@@ -10,13 +10,7 @@
 
 #ifdef DEBUG
 
-// 导入FLEX
-#if __has_include(<FLEX/FLEX.h>)
 #import <FLEX/FLEX.h>
-#else
-#import "FLEX.h"
-#endif
-
 #import <objc/runtime.h>
 
 @implementation UIApplication (FWDebugFLEX)
