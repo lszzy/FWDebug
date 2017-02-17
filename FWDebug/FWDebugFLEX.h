@@ -8,8 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-// DEBUG模式且导入FLEX
-#ifdef DEBUG
+// 导入FLEX
 #if __has_include(<FLEX/FLEX.h>)
 
 /**
@@ -21,5 +20,4 @@
 
 @end
 
-#endif
 #endif

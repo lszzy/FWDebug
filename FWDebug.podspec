@@ -9,5 +9,8 @@ Pod::Spec.new do |spec|
   spec.platform     = :ios, "7.0"
   spec.source       = { :git => "https://github.com/lszzy/ios-debug.git", :tag => spec.version.to_s }
   spec.source_files = 'FWDebug/**/*.{h,m}'
+  spec.frameworks   = "Foundation", "UIKit"
   spec.requires_arc = true
+
+  spec.dependency 'FLEX'
 end
