@@ -1,15 +1,13 @@
-Pod::Spec.new do |s|
-  s.name         = "FWDebug"
-  s.version      = "1.0.0"
-  s.summary      = "ocphp ios-debug"
-  s.homepage     = "http://ocphp.com"
-  s.license      = "MIT"
-  s.author       = { "Wu Yong" => "admin@ocphp.com" }
-  s.source       = { :git => "https://github.com/lszzy/ios-debug.git", :tag => s.version.to_s }
+Pod::Spec.new do |spec|
+  spec.name         = "FWDebug"
+  spec.version      = "1.0.0"
+  spec.summary      = "ios debug library"
+  spec.homepage     = "http://ocphp.com"
+  spec.license      = "MIT"
+  spec.author       = { "Wu Yong" => "admin@ocphp.com" }
 
-  s.requires_arc = true
-  s.platform     = :ios, "7.0"
-  s.source_files = 'FWDebug/**/*.{h,m}'
-
-  s.dependency 'FLEX'
+  spec.platform     = :ios, "7.0"
+  spec.source       = { :git => "https://github.com/lszzy/ios-debug.git", :tag => spec.version.to_s }
+  spec.source_files = 'FWDebug/**/*.{h,m}'
+  spec.requires_arc = true
 end

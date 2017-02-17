@@ -8,7 +8,9 @@
 
 #import "FWDebugFLEX.h"
 
+// DEBUG模式且导入FLEX
 #ifdef DEBUG
+#if __has_include(<FLEX/FLEX.h>)
 
 #import <FLEX/FLEX.h>
 #import <objc/runtime.h>
@@ -46,4 +48,5 @@
 
 @end
 
+#endif
 #endif
