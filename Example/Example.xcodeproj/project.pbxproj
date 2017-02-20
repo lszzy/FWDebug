@@ -28,9 +28,9 @@
 		2FBCA7D31E55768600B7170A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2FBCA7D61E55768600B7170A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2FBCA7D81E55768600B7170A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2FBCA7DF1E557A3000B7170A /* FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebug.h; sourceTree = "<group>"; };
 		2FBCA7E01E557A6500B7170A /* FWDebugFLEX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugFLEX.h; sourceTree = "<group>"; };
 		2FBCA7E11E557A6500B7170A /* FWDebugFLEX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugFLEX.m; sourceTree = "<group>"; };
+		2FCA04971E5AA161008ECDD4 /* FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebug.h; sourceTree = "<group>"; };
 		AACCA41DB452153BF0AFB3AE /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
 		ADC752DDE04343A06695E988 /* Pods-Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Example/Pods-Example.debug.xcconfig"; sourceTree = "<group>"; };
 		E597A70888952082F8F4CE71 /* libPods-Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -111,7 +111,7 @@
 		2FBCA7DE1E5579E000B7170A /* FWDebug */ = {
 			isa = PBXGroup;
 			children = (
-				2FBCA7DF1E557A3000B7170A /* FWDebug.h */,
+				2FCA04971E5AA161008ECDD4 /* FWDebug.h */,
 				2FBCA7E01E557A6500B7170A /* FWDebugFLEX.h */,
 				2FBCA7E11E557A6500B7170A /* FWDebugFLEX.m */,
 			);
