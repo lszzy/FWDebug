@@ -14,18 +14,29 @@ iOS调试库，方便iOS开发和测试。
 推荐使用CocoaPods安装，自动管理依赖和环境配置。如需手工导入请参考Example项目配置。
 
 ### CocoaPods
-本调试库支持Debug和Release环境，一般Debug模式开启。Podfile添加内容，如下：
+本调试库支持Debug和Release环境，一般Debug模式开启。Podfile示例：
 
-	pod 'FWDebug', :configurations => ['Debug']
-	pod 'FLEX', :configurations => ['Debug']
+	platform :ios, '8.0'
+	# use_frameworks!
+
+	target 'Example' do
+	  pod 'FWDebug', :configurations => ['Debug']
+	end
 
 ### Carthage
-本调试库支持Carthage，Cartfile添加内容，如下：
+本调试库支持Carthage，Cartfile示例：
 
-	github "Flipboard/FLEX"
 	github "lszzy/FWDebug"
 
-执行`carthage update`并拷贝`FWDebug.framework`和`FLEX.framework`到项目即可。
+执行`carthage update`并拷贝`FWDebug.framework`到项目即可。
+
+## 第三方库
+本调试库使用了第三方库，在此感谢所有第三方库的作者。列举如下：
+	
+* [FLEX](https://github.com/Flipboard/FLEX)
+* [GCDWebServer](https://github.com/swisspol/GCDWebServer)
+* [RuntimeBrowser](https://github.com/nst/RuntimeBrowser)
+* [KSCrash](https://github.com/kstenerud/KSCrash)
 
 ## 官方网站
 [大勇的网站](http://www.ocphp.com)

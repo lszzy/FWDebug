@@ -1,16 +1,17 @@
 Pod::Spec.new do |spec|
   spec.name         = "FWDebug"
-  spec.version      = "1.0.0"
+  spec.version      = "1.1.0"
   spec.summary      = "ios debug library"
   spec.homepage     = "http://ocphp.com"
   spec.license      = "MIT"
   spec.author       = { "Wu Yong" => "admin@ocphp.com" }
-
-  spec.platform     = :ios, "7.0"
   spec.source       = { :git => "https://github.com/lszzy/ios-debug.git", :tag => spec.version.to_s }
-  spec.source_files = 'FWDebug/**/*.{h,m}'
-  spec.frameworks   = "Foundation", "UIKit"
-  spec.requires_arc = true
 
-  spec.dependency 'FLEX'
+  spec.platform            = :ios, "8.0"
+  spec.requires_arc        = true
+  spec.frameworks          = [ "Foundation", "UIKit", "CoreGraphics", "SystemConfiguration", "MobileCoreServices", "CFNetwork" ]
+  spec.library             = [ "xml2", "z", "sqlite3", "c++" ]
+  spec.xcconfig            = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2", "GCC_ENABLE_CPP_EXCEPTIONS" => "YES" }
+  spec.source_files        = 'FWDebug/**/*.{h,m,mm,c,cpp}'
+  spec.public_header_files = 'FWDebug/*.h'
 end
