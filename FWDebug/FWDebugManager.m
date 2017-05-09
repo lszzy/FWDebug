@@ -11,6 +11,7 @@
 #import <UIKit/UIKit.h>
 #import "FLEXManager+FWDebug.h"
 #import "KSCrash+FWDebug.h"
+#import "JPEngine+FWDebug.h"
 
 #pragma mark - UIApplication+FWDebug
 
@@ -98,6 +99,7 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
 - (void)onLaunch:(NSNotification *)notification
 {
     [KSCrash fwDebugLoad];
+    [JPEngine fwDebugLoad];
 }
 
 - (void)onShake:(NSNotification *)notification
@@ -114,6 +116,11 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
 }
 
 #pragma mark - Public
+
+- (BOOL)isHidden
+{
+    return [FLEXManager sharedManager].isHidden;
+}
 
 - (void)show
 {

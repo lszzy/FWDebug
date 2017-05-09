@@ -64,7 +64,7 @@
 {
     [super viewDidLoad];
     
-    self.title = @"System Info";
+    self.title = @"Device Info";
     
     [self initSystemInfo];
     
@@ -121,7 +121,7 @@
     
     //System
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];;
-    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm";
+    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
     
     sectionData = @{
                     @"title": @"System",
@@ -247,7 +247,6 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifier];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.textLabel.font = [UIFont systemFontOfSize:14];
         cell.detailTextLabel.font = [UIFont systemFontOfSize:14];
     }
@@ -262,6 +261,38 @@
     }
     
     return cell;
+}
+
+- (BOOL)tableView:(UITableView *)tableView shouldShowMenuForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender
+{
+    BOOL canPerformAction = NO;
+    
+    if (action == @selector(copy:)) {
+        canPerformAction = YES;
+    }
+    
+    return canPerformAction;
+}
+
+- (void)tableView:(UITableView *)tableView performAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender
+{
+    if (action == @selector(copy:)) {
+        NSString *stringToCopy = @"";
+        
+        NSArray *sectionData = [[self.tableData objectAtIndex:indexPath.section] objectForKey:@"rows"];
+        NSDictionary *cellData = [sectionData objectAtIndex:indexPath.row];
+        for (NSString *key in cellData) {
+            stringToCopy = [stringToCopy stringByAppendingString:[cellData objectForKey:key]];
+            break;
+        }
+        
+        [[UIPasteboard generalPasteboard] setString:stringToCopy];
+    }
 }
 
 #pragma mark - UISearchController

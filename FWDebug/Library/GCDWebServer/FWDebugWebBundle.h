@@ -10,12 +10,6 @@
 
 @interface FWDebugWebBundle : NSObject
 
-@property (nonatomic, strong, readonly) NSString *bundlePath;
-
-+ (instancetype)sharedInstance;
-
-- (void)createBundle;
-
-- (void)deleteBundle;
++ (NSString *)fwDebugBundlePath;
 
 @end

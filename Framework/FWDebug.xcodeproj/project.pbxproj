@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F019D341E6FD2C80035448E /* FWDebugAppList.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F019D321E6FD2C80035448E /* FWDebugAppList.h */; };
+		2F019D351E6FD2C80035448E /* FWDebugAppList.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F019D331E6FD2C80035448E /* FWDebugAppList.m */; };
+		2F2E3DC71E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F2E3DC51E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h */; };
+		2F2E3DC81E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F2E3DC61E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m */; };
 		2F3C78711E62BADF0015206A /* FWDebugManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F3C786F1E62BADF0015206A /* FWDebugManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2F3C78721E62BADF0015206A /* FWDebugManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F3C78701E62BADF0015206A /* FWDebugManager.m */; };
 		2F4171601E63303B00DC5AD4 /* FLEXArgumentInputColorView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F416FC51E63303B00DC5AD4 /* FLEXArgumentInputColorView.h */; };
@@ -399,8 +403,6 @@
 		2F57D00B1E65369B0062B632 /* FWDebugKSCrashReportSinkFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F57D0071E65369B0062B632 /* FWDebugKSCrashReportSinkFile.m */; };
 		2F57D00F1E6537110062B632 /* FWDebugRuntimeBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F57D00D1E6537110062B632 /* FWDebugRuntimeBrowser.h */; };
 		2F57D0101E6537110062B632 /* FWDebugRuntimeBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F57D00E1E6537110062B632 /* FWDebugRuntimeBrowser.m */; };
-		2F57D0161E653B450062B632 /* FWDebugWebUploader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F57D0121E653B450062B632 /* FWDebugWebUploader.h */; };
-		2F57D0171E653B450062B632 /* FWDebugWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F57D0131E653B450062B632 /* FWDebugWebUploader.m */; };
 		2F57D0181E653B450062B632 /* FWDebugWebBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F57D0141E653B450062B632 /* FWDebugWebBundle.h */; };
 		2F57D0191E653B450062B632 /* FWDebugWebBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F57D0151E653B450062B632 /* FWDebugWebBundle.m */; };
 		2F57D01D1E6545320062B632 /* FWDebugWebServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F57D01B1E6545320062B632 /* FWDebugWebServer.h */; };
@@ -409,13 +411,29 @@
 		2F57D0241E65647D0062B632 /* FWDebugSystemInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F57D0221E65647D0062B632 /* FWDebugSystemInfo.m */; };
 		2F57D0271E65665D0062B632 /* FWDebugFpsInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F57D0251E65665D0062B632 /* FWDebugFpsInfo.h */; };
 		2F57D0281E65665D0062B632 /* FWDebugFpsInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F57D0261E65665D0062B632 /* FWDebugFpsInfo.m */; };
+		2F651BBD1E71010100928A05 /* JPEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F651BBB1E71010100928A05 /* JPEngine.h */; };
+		2F651BBE1E71010100928A05 /* JPEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F651BBC1E71010100928A05 /* JPEngine.m */; };
+		2F651BC21E71012100928A05 /* JPEngine+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F651BC01E71012100928A05 /* JPEngine+FWDebug.h */; };
+		2F651BC31E71012100928A05 /* JPEngine+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F651BC11E71012100928A05 /* JPEngine+FWDebug.m */; };
+		2F651C0E1E71158700928A05 /* NSBundle+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F651C0C1E71158700928A05 /* NSBundle+FWDebug.h */; };
+		2F651C0F1E71158700928A05 /* NSBundle+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F651C0D1E71158700928A05 /* NSBundle+FWDebug.m */; };
+		2F651C191E712E1800928A05 /* FWDebugJSPatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F651C171E712E1800928A05 /* FWDebugJSPatch.h */; };
+		2F651C1A1E712E1800928A05 /* FWDebugJSPatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F651C181E712E1800928A05 /* FWDebugJSPatch.m */; };
 		2FA750321E5EBB5F0040732E /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA750311E5EBB5F0040732E /* libxml2.tbd */; };
 		2FA750371E5EBC4A0040732E /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA750331E5EBC170040732E /* libz.tbd */; };
+		2FB8D2A81E6BF8C8008660F2 /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 2FB8D2A61E6BF8C8008660F2 /* fishhook.c */; };
+		2FB8D2A91E6BF8C8008660F2 /* fishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FB8D2A71E6BF8C8008660F2 /* fishhook.h */; };
+		2FB8D2AE1E6C033B008660F2 /* FWDebugFishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FB8D2AC1E6C033B008660F2 /* FWDebugFishhook.h */; };
+		2FB8D2AF1E6C033B008660F2 /* FWDebugFishhook.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FB8D2AD1E6C033B008660F2 /* FWDebugFishhook.m */; };
 		2FC91DE01E602330001E1C19 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA750351E5EBC1D0040732E /* libsqlite3.tbd */; };
 		2FCA04991E5AA1A4008ECDD4 /* FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FCA04981E5AA1A4008ECDD4 /* FWDebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2F019D321E6FD2C80035448E /* FWDebugAppList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugAppList.h; sourceTree = "<group>"; };
+		2F019D331E6FD2C80035448E /* FWDebugAppList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugAppList.m; sourceTree = "<group>"; };
+		2F2E3DC51E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FLEXSystemLogTableViewController+FWDebug.h"; sourceTree = "<group>"; };
+		2F2E3DC61E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FLEXSystemLogTableViewController+FWDebug.m"; sourceTree = "<group>"; };
 		2F3C786F1E62BADF0015206A /* FWDebugManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugManager.h; sourceTree = "<group>"; };
 		2F3C78701E62BADF0015206A /* FWDebugManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugManager.m; sourceTree = "<group>"; };
 		2F416FC51E63303B00DC5AD4 /* FLEXArgumentInputColorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXArgumentInputColorView.h; sourceTree = "<group>"; };
@@ -808,8 +826,6 @@
 		2F57D0071E65369B0062B632 /* FWDebugKSCrashReportSinkFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugKSCrashReportSinkFile.m; sourceTree = "<group>"; };
 		2F57D00D1E6537110062B632 /* FWDebugRuntimeBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugRuntimeBrowser.h; sourceTree = "<group>"; };
 		2F57D00E1E6537110062B632 /* FWDebugRuntimeBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugRuntimeBrowser.m; sourceTree = "<group>"; };
-		2F57D0121E653B450062B632 /* FWDebugWebUploader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugWebUploader.h; sourceTree = "<group>"; };
-		2F57D0131E653B450062B632 /* FWDebugWebUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugWebUploader.m; sourceTree = "<group>"; };
 		2F57D0141E653B450062B632 /* FWDebugWebBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugWebBundle.h; sourceTree = "<group>"; };
 		2F57D0151E653B450062B632 /* FWDebugWebBundle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugWebBundle.m; sourceTree = "<group>"; };
 		2F57D01B1E6545320062B632 /* FWDebugWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugWebServer.h; sourceTree = "<group>"; };
@@ -818,9 +834,21 @@
 		2F57D0221E65647D0062B632 /* FWDebugSystemInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugSystemInfo.m; sourceTree = "<group>"; };
 		2F57D0251E65665D0062B632 /* FWDebugFpsInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugFpsInfo.h; sourceTree = "<group>"; };
 		2F57D0261E65665D0062B632 /* FWDebugFpsInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugFpsInfo.m; sourceTree = "<group>"; };
+		2F651BBB1E71010100928A05 /* JPEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPEngine.h; sourceTree = "<group>"; };
+		2F651BBC1E71010100928A05 /* JPEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPEngine.m; sourceTree = "<group>"; };
+		2F651BC01E71012100928A05 /* JPEngine+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JPEngine+FWDebug.h"; sourceTree = "<group>"; };
+		2F651BC11E71012100928A05 /* JPEngine+FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "JPEngine+FWDebug.m"; sourceTree = "<group>"; };
+		2F651C0C1E71158700928A05 /* NSBundle+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+FWDebug.h"; sourceTree = "<group>"; };
+		2F651C0D1E71158700928A05 /* NSBundle+FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+FWDebug.m"; sourceTree = "<group>"; };
+		2F651C171E712E1800928A05 /* FWDebugJSPatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugJSPatch.h; sourceTree = "<group>"; };
+		2F651C181E712E1800928A05 /* FWDebugJSPatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugJSPatch.m; sourceTree = "<group>"; };
 		2FA750311E5EBB5F0040732E /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		2FA750331E5EBC170040732E /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		2FA750351E5EBC1D0040732E /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		2FB8D2A61E6BF8C8008660F2 /* fishhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fishhook.c; sourceTree = "<group>"; };
+		2FB8D2A71E6BF8C8008660F2 /* fishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fishhook.h; sourceTree = "<group>"; };
+		2FB8D2AC1E6C033B008660F2 /* FWDebugFishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugFishhook.h; sourceTree = "<group>"; };
+		2FB8D2AD1E6C033B008660F2 /* FWDebugFishhook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugFishhook.m; sourceTree = "<group>"; };
 		2FCA04451E5A8AE3008ECDD4 /* FWDebug.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FWDebug.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FCA04491E5A8AE3008ECDD4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Framework/Info.plist; sourceTree = "<group>"; };
 		2FCA04981E5AA1A4008ECDD4 /* FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebug.h; sourceTree = SOURCE_ROOT; };
@@ -843,6 +871,8 @@
 		2F416FC11E63303B00DC5AD4 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				2F651BBA1E71010100928A05 /* JSPatch */,
+				2FB8D2A51E6BF8C8008660F2 /* fishhook */,
 				2F416FC21E63303B00DC5AD4 /* FLEX */,
 				2F41706C1E63303B00DC5AD4 /* GCDWebServer */,
 				2F4170931E63303B00DC5AD4 /* KSCrash */,
@@ -1526,6 +1556,8 @@
 		2F57CFE91E652E5D0062B632 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				2F651BBF1E71012100928A05 /* JSPatch */,
+				2FB8D2AA1E6BF8E6008660F2 /* fishhook */,
 				2F57D0111E65374C0062B632 /* GCDWebServer */,
 				2F57D00C1E6536FC0062B632 /* RuntimeBrowser */,
 				2F57CFEF1E6533540062B632 /* KSCrash */,
@@ -1547,8 +1579,12 @@
 				2F57CFF91E6535450062B632 /* FLEXFileBrowserTableViewController+FWDebug.m */,
 				2F57CFFA1E6535450062B632 /* FLEXObjectExplorerViewController+FWDebug.h */,
 				2F57CFFB1E6535450062B632 /* FLEXObjectExplorerViewController+FWDebug.m */,
+				2F2E3DC51E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h */,
+				2F2E3DC61E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m */,
 				2F57D0211E65647D0062B632 /* FWDebugSystemInfo.h */,
 				2F57D0221E65647D0062B632 /* FWDebugSystemInfo.m */,
+				2F019D321E6FD2C80035448E /* FWDebugAppList.h */,
+				2F019D331E6FD2C80035448E /* FWDebugAppList.m */,
 				2F57D0251E65665D0062B632 /* FWDebugFpsInfo.h */,
 				2F57D0261E65665D0062B632 /* FWDebugFpsInfo.m */,
 			);
@@ -1582,12 +1618,32 @@
 			children = (
 				2F57D01B1E6545320062B632 /* FWDebugWebServer.h */,
 				2F57D01C1E6545320062B632 /* FWDebugWebServer.m */,
-				2F57D0121E653B450062B632 /* FWDebugWebUploader.h */,
-				2F57D0131E653B450062B632 /* FWDebugWebUploader.m */,
 				2F57D0141E653B450062B632 /* FWDebugWebBundle.h */,
 				2F57D0151E653B450062B632 /* FWDebugWebBundle.m */,
 			);
 			path = GCDWebServer;
+			sourceTree = "<group>";
+		};
+		2F651BBA1E71010100928A05 /* JSPatch */ = {
+			isa = PBXGroup;
+			children = (
+				2F651BBB1E71010100928A05 /* JPEngine.h */,
+				2F651BBC1E71010100928A05 /* JPEngine.m */,
+			);
+			path = JSPatch;
+			sourceTree = "<group>";
+		};
+		2F651BBF1E71012100928A05 /* JSPatch */ = {
+			isa = PBXGroup;
+			children = (
+				2F651BC01E71012100928A05 /* JPEngine+FWDebug.h */,
+				2F651BC11E71012100928A05 /* JPEngine+FWDebug.m */,
+				2F651C171E712E1800928A05 /* FWDebugJSPatch.h */,
+				2F651C181E712E1800928A05 /* FWDebugJSPatch.m */,
+				2F651C0C1E71158700928A05 /* NSBundle+FWDebug.h */,
+				2F651C0D1E71158700928A05 /* NSBundle+FWDebug.m */,
+			);
+			path = JSPatch;
 			sourceTree = "<group>";
 		};
 		2FA750301E5EBB5F0040732E /* Frameworks */ = {
@@ -1598,6 +1654,24 @@
 				2FA750311E5EBB5F0040732E /* libxml2.tbd */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2FB8D2A51E6BF8C8008660F2 /* fishhook */ = {
+			isa = PBXGroup;
+			children = (
+				2FB8D2A71E6BF8C8008660F2 /* fishhook.h */,
+				2FB8D2A61E6BF8C8008660F2 /* fishhook.c */,
+			);
+			path = fishhook;
+			sourceTree = "<group>";
+		};
+		2FB8D2AA1E6BF8E6008660F2 /* fishhook */ = {
+			isa = PBXGroup;
+			children = (
+				2FB8D2AC1E6C033B008660F2 /* FWDebugFishhook.h */,
+				2FB8D2AD1E6C033B008660F2 /* FWDebugFishhook.m */,
+			);
+			path = fishhook;
 			sourceTree = "<group>";
 		};
 		2FCA043B1E5A8AE2008ECDD4 = {
@@ -1681,6 +1755,8 @@
 				2F41717E1E63303B00DC5AD4 /* FLEXFieldEditorViewController.h in Headers */,
 				2F41721A1E63303B00DC5AD4 /* GCDWebUploader.h in Headers */,
 				2F4172931E63303B00DC5AD4 /* KSThread.h in Headers */,
+				2F019D341E6FD2C80035448E /* FWDebugAppList.h in Headers */,
+				2F651BC21E71012100928A05 /* JPEngine+FWDebug.h in Headers */,
 				2F4172651E63303B00DC5AD4 /* KSDate.h in Headers */,
 				2F4172C31E63303B00DC5AD4 /* Fallthrough.h in Headers */,
 				2F57CFFE1E6535450062B632 /* FLEXExplorerToolbar+FWDebug.h in Headers */,
@@ -1705,11 +1781,11 @@
 				2F4172C41E63303B00DC5AD4 /* LLVM.h in Headers */,
 				2F4171E81E63303B00DC5AD4 /* FLEXHeapEnumerator.h in Headers */,
 				2F4172161E63303B00DC5AD4 /* GCDWebServerFileResponse.h in Headers */,
+				2F651C191E712E1800928A05 /* FWDebugJSPatch.h in Headers */,
 				2F4171BF1E63303B00DC5AD4 /* FLEXNetworkRecorder.h in Headers */,
 				2F4172001E63303B00DC5AD4 /* GCDWebServerConnection.h in Headers */,
 				2F4172C11E63303B00DC5AD4 /* Demangle.h in Headers */,
 				2F4172141E63303B00DC5AD4 /* GCDWebServerErrorResponse.h in Headers */,
-				2F57D0161E653B450062B632 /* FWDebugWebUploader.h in Headers */,
 				2F4172711E63303B00DC5AD4 /* KSID.h in Headers */,
 				2F4172CC1E63303B00DC5AD4 /* RTBMethod.h in Headers */,
 				2F41724C1E63303B00DC5AD4 /* KSCrashMonitor_Deadlock.h in Headers */,
@@ -1724,6 +1800,7 @@
 				2F4171D01E63303B00DC5AD4 /* FLEXDefaultsExplorerViewController.h in Headers */,
 				2F4171641E63303B00DC5AD4 /* FLEXArgumentInputFontsPickerView.h in Headers */,
 				2F41726B1E63303B00DC5AD4 /* KSDemangle_Swift.h in Headers */,
+				2FB8D2AE1E6C033B008660F2 /* FWDebugFishhook.h in Headers */,
 				2F4172421E63303B00DC5AD4 /* KSCrashReportStore.h in Headers */,
 				2F4171DA1E63303B00DC5AD4 /* FLEXObjectExplorerFactory.h in Headers */,
 				2F41719A1E63303B00DC5AD4 /* FLEXTableLeftCell.h in Headers */,
@@ -1755,6 +1832,7 @@
 				2F4171EE1E63303B00DC5AD4 /* FLEXMultilineTableViewCell.h in Headers */,
 				2F41721F1E63303B00DC5AD4 /* KSCrashInstallation.h in Headers */,
 				2F4172121E63303B00DC5AD4 /* GCDWebServerDataResponse.h in Headers */,
+				2F651C0E1E71158700928A05 /* NSBundle+FWDebug.h in Headers */,
 				2F4172371E63303B00DC5AD4 /* KSCrashC.h in Headers */,
 				2F4171A51E63303B00DC5AD4 /* FLEXFileBrowserSearchOperation.h in Headers */,
 				2F4172291E63303B00DC5AD4 /* KSCrashInstallationVictory.h in Headers */,
@@ -1772,6 +1850,7 @@
 				2F57D00A1E65369B0062B632 /* FWDebugKSCrashReportSinkFile.h in Headers */,
 				2F4171FC1E63303B00DC5AD4 /* GCDWebDAVServer.h in Headers */,
 				2F4171C11E63303B00DC5AD4 /* FLEXNetworkSettingsTableViewController.h in Headers */,
+				2F651BBD1E71010100928A05 /* JPEngine.h in Headers */,
 				2F4171FA1E63303B00DC5AD4 /* FLEXImagePreviewViewController.h in Headers */,
 				2F4171F81E63303B00DC5AD4 /* FLEXHierarchyTableViewController.h in Headers */,
 				2F4172271E63303B00DC5AD4 /* KSCrashInstallationStandard.h in Headers */,
@@ -1792,6 +1871,7 @@
 				2F4172D21E63303B00DC5AD4 /* RTBRuntimeHeader.h in Headers */,
 				2F57D0081E65369B0062B632 /* FWDebugKSCrashInstallationFile.h in Headers */,
 				2F4171A31E63303B00DC5AD4 /* FLEXFileBrowserFileOperationController.h in Headers */,
+				2F2E3DC71E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h in Headers */,
 				2F4172C51E63303B00DC5AD4 /* Malloc.h in Headers */,
 				2F41719C1E63303B00DC5AD4 /* FLEXTableListViewController.h in Headers */,
 				2F4172D41E63303B00DC5AD4 /* RTBTypeDecoder.h in Headers */,
@@ -1849,6 +1929,7 @@
 				2F57D0021E6535450062B632 /* FLEXObjectExplorerViewController+FWDebug.h in Headers */,
 				2F4172D61E63303B00DC5AD4 /* RTBTypeDecoder2.h in Headers */,
 				2F4171C31E63303B00DC5AD4 /* FLEXNetworkTransaction.h in Headers */,
+				2FB8D2A91E6BF8C8008660F2 /* fishhook.h in Headers */,
 				2F4171C71E63303B00DC5AD4 /* FLEXNetworkTransactionTableViewCell.h in Headers */,
 				2F41717C1E63303B00DC5AD4 /* FLEXFieldEditorView.h in Headers */,
 				2F4171E01E63303B00DC5AD4 /* FLEXViewControllerExplorerViewController.h in Headers */,
@@ -1948,6 +2029,7 @@
 				2F4172A01E63303B00DC5AD4 /* KSCrashReportFilterJSON.m in Sources */,
 				2F4172A91E63303B00DC5AD4 /* NSData+GZip.m in Sources */,
 				2F4172361E63303B00DC5AD4 /* KSCrashC.c in Sources */,
+				2FB8D2AF1E6C033B008660F2 /* FWDebugFishhook.m in Sources */,
 				2F4171A21E63303B00DC5AD4 /* FLEXCookiesTableViewController.m in Sources */,
 				2F4172241E63303B00DC5AD4 /* KSCrashInstallationEmail.m in Sources */,
 				2F4171891E63303B00DC5AD4 /* FLEXWindow.m in Sources */,
@@ -1956,6 +2038,7 @@
 				2F4172461E63303B00DC5AD4 /* KSCrashMonitor.c in Sources */,
 				2F4171BC1E63303B00DC5AD4 /* FLEXNetworkCurlLogger.m in Sources */,
 				2F41716F1E63303B00DC5AD4 /* FLEXArgumentInputStringView.m in Sources */,
+				2F2E3DC81E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m in Sources */,
 				2F41725D1E63303B00DC5AD4 /* KSCPU.c in Sources */,
 				2F4172191E63303B00DC5AD4 /* GCDWebServerStreamedResponse.m in Sources */,
 				2F4172B71E63303B00DC5AD4 /* KSHTTPMultipartPostBody.m in Sources */,
@@ -1966,10 +2049,12 @@
 				2F4172BD1E63303B00DC5AD4 /* NSMutableData+AppendUTF8.m in Sources */,
 				2F4171B21E63303B00DC5AD4 /* FLEXWebViewController.m in Sources */,
 				2F4171A61E63303B00DC5AD4 /* FLEXFileBrowserSearchOperation.m in Sources */,
+				2F019D351E6FD2C80035448E /* FWDebugAppList.m in Sources */,
 				2F4171ED1E63303B00DC5AD4 /* FLEXKeyboardShortcutManager.m in Sources */,
 				2F4172761E63303B00DC5AD4 /* KSLogger.c in Sources */,
 				2F4171D31E63303B00DC5AD4 /* FLEXDictionaryExplorerViewController.m in Sources */,
 				2F4172A21E63303B00DC5AD4 /* KSCrashReportFilterSets.m in Sources */,
+				2F651C1A1E712E1800928A05 /* FWDebugJSPatch.m in Sources */,
 				2F4171A41E63303B00DC5AD4 /* FLEXFileBrowserFileOperationController.m in Sources */,
 				2F4171711E63303B00DC5AD4 /* FLEXArgumentInputStructView.m in Sources */,
 				2F4171C41E63303B00DC5AD4 /* FLEXNetworkTransaction.m in Sources */,
@@ -1979,6 +2064,7 @@
 				2F4171B81E63303B00DC5AD4 /* FLEXSystemLogTableViewController.m in Sources */,
 				2F4171BA1E63303B00DC5AD4 /* FLEXManager.m in Sources */,
 				2F4172631E63303B00DC5AD4 /* KSCPU_x86_64.c in Sources */,
+				2F651BC31E71012100928A05 /* JPEngine+FWDebug.m in Sources */,
 				2F4172481E63303B00DC5AD4 /* KSCrashMonitor_AppState.c in Sources */,
 				2F41729E1E63303B00DC5AD4 /* KSCrashReportFilterGZip.m in Sources */,
 				2F4171A01E63303B00DC5AD4 /* FLEXClassesTableViewController.m in Sources */,
@@ -1987,6 +2073,7 @@
 				2F57CFFF1E6535450062B632 /* FLEXExplorerToolbar+FWDebug.m in Sources */,
 				2F4172131E63303B00DC5AD4 /* GCDWebServerDataResponse.m in Sources */,
 				2F4171FB1E63303B00DC5AD4 /* FLEXImagePreviewViewController.m in Sources */,
+				2F651C0F1E71158700928A05 /* NSBundle+FWDebug.m in Sources */,
 				2F41729A1E63303B00DC5AD4 /* KSCrashReportFilterAppleFmt.m in Sources */,
 				2F57D0191E653B450062B632 /* FWDebugWebBundle.m in Sources */,
 				2F57D0241E65647D0062B632 /* FWDebugSystemInfo.m in Sources */,
@@ -2016,9 +2103,9 @@
 				2F41724D1E63303B00DC5AD4 /* KSCrashMonitor_Deadlock.m in Sources */,
 				2F41716D1E63303B00DC5AD4 /* FLEXArgumentInputNumberView.m in Sources */,
 				2F57D0031E6535450062B632 /* FLEXObjectExplorerViewController+FWDebug.m in Sources */,
-				2F57D0171E653B450062B632 /* FWDebugWebUploader.m in Sources */,
 				2F4171E31E63303B00DC5AD4 /* FLEXViewExplorerViewController.m in Sources */,
 				2F4172641E63303B00DC5AD4 /* KSDate.c in Sources */,
+				2FB8D2A81E6BF8C8008660F2 /* fishhook.c in Sources */,
 				2F57D00B1E65369B0062B632 /* FWDebugKSCrashReportSinkFile.m in Sources */,
 				2F4171E11E63303B00DC5AD4 /* FLEXViewControllerExplorerViewController.m in Sources */,
 				2F4172AF1E63303B00DC5AD4 /* KSCrashReportSinkQuincyHockey.m in Sources */,
@@ -2094,6 +2181,7 @@
 				2F4171991E63303B00DC5AD4 /* FLEXTableContentViewController.m in Sources */,
 				2F4171C81E63303B00DC5AD4 /* FLEXNetworkTransactionTableViewCell.m in Sources */,
 				2F4171DD1E63303B00DC5AD4 /* FLEXObjectExplorerViewController.m in Sources */,
+				2F651BBE1E71010100928A05 /* JPEngine.m in Sources */,
 				2F41728E1E63303B00DC5AD4 /* KSSymbolicator.c in Sources */,
 				2F4171E91E63303B00DC5AD4 /* FLEXHeapEnumerator.m in Sources */,
 				2F4172781E63303B00DC5AD4 /* KSMach.c in Sources */,
@@ -2219,6 +2307,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2240,6 +2329,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

@@ -16,6 +16,9 @@
 // 是否启用摇一摇功能（5秒内摇一摇两次切换调试器），默认YES
 @property (nonatomic, assign) BOOL shakeEnabled;
 
+// 调试器是否隐藏
+@property (nonatomic, readonly) BOOL isHidden;
+
 // 单例方法
 + (instancetype)sharedInstance;
 

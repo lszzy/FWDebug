@@ -32,7 +32,13 @@
 }
 
 - (void)onDebug {
-    [[FWDebugManager sharedInstance] show];
+    if ([FWDebugManager sharedInstance].isHidden) {
+        [[FWDebugManager sharedInstance] show];
+        NSLog(@"显示调试器");
+    } else {
+        [[FWDebugManager sharedInstance] hide];
+        NSLog(@"关闭调试器");
+    }
 }
 
 - (void)onCrash {

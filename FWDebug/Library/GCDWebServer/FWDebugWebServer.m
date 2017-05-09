@@ -7,14 +7,14 @@
 //
 
 #import "FWDebugWebServer.h"
-#import "FWDebugWebUploader.h"
 #import "GCDWebDAVServer.h"
+#import "GCDWebUploader.h"
 
 #define FWDebugWebServerPort 8001
 #define FWDebugWebDavServerPort 8002
 
 // 静态服务器变量
-static FWDebugWebUploader *_webServer = nil;
+static GCDWebUploader *_webServer = nil;
 static GCDWebDAVServer *_webDavServer = nil;
 
 @interface FWDebugWebServer ()
@@ -30,7 +30,12 @@ static GCDWebDAVServer *_webDavServer = nil;
         //初始化WebServer
         if (!_webServer) {
             NSString *webPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
-            _webServer = [[FWDebugWebUploader alloc] initWithUploadDirectory:webPath];
+            _webServer = [[GCDWebUploader alloc] initWithUploadDirectory:webPath];
+            _webServer.title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
+            _webServer.header = _webServer.title;
+            _webServer.prologue = @"<p>Drag &amp; drop files on this window or use the \"Upload Files&hellip;\" button to upload new files.</p>";
+            _webServer.epilogue = @"";
+            _webServer.footer = [NSString stringWithFormat:@"%@ %@", _webServer.title, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
         }
         
         //初始化WebDavServer

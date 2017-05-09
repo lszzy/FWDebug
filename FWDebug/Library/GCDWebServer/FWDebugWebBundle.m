@@ -10,48 +10,26 @@
 
 @implementation FWDebugWebBundle
 
-+ (instancetype)sharedInstance
++ (NSString *)fwDebugBundlePath
 {
-    static FWDebugWebBundle *sharedInstance = nil;
+    static NSString *bundlePath = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedInstance = [[[self class] alloc] init];
+        bundlePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+        bundlePath = [[bundlePath stringByAppendingPathComponent:@"FWDebug"] stringByAppendingPathComponent:@"WebServer"];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:bundlePath]) {
+            [[NSFileManager defaultManager] createDirectoryAtPath:bundlePath withIntermediateDirectories:YES attributes:nil error:NULL];
+            
+            // 自动解码
+            [self bundleDecode:bundlePath];
+        }
     });
-    return sharedInstance;
-}
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        //解码路径
-        _bundlePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"FWDebug.bundle"];
-        NSLog(@"FWDebug: bundlePath = %@", _bundlePath);
-    }
-    return self;
-}
-
-#pragma mark - Public
-
-- (void)createBundle
-{
-    if (![[NSFileManager defaultManager] fileExistsAtPath:_bundlePath]) {
-        [[NSFileManager defaultManager] createDirectoryAtPath:_bundlePath withIntermediateDirectories:YES attributes:nil error:NULL];
-        //自动解码
-        [self bundleDecode];
-    }
-}
-
-- (void)deleteBundle
-{
-    if ([[NSFileManager defaultManager] fileExistsAtPath:_bundlePath]) {
-        [[NSFileManager defaultManager] removeItemAtPath:_bundlePath error:NULL];
-    }
+    return bundlePath;
 }
 
 #pragma mark - Private
 
-- (void)bundleEncode
++ (void)bundleEncode
 {
     NSDictionary *bundleContents = [self bundleContents];
     for (NSString *fileName in bundleContents) {
@@ -59,9 +37,9 @@
     }
 }
 
-- (void)bundleEncodeFile:(NSString *)fileName
++ (void)bundleEncodeFile:(NSString *)fileName
 {
-    NSBundle *siteBundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"FWDebug" ofType:@"bundle"]];
+    NSBundle *siteBundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"GCDWebUploader" ofType:@"bundle"]];
     NSString *filePath = [siteBundle pathForResource:fileName ofType:nil];
     NSData *fileData = [NSData dataWithContentsOfFile:filePath];
     NSString *fileStr = [fileData base64EncodedStringWithOptions:0];
@@ -70,21 +48,20 @@
     savePath = [savePath stringByAppendingPathComponent:[fileName lastPathComponent]];
     NSData *saveData = [fileStr dataUsingEncoding:NSUTF8StringEncoding];
     [[NSFileManager defaultManager] createFileAtPath:savePath contents:saveData attributes:nil];
-    
-    NSLog(@"FWDebug: savePath = %@", savePath);
 }
 
-- (void)bundleDecode
++ (void)bundleDecode:(NSString *)bundlePath
 {
     NSDictionary *bundleContents = [self bundleContents];
     for (NSString *fileName in bundleContents) {
-        [self bundleDecodeFile:fileName encodeStr:[bundleContents objectForKey:fileName]];
+        [self bundleDecodeFile:bundlePath fileName:fileName encodeStr:[bundleContents objectForKey:fileName]];
     }
 }
 
-- (void)bundleDecodeFile:(NSString *)fileName encodeStr:(NSString *)encodeStr
++ (void)bundleDecodeFile:(NSString *)bundlePath fileName:(NSString *)fileName encodeStr:(NSString *)encodeStr
 {
-    NSString *savePath = [self.bundlePath stringByAppendingPathComponent:fileName];
+    NSString *savePath = [bundlePath stringByAppendingPathComponent:@"GCDWebUploader.bundle"];
+    savePath = [savePath stringByAppendingPathComponent:fileName];
     if ([[NSFileManager defaultManager] fileExistsAtPath:savePath]) {
         return;
     }
@@ -98,7 +75,7 @@
     [[NSFileManager defaultManager] createFileAtPath:savePath contents:fileData attributes:nil];
 }
 
-- (NSDictionary *)bundleContents
++ (NSDictionary *)bundleContents
 {
     static NSDictionary *_bundleContents = nil;
     if (_bundleContents) {
