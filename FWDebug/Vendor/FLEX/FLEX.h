@@ -6,4 +6,4 @@
 //  Copyright (c) 2015 Flipboard. All rights reserved.
 //
 
-#import "FLEXManager.h"
+#import <FLEX/FLEXManager.h>
