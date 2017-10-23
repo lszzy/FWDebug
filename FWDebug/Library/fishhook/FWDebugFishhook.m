@@ -60,7 +60,7 @@ static NSMutableArray *_allLogs;
 + (BOOL)isLogEnabled
 {
 #ifdef __IPHONE_10_0
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0 && !TARGET_OS_SIMULATOR
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
     // Xcode8+真机iOS10系统NSLog不显示，重写NSLog方便调试
     return YES;
 #endif
@@ -139,6 +139,20 @@ static NSMutableArray *_allLogs;
 {
     NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:logPath error:nil];
     for (NSString *fileName in fileNames) {
+        // 只保留最近7天的日志
+        if (fileName.length == 18 && [fileName hasPrefix:@"NSLog-"]) {
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            formatter.dateFormat = @"yyyyMMdd";
+            NSDate *date = [formatter dateFromString:[fileName substringWithRange:NSMakeRange(6, 8)]];
+            NSTimeInterval logTime = [date timeIntervalSince1970];
+            NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+            if ((nowTime - logTime) >= 86400 * 7) {
+                NSString *filePath = [logPath stringByAppendingPathComponent:fileName];
+                [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+            }
+            continue;
+        }
+        
         // 只处理未合并的文件
         if (fileName.length != 25 || ![fileName hasPrefix:@"NSLog-"]) continue;
         

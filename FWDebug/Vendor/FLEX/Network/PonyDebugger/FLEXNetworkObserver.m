@@ -462,7 +462,7 @@ didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask delegate:(id <NSU
 
             NSURLSessionUploadTask *(^asyncUploadTaskSwizzleBlock)(Class, NSURLRequest *, id, NSURLSessionAsyncCompletion) = ^NSURLSessionUploadTask *(Class slf, NSURLRequest *request, id argument, NSURLSessionAsyncCompletion completion) {
                 NSURLSessionUploadTask *task = nil;
-                if ([FLEXNetworkObserver isEnabled]) {
+                if ([FLEXNetworkObserver isEnabled] && completion) {
                     NSString *requestID = [self nextRequestID];
                     NSString *mechanism = [self mechansimFromClassMethod:selector onClass:class];
                     NSURLSessionAsyncCompletion completionWrapper = [self asyncCompletionWrapperForRequestID:requestID mechanism:mechanism completion:completion];
@@ -674,7 +674,7 @@ didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask delegate:(id <NSU
         [self sniffWithoutDuplicationForObject:session selector:selector sniffingBlock:^{
             [[FLEXNetworkObserver sharedObserver] URLSession:session task:task willPerformHTTPRedirection:response newRequest:newRequest completionHandler:completionHandler delegate:slf];
         } originalImplementationBlock:^{
-            ((id(*)(id, SEL, id, id, id, id, void(^)()))objc_msgSend)(slf, swizzledSelector, session, task, response, newRequest, completionHandler);
+            ((id(*)(id, SEL, id, id, id, id, void(^)(NSURLRequest *)))objc_msgSend)(slf, swizzledSelector, session, task, response, newRequest, completionHandler);
         }];
     };
 
@@ -755,7 +755,7 @@ didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask delegate:(id <NSU
         [self sniffWithoutDuplicationForObject:session selector:selector sniffingBlock:^{
             [[FLEXNetworkObserver sharedObserver] URLSession:session dataTask:dataTask didReceiveResponse:response completionHandler:completionHandler delegate:slf];
         } originalImplementationBlock:^{
-            ((void(*)(id, SEL, id, id, id, void(^)()))objc_msgSend)(slf, swizzledSelector, session, dataTask, response, completionHandler);
+            ((void(*)(id, SEL, id, id, id, void(^)(NSURLSessionResponseDisposition)))objc_msgSend)(slf, swizzledSelector, session, dataTask, response, completionHandler);
         }];
     };
     

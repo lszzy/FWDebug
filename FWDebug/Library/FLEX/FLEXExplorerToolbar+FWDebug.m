@@ -18,8 +18,8 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
     method_exchangeImplementations(
-                                   class_getInstanceMethod(self, @selector(setToolbarItems:)),
-                                   class_getInstanceMethod(self, @selector(fwDebugSetToolbarItems:))
+                                   class_getInstanceMethod(self, @selector(toolbarItems)),
+                                   class_getInstanceMethod(self, @selector(fwDebugToolbarItems))
                                    );
 #pragma clang diagnostic pop
 }
@@ -29,17 +29,17 @@
     FLEXToolbarItem *item = objc_getAssociatedObject(self, _cmd);
     if (!item) {
         item = [FLEXToolbarItem toolbarItemWithTitle:@"" image:nil];
+        [self addSubview:item];
         objc_setAssociatedObject(self, _cmd, item, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return item;
 }
 
-- (void)fwDebugSetToolbarItems:(NSArray *)toolbarItems
+- (NSArray *)fwDebugToolbarItems
 {
-    NSMutableArray *debugItems = [NSMutableArray arrayWithArray:toolbarItems];
-    [self addSubview:self.fwDebugFpsItem];
+    NSMutableArray *debugItems = [[self fwDebugToolbarItems] mutableCopy];
     [debugItems insertObject:self.fwDebugFpsItem atIndex:debugItems.count > 2 ? 2 : 0];
-    [self fwDebugSetToolbarItems:debugItems];
+    return [debugItems copy];
 }
 
 @end

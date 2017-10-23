@@ -20,10 +20,9 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 * App崩溃日志的记录、查看
 * App文件管理器
 * Documents文件http、webdav服务器
-* iOS10真机NSLog显示
-* 手机App列表查看
-* JSPatch动态修改应用
+* iOS10+真机NSLog显示
 * 生成dylib动态库并注入其它App
+* App加密工具
 
 ## 安装教程
 推荐使用CocoaPods安装，自动管理依赖和环境配置。如需手工导入请参考Example项目配置。
@@ -46,6 +45,12 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 执行`carthage update`并拷贝`FWDebug.framework`到项目即可。
 
 ## 更新日志
+1.3.0版本：
+
+	* 移除部分工具、保留核心功能
+	* 重构、优化代码
+	* 添加App加密工具
+
 1.2.1版本：
 
 	* 同步FLEX最新主干代码
@@ -79,7 +84,6 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 * [GCDWebServer](https://github.com/swisspol/GCDWebServer)
 * [RuntimeBrowser](https://github.com/nst/RuntimeBrowser)
 * [KSCrash](https://github.com/kstenerud/KSCrash)
-* [JSPatch](https://github.com/bang590/JSPatch)
 * [fishhook](https://github.com/facebook/fishhook)
 
 ## 官方网站

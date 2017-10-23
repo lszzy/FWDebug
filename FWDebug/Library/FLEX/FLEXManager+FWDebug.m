@@ -16,8 +16,7 @@
 #import "FLEXSystemLogTableViewController+FWDebug.h"
 #import "FWDebugSystemInfo.h"
 #import "FWDebugWebServer.h"
-#import "FWDebugAppList.h"
-#import "FWDebugJSPatch.h"
+#import "FWDebugAppSecret.h"
 #import <objc/runtime.h>
 
 @interface FLEXManager ()
@@ -51,18 +50,6 @@
 {
     [FLEXManager sharedManager].networkDebuggingEnabled = YES;
     
-    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📘  App Browser" viewControllerFutureBlock:^UIViewController *{
-        return [[FLEXFileBrowserTableViewController alloc] initWithPath:[NSBundle mainBundle].bundlePath];
-    }];
-    
-    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"🍀  JSPatch Editor" viewControllerFutureBlock:^UIViewController *{
-        return [[FWDebugJSPatch alloc] init];
-    }];
-    
-    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"💟  System Apps" viewControllerFutureBlock:^UIViewController *{
-        return [[FWDebugAppList alloc] init];
-    }];
-    
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📳  Device Info" viewControllerFutureBlock:^UIViewController *{
         return [[FWDebugSystemInfo alloc] init];
     }];
@@ -71,7 +58,21 @@
         return [[FWDebugWebServer alloc] init];
     }];
     
-    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📄  Crash Log" viewControllerFutureBlock:^UIViewController *{
+    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"💟  App Secret" viewControllerFutureBlock:^UIViewController *{
+        return [[FWDebugAppSecret alloc] init];
+    }];
+    
+    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📘  App Browser" viewControllerFutureBlock:^UIViewController *{
+        return [[FLEXFileBrowserTableViewController alloc] initWithPath:[NSBundle mainBundle].bundlePath];
+    }];
+    
+    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📝  Log Browser" viewControllerFutureBlock:^UIViewController *{
+        NSString *fileLogPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+        fileLogPath = [[fileLogPath stringByAppendingPathComponent:@"FWDebug"] stringByAppendingPathComponent:@"NSLog"];
+        return [[FLEXFileBrowserTableViewController alloc] initWithPath:fileLogPath];
+    }];
+    
+    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"🍀  Crash Log" viewControllerFutureBlock:^UIViewController *{
         NSString *crashLogPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
         crashLogPath = [[crashLogPath stringByAppendingPathComponent:@"FWDebug"] stringByAppendingPathComponent:@"CrashLog"];
         return [[FLEXFileBrowserTableViewController alloc] initWithPath:crashLogPath];
@@ -93,6 +94,10 @@
 
 - (void)fwDebugShowExplorer
 {
+    if ([FWDebugAppSecret isAppLocked]) {
+        return;
+    }
+    
     [self fwDebugShowExplorer];
     
     [self.fwDebugFpsInfo start];
@@ -100,6 +105,10 @@
 
 - (void)fwDebugHideExplorer
 {
+    if ([FWDebugAppSecret isAppLocked]) {
+        return;
+    }
+    
     [self fwDebugHideExplorer];
     
     [self.fwDebugFpsInfo stop];
