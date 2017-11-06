@@ -45,6 +45,11 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 执行`carthage update`并拷贝`FWDebug.framework`到项目即可。
 
 ## 更新日志
+1.3.1版本：
+
+	* Example项目iPhoneX适配
+	* 修复Documents文件http服务器
+
 1.3.0版本：
 
 	* 移除部分工具、保留核心功能
