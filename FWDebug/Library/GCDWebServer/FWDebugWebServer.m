@@ -9,6 +9,44 @@
 #import "FWDebugWebServer.h"
 #import "GCDWebDAVServer.h"
 #import "GCDWebUploader.h"
+#import <objc/runtime.h>
+#import "FWDebugWebBundle.h"
+
+#pragma mark - NSBundle+FWDebug
+
+@interface NSBundle (FWDebug)
+
+@end
+
+@implementation NSBundle (FWDebug)
+
++ (void)load
+{
+    method_exchangeImplementations(
+                                   class_getClassMethod([self class], @selector(bundleForClass:)),
+                                   class_getClassMethod([self class], @selector(fwDebugBundleForClass:))
+                                   );
+}
+
++ (NSBundle *)fwDebugBundleForClass:(Class)aClass
+{
+    NSBundle *bundle = [self fwDebugBundleForClass:aClass];
+    
+    // 处理bundle资源问题
+    if (aClass == [GCDWebUploader class]) {
+        NSBundle *currentBundle = [NSBundle bundleForClass:[FWDebugWebBundle class]];
+        if ([currentBundle.bundlePath isEqualToString:bundle.bundlePath]) {
+            NSString *bundlePath = [FWDebugWebBundle fwDebugBundlePath];
+            return [NSBundle bundleWithPath:bundlePath];
+        }
+    }
+    
+    return bundle;
+}
+
+@end
+
+#pragma mark - FWDebugWebServer
 
 #define FWDebugWebServerPort 8001
 #define FWDebugWebDavServerPort 8002
