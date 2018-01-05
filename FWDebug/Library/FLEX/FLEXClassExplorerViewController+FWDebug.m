@@ -7,43 +7,21 @@
 //
 
 #import "FLEXClassExplorerViewController+FWDebug.h"
-#import <objc/runtime.h>
+#import "FWDebugManager+FWDebug.h"
 #import "FWDebugRuntimeBrowser.h"
 #import "RTBClass.h"
+#import <objc/runtime.h>
 
 @implementation FLEXClassExplorerViewController (FWDebug)
 
 + (void)load
 {
-    method_exchangeImplementations(
-                                   class_getInstanceMethod(self, @selector(customSectionTitle)),
-                                   class_getInstanceMethod(self, @selector(fwDebugCustomSectionTitle))
-                                   );
-    
-    method_exchangeImplementations(
-                                   class_getInstanceMethod(self, @selector(customSectionRowCookies)),
-                                   class_getInstanceMethod(self, @selector(fwDebugCustomSectionRowCookies))
-                                   );
-    
-    method_exchangeImplementations(
-                                   class_getInstanceMethod(self, @selector(customSectionTitleForRowCookie:)),
-                                   class_getInstanceMethod(self, @selector(fwDebugCustomSectionTitleForRowCookie:))
-                                   );
-    
-    method_exchangeImplementations(
-                                   class_getInstanceMethod(self, @selector(customSectionSubtitleForRowCookie:)),
-                                   class_getInstanceMethod(self, @selector(fwDebugCustomSectionSubtitleForRowCookie:))
-                                   );
-    
-    method_exchangeImplementations(
-                                   class_getInstanceMethod(self, @selector(customSectionCanDrillIntoRowWithCookie:)),
-                                   class_getInstanceMethod(self, @selector(fwDebugCustomSectionCanDrillIntoRowWithCookie:))
-                                   );
-    
-    method_exchangeImplementations(
-                                   class_getInstanceMethod(self, @selector(customSectionDrillInViewControllerForRowCookie:)),
-                                   class_getInstanceMethod(self, @selector(fwDebugCustomSectionDrillInViewControllerForRowCookie:))
-                                   );
+    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionTitle) with:@selector(fwDebugCustomSectionTitle)];
+    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionRowCookies) with:@selector(fwDebugCustomSectionRowCookies)];
+    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionTitleForRowCookie:) with:@selector(fwDebugCustomSectionTitleForRowCookie:)];
+    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionSubtitleForRowCookie:) with:@selector(fwDebugCustomSectionSubtitleForRowCookie:)];
+    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionCanDrillIntoRowWithCookie:) with:@selector(fwDebugCustomSectionCanDrillIntoRowWithCookie:)];
+    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionDrillInViewControllerForRowCookie:) with:@selector(fwDebugCustomSectionDrillInViewControllerForRowCookie:)];
 }
 
 #pragma mark - FWDebug

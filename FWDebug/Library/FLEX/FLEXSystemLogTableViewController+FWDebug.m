@@ -8,7 +8,7 @@
 
 #import "FLEXSystemLogTableViewController+FWDebug.h"
 #import "FWDebugFishhook.h"
-#import <objc/runtime.h>
+#import "FWDebugManager+FWDebug.h"
 
 @implementation FLEXSystemLogTableViewController (FWDebug)
 
@@ -17,10 +17,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
     if ([FWDebugFishhook isLogEnabled]) {
-        method_exchangeImplementations(
-                                       class_getClassMethod([self class], @selector(allLogMessagesForCurrentProcess)),
-                                       class_getClassMethod([self class], @selector(fwDebugAllLogMessagesForCurrentProcess))
-                                       );
+        [FWDebugManager fwDebugSwizzleClass:self method:@selector(allLogMessagesForCurrentProcess) with:@selector(fwDebugAllLogMessagesForCurrentProcess)];
     }
 #pragma clang diagnostic pop
 }

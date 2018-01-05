@@ -11,7 +11,7 @@
 
 @implementation KSCrash (FWDebug)
 
-+ (void)fwDebugLoad
++ (void)fwDebugLaunch
 {
     FWDebugKSCrashInstallationFile *installation = [FWDebugKSCrashInstallationFile sharedInstance];
     installation.printAppleFormat = YES;

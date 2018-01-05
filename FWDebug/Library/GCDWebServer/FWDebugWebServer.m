@@ -9,8 +9,8 @@
 #import "FWDebugWebServer.h"
 #import "GCDWebDAVServer.h"
 #import "GCDWebUploader.h"
-#import <objc/runtime.h>
 #import "FWDebugWebBundle.h"
+#import "FWDebugManager+FWDebug.h"
 
 #pragma mark - NSBundle+FWDebug
 
@@ -22,10 +22,7 @@
 
 + (void)load
 {
-    method_exchangeImplementations(
-                                   class_getClassMethod([self class], @selector(bundleForClass:)),
-                                   class_getClassMethod([self class], @selector(fwDebugBundleForClass:))
-                                   );
+    [FWDebugManager fwDebugSwizzleClass:self method:@selector(bundleForClass:) with:@selector(fwDebugBundleForClass:)];
 }
 
 + (NSBundle *)fwDebugBundleForClass:(Class)aClass

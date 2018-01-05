@@ -16,6 +16,7 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 真机或模拟器中5秒内摇一摇两次即可出现调试菜单。功能如下：
 
 * FLEX调试工具
+* 循环引用检测和分析
 * Class和Protocol的头文件查看
 * FPS、内存、CPU占用率显示
 * 手机、App信息查看
@@ -47,6 +48,11 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 执行`carthage update`并拷贝`FWDebug.framework`到项目即可。
 
 ## 更新日志
+1.4.0版本：
+
+	* 添加类和对象的循环引用检测功能
+	* 添加当前ViewController的循环引用检测功能
+
 1.3.1版本：
 
 	* Example项目iPhoneX适配
@@ -92,6 +98,7 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 * [RuntimeBrowser](https://github.com/nst/RuntimeBrowser)
 * [KSCrash](https://github.com/kstenerud/KSCrash)
 * [fishhook](https://github.com/facebook/fishhook)
+* [FBRetainCycleDetector](https://github.com/facebook/FBRetainCycleDetector)
 
 ## 官方网站
 [大勇的网站](http://www.ocphp.com)

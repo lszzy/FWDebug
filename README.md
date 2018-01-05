@@ -16,6 +16,7 @@ iOS debugging library, support for iOS8 +, without adding any code to facilitate
 Real machine or simulator shaking within 5 seconds twice to appear debug menu. Functions are as follows:
 
 * FLEX debugging tools
+* Circular reference detection and analysis
 * Class and Protocol header files to view
 * FPS, memory, CPU occupancy rate display
 * Phone, App information view
@@ -45,9 +46,14 @@ This debug library supports Carthage, Cartfile example:
 
 	github "lszzy/FWDebug"
 
-Execute `carthage update` and copy` FWDebug.framework` to the project.
+Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+1.4.0 version:
+
+    * Add circular reference detection for classes and objects
+    * Add circular reference detection for current ViewController
+
 1.3.1 version:
 
 	* Example project iPhoneX adaptation
@@ -93,6 +99,7 @@ This debug library uses a third-party library, thanks to all third-party library
 * [RuntimeBrowser](https://github.com/nst/RuntimeBrowser)
 * [KSCrash](https://github.com/kstenerud/KSCrash)
 * [fishhook](https://github.com/facebook/fishhook)
+* [FBRetainCycleDetector](https://github.com/facebook/FBRetainCycleDetector)
 
 ## Support
 [ocphp.com](http://www.ocphp.com)

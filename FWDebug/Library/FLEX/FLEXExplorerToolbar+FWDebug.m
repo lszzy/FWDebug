@@ -9,19 +9,13 @@
 #import "FLEXExplorerToolbar+FWDebug.h"
 #import "FLEXUtility.h"
 #import "FWDebugFpsInfo.h"
-#import <objc/runtime.h>
+#import "FWDebugManager+FWDebug.h"
 
 @implementation FLEXExplorerToolbar (FWDebug)
 
 + (void)load
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundeclared-selector"
-    method_exchangeImplementations(
-                                   class_getInstanceMethod(self, @selector(toolbarItems)),
-                                   class_getInstanceMethod(self, @selector(fwDebugToolbarItems))
-                                   );
-#pragma clang diagnostic pop
+    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(toolbarItems) with:@selector(fwDebugToolbarItems)];
 }
 
 - (FLEXToolbarItem *)fwDebugFpsItem

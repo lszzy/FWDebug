@@ -7,10 +7,11 @@
 //
 
 #import "FWDebugManager.h"
-#import <objc/runtime.h>
 #import <UIKit/UIKit.h>
+#import "FWDebugManager+FWDebug.h"
 #import "FLEXManager+FWDebug.h"
 #import "KSCrash+FWDebug.h"
+#import "FBRetainCycleDetector+FWDebug.h"
 
 #pragma mark - UIApplication+FWDebug
 
@@ -25,19 +26,16 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
 
 + (void)load
 {
-    method_exchangeImplementations(
-                                   class_getInstanceMethod(self, @selector(sendEvent:)),
-                                   class_getInstanceMethod(self, @selector(fwInnerSendEvent:))
-                                   );
+    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(sendEvent:) with:@selector(fwDebugSendEvent:)];
 }
 
-- (void)fwInnerSendEvent:(UIEvent *)event
+- (void)fwDebugSendEvent:(UIEvent *)event
 {
     if (event.type == UIEventTypeMotion && event.subtype == UIEventSubtypeMotionShake) {
         [[NSNotificationCenter defaultCenter] postNotificationName:FWDebugShakeNotification object:event];
     }
     
-    [self fwInnerSendEvent:event];
+    [self fwDebugSendEvent:event];
 }
 
 @end
@@ -97,7 +95,8 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
 
 - (void)onLaunch:(NSNotification *)notification
 {
-    [KSCrash fwDebugLoad];
+    [FBRetainCycleDetector fwDebugLaunch];
+    [KSCrash fwDebugLaunch];
 }
 
 - (void)onShake:(NSNotification *)notification

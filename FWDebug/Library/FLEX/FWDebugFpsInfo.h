@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import "FBRetainCycleDetector.h"
 
 @interface FWDebugFpsData : NSObject
 
@@ -19,14 +21,17 @@
 // CPU占比，0-100
 @property (nonatomic, assign) float cpu;
 
-// FPS结果，1好 0警告 -1不好，下同
+// FPS结果，1好 0警告 -1不好
 @property (nonatomic, assign) NSInteger fpsState;
 
-// 占用内存结果
+// 占用内存结果，1好 0警告 -1不好
 @property (nonatomic, assign) NSInteger memoryState;
 
-// CPU占比结果
+// CPU占比结果，1好 0警告 -1不好
 @property (nonatomic, assign) NSInteger cpuState;
+
+// 当前视图控制器
+@property (nonatomic, weak) UIViewController *currentController;
 
 @end
 

@@ -10,6 +10,6 @@
 
 @interface KSCrash (FWDebug)
 
-+ (void)fwDebugLoad;
++ (void)fwDebugLaunch;
 
 @end

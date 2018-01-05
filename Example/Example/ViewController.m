@@ -11,6 +11,8 @@
 
 @interface ViewController ()
 
+@property (nonatomic, strong) id object;
+
 @end
 
 @implementation ViewController
@@ -19,26 +21,38 @@
     [super viewDidLoad];
     
     self.title = @"Example";
+    self.edgesForExtendedLayout = UIRectEdgeNone;
     
     UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:@"Debug" style:UIBarButtonItemStylePlain target:self action:@selector(onDebug)];
     self.navigationItem.rightBarButtonItem = item;
     
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
-    [button setTitle:@"Crash" forState:UIControlStateNormal];
-    [button addTarget:self action:@selector(onCrash) forControlEvents:UIControlEventTouchUpInside];
-    button.frame = CGRectMake(0, 0, 100, 30);
-    button.center = self.view.center;
-    [self.view addSubview:button];
+    UIButton *retainCycleButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [retainCycleButton setTitle:@"Retain Cycle" forState:UIControlStateNormal];
+    [retainCycleButton addTarget:self action:@selector(onRetainCycle) forControlEvents:UIControlEventTouchUpInside];
+    retainCycleButton.frame = CGRectMake(self.view.frame.size.width / 2 - 50, 20, 100, 30);
+    [self.view addSubview:retainCycleButton];
+    
+    UIButton *crashButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [crashButton setTitle:@"Crash" forState:UIControlStateNormal];
+    [crashButton addTarget:self action:@selector(onCrash) forControlEvents:UIControlEventTouchUpInside];
+    crashButton.frame = CGRectMake(self.view.frame.size.width / 2 - 50, 70, 100, 30);
+    [self.view addSubview:crashButton];
 }
 
 - (void)onDebug {
     if ([FWDebugManager sharedInstance].isHidden) {
         [[FWDebugManager sharedInstance] show];
-        NSLog(@"显示调试器");
+        NSLog(@"Show FWDebug");
     } else {
         [[FWDebugManager sharedInstance] hide];
-        NSLog(@"关闭调试器");
+        NSLog(@"Hide FWDebug");
     }
+}
+
+- (void)onRetainCycle {
+    ViewController *retainObject = [[ViewController alloc] init];
+    retainObject.object = self;
+    self.object = retainObject;
 }
 
 - (void)onCrash {

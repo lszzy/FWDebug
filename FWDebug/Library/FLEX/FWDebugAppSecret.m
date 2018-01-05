@@ -58,7 +58,7 @@ static BOOL isAppLocked = NO;
         isAppLocked = YES;
     });
     
-    [FWDebugAppSecret showPrompt:secretWindow.rootViewController title:@"Input Password" message:nil block:^(BOOL confirm, NSString *text) {
+    [FWDebugAppSecret showPrompt:secretWindow.rootViewController security:YES title:@"Input Password" message:nil block:^(BOOL confirm, NSString *text) {
         NSString *secret = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugAppSecret"];
         if (confirm && [secret isEqualToString:[FWDebugAppSecret secretMd5:text]]) {
             [secretWindow resignKeyWindow];
@@ -81,6 +81,12 @@ static BOOL isAppLocked = NO;
     return secret && secret.length > 0;
 }
 
++ (NSInteger)retainCycleDepth
+{
+    NSNumber *depth = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugRetainCycleDepth"];
+    return depth ? [depth integerValue] : 10;
+}
+
 + (NSString *)secretMd5:(NSString *)str
 {
     const char *cStr = [str UTF8String];
@@ -94,12 +100,12 @@ static BOOL isAppLocked = NO;
     return output;
 }
 
-+ (void)showPrompt:(UIViewController *)viewController title:(NSString *)title message:(NSString *)message block:(void (^)(BOOL confirm, NSString *text))block
++ (void)showPrompt:(UIViewController *)viewController security:(BOOL)security title:(NSString *)title message:(NSString *)message block:(void (^)(BOOL confirm, NSString *text))block
 {
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
     
     [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.secureTextEntry = YES;
+        textField.secureTextEntry = security;
         textField.keyboardType = UIKeyboardTypePhonePad;
     }];
     
@@ -139,7 +145,7 @@ static BOOL isAppLocked = NO;
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -147,31 +153,49 @@ static BOOL isAppLocked = NO;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return @"App Secret";
+    return section == 0 ? @"App Secret" : @"Retain Cycle Depth";
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *cellIdentifier = @"AppSecretCell";
+    NSString *cellIdentifier = indexPath.section == 0 ? @"AppSecretCell" : @"RetainCycleCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.textLabel.font = [UIFont systemFontOfSize:14];
         
-        UISwitch *accessoryView = [[UISwitch alloc] initWithFrame:CGRectZero];
-        [accessoryView addTarget:self action:@selector(actionSwitch:) forControlEvents:UIControlEventValueChanged];
-        cell.accessoryView = accessoryView;
+        if (indexPath.section == 0) {
+            UISwitch *accessoryView = [[UISwitch alloc] initWithFrame:CGRectZero];
+            accessoryView.userInteractionEnabled = NO;
+            cell.accessoryView = accessoryView;
+        } else {
+            UILabel *accessoryView = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 30)];
+            accessoryView.font = [UIFont systemFontOfSize:14];
+            accessoryView.textColor = [UIColor blackColor];
+            cell.accessoryView = accessoryView;
+        }
     }
     
-    [self configCell:cell indexPath:indexPath];
-    
+    if (indexPath.section == 0) {
+        [self configSwitch:cell indexPath:indexPath];
+    } else {
+        [self configLabel:cell indexPath:indexPath];
+    }
     return cell;
 }
 
-- (void)configCell:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
-    UISwitch *cellSwitch = (UISwitch *)cell.accessoryView;
-    cellSwitch.tag = indexPath.section;
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
+    if (indexPath.section == 0) {
+        [self actionSwitch:indexPath];
+    } else {
+        [self actionLabel:indexPath];
+    }
+}
+
+- (void)configSwitch:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
+    UISwitch *cellSwitch = (UISwitch *)cell.accessoryView;
     if ([self.class isSecretEnabled]) {
         cell.textLabel.text = @"Secret Enabled";
         cell.detailTextLabel.text = nil;
@@ -183,43 +207,64 @@ static BOOL isAppLocked = NO;
     }
 }
 
+- (void)configLabel:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
+    UILabel *cellLabel = (UILabel *)cell.accessoryView;
+    cell.textLabel.text = @"Retain Cycle Depth";
+    cell.detailTextLabel.text = nil;
+    cellLabel.text = [NSString stringWithFormat:@"%@", @([self.class retainCycleDepth])];
+}
+
 #pragma mark - Action
-- (void)actionSwitch:(UISwitch *)sender {
-    if (sender.on) {
+
+- (void)actionSwitch:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    UISwitch *cellSwitch = (UISwitch *)cell.accessoryView;
+    if (!cellSwitch.on) {
         typeof(self) __weak weakSelf = self;
-        [FWDebugAppSecret showPrompt:self title:@"Input Password" message:nil block:^(BOOL confirm, NSString *text) {
+        [FWDebugAppSecret showPrompt:self security:YES title:@"Input Password" message:nil block:^(BOOL confirm, NSString *text) {
             if (confirm && text.length > 0) {
                 [[NSUserDefaults standardUserDefaults] setObject:[FWDebugAppSecret secretMd5:text] forKey:@"FWDebugAppSecret"];
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }
-            
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:sender.tag];
-            UITableViewCell *cell = [weakSelf.tableView cellForRowAtIndexPath:indexPath];
-            [weakSelf configCell:cell indexPath:indexPath];
+            [weakSelf configSwitch:cell indexPath:indexPath];
         }];
     } else {
         if ([self.class isSecretEnabled]) {
             typeof(self) __weak weakSelf = self;
-            [FWDebugAppSecret showPrompt:self title:@"Input Password" message:nil block:^(BOOL confirm, NSString *text) {
+            [FWDebugAppSecret showPrompt:self security:YES title:@"Input Password" message:nil block:^(BOOL confirm, NSString *text) {
                 NSString *secret = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugAppSecret"];
                 if (confirm && [secret isEqualToString:[FWDebugAppSecret secretMd5:text]]) {
                     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugAppSecret"];
                     [[NSUserDefaults standardUserDefaults] synchronize];
                 }
                 
-                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:sender.tag];
-                UITableViewCell *cell = [weakSelf.tableView cellForRowAtIndexPath:indexPath];
-                [weakSelf configCell:cell indexPath:indexPath];
+                [weakSelf configSwitch:cell indexPath:indexPath];
             }];
         } else {
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugAppSecret"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:sender.tag];
-            UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-            [self configCell:cell indexPath:indexPath];
+            [self configSwitch:cell indexPath:indexPath];
         }
     }
+}
+
+- (void)actionLabel:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    typeof(self) __weak weakSelf = self;
+    [FWDebugAppSecret showPrompt:self security:NO title:@"Input Depth" message:nil block:^(BOOL confirm, NSString *text) {
+        if (confirm && text.length > 0) {
+            NSInteger depth = [text integerValue];
+            if (depth > 0 && depth <= 10) {
+                [[NSUserDefaults standardUserDefaults] setObject:@(depth) forKey:@"FWDebugRetainCycleDepth"];
+            } else {
+                [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugRetainCycleDepth"];
+            }
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
+        
+        [weakSelf configLabel:cell indexPath:indexPath];
+    }];
 }
 
 @end

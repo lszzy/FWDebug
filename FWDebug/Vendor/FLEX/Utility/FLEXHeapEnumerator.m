@@ -89,7 +89,7 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
             // The largest realistic memory address varies by platform.
             // Only 48 bits are used by 64 bit machines while
             // 32 bit machines use all bits.
-#if __arm64__
+#if __arm64__ || __x86_64__
             static uintptr_t MAX_REALISTIC_ADDRESS = 0xFFFFFFFFFFFF;
 #else
             static uintptr_t MAX_REALISTIC_ADDRESS = INT_MAX;

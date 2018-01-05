@@ -7,6 +7,7 @@
 //
 
 #import "FLEXFileBrowserTableViewController+FWDebug.h"
+#import "FWDebugManager+FWDebug.h"
 #import <objc/runtime.h>
 
 static NSString *fwDebugCopyPath = nil;
@@ -15,18 +16,8 @@ static NSString *fwDebugCopyPath = nil;
 
 + (void)load
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundeclared-selector"
-    method_exchangeImplementations(
-                                   class_getInstanceMethod(self, @selector(viewDidLoad)),
-                                   class_getInstanceMethod(self, @selector(fwDebugViewDidLoad))
-                                   );
-    
-    method_exchangeImplementations(
-                                   class_getInstanceMethod(self, @selector(tableView:canPerformAction:forRowAtIndexPath:withSender:)),
-                                   class_getInstanceMethod(self, @selector(fwDebugTableView:canPerformAction:forRowAtIndexPath:withSender:))
-                                   );
-#pragma clang diagnostic pop
+    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(viewDidLoad) with:@selector(fwDebugViewDidLoad)];
+    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(tableView:canPerformAction:forRowAtIndexPath:withSender:) with:@selector(fwDebugTableView:canPerformAction:forRowAtIndexPath:withSender:)];
 }
 
 #pragma mark - FWDebug

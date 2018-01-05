@@ -7,6 +7,7 @@
 //
 
 #import "FLEXManager+FWDebug.h"
+#import "FWDebugManager+FWDebug.h"
 #import "FLEXExplorerViewController.h"
 #import "FLEXFileBrowserTableViewController.h"
 #import "FLEXObjectExplorerViewController+FWDebug.h"
@@ -14,6 +15,8 @@
 #import "FLEXFileBrowserTableViewController+FWDebug.h"
 #import "FLEXExplorerToolbar+FWDebug.h"
 #import "FLEXSystemLogTableViewController+FWDebug.h"
+#import "FLEXInstancesTableViewController+FWDebug.h"
+#import "FLEXObjectExplorerFactory.h"
 #import "FWDebugSystemInfo.h"
 #import "FWDebugWebServer.h"
 #import "FWDebugAppSecret.h"
@@ -29,21 +32,18 @@
 
 @property (nonatomic, strong) FLEXExplorerToolbar *explorerToolbar;
 
+- (void)makeKeyAndPresentViewController:(UIViewController *)viewController animated:(BOOL)animated completion:(void (^)(void))completion;
+
+- (void)selectedViewExplorerFinished:(id)sender;
+
 @end
 
 @implementation FLEXManager (FWDebug)
 
 + (void)load
 {
-    method_exchangeImplementations(
-                                   class_getInstanceMethod(self, @selector(showExplorer)),
-                                   class_getInstanceMethod(self, @selector(fwDebugShowExplorer))
-                                   );
-    
-    method_exchangeImplementations(
-                                   class_getInstanceMethod(self, @selector(hideExplorer)),
-                                   class_getInstanceMethod(self, @selector(fwDebugHideExplorer))
-                                   );
+    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(showExplorer) with:@selector(fwDebugShowExplorer)];
+    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(hideExplorer) with:@selector(fwDebugHideExplorer)];
 }
 
 + (void)fwDebugLoad
@@ -87,6 +87,7 @@
         fpsInfo.delegate = self;
         objc_setAssociatedObject(self, _cmd, fpsInfo, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         
+        [self.explorerViewController.explorerToolbar.fwDebugFpsItem addTarget:self action:@selector(fwDebugFpsItemClicked:) forControlEvents:UIControlEventTouchUpInside];
         [self.explorerViewController.explorerToolbar.fwDebugFpsItem setFpsData:fpsInfo.fpsData];
     }
     return fpsInfo;
@@ -117,6 +118,14 @@
 - (void)fwDebugFpsInfoChanged:(FWDebugFpsData *)fpsData
 {
     [self.explorerViewController.explorerToolbar.fwDebugFpsItem setFpsData:fpsData];
+}
+
+- (void)fwDebugFpsItemClicked:(FLEXToolbarItem *)sender
+{
+    FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:self.fwDebugFpsInfo.fpsData.currentController];
+    viewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemStop target:self.explorerViewController action:@selector(selectedViewExplorerFinished:)];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+    [self.explorerViewController makeKeyAndPresentViewController:navigationController animated:YES completion:nil];
 }
 
 @end

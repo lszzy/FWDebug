@@ -12,4 +12,6 @@
 
 + (BOOL)isAppLocked;
 
++ (NSInteger)retainCycleDepth;
+
 @end
