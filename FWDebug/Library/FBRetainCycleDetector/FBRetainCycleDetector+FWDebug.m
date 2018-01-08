@@ -7,7 +7,7 @@
 //
 
 #import "FBRetainCycleDetector+FWDebug.h"
-#import "FWDebugAppSecret.h"
+#import "FWDebugAppConfig.h"
 #import "FWDebugManager.h"
 
 @implementation FBRetainCycleDetector (FWDebug)
@@ -17,49 +17,28 @@
     [FBAssociationManager hook];
 }
 
-+ (FBRetainCycleDetector *)fwDebugRetainCycleDetector
-{
-    NSMutableArray *filterBlocks = [NSMutableArray arrayWithArray:FBGetStandardGraphEdgeFilters()];
-    // 添加自定义过滤block
-    if ([FWDebugManager sharedInstance].retainCycleFilter) {
-        FBGraphEdgeFilterBlock customFilter = ^(FBObjectiveCGraphElement *fromObject,
-                                                NSString *byIvar,
-                                                Class toObjectOfClass) {
-            FBGraphEdgeType filterResult = FBGraphEdgeValid;
-            if ([FWDebugManager sharedInstance].retainCycleFilter) {
-                filterResult = [FWDebugManager sharedInstance].retainCycleFilter([fromObject objectClass], byIvar, toObjectOfClass) ? FBGraphEdgeValid : FBGraphEdgeInvalid;
-            }
-            return filterResult;
-        };
-        [filterBlocks addObject:customFilter];
-    }
-    
-    FBObjectGraphConfiguration *configuration = [[FBObjectGraphConfiguration alloc] initWithFilterBlocks:filterBlocks shouldInspectTimers:YES];
-    return [[FBRetainCycleDetector alloc] initWithConfiguration:configuration];
-}
-
 + (NSSet *)fwDebugRetainCycleWithObject:(id)object
 {
     if (!object) {
         return nil;
     }
     
-    FBRetainCycleDetector *detector = [self fwDebugRetainCycleDetector];
+    FBRetainCycleDetector *detector = [[FBRetainCycleDetector alloc] init];
     [detector addCandidate:object];
-    return [detector findRetainCyclesWithMaxCycleLength:[FWDebugAppSecret retainCycleDepth]];
+    return [detector findRetainCyclesWithMaxCycleLength:[FWDebugAppConfig retainCycleDepth]];
 }
 
 + (NSSet *)fwDebugRetainCycleWithObjects:(NSArray *)objects
 {
-    if (objects.count < 0) {
+    if (objects.count == 0) {
         return nil;
     }
     
-    FBRetainCycleDetector *detector = [self fwDebugRetainCycleDetector];
+    FBRetainCycleDetector *detector = [[FBRetainCycleDetector alloc] init];
     for (id object in objects) {
         [detector addCandidate:object];
     }
-    return [detector findRetainCyclesWithMaxCycleLength:[FWDebugAppSecret retainCycleDepth]];
+    return [detector findRetainCyclesWithMaxCycleLength:[FWDebugAppConfig retainCycleDepth]];
 }
 
 @end

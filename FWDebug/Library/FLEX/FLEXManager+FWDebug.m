@@ -19,7 +19,7 @@
 #import "FLEXObjectExplorerFactory.h"
 #import "FWDebugSystemInfo.h"
 #import "FWDebugWebServer.h"
-#import "FWDebugAppSecret.h"
+#import "FWDebugAppConfig.h"
 #import <objc/runtime.h>
 
 @interface FLEXManager ()
@@ -58,10 +58,6 @@
         return [[FWDebugWebServer alloc] init];
     }];
     
-    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"💟  App Secret" viewControllerFutureBlock:^UIViewController *{
-        return [[FWDebugAppSecret alloc] init];
-    }];
-    
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📘  App Browser" viewControllerFutureBlock:^UIViewController *{
         return [[FLEXFileBrowserTableViewController alloc] initWithPath:[NSBundle mainBundle].bundlePath];
     }];
@@ -76,6 +72,10 @@
         NSString *crashLogPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
         crashLogPath = [[crashLogPath stringByAppendingPathComponent:@"FWDebug"] stringByAppendingPathComponent:@"CrashLog"];
         return [[FLEXFileBrowserTableViewController alloc] initWithPath:crashLogPath];
+    }];
+    
+    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"💟  App Config" viewControllerFutureBlock:^UIViewController *{
+        return [[FWDebugAppConfig alloc] init];
     }];
 }
 
@@ -95,7 +95,7 @@
 
 - (void)fwDebugShowExplorer
 {
-    if ([FWDebugAppSecret isAppLocked]) {
+    if ([FWDebugAppConfig isAppLocked]) {
         return;
     }
     
@@ -106,7 +106,7 @@
 
 - (void)fwDebugHideExplorer
 {
-    if ([FWDebugAppSecret isAppLocked]) {
+    if ([FWDebugAppConfig isAppLocked]) {
         return;
     }
     
@@ -122,10 +122,27 @@
 
 - (void)fwDebugFpsItemClicked:(FLEXToolbarItem *)sender
 {
-    FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:self.fwDebugFpsInfo.fpsData.currentController];
+    FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:[self fwDebugViewController]];
     viewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemStop target:self.explorerViewController action:@selector(selectedViewExplorerFinished:)];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
     [self.explorerViewController makeKeyAndPresentViewController:navigationController animated:YES completion:nil];
+}
+
+- (UIViewController *)fwDebugViewController
+{
+    UIViewController *currentViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    while ([currentViewController presentedViewController]) {
+        currentViewController = [currentViewController presentedViewController];
+    }
+    while ([currentViewController isKindOfClass:[UITabBarController class]] &&
+           [(UITabBarController *)currentViewController selectedViewController]) {
+        currentViewController = [(UITabBarController *)currentViewController selectedViewController];
+    }
+    while ([currentViewController isKindOfClass:[UINavigationController class]] &&
+           [(UINavigationController *)currentViewController topViewController]) {
+        currentViewController = [(UINavigationController*)currentViewController topViewController];
+    }
+    return currentViewController;
 }
 
 @end

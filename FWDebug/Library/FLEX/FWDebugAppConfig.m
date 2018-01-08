@@ -6,16 +6,16 @@
 //  Copyright © 2017年 ocphp.com. All rights reserved.
 //
 
-#import "FWDebugAppSecret.h"
+#import "FWDebugAppConfig.h"
 #import <CommonCrypto/CommonDigest.h>
 
 static BOOL isAppLocked = NO;
 
-@interface FWDebugAppSecret ()
+@interface FWDebugAppConfig ()
 
 @end
 
-@implementation FWDebugAppSecret
+@implementation FWDebugAppConfig
 
 #pragma mark - Static
 
@@ -31,7 +31,7 @@ static BOOL isAppLocked = NO;
         appObserver = nil;
         
         if ([UIApplication sharedApplication].keyWindow != nil) {
-            [FWDebugAppSecret secretPrompt];
+            [FWDebugAppConfig secretPrompt];
         }
     }];
 }
@@ -58,9 +58,9 @@ static BOOL isAppLocked = NO;
         isAppLocked = YES;
     });
     
-    [FWDebugAppSecret showPrompt:secretWindow.rootViewController security:YES title:@"Input Password" message:nil block:^(BOOL confirm, NSString *text) {
+    [FWDebugAppConfig showPrompt:secretWindow.rootViewController security:YES title:@"Input Password" message:nil block:^(BOOL confirm, NSString *text) {
         NSString *secret = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugAppSecret"];
-        if (confirm && [secret isEqualToString:[FWDebugAppSecret secretMd5:text]]) {
+        if (confirm && [secret isEqualToString:[FWDebugAppConfig secretMd5:text]]) {
             [secretWindow resignKeyWindow];
             [keyWindow makeKeyAndVisible];
             
@@ -70,7 +70,7 @@ static BOOL isAppLocked = NO;
             
             isAppLocked = NO;
         } else {
-            [FWDebugAppSecret secretPrompt];
+            [FWDebugAppConfig secretPrompt];
         }
     }];
 }
@@ -139,7 +139,7 @@ static BOOL isAppLocked = NO;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.title = @"App Secret";
+    self.title = @"App Config";
 }
 
 #pragma mark - Table view data source
@@ -153,32 +153,29 @@ static BOOL isAppLocked = NO;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return section == 0 ? @"App Secret" : @"Retain Cycle Depth";
+    return section == 0 ? @"App Secret" : @"App Option";
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSString *cellIdentifier = indexPath.section == 0 ? @"AppSecretCell" : @"RetainCycleCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AppConfigCell"];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"AppConfigCell"];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.textLabel.font = [UIFont systemFontOfSize:14];
-        
-        if (indexPath.section == 0) {
-            UISwitch *accessoryView = [[UISwitch alloc] initWithFrame:CGRectZero];
-            accessoryView.userInteractionEnabled = NO;
-            cell.accessoryView = accessoryView;
-        } else {
-            UILabel *accessoryView = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 30)];
-            accessoryView.font = [UIFont systemFontOfSize:14];
-            accessoryView.textColor = [UIColor blackColor];
-            cell.accessoryView = accessoryView;
-        }
     }
     
     if (indexPath.section == 0) {
+        UISwitch *accessoryView = [[UISwitch alloc] initWithFrame:CGRectZero];
+        accessoryView.userInteractionEnabled = NO;
+        cell.accessoryView = accessoryView;
+        
         [self configSwitch:cell indexPath:indexPath];
     } else {
+        UILabel *accessoryView = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 30)];
+        accessoryView.font = [UIFont systemFontOfSize:14];
+        accessoryView.textColor = [UIColor blackColor];
+        cell.accessoryView = accessoryView;
+        
         [self configLabel:cell indexPath:indexPath];
     }
     return cell;
@@ -221,9 +218,9 @@ static BOOL isAppLocked = NO;
     UISwitch *cellSwitch = (UISwitch *)cell.accessoryView;
     if (!cellSwitch.on) {
         typeof(self) __weak weakSelf = self;
-        [FWDebugAppSecret showPrompt:self security:YES title:@"Input Password" message:nil block:^(BOOL confirm, NSString *text) {
+        [FWDebugAppConfig showPrompt:self security:YES title:@"Input Password" message:nil block:^(BOOL confirm, NSString *text) {
             if (confirm && text.length > 0) {
-                [[NSUserDefaults standardUserDefaults] setObject:[FWDebugAppSecret secretMd5:text] forKey:@"FWDebugAppSecret"];
+                [[NSUserDefaults standardUserDefaults] setObject:[FWDebugAppConfig secretMd5:text] forKey:@"FWDebugAppSecret"];
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }
             [weakSelf configSwitch:cell indexPath:indexPath];
@@ -231,9 +228,9 @@ static BOOL isAppLocked = NO;
     } else {
         if ([self.class isSecretEnabled]) {
             typeof(self) __weak weakSelf = self;
-            [FWDebugAppSecret showPrompt:self security:YES title:@"Input Password" message:nil block:^(BOOL confirm, NSString *text) {
+            [FWDebugAppConfig showPrompt:self security:YES title:@"Input Password" message:nil block:^(BOOL confirm, NSString *text) {
                 NSString *secret = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugAppSecret"];
-                if (confirm && [secret isEqualToString:[FWDebugAppSecret secretMd5:text]]) {
+                if (confirm && [secret isEqualToString:[FWDebugAppConfig secretMd5:text]]) {
                     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugAppSecret"];
                     [[NSUserDefaults standardUserDefaults] synchronize];
                 }
@@ -252,7 +249,7 @@ static BOOL isAppLocked = NO;
 - (void)actionLabel:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     typeof(self) __weak weakSelf = self;
-    [FWDebugAppSecret showPrompt:self security:NO title:@"Input Depth" message:nil block:^(BOOL confirm, NSString *text) {
+    [FWDebugAppConfig showPrompt:self security:NO title:@"Input Depth" message:nil block:^(BOOL confirm, NSString *text) {
         if (confirm && text.length > 0) {
             NSInteger depth = [text integerValue];
             if (depth > 0 && depth <= 10) {

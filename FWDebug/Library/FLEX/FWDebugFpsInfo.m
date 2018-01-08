@@ -7,9 +7,9 @@
 //
 
 #import "FWDebugFpsInfo.h"
+#import "FLEXWindow.h"
 #import <UIKit/UIKit.h>
 #import <mach/mach.h>
-#import "FBRetainCycleDetector+FWDebug.h"
 
 // 解决NSTimer导致的self循环引用问题
 @interface FWDebugWeakProxy : NSProxy
@@ -110,8 +110,7 @@
         _fpsData.fps = 0;
         _fpsData.fpsState = 0;
         _fpsData.memory = [self memoryUsage];
-        _fpsData.currentController = [self currentViewController];
-        _fpsData.memoryState = [self memoryStateForData:_fpsData.currentController];
+        _fpsData.memoryState = [self memoryStateForData:_fpsData.memory];
         _fpsData.cpu = [self cpuUsage];
         _fpsData.cpuState = [self cpuStateForData:_fpsData.cpu];
         
@@ -161,9 +160,8 @@
         return;
     }
     
-    UIViewController *currentViewController = [self currentViewController];
-    NSString *controllerClass = NSStringFromClass([currentViewController class]);
-    if ([controllerClass hasPrefix:@"FLEX"]) {
+    UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+    if ([keyWindow isKindOfClass:[FLEXWindow class]]) {
         return;
     }
 
@@ -179,8 +177,7 @@
     
     CGFloat memory = [self memoryUsage];
     _fpsData.memory = memory;
-    _fpsData.currentController = currentViewController;
-    _fpsData.memoryState = [self memoryStateForData:_fpsData.currentController];
+    _fpsData.memoryState = [self memoryStateForData:_fpsData.memory];
 
     if (self.delegate && [self.delegate respondsToSelector:@selector(fwDebugFpsInfoChanged:)]) {
         [self.delegate fwDebugFpsInfoChanged:_fpsData];
@@ -204,13 +201,9 @@
     return (fps > 55.0) ? 1 : (fps > 40.0 ? 0 : -1);
 }
 
-- (NSInteger)memoryStateForData:(UIViewController *)viewController
+- (NSInteger)memoryStateForData:(float)memory
 {
-    if (!viewController) {
-        return 0;
-    }
-    NSSet *retainCycles = [FBRetainCycleDetector fwDebugRetainCycleWithObject:viewController];
-    return retainCycles.count < 1 ? 1 : -1;
+    return (memory < 150.0) ? 1 : (memory < 200.0 ? 0 : -1);
 }
 
 - (NSInteger)cpuStateForData:(float)cpu
@@ -288,27 +281,6 @@
     assert(kr == KERN_SUCCESS);
     
     return tot_cpu;
-}
-
-- (UIViewController *)currentViewController
-{
-    UIViewController *currentViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
-
-    while ([currentViewController presentedViewController]) {
-        currentViewController = [currentViewController presentedViewController];
-    }
-    
-    while ([currentViewController isKindOfClass:[UITabBarController class]] &&
-           [(UITabBarController *)currentViewController selectedViewController]) {
-        currentViewController = [(UITabBarController *)currentViewController selectedViewController];
-    }
-    
-    while ([currentViewController isKindOfClass:[UINavigationController class]] &&
-           [(UINavigationController *)currentViewController topViewController]) {
-        currentViewController = [(UINavigationController*)currentViewController topViewController];
-    }
-    
-    return currentViewController;
 }
 
 @end

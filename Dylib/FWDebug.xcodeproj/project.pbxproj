@@ -66,6 +66,8 @@
 		2F9C72C81FFF22980054A607 /* FWDebugRetainCycle.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F9C72C21FFF22980054A607 /* FWDebugRetainCycle.m */; };
 		2F9C72CB1FFF22A90054A607 /* FLEXInstancesTableViewController+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F9C72C91FFF22A90054A607 /* FLEXInstancesTableViewController+FWDebug.m */; };
 		2F9C72CC1FFF22A90054A607 /* FLEXInstancesTableViewController+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F9C72CA1FFF22A90054A607 /* FLEXInstancesTableViewController+FWDebug.h */; };
+		2F9FD04020034F9E002572F3 /* FWDebugAppConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F9FD03E20034F9D002572F3 /* FWDebugAppConfig.h */; };
+		2F9FD04120034F9E002572F3 /* FWDebugAppConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F9FD03F20034F9E002572F3 /* FWDebugAppConfig.m */; };
 		2FEE54021F9DC03000320143 /* FLEXClassExplorerViewController+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FEE53DE1F9DC02F00320143 /* FLEXClassExplorerViewController+FWDebug.h */; };
 		2FEE54031F9DC03000320143 /* FLEXClassExplorerViewController+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FEE53DF1F9DC02F00320143 /* FLEXClassExplorerViewController+FWDebug.m */; };
 		2FEE54041F9DC03000320143 /* FLEXExplorerToolbar+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FEE53E01F9DC02F00320143 /* FLEXExplorerToolbar+FWDebug.h */; };
@@ -78,8 +80,6 @@
 		2FEE540B1F9DC03000320143 /* FLEXObjectExplorerViewController+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FEE53E71F9DC02F00320143 /* FLEXObjectExplorerViewController+FWDebug.m */; };
 		2FEE540C1F9DC03000320143 /* FLEXSystemLogTableViewController+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FEE53E81F9DC02F00320143 /* FLEXSystemLogTableViewController+FWDebug.h */; };
 		2FEE540D1F9DC03000320143 /* FLEXSystemLogTableViewController+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FEE53E91F9DC02F00320143 /* FLEXSystemLogTableViewController+FWDebug.m */; };
-		2FEE540E1F9DC03000320143 /* FWDebugAppSecret.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FEE53EA1F9DC02F00320143 /* FWDebugAppSecret.h */; };
-		2FEE540F1F9DC03000320143 /* FWDebugAppSecret.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FEE53EB1F9DC02F00320143 /* FWDebugAppSecret.m */; };
 		2FEE54101F9DC03000320143 /* FWDebugFpsInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FEE53EC1F9DC02F00320143 /* FWDebugFpsInfo.h */; };
 		2FEE54111F9DC03000320143 /* FWDebugFpsInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FEE53ED1F9DC02F00320143 /* FWDebugFpsInfo.m */; };
 		2FEE54121F9DC03000320143 /* FWDebugSystemInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FEE53EE1F9DC02F00320143 /* FWDebugSystemInfo.h */; };
@@ -538,6 +538,8 @@
 		2F9C72C21FFF22980054A607 /* FWDebugRetainCycle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugRetainCycle.m; sourceTree = "<group>"; };
 		2F9C72C91FFF22A90054A607 /* FLEXInstancesTableViewController+FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FLEXInstancesTableViewController+FWDebug.m"; sourceTree = "<group>"; };
 		2F9C72CA1FFF22A90054A607 /* FLEXInstancesTableViewController+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FLEXInstancesTableViewController+FWDebug.h"; sourceTree = "<group>"; };
+		2F9FD03E20034F9D002572F3 /* FWDebugAppConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugAppConfig.h; sourceTree = "<group>"; };
+		2F9FD03F20034F9E002572F3 /* FWDebugAppConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugAppConfig.m; sourceTree = "<group>"; };
 		2FEE53DE1F9DC02F00320143 /* FLEXClassExplorerViewController+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FLEXClassExplorerViewController+FWDebug.h"; sourceTree = "<group>"; };
 		2FEE53DF1F9DC02F00320143 /* FLEXClassExplorerViewController+FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FLEXClassExplorerViewController+FWDebug.m"; sourceTree = "<group>"; };
 		2FEE53E01F9DC02F00320143 /* FLEXExplorerToolbar+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FLEXExplorerToolbar+FWDebug.h"; sourceTree = "<group>"; };
@@ -550,8 +552,6 @@
 		2FEE53E71F9DC02F00320143 /* FLEXObjectExplorerViewController+FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FLEXObjectExplorerViewController+FWDebug.m"; sourceTree = "<group>"; };
 		2FEE53E81F9DC02F00320143 /* FLEXSystemLogTableViewController+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FLEXSystemLogTableViewController+FWDebug.h"; sourceTree = "<group>"; };
 		2FEE53E91F9DC02F00320143 /* FLEXSystemLogTableViewController+FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FLEXSystemLogTableViewController+FWDebug.m"; sourceTree = "<group>"; };
-		2FEE53EA1F9DC02F00320143 /* FWDebugAppSecret.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugAppSecret.h; sourceTree = "<group>"; };
-		2FEE53EB1F9DC02F00320143 /* FWDebugAppSecret.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugAppSecret.m; sourceTree = "<group>"; };
 		2FEE53EC1F9DC02F00320143 /* FWDebugFpsInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugFpsInfo.h; sourceTree = "<group>"; };
 		2FEE53ED1F9DC02F00320143 /* FWDebugFpsInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugFpsInfo.m; sourceTree = "<group>"; };
 		2FEE53EE1F9DC02F00320143 /* FWDebugSystemInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugSystemInfo.h; sourceTree = "<group>"; };
@@ -1187,8 +1187,8 @@
 				2FEE53E91F9DC02F00320143 /* FLEXSystemLogTableViewController+FWDebug.m */,
 				2F9C72CA1FFF22A90054A607 /* FLEXInstancesTableViewController+FWDebug.h */,
 				2F9C72C91FFF22A90054A607 /* FLEXInstancesTableViewController+FWDebug.m */,
-				2FEE53EA1F9DC02F00320143 /* FWDebugAppSecret.h */,
-				2FEE53EB1F9DC02F00320143 /* FWDebugAppSecret.m */,
+				2F9FD03E20034F9D002572F3 /* FWDebugAppConfig.h */,
+				2F9FD03F20034F9E002572F3 /* FWDebugAppConfig.m */,
 				2FEE53EC1F9DC02F00320143 /* FWDebugFpsInfo.h */,
 				2FEE53ED1F9DC02F00320143 /* FWDebugFpsInfo.m */,
 				2FEE53EE1F9DC02F00320143 /* FWDebugSystemInfo.h */,
@@ -2144,6 +2144,7 @@
 				2FEE55CE1F9DC03F00320143 /* KSCrashInstallationStandard.h in Headers */,
 				2FEE56FB1F9DC04000320143 /* FLEXHeapEnumerator.h in Headers */,
 				2FEE56251F9DC03F00320143 /* KSMemory.h in Headers */,
+				2F9FD04020034F9E002572F3 /* FWDebugAppConfig.h in Headers */,
 				2FEE56361F9DC03F00320143 /* KSSymbolicator.h in Headers */,
 				2FEE564F1F9DC03F00320143 /* NSData+GZip.h in Headers */,
 				2FEE57391F9DC04000320143 /* RTBTypeDecoder.h in Headers */,
@@ -2179,7 +2180,6 @@
 				2FEE57291F9DC04000320143 /* GCDWebServerFileResponse.h in Headers */,
 				2FEE55EB1F9DC03F00320143 /* KSCrashReportWriter.h in Headers */,
 				2FEE570B1F9DC04000320143 /* FLEXHierarchyTableViewController.h in Headers */,
-				2FEE540E1F9DC03000320143 /* FWDebugAppSecret.h in Headers */,
 				2FEE55EC1F9DC03F00320143 /* KSSystemCapabilities.h in Headers */,
 				2FEE564C1F9DC03F00320143 /* Container+DeepSearch.h in Headers */,
 				2FEE55CC1F9DC03F00320143 /* KSCrashInstallationQuincyHockey.h in Headers */,
@@ -2303,7 +2303,6 @@
 				2FEE56601F9DC03F00320143 /* KSHTTPRequestSender.m in Sources */,
 				2FEE54131F9DC03000320143 /* FWDebugSystemInfo.m in Sources */,
 				2F9C729E1FFF228C0054A607 /* FBObjectiveCBlock.m in Sources */,
-				2FEE540F1F9DC03000320143 /* FWDebugAppSecret.m in Sources */,
 				2FEE56CB1F9DC03F00320143 /* FLEXSystemLogTableViewController.m in Sources */,
 				2FEE55CB1F9DC03F00320143 /* KSCrashInstallationEmail.m in Sources */,
 				2FEE56AA1F9DC03F00320143 /* FLEXTableContentCell.m in Sources */,
@@ -2416,6 +2415,7 @@
 				2FEE56A11F9DC03F00320143 /* FLEXMultiColumnTableView.m in Sources */,
 				2FEE56491F9DC03F00320143 /* KSCrashReportFilterSets.m in Sources */,
 				2F9C72A91FFF228C0054A607 /* FBBlockStrongLayout.m in Sources */,
+				2F9FD04120034F9E002572F3 /* FWDebugAppConfig.m in Sources */,
 				2FEE56FA1F9DC04000320143 /* FLEXToolbarItem.m in Sources */,
 				2FEE55D11F9DC03F00320143 /* KSCrashInstallationVictory.m in Sources */,
 				2FEE56661F9DC03F00320143 /* NSString+URLEncode.m in Sources */,

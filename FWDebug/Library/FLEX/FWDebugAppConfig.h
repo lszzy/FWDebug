@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface FWDebugAppSecret : UITableViewController
+@interface FWDebugAppConfig : UITableViewController
 
 + (BOOL)isAppLocked;
 

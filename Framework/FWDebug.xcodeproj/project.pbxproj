@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		2F2E3DC71E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F2E3DC51E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h */; };
 		2F2E3DC81E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F2E3DC61E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m */; };
-		2F32AD581F0B6A0C004072E5 /* FWDebugAppSecret.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F32AD561F0B6A0C004072E5 /* FWDebugAppSecret.h */; };
-		2F32AD591F0B6A0C004072E5 /* FWDebugAppSecret.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F32AD571F0B6A0C004072E5 /* FWDebugAppSecret.m */; };
+		2F32AD581F0B6A0C004072E5 /* FWDebugAppConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F32AD561F0B6A0C004072E5 /* FWDebugAppConfig.h */; };
+		2F32AD591F0B6A0C004072E5 /* FWDebugAppConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F32AD571F0B6A0C004072E5 /* FWDebugAppConfig.m */; };
 		2F3C78711E62BADF0015206A /* FWDebugManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F3C786F1E62BADF0015206A /* FWDebugManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2F3C78721E62BADF0015206A /* FWDebugManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F3C78701E62BADF0015206A /* FWDebugManager.m */; };
 		2F4171FC1E63303B00DC5AD4 /* GCDWebDAVServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F41706E1E63303B00DC5AD4 /* GCDWebDAVServer.h */; };
@@ -476,8 +476,8 @@
 /* Begin PBXFileReference section */
 		2F2E3DC51E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FLEXSystemLogTableViewController+FWDebug.h"; sourceTree = "<group>"; };
 		2F2E3DC61E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FLEXSystemLogTableViewController+FWDebug.m"; sourceTree = "<group>"; };
-		2F32AD561F0B6A0C004072E5 /* FWDebugAppSecret.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugAppSecret.h; sourceTree = "<group>"; };
-		2F32AD571F0B6A0C004072E5 /* FWDebugAppSecret.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugAppSecret.m; sourceTree = "<group>"; };
+		2F32AD561F0B6A0C004072E5 /* FWDebugAppConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugAppConfig.h; sourceTree = "<group>"; };
+		2F32AD571F0B6A0C004072E5 /* FWDebugAppConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugAppConfig.m; sourceTree = "<group>"; };
 		2F3C786F1E62BADF0015206A /* FWDebugManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugManager.h; sourceTree = "<group>"; };
 		2F3C78701E62BADF0015206A /* FWDebugManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugManager.m; sourceTree = "<group>"; };
 		2F41706E1E63303B00DC5AD4 /* GCDWebDAVServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebDAVServer.h; sourceTree = "<group>"; };
@@ -1140,8 +1140,8 @@
 				2F2E3DC61E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m */,
 				2F57D0211E65647D0062B632 /* FWDebugSystemInfo.h */,
 				2F57D0221E65647D0062B632 /* FWDebugSystemInfo.m */,
-				2F32AD561F0B6A0C004072E5 /* FWDebugAppSecret.h */,
-				2F32AD571F0B6A0C004072E5 /* FWDebugAppSecret.m */,
+				2F32AD561F0B6A0C004072E5 /* FWDebugAppConfig.h */,
+				2F32AD571F0B6A0C004072E5 /* FWDebugAppConfig.m */,
 				2F57D0251E65665D0062B632 /* FWDebugFpsInfo.h */,
 				2F57D0261E65665D0062B632 /* FWDebugFpsInfo.m */,
 			);
@@ -1992,7 +1992,7 @@
 				2F64CB881F99F49D00F3F48C /* KSDemangle_CPP.h in Headers */,
 				2F64CB681F99F49D00F3F48C /* KSCrashMonitor_AppState.h in Headers */,
 				2F64C9F41F99F41E00F3F48C /* FLEXImagePreviewViewController.h in Headers */,
-				2F32AD581F0B6A0C004072E5 /* FWDebugAppSecret.h in Headers */,
+				2F32AD581F0B6A0C004072E5 /* FWDebugAppConfig.h in Headers */,
 				2F64CB4A1F99F49D00F3F48C /* Demangle.h in Headers */,
 				2F64C9B41F99F41E00F3F48C /* FLEX.h in Headers */,
 				2F64CBA01F99F49D00F3F48C /* KSObjCApple.h in Headers */,
@@ -2407,7 +2407,7 @@
 				2F3C78721E62BADF0015206A /* FWDebugManager.m in Sources */,
 				2FA54B161FD5580900FE1CD1 /* FBStructEncodingParser.mm in Sources */,
 				2FA54B0D1FD5580900FE1CD1 /* FBBlockStrongLayout.m in Sources */,
-				2F32AD591F0B6A0C004072E5 /* FWDebugAppSecret.m in Sources */,
+				2F32AD591F0B6A0C004072E5 /* FWDebugAppConfig.m in Sources */,
 				2F64CB0F1F99F49D00F3F48C /* KSCrashReportFilterGZip.m in Sources */,
 				2F64CBA71F99F49D00F3F48C /* KSStackCursor_MachineContext.c in Sources */,
 				2FB7FEE81FFE261E00141F1B /* FLEXInstancesTableViewController+FWDebug.m in Sources */,

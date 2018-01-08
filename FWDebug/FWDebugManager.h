@@ -19,9 +19,6 @@
 // 调试器是否隐藏
 @property (nonatomic, readonly) BOOL isHidden;
 
-// 循环引用过滤器，返回YES时不过滤，NO则过滤
-@property (nonatomic, copy) BOOL (^retainCycleFilter)(Class fromClass, NSString *ivarName, Class toClass);
-
 // 单例方法
 + (instancetype)sharedInstance;
 
