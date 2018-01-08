@@ -48,6 +48,10 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 执行`carthage update`并拷贝`FWDebug.framework`到项目即可。
 
 ## 更新日志
+1.4.1版本：
+
+	* 优化循环引用检测功能
+
 1.4.0版本：
 
 	* 添加类和对象的循环引用检测功能
@@ -77,7 +81,7 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 	* 添加dylib项目和注入现有App工具
 
 1.1.0版本：
-	
+
 	* 调整项目结构
 	* 更新FLEX到2.4.0版本
 	* 添加崩溃日志调试
@@ -92,7 +96,7 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 
 ## 第三方库
 本调试库使用了第三方库，在此感谢所有第三方库的作者。列举如下：
-	
+
 * [FLEX](https://github.com/Flipboard/FLEX)
 * [GCDWebServer](https://github.com/swisspol/GCDWebServer)
 * [RuntimeBrowser](https://github.com/nst/RuntimeBrowser)

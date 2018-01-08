@@ -49,6 +49,10 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+1.4.1 version:
+
+    * Optimized circular reference detection
+
 1.4.0 version:
 
     * Add circular reference detection for classes and objects
