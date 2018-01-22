@@ -27,11 +27,18 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 * 生成dylib动态库并注入其它App
 * App加密工具
 
+## 审核说明
+针对大家关心的上架审核问题，特别说明一下：
+
+**由于本调试库调用了私有Api，上架审核会不通过的，所以提交AppStore时请移除。**
+
+只需在添加pod时设置`:configurations => ['Debug']`，只在Debug模式生效即可。
+
 ## 安装教程
 推荐使用CocoaPods安装，自动管理依赖和环境配置。如需手工导入请参考Example项目配置。
 
 ### CocoaPods
-本调试库支持Debug和Release环境，一般Debug模式开启，提交AppStore时请移除。Podfile示例：
+本调试库支持Debug和Release环境，建议Debug模式开启。Podfile示例：
 
 	platform :ios, '8.0'
 	# use_frameworks!

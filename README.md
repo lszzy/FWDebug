@@ -27,12 +27,18 @@ Real machine or simulator shaking within 5 seconds twice to appear debug menu. F
 * Generate dylib dynamic library and inject other App
 * App encryption tools
 
+## Review
+For everyone concerned about the issue of shelf audit, in particular, explain:
+
+**Since this debug library calls the private APIs, the on-board review will not pass, so please remove it when submitting to AppStore.**
+
+Just set `: configurations => ['Debug']` when adding a pod, valid only in Debug mode.
+
 ## Installation
 CocoaPods installation is recommended for automatic management of dependencies and environment configuration. For manual import, please refer to the Example project configuration.
 
 ### CocoaPods
-This debug library supports Debug and Release environment, the general Debug mode is turned on, please remove when submitting AppStore. 
-Podfile example:
+The debug library supports Debug and Release environment, it is recommended Debug mode is turned on. Podfile example:
 
 	platform :ios, '8.0'
 	# use_frameworks!
