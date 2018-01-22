@@ -2226,7 +2226,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0910;
-				ORGANIZATIONNAME = ocphp.com;
+				ORGANIZATIONNAME = wuyong.site;
 				TargetAttributes = {
 					2FCA04441E5A8AE2008ECDD4 = {
 						CreatedOnToolsVersion = 8.2.1;

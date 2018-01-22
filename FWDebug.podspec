@@ -2,9 +2,9 @@ Pod::Spec.new do |spec|
   spec.name                = "FWDebug"
   spec.version             = "1.4.1"
   spec.summary             = "ios debug library"
-  spec.homepage            = "http://ocphp.com"
+  spec.homepage            = "http://wuyong.site"
   spec.license             = "MIT"
-  spec.author              = { "Wu Yong" => "admin@ocphp.com" }
+  spec.author              = { "Wu Yong" => "admin@wuyong.site" }
   spec.platform            = :ios, "8.0"
   spec.source              = { :git => "https://github.com/lszzy/FWDebug.git", :tag => "#{spec.version}" }
 
