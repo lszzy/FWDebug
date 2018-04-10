@@ -87,6 +87,12 @@ static BOOL isAppLocked = NO;
     return depth ? [depth integerValue] : 10;
 }
 
++ (NSInteger)systemLogLimit
+{
+    NSNumber *limit = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugSystemLogLimit"];
+    return limit ? [limit integerValue] : 100;
+}
+
 + (NSString *)secretMd5:(NSString *)str
 {
     const char *cStr = [str UTF8String];
@@ -149,7 +155,7 @@ static BOOL isAppLocked = NO;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 1;
+    return section == 0 ? 1 : 2;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
@@ -206,9 +212,14 @@ static BOOL isAppLocked = NO;
 
 - (void)configLabel:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
     UILabel *cellLabel = (UILabel *)cell.accessoryView;
-    cell.textLabel.text = @"Retain Cycle Depth";
     cell.detailTextLabel.text = nil;
-    cellLabel.text = [NSString stringWithFormat:@"%@", @([self.class retainCycleDepth])];
+    if (indexPath.row == 0) {
+        cell.textLabel.text = @"Retain Cycle Depth";
+        cellLabel.text = [NSString stringWithFormat:@"%@", @([self.class retainCycleDepth])];
+    } else {
+        cell.textLabel.text = @"System Log Limit";
+        cellLabel.text = [NSString stringWithFormat:@"%@", @([self.class systemLogLimit])];
+    }
 }
 
 #pragma mark - Action
@@ -249,13 +260,21 @@ static BOOL isAppLocked = NO;
 - (void)actionLabel:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     typeof(self) __weak weakSelf = self;
-    [FWDebugAppConfig showPrompt:self security:NO title:@"Input Depth" message:nil block:^(BOOL confirm, NSString *text) {
+    [FWDebugAppConfig showPrompt:self security:NO title:@"Input Value" message:nil block:^(BOOL confirm, NSString *text) {
         if (confirm && text.length > 0) {
-            NSInteger depth = [text integerValue];
-            if (depth > 0 && depth <= 10) {
-                [[NSUserDefaults standardUserDefaults] setObject:@(depth) forKey:@"FWDebugRetainCycleDepth"];
+            NSInteger value = [text integerValue];
+            if (indexPath.row == 0) {
+                if (value > 0 && value <= 10) {
+                    [[NSUserDefaults standardUserDefaults] setObject:@(value) forKey:@"FWDebugRetainCycleDepth"];
+                } else {
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugRetainCycleDepth"];
+                }
             } else {
-                [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugRetainCycleDepth"];
+                if (value > 0 && value <= 100) {
+                    [[NSUserDefaults standardUserDefaults] setObject:@(value) forKey:@"FWDebugSystemLogLimit"];
+                } else {
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugSystemLogLimit"];
+                }
             }
             [[NSUserDefaults standardUserDefaults] synchronize];
         }

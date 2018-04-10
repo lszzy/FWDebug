@@ -14,4 +14,6 @@
 
 + (NSInteger)retainCycleDepth;
 
++ (NSInteger)systemLogLimit;
+
 @end
