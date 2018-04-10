@@ -55,6 +55,11 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+1.4.2 version:
+
+	* Increase NSLog display limit
+	* Example project Swift mixed debugging
+
 1.4.1 version:
 
     * Optimized circular reference detection

@@ -7,57 +7,45 @@
 //
 
 #import "ViewController.h"
-#import <FWDebug/FWDebug.h>
+#import "ObjectivecController.h"
+#import "SwiftHeader.h"
 
 @interface ViewController ()
-
-@property (nonatomic, strong) id object;
 
 @end
 
 @implementation ViewController
 
+#pragma mark - Lifecycle
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     self.title = @"Example";
     self.edgesForExtendedLayout = UIRectEdgeNone;
+    self.view.backgroundColor = [UIColor whiteColor];
     
-    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:@"Debug" style:UIBarButtonItemStylePlain target:self action:@selector(onDebug)];
-    self.navigationItem.rightBarButtonItem = item;
+    UIButton *objectivecButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [objectivecButton setTitle:@"Objective-C" forState:UIControlStateNormal];
+    [objectivecButton addTarget:self action:@selector(onObjectivec) forControlEvents:UIControlEventTouchUpInside];
+    objectivecButton.frame = CGRectMake(self.view.frame.size.width / 2 - 50, 20, 100, 30);
+    [self.view addSubview:objectivecButton];
     
-    UIButton *retainCycleButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [retainCycleButton setTitle:@"Retain Cycle" forState:UIControlStateNormal];
-    [retainCycleButton addTarget:self action:@selector(onRetainCycle) forControlEvents:UIControlEventTouchUpInside];
-    retainCycleButton.frame = CGRectMake(self.view.frame.size.width / 2 - 50, 20, 100, 30);
-    [self.view addSubview:retainCycleButton];
-    
-    UIButton *crashButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [crashButton setTitle:@"Crash" forState:UIControlStateNormal];
-    [crashButton addTarget:self action:@selector(onCrash) forControlEvents:UIControlEventTouchUpInside];
-    crashButton.frame = CGRectMake(self.view.frame.size.width / 2 - 50, 70, 100, 30);
-    [self.view addSubview:crashButton];
+    UIButton *swiftButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [swiftButton setTitle:@"Swift" forState:UIControlStateNormal];
+    [swiftButton addTarget:self action:@selector(onSwift) forControlEvents:UIControlEventTouchUpInside];
+    swiftButton.frame = CGRectMake(self.view.frame.size.width / 2 - 50, 70, 100, 30);
+    [self.view addSubview:swiftButton];
 }
 
-- (void)onDebug {
-    if ([FWDebugManager sharedInstance].isHidden) {
-        [[FWDebugManager sharedInstance] show];
-        NSLog(@"Show FWDebug");
-    } else {
-        [[FWDebugManager sharedInstance] hide];
-        NSLog(@"Hide FWDebug");
-    }
+#pragma mark - Action
+- (void)onSwift {
+    SwiftController *viewController = [[SwiftController alloc] init];
+    [self.navigationController pushViewController:viewController animated:YES];
 }
 
-- (void)onRetainCycle {
-    ViewController *retainObject = [[ViewController alloc] init];
-    retainObject.object = self;
-    self.object = retainObject;
-}
-
-- (void)onCrash {
-    id object = [[NSObject alloc] init];
-    [object onCrash];
+- (void)onObjectivec {
+    ObjectivecController *viewController = [[ObjectivecController alloc] init];
+    [self.navigationController pushViewController:viewController animated:YES];
 }
 
 @end

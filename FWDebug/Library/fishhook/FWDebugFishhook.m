@@ -7,6 +7,7 @@
 //
 
 #import "FWDebugFishhook.h"
+#import "FWDebugAppConfig.h"
 #import "FLEXSystemLogMessage.h"
 #import "fishhook.h"
 #import <objc/runtime.h>
@@ -118,6 +119,12 @@ static NSMutableArray *_allLogs;
         logObj.messageText = message;
         logObj.messageID = ++_logCount;
         [_allLogs addObject:logObj];
+
+        // 内存缓存限制
+        NSInteger logLimit = [FWDebugAppConfig systemLogLimit];
+        if (_allLogs.count > logLimit) {
+            [_allLogs removeObjectsInRange:NSMakeRange(0, _allLogs.count - logLimit)];
+        }
         
         // 追加写入文件
         NSString *fileText = [NSString stringWithFormat:@"%@: %@\n", [_logFormatter stringFromDate:logObj.date], logObj.messageText];
