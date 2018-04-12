@@ -39,7 +39,14 @@
 {
     [self fwDebugViewDidLoad];
     
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(fwDebugRetainCycles)];
+    UIBarButtonItem *retainItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(fwDebugRetainCycles)];
+    if (self.navigationItem.rightBarButtonItems.count > 0) {
+        NSMutableArray *rightItems = [NSMutableArray arrayWithArray:self.navigationItem.rightBarButtonItems];
+        [rightItems addObject:retainItem];
+        self.navigationItem.rightBarButtonItems = rightItems;
+    } else {
+        self.navigationItem.rightBarButtonItem = retainItem;
+    }
 }
 
 - (void)fwDebugRetainCycles
