@@ -361,7 +361,11 @@ static NSString* getReceiptUrlPath()
     NSString* path = nil;
 #if KSCRASH_HOST_IOS
     // For iOS 6 compatibility
+#ifdef __IPHONE_11_0
+    if (@available(iOS 7, *)) {
+#else
     if ([[UIDevice currentDevice].systemVersion compare:@"7" options:NSNumericSearch] != NSOrderedAscending) {
+#endif
 #endif
         path = [NSBundle mainBundle].appStoreReceiptURL.path;
 #if KSCRASH_HOST_IOS
@@ -499,7 +503,11 @@ static void initialize()
 #if KSCRASH_HOST_WATCH
         g_systemData.systemName = "watchOS";
 #endif
-        NSOperatingSystemVersion version = [NSProcessInfo processInfo].operatingSystemVersion;
+        NSOperatingSystemVersion version = {0, 0, 0};
+        if(@available(macOS 10.10, *))
+        {
+            version = [NSProcessInfo processInfo].operatingSystemVersion;
+        }
         NSString* systemVersion;
         if(version.patchVersion == 0)
         {

@@ -55,7 +55,7 @@
 typedef struct
 {
     KSCrashMonitorType monitorType;
-    KSCrashMonitorAPI* (*getAPI)();
+    KSCrashMonitorAPI* (*getAPI)(void);
 } Monitor;
 
 static Monitor g_monitors[] =
@@ -105,7 +105,7 @@ static Monitor g_monitors[] =
 };
 static int g_monitorsCount = sizeof(g_monitors) / sizeof(*g_monitors);
 
-KSCrashMonitorType g_activeMonitors = KSCrashMonitorTypeNone;
+static KSCrashMonitorType g_activeMonitors = KSCrashMonitorTypeNone;
 
 static bool g_handlingFatalException = false;
 static bool g_crashedDuringExceptionHandling = false;
@@ -246,9 +246,12 @@ void kscm_handleException(struct KSCrash_MonitorContext* context)
 
     g_onExceptionEvent(context);
 
-    if(g_handlingFatalException && !g_crashedDuringExceptionHandling)
-    {
-        KSLOG_DEBUG("Exception is fatal. Restoring original handlers.");
-        kscm_setActiveMonitors(KSCrashMonitorTypeNone);
+    if (context->currentSnapshotUserReported) {
+        g_handlingFatalException = false;
+    } else {
+        if(g_handlingFatalException && !g_crashedDuringExceptionHandling) {
+            KSLOG_DEBUG("Exception is fatal. Restoring original handlers.");
+            kscm_setActiveMonitors(KSCrashMonitorTypeNone);
+        }
     }
 }
