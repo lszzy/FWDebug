@@ -26,6 +26,7 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 * iOS10+真机NSLog显示
 * 生成dylib动态库并注入其它App
 * App加密工具
+* CLLocationManager虚拟定位
 
 ## 审核说明
 针对大家关心的上架审核问题，特别说明一下：
@@ -55,6 +56,10 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 执行`carthage update`并拷贝`FWDebug.framework`到项目即可。
 
 ## 更新日志
+1.5.0版本：
+
+	* 增加CLLocationManager虚拟定位和移动功能
+
 1.4.2版本：
 
 	* 增加NSLog显示条数限制

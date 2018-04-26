@@ -59,6 +59,8 @@
 		2F4172D51E63303B00DC5AD4 /* RTBTypeDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F41715D1E63303B00DC5AD4 /* RTBTypeDecoder.m */; };
 		2F4172D61E63303B00DC5AD4 /* RTBTypeDecoder2.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F41715E1E63303B00DC5AD4 /* RTBTypeDecoder2.h */; };
 		2F4172D71E63303B00DC5AD4 /* RTBTypeDecoder2.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F41715F1E63303B00DC5AD4 /* RTBTypeDecoder2.m */; };
+		2F4E7E79209089FD00E6157C /* FWDebugFakeLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F4E7E77209089FD00E6157C /* FWDebugFakeLocation.h */; };
+		2F4E7E7A209089FD00E6157C /* FWDebugFakeLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F4E7E78209089FD00E6157C /* FWDebugFakeLocation.m */; };
 		2F57CFED1E652F860062B632 /* FLEXManager+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F57CFEB1E652F860062B632 /* FLEXManager+FWDebug.h */; };
 		2F57CFEE1E652F860062B632 /* FLEXManager+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F57CFEC1E652F860062B632 /* FLEXManager+FWDebug.m */; };
 		2F57CFF21E65338A0062B632 /* KSCrash+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F57CFF01E65338A0062B632 /* KSCrash+FWDebug.h */; };
@@ -526,6 +528,8 @@
 		2F41715D1E63303B00DC5AD4 /* RTBTypeDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RTBTypeDecoder.m; sourceTree = "<group>"; };
 		2F41715E1E63303B00DC5AD4 /* RTBTypeDecoder2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTBTypeDecoder2.h; sourceTree = "<group>"; };
 		2F41715F1E63303B00DC5AD4 /* RTBTypeDecoder2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RTBTypeDecoder2.m; sourceTree = "<group>"; };
+		2F4E7E77209089FD00E6157C /* FWDebugFakeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugFakeLocation.h; sourceTree = "<group>"; };
+		2F4E7E78209089FD00E6157C /* FWDebugFakeLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugFakeLocation.m; sourceTree = "<group>"; };
 		2F57CFEB1E652F860062B632 /* FLEXManager+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FLEXManager+FWDebug.h"; sourceTree = "<group>"; };
 		2F57CFEC1E652F860062B632 /* FLEXManager+FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FLEXManager+FWDebug.m"; sourceTree = "<group>"; };
 		2F57CFF01E65338A0062B632 /* KSCrash+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KSCrash+FWDebug.h"; sourceTree = "<group>"; };
@@ -1138,6 +1142,8 @@
 				2FB7FEE61FFE261E00141F1B /* FLEXInstancesTableViewController+FWDebug.m */,
 				2F2E3DC51E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h */,
 				2F2E3DC61E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m */,
+				2F4E7E77209089FD00E6157C /* FWDebugFakeLocation.h */,
+				2F4E7E78209089FD00E6157C /* FWDebugFakeLocation.m */,
 				2F57D0211E65647D0062B632 /* FWDebugSystemInfo.h */,
 				2F57D0221E65647D0062B632 /* FWDebugSystemInfo.m */,
 				2F32AD561F0B6A0C004072E5 /* FWDebugAppConfig.h */,
@@ -2195,6 +2201,7 @@
 				2F64CB361F99F49D00F3F48C /* KSCrashInstallationConsole.h in Headers */,
 				2F64C9FE1F99F41E00F3F48C /* FLEXTableColumnHeader.h in Headers */,
 				2F64CB6A1F99F49D00F3F48C /* KSCrashMonitor_CPPException.h in Headers */,
+				2F4E7E79209089FD00E6157C /* FWDebugFakeLocation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2437,6 +2444,7 @@
 				2F4172D31E63303B00DC5AD4 /* RTBRuntimeHeader.m in Sources */,
 				2F64C9B61F99F41E00F3F48C /* FLEXArgumentInputColorView.m in Sources */,
 				2F64C9FF1F99F41E00F3F48C /* FLEXTableColumnHeader.m in Sources */,
+				2F4E7E7A209089FD00E6157C /* FWDebugFakeLocation.m in Sources */,
 				2F64C9AF1F99F41E00F3F48C /* FLEXExplorerViewController.m in Sources */,
 				2F64CA431F99F41E00F3F48C /* FLEXObjectExplorerViewController.m in Sources */,
 				2F64CA371F99F41E00F3F48C /* FLEXDefaultsExplorerViewController.m in Sources */,
