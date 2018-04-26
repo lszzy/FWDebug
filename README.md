@@ -26,6 +26,7 @@ Real machine or simulator shaking within 5 seconds twice to appear debug menu. F
 * iOS10 + real machine NSLog display
 * Generate dylib dynamic library and inject other App
 * App encryption tools
+* CLLocationManager virtual positioning
 
 ## Review
 For everyone concerned about the issue of shelf audit, in particular, explain:
@@ -55,6 +56,10 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+1.5.0 version:
+
+	* Add CLLocationManager virtual positioning and movement
+
 1.4.2 version:
 
 	* Increase NSLog display limit

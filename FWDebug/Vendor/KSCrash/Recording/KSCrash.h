@@ -55,6 +55,9 @@ typedef enum
 
 #pragma mark - Configuration -
 
+/** Init KSCrash instance with custom base path. */
+- (id) initWithBasePath:(NSString *)basePath;
+
 /** A dictionary containing any info you'd like to appear in crash reports. Must
  * contain only JSON-safe data: NSString for keys, and NSDictionary, NSArray,
  * NSString, NSDate, and NSNumber for values.
@@ -169,6 +172,9 @@ typedef enum
 /** Exposes the uncaughtExceptionHandler if set from KSCrash. Is nil if debugger is running. **/
 @property (nonatomic, assign) NSUncaughtExceptionHandler *uncaughtExceptionHandler;
 
+/** Exposes the currentSnapshotUserReportedExceptionHandler if set from KSCrash. Is nil if debugger is running. **/
+@property (nonatomic, assign) NSUncaughtExceptionHandler *currentSnapshotUserReportedExceptionHandler;
+
 #pragma mark - Information -
 
 /** Total active time elapsed since the last crash. */
@@ -227,9 +233,29 @@ typedef enum
  */
 - (void) sendAllReportsWithCompletion:(KSCrashReportFilterCompletion) onCompletion;
 
+/** Get all unsent report IDs.
+ *
+ * @return An array with report IDs.
+ */
+- (NSArray*) reportIDs;
+
+/** Get report.
+ *
+ * @param reportID An ID of report.
+ *
+ * @return A dictionary with report fields. See KSCrashReportFields.h for available fields.
+ */
+- (NSDictionary*) reportWithID:(NSNumber*) reportID;
+
 /** Delete all unsent reports.
  */
 - (void) deleteAllReports;
+
+/** Delete report.
+ *
+ * @param reportID An ID of report to delete.
+ */
+- (void) deleteReportWithID:(NSNumber*) reportID;
 
 /** Report a custom, user defined exception.
  * This can be useful when dealing with scripting languages.

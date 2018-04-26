@@ -203,7 +203,7 @@
 
 - (NSInteger)memoryStateForData:(float)memory
 {
-    return (memory < 150.0) ? 1 : (memory < 200.0 ? 0 : -1);
+    return (memory < 200.0) ? 1 : (memory < 300.0 ? 0 : -1);
 }
 
 - (NSInteger)cpuStateForData:(float)cpu

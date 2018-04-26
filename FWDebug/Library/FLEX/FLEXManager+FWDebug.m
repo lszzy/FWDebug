@@ -20,6 +20,7 @@
 #import "FWDebugSystemInfo.h"
 #import "FWDebugWebServer.h"
 #import "FWDebugAppConfig.h"
+#import "FWDebugFakeLocation.h"
 #import <objc/runtime.h>
 
 @interface FLEXManager ()
@@ -56,6 +57,10 @@
     
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📶  Web Server" viewControllerFutureBlock:^UIViewController *{
         return [[FWDebugWebServer alloc] init];
+    }];
+    
+    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📍  Fake Location" viewControllerFutureBlock:^UIViewController *{
+        return [[FWDebugFakeLocation alloc] init];
     }];
     
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📘  App Browser" viewControllerFutureBlock:^UIViewController *{

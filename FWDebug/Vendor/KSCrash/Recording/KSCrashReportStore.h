@@ -52,7 +52,7 @@ void kscrs_getNextCrashReportPath(char* crashReportPathBuffer);
 
 /** Get the number of reports on disk.
  */
-int kscrs_getReportCount();
+int kscrs_getReportCount(void);
 
 /** Get a list of IDs for all reports on disk.
  *
@@ -83,7 +83,13 @@ int64_t kscrs_addUserReport(const char* report, int reportLength);
 
 /** Delete all reports on disk.
  */
-void kscrs_deleteAllReports();
+void kscrs_deleteAllReports(void);
+
+/** Delete report.
+ *
+ * @param reportID An ID of report to delete.
+ */
+void kscrs_deleteReportWithID(int64_t reportID);
 
 /** Set the maximum number of reports allowed on disk before old ones get deleted.
  *

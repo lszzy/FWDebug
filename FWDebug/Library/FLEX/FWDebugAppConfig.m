@@ -58,7 +58,7 @@ static BOOL isAppLocked = NO;
         isAppLocked = YES;
     });
     
-    [FWDebugAppConfig showPrompt:secretWindow.rootViewController security:YES title:@"Input Password" message:nil block:^(BOOL confirm, NSString *text) {
+    [FWDebugAppConfig showPrompt:secretWindow.rootViewController security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
         NSString *secret = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugAppSecret"];
         if (confirm && [secret isEqualToString:[FWDebugAppConfig secretMd5:text]]) {
             [secretWindow resignKeyWindow];
@@ -106,13 +106,14 @@ static BOOL isAppLocked = NO;
     return output;
 }
 
-+ (void)showPrompt:(UIViewController *)viewController security:(BOOL)security title:(NSString *)title message:(NSString *)message block:(void (^)(BOOL confirm, NSString *text))block
++ (void)showPrompt:(UIViewController *)viewController security:(BOOL)security title:(NSString *)title message:(NSString *)message text:(NSString *)text block:(void (^)(BOOL confirm, NSString *text))block
 {
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
     
     [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
         textField.secureTextEntry = security;
         textField.keyboardType = UIKeyboardTypePhonePad;
+        textField.text = text ?: @"";
     }];
     
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
@@ -180,6 +181,7 @@ static BOOL isAppLocked = NO;
         UILabel *accessoryView = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 30)];
         accessoryView.font = [UIFont systemFontOfSize:14];
         accessoryView.textColor = [UIColor blackColor];
+        accessoryView.textAlignment = NSTextAlignmentRight;
         cell.accessoryView = accessoryView;
         
         [self configLabel:cell indexPath:indexPath];
@@ -229,7 +231,7 @@ static BOOL isAppLocked = NO;
     UISwitch *cellSwitch = (UISwitch *)cell.accessoryView;
     if (!cellSwitch.on) {
         typeof(self) __weak weakSelf = self;
-        [FWDebugAppConfig showPrompt:self security:YES title:@"Input Password" message:nil block:^(BOOL confirm, NSString *text) {
+        [FWDebugAppConfig showPrompt:self security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
             if (confirm && text.length > 0) {
                 [[NSUserDefaults standardUserDefaults] setObject:[FWDebugAppConfig secretMd5:text] forKey:@"FWDebugAppSecret"];
                 [[NSUserDefaults standardUserDefaults] synchronize];
@@ -239,7 +241,7 @@ static BOOL isAppLocked = NO;
     } else {
         if ([self.class isSecretEnabled]) {
             typeof(self) __weak weakSelf = self;
-            [FWDebugAppConfig showPrompt:self security:YES title:@"Input Password" message:nil block:^(BOOL confirm, NSString *text) {
+            [FWDebugAppConfig showPrompt:self security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
                 NSString *secret = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugAppSecret"];
                 if (confirm && [secret isEqualToString:[FWDebugAppConfig secretMd5:text]]) {
                     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugAppSecret"];
@@ -260,7 +262,7 @@ static BOOL isAppLocked = NO;
 - (void)actionLabel:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     typeof(self) __weak weakSelf = self;
-    [FWDebugAppConfig showPrompt:self security:NO title:@"Input Value" message:nil block:^(BOOL confirm, NSString *text) {
+    [FWDebugAppConfig showPrompt:self security:NO title:@"Input Value" message:nil text:nil block:^(BOOL confirm, NSString *text) {
         if (confirm && text.length > 0) {
             NSInteger value = [text integerValue];
             if (indexPath.row == 0) {
