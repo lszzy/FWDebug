@@ -1871,8 +1871,8 @@
 		2FA54AF01FD5580900FE1CD1 /* fishhook */ = {
 			isa = PBXGroup;
 			children = (
-				2FA54AF11FD5580900FE1CD1 /* fishhook.c */,
 				2FA54AF21FD5580900FE1CD1 /* fishhook.h */,
+				2FA54AF11FD5580900FE1CD1 /* fishhook.c */,
 			);
 			path = fishhook;
 			sourceTree = "<group>";
