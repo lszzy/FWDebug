@@ -71,8 +71,9 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
         for (unsigned int i = 0; i < zoneCount; i++) {
             malloc_zone_t *zone = (malloc_zone_t *)zones[i];
             malloc_introspection_t *introspection = zone->introspect;
+            NSString *zoneName = @(zone->zone_name);
 
-            if (!introspection) {
+            if (![zoneName isEqualToString:@"DefaultMallocZone"] || !introspection) {
                 continue;
             }
 
@@ -89,6 +90,7 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
             // The largest realistic memory address varies by platform.
             // Only 48 bits are used by 64 bit machines while
             // 32 bit machines use all bits.
+// FWDebug
 #if __arm64__ || __x86_64__
             static uintptr_t MAX_REALISTIC_ADDRESS = 0xFFFFFFFFFFFF;
 #else
@@ -107,6 +109,9 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
                 introspection->enumerator(TASK_NULL, (void *)&callback, MALLOC_PTR_IN_USE_RANGE_TYPE, (vm_address_t)zone, reader, &range_callback);
                 unlock_zone(zone);
             }
+
+            // Only one zone to enumerate
+            break;
         }
     }
 }

@@ -19,29 +19,10 @@
 
 @implementation FLEXTableContentViewController
 
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        
-        CGRect rectStatus = [UIApplication sharedApplication].statusBarFrame;
-        CGFloat y = 64;
-        if (rectStatus.size.height == 0) {
-            y = 32;
-        }
-        _multiColumView = [[FLEXMultiColumnTableView alloc] initWithFrame:
-                           CGRectMake(0, y, self.view.frame.size.width, self.view.frame.size.height - y)];
-        
-        _multiColumView.autoresizingMask          = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        _multiColumView.backgroundColor           = [UIColor whiteColor];
-        _multiColumView.dataSource                = self;
-        _multiColumView.delegate                  = self;
-        self.automaticallyAdjustsScrollViewInsets = NO;
-        
-        
-        [self.view addSubview:_multiColumView];
-    }
-    return self;
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.edgesForExtendedLayout = UIRectEdgeNone;
+    [self.view addSubview:self.multiColumView];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -51,6 +32,20 @@
 }
 
 #pragma mark -
+
+#pragma mark init SubView
+- (FLEXMultiColumnTableView *)multiColumView {
+    if (!_multiColumView) {
+        _multiColumView = [[FLEXMultiColumnTableView alloc] initWithFrame:
+                           CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+        
+        _multiColumView.autoresizingMask          = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin;
+        _multiColumView.backgroundColor           = [UIColor whiteColor];
+        _multiColumView.dataSource                = self;
+        _multiColumView.delegate                  = self;
+    }
+    return _multiColumView;
+}
 #pragma mark MultiColumnTableView DataSource
 
 - (NSInteger)numberOfColumnsInTableView:(FLEXMultiColumnTableView *)tableView
@@ -175,10 +170,10 @@
     [coordinator animateAlongsideTransition:^(id <UIViewControllerTransitionCoordinatorContext> context) {
         if (newCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact) {
             
-            _multiColumView.frame = CGRectMake(0, 32, self.view.frame.size.width, self.view.frame.size.height - 32);
+            self->_multiColumView.frame = CGRectMake(0, 32, self.view.frame.size.width, self.view.frame.size.height - 32);
         }
         else {
-            _multiColumView.frame = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64);
+            self->_multiColumView.frame = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64);
         }
         [self.view setNeedsLayout];
     } completion:nil];
