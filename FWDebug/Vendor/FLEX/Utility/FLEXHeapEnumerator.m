@@ -73,7 +73,9 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
             malloc_introspection_t *introspection = zone->introspect;
             NSString *zoneName = @(zone->zone_name);
 
-            if (![zoneName isEqualToString:@"DefaultMallocZone"] || !introspection) {
+            // FWDebug
+            // if (![zoneName isEqualToString:@"DefaultMallocZone"] || !introspection) {
+            if (!introspection) {
                 continue;
             }
 
@@ -91,6 +93,7 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
             // Only 48 bits are used by 64 bit machines while
             // 32 bit machines use all bits.
 // FWDebug
+// #if __arm64__
 #if __arm64__ || __x86_64__
             static uintptr_t MAX_REALISTIC_ADDRESS = 0xFFFFFFFFFFFF;
 #else
@@ -111,7 +114,8 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
             }
 
             // Only one zone to enumerate
-            break;
+            // FWDebug
+            // break;
         }
     }
 }
