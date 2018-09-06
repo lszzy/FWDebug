@@ -56,6 +56,11 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 执行`carthage update`并拷贝`FWDebug.framework`到项目即可。
 
 ## 更新日志
+1.5.1版本：
+
+	* 同步Vendor最新主干代码
+	* Example项目Swift 4兼容
+
 1.5.0版本：
 
 	* 增加CLLocationManager虚拟定位和移动功能
