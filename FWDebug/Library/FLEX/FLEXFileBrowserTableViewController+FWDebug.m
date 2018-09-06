@@ -16,7 +16,7 @@ static NSString *fwDebugCopyPath = nil;
 
 + (void)load
 {
-    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(viewDidLoad) with:@selector(fwDebugViewDidLoad)];
+    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(tableView:shouldShowMenuForRowAtIndexPath:) with:@selector(fwDebugTableView:shouldShowMenuForRowAtIndexPath:)];
     [FWDebugManager fwDebugSwizzleInstance:self method:@selector(tableView:canPerformAction:forRowAtIndexPath:withSender:) with:@selector(fwDebugTableView:canPerformAction:forRowAtIndexPath:withSender:)];
 }
 
@@ -32,34 +32,20 @@ static NSString *fwDebugCopyPath = nil;
     return item;
 }
 
-- (void)fwDebugViewDidLoad
+- (BOOL)fwDebugTableView:(UITableView *)tableView shouldShowMenuForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self fwDebugViewDidLoad];
-    
+    BOOL result = [self fwDebugTableView:tableView shouldShowMenuForRowAtIndexPath:indexPath];
     NSMutableArray<UIMenuItem *> *menuItems = [NSMutableArray arrayWithArray:[UIMenuController sharedMenuController].menuItems];
     self.fwDebugCopyItem.title = fwDebugCopyPath ? @"Paste" : @"Copy";
     [menuItems addObject:self.fwDebugCopyItem];
-    [menuItems addObject:[[UIMenuItem alloc] initWithTitle:@"Openin" action:@selector(fwDebugFileBrowserOpenin:)]];
     [UIMenuController sharedMenuController].menuItems = menuItems;
+    return result;
 }
 
 - (BOOL)fwDebugTableView:(UITableView *)tableView canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender
 {
     BOOL result = [self fwDebugTableView:tableView canPerformAction:action forRowAtIndexPath:indexPath withSender:sender];
-    return result || action == @selector(fwDebugFileBrowserOpenin:) || action == @selector(fwDebugFileBrowserCopy:);
-}
-
-- (void)fwDebugFileBrowserOpenin:(UITableViewCell *)sender
-{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
-    SEL selector = NSSelectorFromString(@"filePathAtIndexPath:");
-    NSString *fullPath = [self performSelector:selector withObject:indexPath];
-    
-    selector = NSSelectorFromString(@"openFileController:");
-    [self performSelector:selector withObject:fullPath];
-#pragma clang diagnostic pop
+    return result || action == @selector(fwDebugFileBrowserCopy:);
 }
 
 - (void)fwDebugFileBrowserCopy:(UITableViewCell *)sender
@@ -108,12 +94,6 @@ static NSString *fwDebugCopyPath = nil;
 @end
 
 @implementation FLEXFileBrowserTableViewCell (FWDebug)
-
-- (void)fwDebugFileBrowserOpenin:(UIMenuController *)sender
-{
-    id target = [self.nextResponder targetForAction:_cmd withSender:sender];
-    [[UIApplication sharedApplication] sendAction:_cmd to:target from:self forEvent:nil];
-}
 
 - (void)fwDebugFileBrowserCopy:(UIMenuController *)sender
 {

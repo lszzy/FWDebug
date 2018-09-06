@@ -10,10 +10,11 @@
 #import "FWDebugManager+FWDebug.h"
 #import "FBRetainCycleDetector+FWDebug.h"
 #import "FWDebugRetainCycle.h"
+#import "FLEXObjectRef.h"
 
 @interface FLEXInstancesTableViewController ()
 
-@property (nonatomic, strong) NSArray *instances;
+@property (nonatomic) NSArray<FLEXObjectRef *> *instances;
 
 @end
 

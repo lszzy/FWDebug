@@ -155,10 +155,14 @@ const unsigned int kFLEXNumberOfImplicitArgs = 2;
         }
     }
     
-    if (!description) {
-        // Single line display - replace newlines and tabs with spaces.
-        description = [[value description] stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
-        description = [description stringByReplacingOccurrencesOfString:@"\t" withString:@" "];
+    @try {
+        if (!description) {
+            // Single line display - replace newlines and tabs with spaces.
+            description = [[value description] stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
+            description = [description stringByReplacingOccurrencesOfString:@"\t" withString:@" "];
+        }
+    } @catch (NSException *e) {
+        description = [@"Thrown: " stringByAppendingString:e.reason ?: @"(nil exception reason)"];
     }
     
     if (!description) {
@@ -375,8 +379,19 @@ const unsigned int kFLEXNumberOfImplicitArgs = 2;
     } @catch (NSException *exception) {
         // Bummer...
         if (error) {
-            NSDictionary<NSString *, id> *userInfo = @{ NSLocalizedDescriptionKey : [NSString stringWithFormat:@"Exception thrown while performing selector %@ on object %@", NSStringFromSelector(selector), object]};
-            *error = [NSError errorWithDomain:FLEXRuntimeUtilityErrorDomain code:FLEXRuntimeUtilityErrorCodeInvocationFailed userInfo:userInfo];
+            // "… on <class>" / "… on instance of <class>"
+            NSString *class = NSStringFromClass([object class]);
+            NSString *calledOn = object == [object class] ? class : [@"an instance of " stringByAppendingString:class];
+
+            NSString *message = [NSString stringWithFormat:@"Exception '%@' thrown while performing selector '%@' on %@.\nReason:\n\n%@",
+                                 exception.name,
+                                 NSStringFromSelector(selector),
+                                 calledOn,
+                                 exception.reason];
+
+            *error = [NSError errorWithDomain:FLEXRuntimeUtilityErrorDomain
+                                         code:FLEXRuntimeUtilityErrorCodeInvocationFailed
+                                     userInfo:@{ NSLocalizedDescriptionKey : message }];
         }
     }
     

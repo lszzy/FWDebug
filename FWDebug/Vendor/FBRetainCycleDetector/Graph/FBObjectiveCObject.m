@@ -86,13 +86,6 @@
             }
           }
           if (isKeyValued && retainsValues) {
-#if TARGET_IPHONE_SIMULATOR
-            // 修正模拟器崩溃问题
-            Class exceptClass = NSClassFromString(@"NSConcreteMapTable");
-            if (exceptClass != NULL && [self.object isKindOfClass:exceptClass]) {
-                continue;
-            }
-#endif
             FBObjectiveCGraphElement *element = FBWrapObjectGraphElement(self,
                                                                          [self.object objectForKey:subobject],
                                                                          self.configuration);

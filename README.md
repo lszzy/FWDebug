@@ -56,6 +56,11 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+1.5.1 version:
+
+	* Sync Vendor latest trunk code
+	* Example project Swift 4 compatible
+
 1.5.0 version:
 
 	* Add CLLocationManager virtual positioning and movement
