@@ -10,7 +10,7 @@ import UIKit
 import FWDebug
 import CoreLocation
 
-@objc class SwiftController: UIViewController, CLLocationManagerDelegate {
+@objcMembers class SwiftController: UIViewController, CLLocationManagerDelegate {
     // MARK: - Property
     private struct AssociatedKeys {
         static var object = "ak_object"
