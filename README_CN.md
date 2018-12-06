@@ -56,6 +56,10 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 执行`carthage update`并拷贝`FWDebug.framework`到项目即可。
 
 ## 更新日志
+1.5.2版本：
+
+	* 支持InjectionIII开发调试
+
 1.5.1版本：
 
 	* 同步Vendor最新主干代码
