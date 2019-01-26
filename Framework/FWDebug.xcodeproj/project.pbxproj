@@ -74,7 +74,6 @@
 		2F4E20442122C26A00A565C3 /* FLEXNetworkHistoryTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F4E1F9A2122C26800A565C3 /* FLEXNetworkHistoryTableViewController.m */; };
 		2F4E20452122C26A00A565C3 /* FLEXNetworkTransactionTableViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F4E1F9B2122C26800A565C3 /* FLEXNetworkTransactionTableViewCell.h */; };
 		2F4E20462122C26A00A565C3 /* FLEXNetworkObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F4E1F9D2122C26800A565C3 /* FLEXNetworkObserver.h */; };
-		2F4E20472122C26A00A565C3 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 2F4E1F9E2122C26800A565C3 /* LICENSE */; };
 		2F4E20482122C26A00A565C3 /* FLEXNetworkObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F4E1F9F2122C26800A565C3 /* FLEXNetworkObserver.m */; };
 		2F4E20492122C26A00A565C3 /* FLEX.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F4E1FA02122C26800A565C3 /* FLEX.h */; };
 		2F4E204A2122C26A00A565C3 /* FLEXUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F4E1FA22122C26800A565C3 /* FLEXUtility.m */; };
@@ -116,7 +115,6 @@
 		2F4E206E2122C26A00A565C3 /* FLEXRealmDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F4E1FC92122C26800A565C3 /* FLEXRealmDefines.h */; };
 		2F4E206F2122C26A00A565C3 /* FLEXTableLeftCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F4E1FCA2122C26800A565C3 /* FLEXTableLeftCell.m */; };
 		2F4E20702122C26A00A565C3 /* FLEXRealmDatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F4E1FCB2122C26800A565C3 /* FLEXRealmDatabaseManager.h */; };
-		2F4E20712122C26A00A565C3 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 2F4E1FCC2122C26800A565C3 /* LICENSE */; };
 		2F4E20722122C26A00A565C3 /* FLEXTableContentCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F4E1FCD2122C26800A565C3 /* FLEXTableContentCell.h */; };
 		2F4E20732122C26A00A565C3 /* FLEXTableContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F4E1FCE2122C26800A565C3 /* FLEXTableContentViewController.m */; };
 		2F4E20742122C26A00A565C3 /* FLEXTableListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F4E1FCF2122C26800A565C3 /* FLEXTableListViewController.m */; };
@@ -440,7 +438,6 @@
 		2FA54B071FD5580900FE1CD1 /* FBObjectiveCGraphElement+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AD21FD5580900FE1CD1 /* FBObjectiveCGraphElement+Internal.h */; };
 		2FA54B081FD5580900FE1CD1 /* FBObjectiveCNSCFTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AD41FD5580900FE1CD1 /* FBObjectiveCNSCFTimer.h */; };
 		2FA54B091FD5580900FE1CD1 /* FBObjectiveCNSCFTimer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54AD51FD5580900FE1CD1 /* FBObjectiveCNSCFTimer.mm */; };
-		2FA54B0A1FD5580900FE1CD1 /* Circle-LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 2FA54AD81FD5580900FE1CD1 /* Circle-LICENSE */; };
 		2FA54B0B1FD5580900FE1CD1 /* FBBlockInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AD91FD5580900FE1CD1 /* FBBlockInterface.h */; };
 		2FA54B0C1FD5580900FE1CD1 /* FBBlockStrongLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54ADA1FD5580900FE1CD1 /* FBBlockStrongLayout.h */; };
 		2FA54B0D1FD5580900FE1CD1 /* FBBlockStrongLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54ADB1FD5580900FE1CD1 /* FBBlockStrongLayout.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -2276,9 +2273,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F4E20712122C26A00A565C3 /* LICENSE in Resources */,
-				2F4E20472122C26A00A565C3 /* LICENSE in Resources */,
-				2FA54B0A1FD5580900FE1CD1 /* Circle-LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
