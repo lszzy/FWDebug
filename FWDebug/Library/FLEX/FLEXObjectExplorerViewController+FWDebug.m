@@ -28,9 +28,12 @@
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
-    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(viewDidLoad) with:@selector(fwDebugViewDidLoad)];
-    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(canDrillInToRow:inExplorerSection:) with:@selector(fwDebugCanDrillInToRow:inExplorerSection:)];
-    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(drillInViewControllerForRow:inExplorerSection:) with:@selector(fwDebugDrillInViewControllerForRow:inExplorerSection:)];
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(viewDidLoad) with:@selector(fwDebugViewDidLoad)];
+        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(canDrillInToRow:inExplorerSection:) with:@selector(fwDebugCanDrillInToRow:inExplorerSection:)];
+        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(drillInViewControllerForRow:inExplorerSection:) with:@selector(fwDebugDrillInViewControllerForRow:inExplorerSection:)];
+    });
 #pragma clang diagnostic pop
 }
 

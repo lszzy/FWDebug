@@ -52,10 +52,13 @@ static NSMutableArray *_allLogs;
         return;
     }
     
-    rcd_rebind_symbols((struct rcd_rebinding[2]){
-        {"NSLog", fwDebug_NSLog, (void *)&orig_NSLog},
-        {"NSLogv", fwDebug_NSLogv, (void *)&orig_NSLogv}
-    }, 2);
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        rcd_rebind_symbols((struct rcd_rebinding[2]){
+            {"NSLog", fwDebug_NSLog, (void *)&orig_NSLog},
+            {"NSLogv", fwDebug_NSLogv, (void *)&orig_NSLogv}
+        }, 2);
+    });
 }
 
 + (BOOL)isLogEnabled
