@@ -72,7 +72,10 @@
         });
     } else if ([self.locationManager.delegate respondsToSelector:@selector(locationManager:didUpdateToLocation:fromLocation:)]) {
         dispatch_async(dispatch_get_main_queue(), ^{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             [self.locationManager.delegate locationManager:self.locationManager didUpdateToLocation:location fromLocation:oldLocation];
+#pragma clang diagnostic pop
         });
     }
 }

@@ -22,7 +22,10 @@
 
 + (void)load
 {
-    [FWDebugManager fwDebugSwizzleClass:self method:@selector(bundleForClass:) with:@selector(fwDebugBundleForClass:)];
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [FWDebugManager fwDebugSwizzleClass:self method:@selector(bundleForClass:) with:@selector(fwDebugBundleForClass:)];
+    });
 }
 
 + (NSBundle *)fwDebugBundleForClass:(Class)aClass

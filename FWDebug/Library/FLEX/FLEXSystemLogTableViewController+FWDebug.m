@@ -17,7 +17,10 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
     if ([FWDebugFishhook isLogEnabled]) {
-        [FWDebugManager fwDebugSwizzleClass:self method:@selector(allLogMessagesForCurrentProcess) with:@selector(fwDebugAllLogMessagesForCurrentProcess)];
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            [FWDebugManager fwDebugSwizzleClass:self method:@selector(allLogMessagesForCurrentProcess) with:@selector(fwDebugAllLogMessagesForCurrentProcess)];
+        });
     }
 #pragma clang diagnostic pop
 }

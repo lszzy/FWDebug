@@ -16,12 +16,15 @@
 
 + (void)load
 {
-    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionTitle) with:@selector(fwDebugCustomSectionTitle)];
-    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionRowCookies) with:@selector(fwDebugCustomSectionRowCookies)];
-    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionTitleForRowCookie:) with:@selector(fwDebugCustomSectionTitleForRowCookie:)];
-    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionSubtitleForRowCookie:) with:@selector(fwDebugCustomSectionSubtitleForRowCookie:)];
-    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionCanDrillIntoRowWithCookie:) with:@selector(fwDebugCustomSectionCanDrillIntoRowWithCookie:)];
-    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionDrillInViewControllerForRowCookie:) with:@selector(fwDebugCustomSectionDrillInViewControllerForRowCookie:)];
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionTitle) with:@selector(fwDebugCustomSectionTitle)];
+        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionRowCookies) with:@selector(fwDebugCustomSectionRowCookies)];
+        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionTitleForRowCookie:) with:@selector(fwDebugCustomSectionTitleForRowCookie:)];
+        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionSubtitleForRowCookie:) with:@selector(fwDebugCustomSectionSubtitleForRowCookie:)];
+        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionCanDrillIntoRowWithCookie:) with:@selector(fwDebugCustomSectionCanDrillIntoRowWithCookie:)];
+        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(customSectionDrillInViewControllerForRowCookie:) with:@selector(fwDebugCustomSectionDrillInViewControllerForRowCookie:)];
+    });
 }
 
 #pragma mark - FWDebug

@@ -71,7 +71,7 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
         for (unsigned int i = 0; i < zoneCount; i++) {
             malloc_zone_t *zone = (malloc_zone_t *)zones[i];
             malloc_introspection_t *introspection = zone->introspect;
-            NSString *zoneName = @(zone->zone_name);
+            // NSString *zoneName = @(zone->zone_name);
 
             // FWDebug
             // if (![zoneName isEqualToString:@"DefaultMallocZone"] || !introspection) {

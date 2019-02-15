@@ -16,8 +16,11 @@ static NSString *fwDebugCopyPath = nil;
 
 + (void)load
 {
-    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(tableView:shouldShowMenuForRowAtIndexPath:) with:@selector(fwDebugTableView:shouldShowMenuForRowAtIndexPath:)];
-    [FWDebugManager fwDebugSwizzleInstance:self method:@selector(tableView:canPerformAction:forRowAtIndexPath:withSender:) with:@selector(fwDebugTableView:canPerformAction:forRowAtIndexPath:withSender:)];
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(tableView:shouldShowMenuForRowAtIndexPath:) with:@selector(fwDebugTableView:shouldShowMenuForRowAtIndexPath:)];
+        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(tableView:canPerformAction:forRowAtIndexPath:withSender:) with:@selector(fwDebugTableView:canPerformAction:forRowAtIndexPath:withSender:)];
+    });
 }
 
 #pragma mark - FWDebug
