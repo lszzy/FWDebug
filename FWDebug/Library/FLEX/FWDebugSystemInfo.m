@@ -123,13 +123,17 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];;
     dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
     
+    BOOL lowPowerMode = NO;
+    if (@available(iOS 9.0, *)) {
+        lowPowerMode = [[NSProcessInfo processInfo] isLowPowerModeEnabled];
+    }
     sectionData = @{
                     @"title": @"System",
                     @"rows": @[
                             @{ @"System Version" : [NSString stringWithFormat:@"%@ %@", [UIDevice currentDevice].systemName, [UIDevice currentDevice].systemVersion] },
                             @{ @"System Time" : [dateFormatter stringFromDate:[NSDate date]] },
                             @{ @"Boot Time" : [dateFormatter stringFromDate:[self systemBootDate]] },
-                            @{ @"Low Power Mode" : FWDebugBool([[NSProcessInfo processInfo] isLowPowerModeEnabled]) }
+                            @{ @"Low Power Mode" : FWDebugBool(lowPowerMode) }
                             ]
                     };
     [self.systemInfo addObject:sectionData];

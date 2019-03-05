@@ -541,19 +541,19 @@
     
     annotationView.annotation = annotation;
     if (annotationIndex == 0) {
-        if ([annotationView respondsToSelector:@selector(pinTintColor)]) {
+        if (@available(iOS 9.0, *)) {
             annotationView.pinTintColor = [MKPinAnnotationView purplePinColor];
         } else {
             annotationView.pinColor = MKPinAnnotationColorPurple;
         }
     } else if (annotationIndex == 1) {
-        if ([annotationView respondsToSelector:@selector(pinTintColor)]) {
+        if (@available(iOS 9.0, *)) {
             annotationView.pinTintColor = [MKPinAnnotationView redPinColor];
         } else {
             annotationView.pinColor = MKPinAnnotationColorRed;
         }
     } else {
-        if ([annotationView respondsToSelector:@selector(pinTintColor)]) {
+        if (@available(iOS 9.0, *)) {
             annotationView.pinTintColor = [MKPinAnnotationView greenPinColor];
         } else {
             annotationView.pinColor = MKPinAnnotationColorGreen;
