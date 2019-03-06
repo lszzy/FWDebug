@@ -267,7 +267,7 @@
         NSArray *encodedTypes = d[@"encodedTypes"];
         [encodedTypes enumerateObjectsUsingBlock:^(NSDictionary *encodedTypeDictionary, NSUInteger idx, BOOL *stop) {
             NSString *typeDescription = [self descriptionForTypeDictionary:encodedTypeDictionary];
-            [ms appendFormat:@"%@ x%lu; ", typeDescription, idx+1];
+            [ms appendFormat:@"%@ x%@; ", typeDescription, @(idx+1)];
         }];
         [ms appendString:@"}"];
         return ms;
