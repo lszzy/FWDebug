@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+/*!
+ @discussion 原始：NSString* bundlePath = [[NSBundle bundleForClass:[GCDWebUploader class]] pathForResource:@"GCDWebUploader" ofType:@"bundle"]; 修改：NSString* bundlePath = [[NSBundle bundleWithPath:[FWDebugWebBundle fwDebugBundlePath]] pathForResource:@"GCDWebUploader" ofType:@"bundle"];
+ */
 @interface FWDebugWebServer : UITableViewController
 
 @end
