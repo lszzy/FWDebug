@@ -12,40 +12,6 @@
 #import "FWDebugWebBundle.h"
 #import "FWDebugManager+FWDebug.h"
 
-#pragma mark - NSBundle+FWDebug
-
-@interface NSBundle (FWDebug)
-
-@end
-
-@implementation NSBundle (FWDebug)
-
-+ (void)load
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleClass:self method:@selector(bundleForClass:) with:@selector(fwDebugBundleForClass:)];
-    });
-}
-
-+ (NSBundle *)fwDebugBundleForClass:(Class)aClass
-{
-    NSBundle *bundle = [self fwDebugBundleForClass:aClass];
-    
-    // 处理bundle资源问题
-    if (aClass == [GCDWebUploader class]) {
-        NSBundle *currentBundle = [NSBundle bundleForClass:[FWDebugWebBundle class]];
-        if ([currentBundle.bundlePath isEqualToString:bundle.bundlePath]) {
-            NSString *bundlePath = [FWDebugWebBundle fwDebugBundlePath];
-            return [NSBundle bundleWithPath:bundlePath];
-        }
-    }
-    
-    return bundle;
-}
-
-@end
-
 #pragma mark - FWDebugWebServer
 
 #define FWDebugWebServerPort 8001
