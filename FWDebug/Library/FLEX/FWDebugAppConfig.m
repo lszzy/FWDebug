@@ -35,11 +35,7 @@ static BOOL isAppLocked = NO;
         if ([self isInjectionEnabled]) {
 #if TARGET_OS_SIMULATOR
             // https://itunes.apple.com/cn/app/injectioniii/id1380446739?mt=12
-            if (@available(iOS 10, *)) {
-                [[NSBundle bundleWithPath:@"/Applications/InjectionIII.app/Contents/Resources/iOSInjection10.bundle"] load];
-            } else {
-                [[NSBundle bundleWithPath:@"/Applications/InjectionIII.app/Contents/Resources/iOSInjection.bundle"] load];
-            }
+            [[NSBundle bundleWithPath:@"/Applications/InjectionIII.app/Contents/Resources/iOSInjection.bundle"] load];
 #endif
         }
     }];
