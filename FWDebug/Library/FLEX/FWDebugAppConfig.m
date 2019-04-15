@@ -7,6 +7,7 @@
 //
 
 #import "FWDebugAppConfig.h"
+#import "FWDebugManager+FWDebug.h"
 #import <CommonCrypto/CommonDigest.h>
 
 static BOOL isAppLocked = NO;
@@ -19,26 +20,20 @@ static BOOL isAppLocked = NO;
 
 #pragma mark - Static
 
-+ (void)load
++ (void)fwDebugLaunch
 {
-    static NSObject *appObserver = nil;
-    appObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
-        [[NSNotificationCenter defaultCenter] removeObserver:appObserver];
-        appObserver = nil;
-        
-        if ([self isSecretEnabled]) {
-            if ([UIApplication sharedApplication].keyWindow != nil) {
-                [FWDebugAppConfig secretPrompt];
-            }
+    if ([self isSecretEnabled]) {
+        if ([UIApplication sharedApplication].keyWindow != nil) {
+            [FWDebugAppConfig secretPrompt];
         }
-        
-        if ([self isInjectionEnabled]) {
+    }
+    
+    if ([self isInjectionEnabled]) {
 #if TARGET_OS_SIMULATOR
-            // https://itunes.apple.com/cn/app/injectioniii/id1380446739?mt=12
-            [[NSBundle bundleWithPath:@"/Applications/InjectionIII.app/Contents/Resources/iOSInjection.bundle"] load];
+        // https://itunes.apple.com/cn/app/injectioniii/id1380446739?mt=12
+        [[NSBundle bundleWithPath:@"/Applications/InjectionIII.app/Contents/Resources/iOSInjection.bundle"] load];
 #endif
-        }
-    }];
+    }
 }
 
 + (BOOL)isAppLocked
@@ -63,7 +58,7 @@ static BOOL isAppLocked = NO;
         isAppLocked = YES;
     });
     
-    [FWDebugAppConfig showPrompt:secretWindow.rootViewController security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
+    [FWDebugManager fwDebugShowPrompt:secretWindow.rootViewController security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
         NSString *secret = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugAppSecret"];
         if (confirm && [secret isEqualToString:[FWDebugAppConfig secretMd5:text]]) {
             [secretWindow resignKeyWindow];
@@ -118,33 +113,6 @@ static BOOL isAppLocked = NO;
         [output appendFormat:@"%02x", digest[i]];
     }
     return output;
-}
-
-+ (void)showPrompt:(UIViewController *)viewController security:(BOOL)security title:(NSString *)title message:(NSString *)message text:(NSString *)text block:(void (^)(BOOL confirm, NSString *text))block
-{
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
-    
-    [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.secureTextEntry = security;
-        textField.keyboardType = UIKeyboardTypePhonePad;
-        textField.text = text ?: @"";
-    }];
-    
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-        if (block) {
-            block(NO, [alertController.textFields objectAtIndex:0].text);
-        }
-    }];
-    [alertController addAction:cancelAction];
-    
-    UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        if (block) {
-            block(YES, [alertController.textFields objectAtIndex:0].text);
-        }
-    }];
-    [alertController addAction:alertAction];
-    
-    [viewController presentViewController:alertController animated:YES completion:nil];
 }
 
 #pragma mark - Lifecycle
@@ -281,7 +249,7 @@ static BOOL isAppLocked = NO;
     if (indexPath.section == 0) {
         if (!cellSwitch.on) {
             typeof(self) __weak weakSelf = self;
-            [FWDebugAppConfig showPrompt:self security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
+            [FWDebugManager fwDebugShowPrompt:self security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
                 if (confirm && text.length > 0) {
                     [[NSUserDefaults standardUserDefaults] setObject:[FWDebugAppConfig secretMd5:text] forKey:@"FWDebugAppSecret"];
                     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -291,7 +259,7 @@ static BOOL isAppLocked = NO;
         } else {
             if ([self.class isSecretEnabled]) {
                 typeof(self) __weak weakSelf = self;
-                [FWDebugAppConfig showPrompt:self security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
+                [FWDebugManager fwDebugShowPrompt:self security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
                     NSString *secret = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugAppSecret"];
                     if (confirm && [secret isEqualToString:[FWDebugAppConfig secretMd5:text]]) {
                         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugAppSecret"];
@@ -326,7 +294,7 @@ static BOOL isAppLocked = NO;
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     if (indexPath.section == 2) {
         typeof(self) __weak weakSelf = self;
-        [FWDebugAppConfig showPrompt:self security:NO title:@"Input Value" message:nil text:nil block:^(BOOL confirm, NSString *text) {
+        [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:nil block:^(BOOL confirm, NSString *text) {
             if (confirm && text.length > 0) {
                 NSInteger value = [text integerValue];
                 if (indexPath.row == 0) {

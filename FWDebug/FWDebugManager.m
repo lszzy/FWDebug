@@ -98,6 +98,7 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
 
 - (void)onLaunch:(NSNotification *)notification
 {
+    [FLEXManager fwDebugLaunch];
     [FBRetainCycleDetector fwDebugLaunch];
     [KSCrash fwDebugLaunch];
 }

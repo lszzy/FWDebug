@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F2BB4D02261B98500D022D0 /* FWDebugFakeNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F2BB4CE2261B98500D022D0 /* FWDebugFakeNotification.h */; };
+		2F2BB4D12261B98500D022D0 /* FWDebugFakeNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F2BB4CF2261B98500D022D0 /* FWDebugFakeNotification.m */; };
 		2F2E3DC71E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F2E3DC51E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h */; };
 		2F2E3DC81E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F2E3DC61E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m */; };
 		2F32AD581F0B6A0C004072E5 /* FWDebugAppConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F32AD561F0B6A0C004072E5 /* FWDebugAppConfig.h */; };
@@ -479,6 +481,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2F2BB4CE2261B98500D022D0 /* FWDebugFakeNotification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FWDebugFakeNotification.h; sourceTree = "<group>"; };
+		2F2BB4CF2261B98500D022D0 /* FWDebugFakeNotification.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWDebugFakeNotification.m; sourceTree = "<group>"; };
 		2F2E3DC51E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FLEXSystemLogTableViewController+FWDebug.h"; sourceTree = "<group>"; };
 		2F2E3DC61E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FLEXSystemLogTableViewController+FWDebug.m"; sourceTree = "<group>"; };
 		2F32AD561F0B6A0C004072E5 /* FWDebugAppConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugAppConfig.h; sourceTree = "<group>"; };
@@ -1697,6 +1701,8 @@
 				2F57D0221E65647D0062B632 /* FWDebugSystemInfo.m */,
 				2F32AD561F0B6A0C004072E5 /* FWDebugAppConfig.h */,
 				2F32AD571F0B6A0C004072E5 /* FWDebugAppConfig.m */,
+				2F2BB4CE2261B98500D022D0 /* FWDebugFakeNotification.h */,
+				2F2BB4CF2261B98500D022D0 /* FWDebugFakeNotification.m */,
 				2F57D0251E65665D0062B632 /* FWDebugFpsInfo.h */,
 				2F57D0261E65665D0062B632 /* FWDebugFpsInfo.m */,
 			);
@@ -2002,6 +2008,7 @@
 				2F4E208B2122C26A00A565C3 /* FLEXManager+Private.h in Headers */,
 				2F4E20552122C26A00A565C3 /* FLEXRuntimeUtility.h in Headers */,
 				2F4E20432122C26A00A565C3 /* FLEXNetworkSettingsTableViewController.h in Headers */,
+				2F2BB4D02261B98500D022D0 /* FWDebugFakeNotification.h in Headers */,
 				2FA54B071FD5580900FE1CD1 /* FBObjectiveCGraphElement+Internal.h in Headers */,
 				2F54B9182230BA86008411EF /* NSMutableData+AppendUTF8.h in Headers */,
 				2F4E209E2122C26A00A565C3 /* FLEXViewExplorerViewController.h in Headers */,
@@ -2498,6 +2505,7 @@
 				2F4E208E2122C26A00A565C3 /* FLEXImagePreviewViewController.m in Sources */,
 				2F54B91F2230BA86008411EF /* KSHTTPRequestSender.m in Sources */,
 				2FA54AFA1FD5580900FE1CD1 /* FBRetainCycleDetector.mm in Sources */,
+				2F2BB4D12261B98500D022D0 /* FWDebugFakeNotification.m in Sources */,
 				2F4E20752122C26A00A565C3 /* FLEXTableColumnHeader.m in Sources */,
 				2F54B9A82230BA86008411EF /* Demangle.cpp in Sources */,
 				2F4E20412122C26A00A565C3 /* FLEXNetworkTransactionDetailTableViewController.m in Sources */,

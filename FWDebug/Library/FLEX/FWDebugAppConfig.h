@@ -10,6 +10,8 @@
 
 @interface FWDebugAppConfig : UITableViewController
 
++ (void)fwDebugLaunch;
+
 + (BOOL)isAppLocked;
 
 + (NSInteger)retainCycleDepth;

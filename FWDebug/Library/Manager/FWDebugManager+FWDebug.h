@@ -7,6 +7,7 @@
 //
 
 #import "FWDebugManager.h"
+#import <UIKit/UIKit.h>
 
 /**
  * Vendor修改注释格式如下：
@@ -21,5 +22,7 @@
 + (BOOL)fwDebugSwizzleInstance:(Class)clazz method:(SEL)originalSelector with:(SEL)swizzleSelector;
 
 + (BOOL)fwDebugSwizzleClass:(Class)clazz method:(SEL)originalSelector with:(SEL)swizzleSelector;
+
++ (void)fwDebugShowPrompt:(UIViewController *)viewController security:(BOOL)security title:(NSString *)title message:(NSString *)message text:(NSString *)text block:(void (^)(BOOL confirm, NSString *text))block;
 
 @end

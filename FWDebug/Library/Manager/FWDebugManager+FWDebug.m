@@ -32,4 +32,30 @@
     return [self fwDebugSwizzleInstance:object_getClass((id)clazz) method:originalSelector with:swizzleSelector];
 }
 
++ (void)fwDebugShowPrompt:(UIViewController *)viewController security:(BOOL)security title:(NSString *)title message:(NSString *)message text:(NSString *)text block:(void (^)(BOOL confirm, NSString *text))block
+{
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.secureTextEntry = security;
+        textField.text = text ?: @"";
+    }];
+    
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        if (block) {
+            block(NO, [alertController.textFields objectAtIndex:0].text);
+        }
+    }];
+    [alertController addAction:cancelAction];
+    
+    UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        if (block) {
+            block(YES, [alertController.textFields objectAtIndex:0].text);
+        }
+    }];
+    [alertController addAction:alertAction];
+    
+    [viewController presentViewController:alertController animated:YES completion:nil];
+}
+
 @end
