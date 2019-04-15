@@ -16,15 +16,25 @@
 #import <sys/socket.h>
 #import <unistd.h>
 #import <ifaddrs.h>
+#import "NWHub.h"
+#import "NWLCore.h"
+#import "NWNotification.h"
 #import "NWPusher.h"
+#import "NWSSLConnection.h"
+#import "NWSecTools.h"
+#import "NWPushFeedback.h"
 
-@interface FWDebugFakeNotification ()
+@interface FWDebugFakeNotification () <NWHubDelegate>
 
 @property (nonatomic, copy) NSString *pushCertPath;
 
 @end
 
-@implementation FWDebugFakeNotification
+@implementation FWDebugFakeNotification {
+    NWHub *_hub;
+    NWIdentityRef _identity;
+    NWCertificateRef _certificate;
+}
 
 #pragma mark - Static
 
@@ -632,6 +642,46 @@
         }
         
         NSError *error = nil;
+        NSArray *ids = [NWSecTools identitiesWithPKCS12Data:pkcs12Data password:[self.class pushCertPassword] error:&error];
+        if (!ids) {
+            NSLog(@"FWDebug: Unable to read p12 file: %@", error.localizedDescription);
+            return;
+        }
+        
+        for (NWIdentityRef identity in ids) {
+            NWCertificateRef certificate = [NWSecTools certificateWithIdentity:identity error:&error];
+            if (!certificate) {
+                NSLog(@"FWDebug: Unable to import p12 file: %@", error.localizedDescription);
+                return;
+            }
+            
+            _identity = identity;
+            _certificate = certificate;
+        }
+        
+        if (_hub) {
+            [_hub disconnect];
+            _hub = nil;
+        }
+        
+        NWEnvironment environment = [self.class pushCertEnvironment] ? NWEnvironmentProduction : NWEnvironmentSandbox;
+        NWHub *hub = [NWHub connectWithDelegate:self identity:_identity environment:environment error:&error];
+        if (hub) {
+            NSString *summary = [NWSecTools summaryWithCertificate:_certificate];
+            NSLog(@"FWDebug: Connected to APN: %@ (%@)", summary, ([self.class pushCertEnvironment] ? @"Production" : @"Sandbox"));
+            _hub = hub;
+            
+            NSLog(@"FWDebug: Pushing..");
+            NSUInteger failed = [_hub pushPayload:[self.class pushApnsMessage] token:[self.class pushDeviceToken]];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                NSUInteger failed2 = failed + [_hub readFailed];
+                if (!failed2) NSLog(@"FWDebug: Payload has been pushed");
+            });
+        } else {
+            NSLog(@"FWDebug: Unable to connect: %@", error.localizedDescription);
+        }
+        
+        /*
         NWPusher *pusher = [NWPusher connectWithPKCS12Data:pkcs12Data password:[self.class pushCertPassword] environment:([self.class pushCertEnvironment] ? NWEnvironmentProduction : NWEnvironmentSandbox) error:&error];
         if (!pusher || error) {
             NSLog(@"FWDebug: Unable to connect: %@", error);
@@ -653,7 +703,7 @@
             NSLog(@"FWDebug: Read and none failed");
         } else {
             NSLog(@"FWDebug: Unable to read: %@", error);
-        }
+        }*/
     }
 }
 
