@@ -104,7 +104,7 @@ static NSMutableArray *_allLogs;
         _logFilePath = [logPath stringByAppendingPathComponent:[NSString stringWithFormat:@"NSLog-%@.log", dateString]];
         
         // 文件写队列，串行
-        _logFileQueue = dispatch_queue_create("com.ocphp.FWDebugNSLog", DISPATCH_QUEUE_SERIAL);
+        _logFileQueue = dispatch_queue_create("site.wuyong.FWDebugNSLog", DISPATCH_QUEUE_SERIAL);
         
         // 初始化内存缓存
         _allLogs = [NSMutableArray array];

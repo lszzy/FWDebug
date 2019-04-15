@@ -16,8 +16,11 @@
 #import <sys/socket.h>
 #import <unistd.h>
 #import <ifaddrs.h>
+#import "NWPusher.h"
 
 @interface FWDebugFakeNotification ()
+
+@property (nonatomic, copy) NSString *pushCertPath;
 
 @end
 
@@ -33,7 +36,7 @@
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [self listenForRemoteNotifications];
+        [self startFakeServer];
     });
 }
 
@@ -48,7 +51,34 @@
     return port > 0 ? port : 9930;
 }
 
-+ (void)listenForRemoteNotifications
++ (NSString *)fakeClientIP
+{
+    NSString *clientIP = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFakeNotificationClientIP"];
+    return clientIP ? clientIP : [self getIPAddress];
+}
+
++ (NSInteger)fakeClientPort
+{
+    NSInteger port = [[[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFakeNotificationClientPort"] integerValue];
+    return port > 0 ? port : [self fakeNotificatinPort];
+}
+
++ (NSString *)fakeClientMessage
+{
+    NSString *clientMessage = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFakeNotificationClientMessage"];
+    if (clientMessage) {
+        return clientMessage;
+    } else {
+        return @"{\"alert\":{\"title\":\"title\",\"body\":\"body\"},\"sound\":\"default\"}";
+    }
+}
+
++ (NSString *)fakeClientCommand
+{
+    return [NSString stringWithFormat:@"echo -n '%@' | nc -4u -w1 %@ %@", [self fakeClientMessage], [self fakeClientIP], @([self fakeClientPort])];
+}
+
++ (void)startFakeServer
 {
     static const NSInteger __buffer_length = 512;
     static struct sockaddr_in __si_me, __si_other;
@@ -86,7 +116,7 @@
         if (!dict) {
             NSLog(@"FWDebug: error = %@", error);
         } else if (![dict isKindOfClass:[NSDictionary class]]) {
-            NSLog(@"FWDebug: message error");
+            NSLog(@"FWDebug: message error - %@", string);
         } else {
             BOOL success = NO;
             UIApplication *application = [UIApplication sharedApplication];
@@ -113,11 +143,14 @@
             if (!success) {
                 if ([application.delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
                     [application.delegate application:application didReceiveRemoteNotification:dict fetchCompletionHandler:^(UIBackgroundFetchResult result) {}];
-                } else {
-                    if ([application.delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]) {
-                        [application.delegate application:application didReceiveRemoteNotification:dict];
-                    }
+                    success = YES;
+                } else if ([application.delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]) {
+                    [application.delegate application:application didReceiveRemoteNotification:dict];
+                    success = YES;
                 }
+            }
+            if (!success) {
+                NSLog(@"FWDebug: message failed - %@", string);
             }
         }
     });
@@ -126,6 +159,45 @@
         close(__socket);
     });
     dispatch_resume(input_src);
+}
+
++ (void)pushFakeMessage:(NSString *)payload
+{
+    static const NSInteger __buffer_length = 512;
+    struct sockaddr_in si_other;
+    int s;
+    char buf[__buffer_length];
+    static int __port;
+    
+    NSError *error = nil;
+    NSData *data = [payload dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+    if (!dict || error) {
+        NSLog(@"FWDebug: data error = %@", error);
+        return;
+    }
+    
+    __port = (int)[self fakeClientPort];
+    if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))==-1) {
+        NSLog(@"FWDebug: socket error");
+    }
+    
+    memset((char *) &si_other, 0, sizeof(si_other));
+    si_other.sin_family = AF_INET;
+    si_other.sin_port = htons(__port);
+    const char *host = [[self fakeClientIP] cStringUsingEncoding:NSUTF8StringEncoding];
+    if (inet_aton(host, &si_other.sin_addr)==0) {
+        NSLog(@"FWDebug: inet_aton error");
+    }
+    
+    memset(buf, '\0', __buffer_length);
+    strncpy(buf, [data bytes], MIN(data.length, __buffer_length));
+    
+    if (sendto(s, buf, strnlen(buf, __buffer_length), 0, (struct sockaddr*)&si_other, sizeof(si_other))==-1) {
+        NSLog(@"FWDebug: sendto error");
+    }
+    
+    close(s);
 }
 
 + (NSString *)getIPAddress
@@ -150,6 +222,40 @@
     return result ? result : @"0.0.0.0";
 }
 
++ (NSString *)pushCertName
+{
+    NSString *certName = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFakeNotificationCertName"];
+    return certName ? certName : @"pusher.p12";
+}
+
++ (NSString *)pushCertPassword
+{
+    NSString *certPassword = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFakeNotificationCertPassword"];
+    return certPassword ? certPassword : @"";
+}
+
++ (BOOL)pushCertEnvironment
+{
+    NSNumber *certEnvironment = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFakeNotificationCertEnvironment"];
+    return certEnvironment ? [certEnvironment boolValue] : NO;
+}
+
++ (NSString *)pushDeviceToken
+{
+    NSString *deviceToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFakeNotificationDeviceToken"];
+    return deviceToken ? deviceToken : @"";
+}
+
++ (NSString *)pushApnsMessage
+{
+    NSString *apnsMessage = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFakeNotificationApnsMessage"];
+    if (apnsMessage) {
+        return apnsMessage;
+    } else {
+        return @"{\"alert\":{\"title\":\"title\",\"body\":\"body\"},\"sound\":\"default\"}";
+    }
+}
+
 #pragma mark - Lifecycle
 
 - (instancetype)initWithStyle:(UITableViewStyle)style
@@ -164,53 +270,80 @@
     [super viewDidLoad];
     
     self.title = @"Fake Notification";
+    
+    // 创建推送pkcs12证书目录
+    NSString *pushCertPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+    pushCertPath = [[pushCertPath stringByAppendingPathComponent:@"FWDebug"] stringByAppendingPathComponent:@"PushCert"];
+    _pushCertPath = pushCertPath;
+    if (![[NSFileManager defaultManager] fileExistsAtPath:pushCertPath]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:pushCertPath withIntermediateDirectories:YES attributes:nil error:NULL];
+    }
 }
 
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return 3;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) {
         return 2;
+    } else if (section == 1) {
+        return 5;
     } else {
-        return 2;
+        return 6;
     }
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == 0) {
         return @"Fake Server";
-    } else {
+    } else if (section == 1) {
         return @"Fake Client";
+    } else {
+        return @"APNS Client";
     }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FakeNotificationCell"];
+    NSInteger type = [self cellTypeAtIndexPath:indexPath];
+    NSString *cellId = [NSString stringWithFormat:@"Cell%@", @(type)];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"FakeNotificationCell"];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellId];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.textLabel.font = [UIFont systemFontOfSize:14];
     }
     
-    NSInteger type = [self cellTypeAtIndexPath:indexPath];
     if (type == 0) {
         UISwitch *accessoryView = [[UISwitch alloc] initWithFrame:CGRectZero];
         accessoryView.userInteractionEnabled = NO;
         cell.accessoryView = accessoryView;
         
         [self configSwitch:cell indexPath:indexPath];
-    } else {
-        UILabel *accessoryView = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 30)];
+    } else if (type == 1) {
+        UILabel *accessoryView = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width / 2, 30)];
         accessoryView.font = [UIFont systemFontOfSize:14];
         accessoryView.textColor = [UIColor blackColor];
         accessoryView.textAlignment = NSTextAlignmentRight;
         cell.accessoryView = accessoryView;
         
         [self configLabel:cell indexPath:indexPath];
+    } else if (type == 2) {
+        cell.detailTextLabel.numberOfLines = 0;
+        
+        [self configLabel:cell indexPath:indexPath];
+    } else if (type == 3) {
+        UIButton *accessoryView = [UIButton buttonWithType:UIButtonTypeSystem];
+        accessoryView.frame = CGRectMake(0, 0, 50, 30);
+        accessoryView.titleLabel.font = [UIFont systemFontOfSize:14];
+        accessoryView.titleLabel.textAlignment = NSTextAlignmentRight;
+        [accessoryView addTarget:self action:@selector(actionButton:) forControlEvents:UIControlEventTouchUpInside];
+        [accessoryView setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        cell.accessoryView = accessoryView;
+        
+        [self configButton:cell indexPath:indexPath];
     }
     return cell;
 }
@@ -226,30 +359,28 @@
     }
 }
 
-- (BOOL)tableView:(UITableView *)tableView shouldShowMenuForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return YES;
-}
-
-- (BOOL)tableView:(UITableView *)tableView canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-    BOOL canPerformAction = NO;
-    if (action == @selector(copy:)) {
-        canPerformAction = YES;
-    }
-    return canPerformAction;
-}
-
-- (void)tableView:(UITableView *)tableView performAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-    if (action == @selector(copy:)) {
-        NSString *stringToCopy = @"";
-        
-        [[UIPasteboard generalPasteboard] setString:stringToCopy];
-    }
-}
-
 - (NSInteger)cellTypeAtIndexPath:(NSIndexPath *)indexPath {
     NSInteger type = 0;
-    if (indexPath.section == 0 && indexPath.row == 1) {
-        type = 1;
+    if (indexPath.section == 0) {
+        if (indexPath.row == 1) {
+            type = 1;
+        }
+    } else if (indexPath.section == 1) {
+        if (indexPath.row == 0 || indexPath.row == 1) {
+            type = 1;
+        } else if (indexPath.row == 2 || indexPath.row == 3) {
+            type = 2;
+        } else if (indexPath.row == 4) {
+            type = 3;
+        }
+    } else if (indexPath.section == 2) {
+        if (indexPath.row == 0 || indexPath.row == 1 || indexPath.row == 2) {
+            type = 1;
+        } else if (indexPath.row == 3 || indexPath.row == 4) {
+            type = 2;
+        } else if (indexPath.row == 5) {
+            type = 3;
+        }
     }
     return type;
 }
@@ -277,6 +408,55 @@
             cellLabel.text = [NSString stringWithFormat:@"%@", @([self.class fakeNotificatinPort])];
             cell.detailTextLabel.text = [self.class getIPAddress];
         }
+    } else if (indexPath.section == 1) {
+        if (indexPath.row == 0) {
+            cell.textLabel.text = @"Client IP";
+            cellLabel.text = [self.class fakeClientIP];
+        } else if (indexPath.row == 1) {
+            cell.textLabel.text = @"Client Port";
+            cellLabel.text = [NSString stringWithFormat:@"%@", @([self.class fakeClientPort])];
+        } else if (indexPath.row == 2) {
+            cell.textLabel.text = @"Message";
+            cell.detailTextLabel.text = [self.class fakeClientMessage];
+        } else if (indexPath.row == 3) {
+            cell.textLabel.text = @"Command";
+            cell.detailTextLabel.text = [self.class fakeClientCommand];
+        }
+    } else if (indexPath.section == 2) {
+        if (indexPath.row == 0) {
+            cell.textLabel.text = @"Cert Name";
+            cell.detailTextLabel.text = @"FWDebug/PushCert/";
+            cellLabel.text = [self.class pushCertName];
+        } else if (indexPath.row == 1) {
+            cell.textLabel.text = @"Cert Password";
+            cellLabel.text = [self.class pushCertPassword];
+        } else if (indexPath.row == 2) {
+            cell.textLabel.text = @"Cert Environment";
+            cellLabel.text = [self.class pushCertEnvironment] ? @"Production" : @"Sandbox";
+        } else if (indexPath.row == 3) {
+            cell.textLabel.text = @"Device Token";
+            cell.detailTextLabel.text = [self.class pushDeviceToken];
+        } else if (indexPath.row == 4) {
+            cell.textLabel.text = @"Message";
+            cell.detailTextLabel.text = [self.class pushApnsMessage];
+        }
+    }
+}
+
+- (void)configButton:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
+    UIButton *cellButton = (UIButton *)cell.accessoryView;
+    if (indexPath.section == 1) {
+        if (indexPath.row == 4) {
+            cell.textLabel.text = @"";
+            cellButton.tag = 1;
+            [cellButton setTitle:@"Push" forState:UIControlStateNormal];
+        }
+    } else if (indexPath.section == 2) {
+        if (indexPath.row == 5) {
+            cell.textLabel.text = @"";
+            cellButton.tag = 2;
+            [cellButton setTitle:@"Push" forState:UIControlStateNormal];
+        }
     }
 }
 
@@ -289,6 +469,7 @@
     if (indexPath.section == 0) {
         if (!cellSwitch.on) {
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugFakeNotification"];
+            [self.class fwDebugLaunch];
         } else {
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFakeNotification"];
         }
@@ -302,21 +483,176 @@
     if (indexPath.section == 0) {
         if (indexPath.row == 1) {
             typeof(self) __weak weakSelf = self;
-            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:nil block:^(BOOL confirm, NSString *text) {
-                if (confirm && text.length > 0) {
+            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[NSString stringWithFormat:@"%@", @([self.class fakeNotificatinPort])] block:^(BOOL confirm, NSString *text) {
+                if (confirm) {
                     NSInteger value = [text integerValue];
-                    if (indexPath.row == 1) {
-                        if (value > 0) {
-                            [[NSUserDefaults standardUserDefaults] setObject:@(value) forKey:@"FWDebugFakeNotificationPort"];
-                        } else {
-                            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFakeNotificationPort"];
-                        }
+                    if (value > 0) {
+                        [[NSUserDefaults standardUserDefaults] setObject:@(value) forKey:@"FWDebugFakeNotificationPort"];
+                    } else {
+                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFakeNotificationPort"];
                     }
                     [[NSUserDefaults standardUserDefaults] synchronize];
                 }
                 
                 [weakSelf configLabel:cell indexPath:indexPath];
             }];
+        }
+    } else if (indexPath.section == 1) {
+        if (indexPath.row == 0) {
+            typeof(self) __weak weakSelf = self;
+            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class fakeClientIP] block:^(BOOL confirm, NSString *text) {
+                if (confirm) {
+                    if (text.length > 0) {
+                        [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugFakeNotificationClientIP"];
+                    } else {
+                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFakeNotificationClientIP"];
+                    }
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
+                
+                [weakSelf configLabel:cell indexPath:indexPath];
+            }];
+        } else if (indexPath.row == 1) {
+            typeof(self) __weak weakSelf = self;
+            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[NSString stringWithFormat:@"%@", @([self.class fakeClientPort])] block:^(BOOL confirm, NSString *text) {
+                if (confirm) {
+                    NSInteger value = [text integerValue];
+                    if (value > 0) {
+                        [[NSUserDefaults standardUserDefaults] setObject:@(value) forKey:@"FWDebugFakeNotificationClientPort"];
+                    } else {
+                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFakeNotificationClientPort"];
+                    }
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
+                
+                [weakSelf configLabel:cell indexPath:indexPath];
+            }];
+        } else if (indexPath.row == 2) {
+            typeof(self) __weak weakSelf = self;
+            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class fakeClientMessage] block:^(BOOL confirm, NSString *text) {
+                if (confirm) {
+                    if (text.length > 0) {
+                        [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugFakeNotificationClientMessage"];
+                    } else {
+                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFakeNotificationClientMessage"];
+                    }
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
+                
+                [weakSelf configLabel:cell indexPath:indexPath];
+            }];
+        } else if (indexPath.row == 3) {
+            [[UIPasteboard generalPasteboard] setString:[self.class fakeClientCommand]];
+        }
+    } else if (indexPath.section == 2) {
+        if (indexPath.row == 0) {
+            typeof(self) __weak weakSelf = self;
+            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class pushCertName] block:^(BOOL confirm, NSString *text) {
+                if (confirm) {
+                    if (text.length > 0) {
+                        [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugFakeNotificationCertName"];
+                    } else {
+                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFakeNotificationCertName"];
+                    }
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
+                
+                [weakSelf configLabel:cell indexPath:indexPath];
+            }];
+        } else if (indexPath.row == 1) {
+            typeof(self) __weak weakSelf = self;
+            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class pushCertPassword] block:^(BOOL confirm, NSString *text) {
+                if (confirm) {
+                    if (text.length > 0) {
+                        [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugFakeNotificationCertPassword"];
+                    } else {
+                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFakeNotificationCertPassword"];
+                    }
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
+                
+                [weakSelf configLabel:cell indexPath:indexPath];
+            }];
+        } else if (indexPath.row == 2) {
+            typeof(self) __weak weakSelf = self;
+            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:([self.class pushCertEnvironment] ? @"1" : @"0") block:^(BOOL confirm, NSString *text) {
+                if (confirm) {
+                    if ([text boolValue]) {
+                        [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugFakeNotificationCertEnvironment"];
+                    } else {
+                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFakeNotificationCertEnvironment"];
+                    }
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
+                
+                [weakSelf configLabel:cell indexPath:indexPath];
+            }];
+        } else if (indexPath.row == 3) {
+            typeof(self) __weak weakSelf = self;
+            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class pushDeviceToken] block:^(BOOL confirm, NSString *text) {
+                if (confirm) {
+                    if (text.length > 0) {
+                        [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugFakeNotificationDeviceToken"];
+                    } else {
+                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFakeNotificationDeviceToken"];
+                    }
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
+                
+                [weakSelf configLabel:cell indexPath:indexPath];
+            }];
+        } else if (indexPath.row == 4) {
+            typeof(self) __weak weakSelf = self;
+            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class pushApnsMessage] block:^(BOOL confirm, NSString *text) {
+                if (confirm) {
+                    if (text.length > 0) {
+                        [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugFakeNotificationApnsMessage"];
+                    } else {
+                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFakeNotificationApnsMessage"];
+                    }
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
+                
+                [weakSelf configLabel:cell indexPath:indexPath];
+            }];
+        }
+    }
+}
+
+- (void)actionButton:(UIButton *)button {
+    if (button.tag == 1) {
+        NSString *payload = [self.class fakeClientMessage];
+        [self.class pushFakeMessage:payload];
+    } else if (button.tag == 2) {
+        NSString *pkcs12File = [self.pushCertPath stringByAppendingPathComponent:[self.class pushCertName]];
+        NSData *pkcs12Data = [NSData dataWithContentsOfFile:pkcs12File];
+        if (!pkcs12Data) {
+            NSLog(@"FWDebug: %@ does not exist", [self.class pushCertName]);
+            return;
+        }
+        
+        NSError *error = nil;
+        NWPusher *pusher = [NWPusher connectWithPKCS12Data:pkcs12Data password:[self.class pushCertPassword] environment:([self.class pushCertEnvironment] ? NWEnvironmentProduction : NWEnvironmentSandbox) error:&error];
+        if (!pusher || error) {
+            NSLog(@"FWDebug: Unable to connect: %@", error);
+            return;
+        }
+        
+        BOOL pushed = [pusher pushPayload:[self.class pushApnsMessage] token:[self.class pushDeviceToken] identifier:rand() error:&error];
+        if (!pushed || error) {
+            NSLog(@"FWDebug: Unable to push: %@", error);
+            return;
+        }
+            
+        NSUInteger identifier = 0;
+        NSError *apnError = nil;
+        BOOL read = [pusher readFailedIdentifier:&identifier apnError:&apnError error:&error];
+        if (read && apnError) {
+            NSLog(@"FWDebug: Notification with identifier %i rejected: %@", (int)identifier, apnError);
+        } else if (read) {
+            NSLog(@"FWDebug: Read and none failed");
+        } else {
+            NSLog(@"FWDebug: Unable to read: %@", error);
         }
     }
 }
