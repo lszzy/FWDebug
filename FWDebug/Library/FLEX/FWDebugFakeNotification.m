@@ -26,7 +26,13 @@
 
 @interface UNNotificationResponse ()
 
-+ (instancetype)responseWithNotification:(UNNotification *)notification actionIdentifer:(NSString *)actionIdentifier;
++ (instancetype)responseWithNotification:(UNNotification *)notification actionIdentifier:(NSString *)actionIdentifier;
+
+@end
+
+@interface UNPushNotificationTrigger ()
+
++ (instancetype)triggerWithContentAvailable:(BOOL)available mutableContent:(BOOL)mutable;
 
 @end
 
@@ -176,7 +182,7 @@ static const NSInteger FWDebugBufferLength = 512;
     close(client_socket);
 }
 
-+ (UNNotification *)notificationWithUserInfo:(NSDictionary *)userInfo
++ (UNNotification *)notificationWithUserInfo:(NSDictionary *)userInfo NS_AVAILABLE_IOS(10_0)
 {
     // content
     UNMutableNotificationContent *content = [UNMutableNotificationContent new];
@@ -211,7 +217,12 @@ static const NSInteger FWDebugBufferLength = 512;
     CFStringRef string = CFUUIDCreateString(NULL, uuid);
     CFRelease(uuid);
     NSString *identifier = (__bridge_transfer NSString *)string;
-    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:identifier content:[content copy] trigger:[UNPushNotificationTrigger new]];
+    BOOL contentAvailable = [apsDict[@"content-available"] respondsToSelector:@selector(boolValue)] ? [apsDict[@"content-available"] boolValue] : NO;
+    UNNotificationTrigger *trigger = nil;
+    if ([UNPushNotificationTrigger respondsToSelector:@selector(triggerWithContentAvailable:mutableContent:)]) {
+        trigger = [UNPushNotificationTrigger triggerWithContentAvailable:contentAvailable mutableContent:NO];
+    }
+    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:identifier content:[content copy] trigger:trigger];
     
     // notification
     UNNotification *notification = nil;
@@ -235,8 +246,8 @@ static const NSInteger FWDebugBufferLength = 512;
                         if ((options & UNNotificationPresentationOptionAlert) == UNNotificationPresentationOptionAlert) {
                             if (delegate && [delegate respondsToSelector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]) {
                                 UNNotificationResponse *response = nil;
-                                if ([UNNotificationResponse respondsToSelector:@selector(responseWithNotification:actionIdentifer:)]) {
-                                    response = [UNNotificationResponse responseWithNotification:notification actionIdentifer:UNNotificationDefaultActionIdentifier];
+                                if ([UNNotificationResponse respondsToSelector:@selector(responseWithNotification:actionIdentifier:)]) {
+                                    response = [UNNotificationResponse responseWithNotification:notification actionIdentifier:UNNotificationDefaultActionIdentifier];
                                 }
                                 [delegate userNotificationCenter:[UNUserNotificationCenter currentNotificationCenter] didReceiveNotificationResponse:response withCompletionHandler:^{}];
                             }
@@ -248,8 +259,8 @@ static const NSInteger FWDebugBufferLength = 512;
                 if (delegate && [delegate respondsToSelector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]) {
                     UNNotification *notification = [self notificationWithUserInfo:userInfo];
                     UNNotificationResponse *response = nil;
-                    if ([UNNotificationResponse respondsToSelector:@selector(responseWithNotification:actionIdentifer:)]) {
-                        response = [UNNotificationResponse responseWithNotification:notification actionIdentifer:UNNotificationDefaultActionIdentifier];
+                    if ([UNNotificationResponse respondsToSelector:@selector(responseWithNotification:actionIdentifier:)]) {
+                        response = [UNNotificationResponse responseWithNotification:notification actionIdentifier:UNNotificationDefaultActionIdentifier];
                     }
                     [delegate userNotificationCenter:[UNUserNotificationCenter currentNotificationCenter] didReceiveNotificationResponse:response withCompletionHandler:^{}];
                     handled = YES;
