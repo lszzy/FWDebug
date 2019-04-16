@@ -21,8 +21,6 @@
 		2F22E6282264EF940081B7AC /* NWPusher.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F22E61A2264EF940081B7AC /* NWPusher.h */; };
 		2F22E6292264EF940081B7AC /* NWType.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F22E61B2264EF940081B7AC /* NWType.m */; };
 		2F22E62A2264EF940081B7AC /* NWSSLConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F22E61C2264EF940081B7AC /* NWSSLConnection.h */; };
-		2F22E62D2264F5A00081B7AC /* NWLCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 2F22E62B2264F5A00081B7AC /* NWLCore.c */; };
-		2F22E62E2264F5A00081B7AC /* NWLCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F22E62C2264F5A00081B7AC /* NWLCore.h */; };
 		2F2BB4D02261B98500D022D0 /* FWDebugFakeNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F2BB4CE2261B98500D022D0 /* FWDebugFakeNotification.h */; };
 		2F2BB4D12261B98500D022D0 /* FWDebugFakeNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F2BB4CF2261B98500D022D0 /* FWDebugFakeNotification.m */; };
 		2F2E3DC71E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F2E3DC51E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h */; };
@@ -511,8 +509,6 @@
 		2F22E61A2264EF940081B7AC /* NWPusher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWPusher.h; sourceTree = "<group>"; };
 		2F22E61B2264EF940081B7AC /* NWType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWType.m; sourceTree = "<group>"; };
 		2F22E61C2264EF940081B7AC /* NWSSLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWSSLConnection.h; sourceTree = "<group>"; };
-		2F22E62B2264F5A00081B7AC /* NWLCore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NWLCore.c; sourceTree = "<group>"; };
-		2F22E62C2264F5A00081B7AC /* NWLCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWLCore.h; sourceTree = "<group>"; };
 		2F2BB4CE2261B98500D022D0 /* FWDebugFakeNotification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FWDebugFakeNotification.h; sourceTree = "<group>"; };
 		2F2BB4CF2261B98500D022D0 /* FWDebugFakeNotification.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWDebugFakeNotification.m; sourceTree = "<group>"; };
 		2F2E3DC51E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FLEXSystemLogTableViewController+FWDebug.h"; sourceTree = "<group>"; };
@@ -1010,8 +1006,6 @@
 			children = (
 				2F22E6172264EF940081B7AC /* NWHub.h */,
 				2F22E6112264EF940081B7AC /* NWHub.m */,
-				2F22E62B2264F5A00081B7AC /* NWLCore.c */,
-				2F22E62C2264F5A00081B7AC /* NWLCore.h */,
 				2F22E6102264EF940081B7AC /* NWNotification.h */,
 				2F22E6182264EF940081B7AC /* NWNotification.m */,
 				2F22E61A2264EF940081B7AC /* NWPusher.h */,
@@ -2282,7 +2276,6 @@
 				2F4E20A22122C26A00A565C3 /* FLEXObjectExplorerViewController.h in Headers */,
 				2F54B90D2230BA86008411EF /* KSCrashReportFilterAlert.h in Headers */,
 				2F54B9492230BA86008411EF /* KSString.h in Headers */,
-				2F22E62E2264F5A00081B7AC /* NWLCore.h in Headers */,
 				2F4E20AF2122C26A00A565C3 /* FLEXViewControllerExplorerViewController.h in Headers */,
 				2F4E20602122C26A00A565C3 /* FLEXGlobalsTableViewController.h in Headers */,
 				2F4E20612122C26A00A565C3 /* FLEXLibrariesTableViewController.h in Headers */,
@@ -2575,7 +2568,6 @@
 				2F4E204A2122C26A00A565C3 /* FLEXUtility.m in Sources */,
 				2F4E208E2122C26A00A565C3 /* FLEXImagePreviewViewController.m in Sources */,
 				2F54B91F2230BA86008411EF /* KSHTTPRequestSender.m in Sources */,
-				2F22E62D2264F5A00081B7AC /* NWLCore.c in Sources */,
 				2FA54AFA1FD5580900FE1CD1 /* FBRetainCycleDetector.mm in Sources */,
 				2F2BB4D12261B98500D022D0 /* FWDebugFakeNotification.m in Sources */,
 				2F4E20752122C26A00A565C3 /* FLEXTableColumnHeader.m in Sources */,

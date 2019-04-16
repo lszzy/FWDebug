@@ -16,25 +16,29 @@
 #import <sys/socket.h>
 #import <unistd.h>
 #import <ifaddrs.h>
-#import "NWHub.h"
-#import "NWLCore.h"
-#import "NWNotification.h"
 #import "NWPusher.h"
-#import "NWSSLConnection.h"
-#import "NWSecTools.h"
-#import "NWPushFeedback.h"
 
-@interface FWDebugFakeNotification () <NWHubDelegate>
+@interface UNNotification ()
+
++ (instancetype)notificationWithRequest:(UNNotificationRequest *)request date:(NSDate *)date;
+
+@end
+
+@interface UNNotificationResponse ()
+
++ (instancetype)responseWithNotification:(UNNotification *)notification actionIdentifer:(NSString *)actionIdentifier;
+
+@end
+
+static const NSInteger FWDebugBufferLength = 512;
+
+@interface FWDebugFakeNotification ()
 
 @property (nonatomic, copy) NSString *pushCertPath;
 
 @end
 
-@implementation FWDebugFakeNotification {
-    NWHub *_hub;
-    NWIdentityRef _identity;
-    NWCertificateRef _certificate;
-}
+@implementation FWDebugFakeNotification
 
 #pragma mark - Static
 
@@ -64,7 +68,7 @@
 + (NSString *)fakeClientIP
 {
     NSString *clientIP = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFakeNotificationClientIP"];
-    return clientIP ? clientIP : [self getIPAddress];
+    return clientIP ? clientIP : [self fakeIPAddress];
 }
 
 + (NSInteger)fakeClientPort
@@ -79,7 +83,7 @@
     if (clientMessage) {
         return clientMessage;
     } else {
-        return @"{\"alert\":{\"title\":\"title\",\"body\":\"body\"},\"sound\":\"default\"}";
+        return @"{\"aps\":{\"alert\":{\"title\":\"title\",\"body\":\"body\"},\"badge\":1,\"sound\":\"default\"}}";
     }
 }
 
@@ -90,127 +94,184 @@
 
 + (void)startFakeServer
 {
-    static const NSInteger __buffer_length = 512;
-    static struct sockaddr_in __si_me, __si_other;
-    static int __socket;
-    static int __port;
-    static char __buffer[__buffer_length];
+    static struct sockaddr_in si_server, si_client;
+    static int server_socket, server_port;
+    static char server_buffer[FWDebugBufferLength];
     static dispatch_source_t input_src;
     
-    __port = (int)[self fakeNotificatinPort];
-    if ((__socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
+    server_port = (int)[self fakeNotificatinPort];
+    if ((server_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
         NSLog(@"FWDebug: socket error");
     }
     
-    memset((char *) &__si_me, 0, sizeof(__si_me));
-    __si_me.sin_family = AF_INET;
-    __si_me.sin_port = htons(__port);
-    __si_me.sin_addr.s_addr = htonl(INADDR_ANY);
-    
-    if (bind(__socket, (struct sockaddr*)&__si_me, sizeof(__si_me))==-1) {
-        NSLog(@"FWDebug: bind error");
+    memset((char *)&si_server, 0, sizeof(si_server));
+    si_server.sin_family = AF_INET;
+    si_server.sin_port = htons(server_port);
+    si_server.sin_addr.s_addr = htonl(INADDR_ANY);
+    if (bind(server_socket, (struct sockaddr *)&si_server, sizeof(si_server)) == -1) {
+        NSLog(@"FWDebug: socket bind error");
+    } else {
+        NSLog(@"FWDebug: socket bind on %@:%@", [self.class fakeIPAddress], @(server_port));
     }
-    NSLog(@"FWDebug: listening on %@:%@", [self.class getIPAddress], @(__port));
     
-    input_src = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, __socket, 0, dispatch_get_main_queue());
+    input_src = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, server_socket, 0, dispatch_get_main_queue());
     dispatch_source_set_event_handler(input_src,  ^{
-        socklen_t slen = sizeof(__si_other);
+        socklen_t slen = sizeof(si_client);
         ssize_t size = 0;
-        if ((size = recvfrom(__socket, __buffer, __buffer_length, 0, (struct sockaddr*)&__si_other, &slen))==-1) {
-            NSLog(@"FWDebug: recvfrom error");
+        if ((size = recvfrom(server_socket, server_buffer, FWDebugBufferLength, 0, (struct sockaddr*)&si_client, &slen)) == -1) {
+            NSLog(@"FWDebug: socket recvfrom error");
         }
-        __buffer[size] = '\0';
-        NSString *string = [NSString stringWithUTF8String:__buffer];
+        server_buffer[size] = '\0';
+        NSString *string = [NSString stringWithUTF8String:server_buffer];
         NSError *error = nil;
         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:[string dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
-        if (!dict) {
-            NSLog(@"FWDebug: error = %@", error);
-        } else if (![dict isKindOfClass:[NSDictionary class]]) {
-            NSLog(@"FWDebug: message error - %@", string);
+        if (!dict || ![dict isKindOfClass:[NSDictionary class]]) {
+            NSLog(@"FWDebug: socket decode error - %@", string);
         } else {
-            BOOL success = NO;
-            UIApplication *application = [UIApplication sharedApplication];
-            if (@available(iOS 10.0, *)) {
-                id<UNUserNotificationCenterDelegate> delegate = [UNUserNotificationCenter currentNotificationCenter].delegate;
-                if (delegate) {
-                    if (application.applicationState == UIApplicationStateActive) {
-                        if (delegate && [delegate respondsToSelector:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:)]) {
-                            [delegate userNotificationCenter:[UNUserNotificationCenter currentNotificationCenter] willPresentNotification:nil withCompletionHandler:^(UNNotificationPresentationOptions options) {
-                                
-                            }];
-                            success = YES;
-                        }
-                    } else {
-                        if (delegate && [delegate respondsToSelector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]) {
-                            [delegate userNotificationCenter:[UNUserNotificationCenter currentNotificationCenter] didReceiveNotificationResponse:nil withCompletionHandler:^{
-                                
-                            }];
-                            success = YES;
-                        }
-                    }
-                }
-            }
-            if (!success) {
-                if ([application.delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
-                    [application.delegate application:application didReceiveRemoteNotification:dict fetchCompletionHandler:^(UIBackgroundFetchResult result) {}];
-                    success = YES;
-                } else if ([application.delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]) {
-                    [application.delegate application:application didReceiveRemoteNotification:dict];
-                    success = YES;
-                }
-            }
-            if (!success) {
-                NSLog(@"FWDebug: message failed - %@", string);
+            if ([self isFakeEnabled]) {
+                [self handleFakeNotification:dict];
             }
         }
     });
     dispatch_source_set_cancel_handler(input_src,  ^{
+        close(server_socket);
         NSLog(@"FWDebug: socket closed");
-        close(__socket);
     });
     dispatch_resume(input_src);
 }
 
 + (void)pushFakeMessage:(NSString *)payload
 {
-    static const NSInteger __buffer_length = 512;
-    struct sockaddr_in si_other;
-    int s;
-    char buf[__buffer_length];
-    static int __port;
+    struct sockaddr_in si_client;
+    int client_socket;
+    static int client_port;
+    char client_buffer[FWDebugBufferLength];
     
     NSError *error = nil;
     NSData *data = [payload dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-    if (!dict || error) {
-        NSLog(@"FWDebug: data error = %@", error);
+    if (!dict || ![dict isKindOfClass:[NSDictionary class]]) {
+        NSLog(@"FWDebug: client data error - %@", payload);
         return;
     }
     
-    __port = (int)[self fakeClientPort];
-    if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))==-1) {
-        NSLog(@"FWDebug: socket error");
+    client_port = (int)[self fakeClientPort];
+    if ((client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
+        NSLog(@"FWDebug: client socket error");
     }
     
-    memset((char *) &si_other, 0, sizeof(si_other));
-    si_other.sin_family = AF_INET;
-    si_other.sin_port = htons(__port);
+    memset((char *)&si_client, 0, sizeof(si_client));
+    si_client.sin_family = AF_INET;
+    si_client.sin_port = htons(client_port);
     const char *host = [[self fakeClientIP] cStringUsingEncoding:NSUTF8StringEncoding];
-    if (inet_aton(host, &si_other.sin_addr)==0) {
-        NSLog(@"FWDebug: inet_aton error");
+    if (inet_aton(host, &si_client.sin_addr) == 0) {
+        NSLog(@"FWDebug: client inet_aton error");
     }
     
-    memset(buf, '\0', __buffer_length);
-    strncpy(buf, [data bytes], MIN(data.length, __buffer_length));
-    
-    if (sendto(s, buf, strnlen(buf, __buffer_length), 0, (struct sockaddr*)&si_other, sizeof(si_other))==-1) {
-        NSLog(@"FWDebug: sendto error");
+    memset(client_buffer, '\0', FWDebugBufferLength);
+    strncpy(client_buffer, [data bytes], MIN(data.length, FWDebugBufferLength));
+    if (sendto(client_socket, client_buffer, strnlen(client_buffer, FWDebugBufferLength), 0, (struct sockaddr *)&si_client, sizeof(si_client)) == -1) {
+        NSLog(@"FWDebug: client sendto error");
     }
-    
-    close(s);
+    close(client_socket);
 }
 
-+ (NSString *)getIPAddress
++ (UNNotification *)notificationWithUserInfo:(NSDictionary *)userInfo
+{
+    // content
+    UNMutableNotificationContent *content = [UNMutableNotificationContent new];
+    content.userInfo = userInfo;
+    NSDictionary *apsDict = [userInfo[@"aps"] isKindOfClass:[NSDictionary class]] ? userInfo[@"aps"] : nil;
+    id badgeValue = apsDict[@"badge"];
+    if (badgeValue) {
+        if ([badgeValue isKindOfClass:[NSNumber class]]) {
+            content.badge = badgeValue;
+        } else if ([badgeValue isKindOfClass:[NSString class]]) {
+            content.badge = [NSNumber numberWithInteger:[badgeValue integerValue]];
+        }
+    }
+    NSString *soundName = [apsDict[@"sound"] isKindOfClass:[NSString class]] ? apsDict[@"sound"] : nil;
+    if (soundName.length > 0) {
+        content.sound = [soundName isEqualToString:@"default"] ? [UNNotificationSound defaultSound] : [UNNotificationSound soundNamed:soundName];
+    }
+    content.threadIdentifier = [apsDict[@"thread-id"] isKindOfClass:[NSString class]] ? apsDict[@"thread-id"] : nil;
+    content.categoryIdentifier = [apsDict[@"category"] isKindOfClass:[NSString class]] ? apsDict[@"category"] : nil;
+    NSDictionary *alertDict = [apsDict[@"alert"] isKindOfClass:[NSDictionary class]] ? apsDict[@"alert"] : nil;
+    if ([alertDict[@"title"] isKindOfClass:[NSString class]]) {
+        content.title = alertDict[@"title"];
+    } else if ([apsDict[@"title"] isKindOfClass:[NSString class]]) {
+        content.title = apsDict[@"title"];
+    }
+    content.subtitle = [alertDict[@"subtitle"] isKindOfClass:[NSString class]] ? alertDict[@"subtitle"] : nil;
+    content.body = [alertDict[@"body"] isKindOfClass:[NSString class]] ? alertDict[@"body"] : nil;
+    content.launchImageName = [alertDict[@"launch-image"] isKindOfClass:[NSString class]] ? alertDict[@"launch-image"] : nil;
+    
+    // request
+    CFUUIDRef uuid = CFUUIDCreate(NULL);
+    CFStringRef string = CFUUIDCreateString(NULL, uuid);
+    CFRelease(uuid);
+    NSString *identifier = (__bridge_transfer NSString *)string;
+    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:identifier content:[content copy] trigger:[UNPushNotificationTrigger new]];
+    
+    // notification
+    UNNotification *notification = nil;
+    if ([UNNotification respondsToSelector:@selector(notificationWithRequest:date:)]) {
+        notification = [UNNotification notificationWithRequest:request date:[NSDate date]];
+    }
+    return notification;
+}
+
++ (void)handleFakeNotification:(NSDictionary *)userInfo
+{
+    BOOL handled = NO;
+    UIApplication *application = [UIApplication sharedApplication];
+    if (@available(iOS 10.0, *)) {
+        id<UNUserNotificationCenterDelegate> delegate = [UNUserNotificationCenter currentNotificationCenter].delegate;
+        if (delegate) {
+            if (application.applicationState == UIApplicationStateActive) {
+                if (delegate && [delegate respondsToSelector:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:)]) {
+                    UNNotification *notification = [self notificationWithUserInfo:userInfo];
+                    [delegate userNotificationCenter:[UNUserNotificationCenter currentNotificationCenter] willPresentNotification:notification withCompletionHandler:^(UNNotificationPresentationOptions options) {
+                        if ((options & UNNotificationPresentationOptionAlert) == UNNotificationPresentationOptionAlert) {
+                            if (delegate && [delegate respondsToSelector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]) {
+                                UNNotificationResponse *response = nil;
+                                if ([UNNotificationResponse respondsToSelector:@selector(responseWithNotification:actionIdentifer:)]) {
+                                    response = [UNNotificationResponse responseWithNotification:notification actionIdentifer:UNNotificationDefaultActionIdentifier];
+                                }
+                                [delegate userNotificationCenter:[UNUserNotificationCenter currentNotificationCenter] didReceiveNotificationResponse:response withCompletionHandler:^{}];
+                            }
+                        }
+                    }];
+                    handled = YES;
+                }
+            } else {
+                if (delegate && [delegate respondsToSelector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]) {
+                    UNNotification *notification = [self notificationWithUserInfo:userInfo];
+                    UNNotificationResponse *response = nil;
+                    if ([UNNotificationResponse respondsToSelector:@selector(responseWithNotification:actionIdentifer:)]) {
+                        response = [UNNotificationResponse responseWithNotification:notification actionIdentifer:UNNotificationDefaultActionIdentifier];
+                    }
+                    [delegate userNotificationCenter:[UNUserNotificationCenter currentNotificationCenter] didReceiveNotificationResponse:response withCompletionHandler:^{}];
+                    handled = YES;
+                }
+            }
+        }
+    }
+    if (!handled) {
+        if ([application.delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
+            [application.delegate application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {}];
+            handled = YES;
+        } else if ([application.delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]) {
+            [application.delegate application:application didReceiveRemoteNotification:userInfo];
+            handled = YES;
+        }
+    }
+    if (!handled) {
+        NSLog(@"FWDebug: socket handle failed - %@", userInfo);
+    }
+}
+
++ (NSString *)fakeIPAddress
 {
     struct ifaddrs *interfaces = NULL;
     struct ifaddrs *temp_addr = NULL;
@@ -253,7 +314,13 @@
 + (NSString *)pushDeviceToken
 {
     NSString *deviceToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFakeNotificationDeviceToken"];
-    return deviceToken ? deviceToken : @"";
+    if (deviceToken) {
+        return deviceToken;
+    } else {
+        // 兼容FWFramework
+        deviceToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDeviceToken"];
+        return deviceToken ? deviceToken : @"";
+    }
 }
 
 + (NSString *)pushApnsMessage
@@ -262,7 +329,7 @@
     if (apnsMessage) {
         return apnsMessage;
     } else {
-        return @"{\"alert\":{\"title\":\"title\",\"body\":\"body\"},\"sound\":\"default\"}";
+        return @"{\"aps\":{\"alert\":{\"title\":\"title\",\"body\":\"body\"},\"badge\":1,\"sound\":\"default\"}}";
     }
 }
 
@@ -270,10 +337,7 @@
 
 - (instancetype)initWithStyle:(UITableViewStyle)style
 {
-    self = [super initWithStyle:UITableViewStyleGrouped];
-    if (self) {
-    }
-    return self;
+    return [super initWithStyle:UITableViewStyleGrouped];
 }
 
 - (void)viewDidLoad {
@@ -290,7 +354,7 @@
     }
 }
 
-#pragma mark - Table view data source
+#pragma mark - TableView
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 3;
@@ -348,7 +412,6 @@
         UIButton *accessoryView = [UIButton buttonWithType:UIButtonTypeSystem];
         accessoryView.frame = CGRectMake(0, 0, 50, 30);
         accessoryView.titleLabel.font = [UIFont systemFontOfSize:14];
-        accessoryView.titleLabel.textAlignment = NSTextAlignmentRight;
         [accessoryView addTarget:self action:@selector(actionButton:) forControlEvents:UIControlEventTouchUpInside];
         [accessoryView setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         cell.accessoryView = accessoryView;
@@ -416,7 +479,7 @@
         if (indexPath.row == 1) {
             cell.textLabel.text = @"Server Port";
             cellLabel.text = [NSString stringWithFormat:@"%@", @([self.class fakeNotificatinPort])];
-            cell.detailTextLabel.text = [self.class getIPAddress];
+            cell.detailTextLabel.text = [self.class fakeIPAddress];
         }
     } else if (indexPath.section == 1) {
         if (indexPath.row == 0) {
@@ -475,7 +538,6 @@
 - (void)actionSwitch:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     UISwitch *cellSwitch = (UISwitch *)cell.accessoryView;
-    
     if (indexPath.section == 0) {
         if (!cellSwitch.on) {
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugFakeNotification"];
@@ -489,10 +551,10 @@
 }
 
 - (void)actionLabel:(NSIndexPath *)indexPath {
+    typeof(self) __weak weakSelf = self;
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     if (indexPath.section == 0) {
         if (indexPath.row == 1) {
-            typeof(self) __weak weakSelf = self;
             [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[NSString stringWithFormat:@"%@", @([self.class fakeNotificatinPort])] block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     NSInteger value = [text integerValue];
@@ -509,7 +571,6 @@
         }
     } else if (indexPath.section == 1) {
         if (indexPath.row == 0) {
-            typeof(self) __weak weakSelf = self;
             [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class fakeClientIP] block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     if (text.length > 0) {
@@ -523,7 +584,6 @@
                 [weakSelf configLabel:cell indexPath:indexPath];
             }];
         } else if (indexPath.row == 1) {
-            typeof(self) __weak weakSelf = self;
             [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[NSString stringWithFormat:@"%@", @([self.class fakeClientPort])] block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     NSInteger value = [text integerValue];
@@ -538,7 +598,6 @@
                 [weakSelf configLabel:cell indexPath:indexPath];
             }];
         } else if (indexPath.row == 2) {
-            typeof(self) __weak weakSelf = self;
             [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class fakeClientMessage] block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     if (text.length > 0) {
@@ -556,7 +615,6 @@
         }
     } else if (indexPath.section == 2) {
         if (indexPath.row == 0) {
-            typeof(self) __weak weakSelf = self;
             [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class pushCertName] block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     if (text.length > 0) {
@@ -570,7 +628,6 @@
                 [weakSelf configLabel:cell indexPath:indexPath];
             }];
         } else if (indexPath.row == 1) {
-            typeof(self) __weak weakSelf = self;
             [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class pushCertPassword] block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     if (text.length > 0) {
@@ -584,7 +641,6 @@
                 [weakSelf configLabel:cell indexPath:indexPath];
             }];
         } else if (indexPath.row == 2) {
-            typeof(self) __weak weakSelf = self;
             [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:([self.class pushCertEnvironment] ? @"1" : @"0") block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     if ([text boolValue]) {
@@ -598,7 +654,6 @@
                 [weakSelf configLabel:cell indexPath:indexPath];
             }];
         } else if (indexPath.row == 3) {
-            typeof(self) __weak weakSelf = self;
             [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class pushDeviceToken] block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     if (text.length > 0) {
@@ -612,7 +667,6 @@
                 [weakSelf configLabel:cell indexPath:indexPath];
             }];
         } else if (indexPath.row == 4) {
-            typeof(self) __weak weakSelf = self;
             [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class pushApnsMessage] block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     if (text.length > 0) {
@@ -631,8 +685,7 @@
 
 - (void)actionButton:(UIButton *)button {
     if (button.tag == 1) {
-        NSString *payload = [self.class fakeClientMessage];
-        [self.class pushFakeMessage:payload];
+        [self.class pushFakeMessage:[self.class fakeClientMessage]];
     } else if (button.tag == 2) {
         NSString *pkcs12File = [self.pushCertPath stringByAppendingPathComponent:[self.class pushCertName]];
         NSData *pkcs12Data = [NSData dataWithContentsOfFile:pkcs12File];
@@ -642,68 +695,28 @@
         }
         
         NSError *error = nil;
-        NSArray *ids = [NWSecTools identitiesWithPKCS12Data:pkcs12Data password:[self.class pushCertPassword] error:&error];
-        if (!ids) {
-            NSLog(@"FWDebug: Unable to read p12 file: %@", error.localizedDescription);
-            return;
-        }
-        
-        for (NWIdentityRef identity in ids) {
-            NWCertificateRef certificate = [NWSecTools certificateWithIdentity:identity error:&error];
-            if (!certificate) {
-                NSLog(@"FWDebug: Unable to import p12 file: %@", error.localizedDescription);
-                return;
-            }
-            
-            _identity = identity;
-            _certificate = certificate;
-        }
-        
-        if (_hub) {
-            [_hub disconnect];
-            _hub = nil;
-        }
-        
-        NWEnvironment environment = [self.class pushCertEnvironment] ? NWEnvironmentProduction : NWEnvironmentSandbox;
-        NWHub *hub = [NWHub connectWithDelegate:self identity:_identity environment:environment error:&error];
-        if (hub) {
-            NSString *summary = [NWSecTools summaryWithCertificate:_certificate];
-            NSLog(@"FWDebug: Connected to APN: %@ (%@)", summary, ([self.class pushCertEnvironment] ? @"Production" : @"Sandbox"));
-            _hub = hub;
-            
-            NSLog(@"FWDebug: Pushing..");
-            NSUInteger failed = [_hub pushPayload:[self.class pushApnsMessage] token:[self.class pushDeviceToken]];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                NSUInteger failed2 = failed + [_hub readFailed];
-                if (!failed2) NSLog(@"FWDebug: Payload has been pushed");
-            });
-        } else {
-            NSLog(@"FWDebug: Unable to connect: %@", error.localizedDescription);
-        }
-        
-        /*
         NWPusher *pusher = [NWPusher connectWithPKCS12Data:pkcs12Data password:[self.class pushCertPassword] environment:([self.class pushCertEnvironment] ? NWEnvironmentProduction : NWEnvironmentSandbox) error:&error];
         if (!pusher || error) {
-            NSLog(@"FWDebug: Unable to connect: %@", error);
+            NSLog(@"FWDebug: unable to connect - %@", error);
             return;
         }
         
-        BOOL pushed = [pusher pushPayload:[self.class pushApnsMessage] token:[self.class pushDeviceToken] identifier:rand() error:&error];
+        NSUInteger identifier = 0;
+        BOOL pushed = [pusher pushPayload:[self.class pushApnsMessage] token:[self.class pushDeviceToken] identifier:identifier error:&error];
         if (!pushed || error) {
-            NSLog(@"FWDebug: Unable to push: %@", error);
+            NSLog(@"FWDebug: unable to push: %@", error);
             return;
         }
-            
-        NSUInteger identifier = 0;
+        
         NSError *apnError = nil;
-        BOOL read = [pusher readFailedIdentifier:&identifier apnError:&apnError error:&error];
-        if (read && apnError) {
-            NSLog(@"FWDebug: Notification with identifier %i rejected: %@", (int)identifier, apnError);
-        } else if (read) {
-            NSLog(@"FWDebug: Read and none failed");
+        BOOL readed = [pusher readFailedIdentifier:&identifier apnError:&apnError error:&error];
+        if (readed && apnError) {
+            NSLog(@"FWDebug: push rejected %i - %@", (int)identifier, apnError);
+        } else if (readed) {
+            NSLog(@"FWDebug: push success");
         } else {
-            NSLog(@"FWDebug: Unable to read: %@", error);
-        }*/
+            NSLog(@"FWDebug: unable to read - %@", error);
+        }
     }
 }
 

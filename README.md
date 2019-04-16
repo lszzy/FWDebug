@@ -56,6 +56,11 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+Version 1.6.0:
+
+	* Added simulator virtual remote push send and receive function
+	* Added APNs remote push sending function
+
 1.5.3 version:
 
 	* Sync Vendor latest trunk code
