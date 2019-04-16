@@ -138,6 +138,7 @@ This debug library uses a third-party library, thanks to all third-party library
 * [KSCrash](https://github.com/kstenerud/KSCrash)
 * [fishhook](https://github.com/facebook/fishhook)
 * [FBRetainCycleDetector](https://github.com/facebook/FBRetainCycleDetector)
+* [NWPusher](https://github.com/noodlewerk/NWPusher)
 
 ## Support
 [wuyong.site](http://www.wuyong.site)

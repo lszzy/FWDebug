@@ -138,6 +138,7 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 * [KSCrash](https://github.com/kstenerud/KSCrash)
 * [fishhook](https://github.com/facebook/fishhook)
 * [FBRetainCycleDetector](https://github.com/facebook/FBRetainCycleDetector)
+* [NWPusher](https://github.com/noodlewerk/NWPusher)
 
 ## 官方网站
 [大勇的网站](http://www.wuyong.site)
