@@ -245,33 +245,6 @@
     return locationTime.length > 0 ? [locationTime integerValue] : 0;
 }
 
-+ (void)showPrompt:(UIViewController *)viewController title:(NSString *)title message:(NSString *)message text:(NSString *)text block:(void (^)(BOOL confirm, NSString *text))block
-{
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
-    
-    [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.secureTextEntry = NO;
-        textField.keyboardType = UIKeyboardTypePhonePad;
-        textField.text = text ?: @"";
-    }];
-    
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-        if (block) {
-            block(NO, [alertController.textFields objectAtIndex:0].text);
-        }
-    }];
-    [alertController addAction:cancelAction];
-    
-    UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        if (block) {
-            block(YES, [alertController.textFields objectAtIndex:0].text);
-        }
-    }];
-    [alertController addAction:alertAction];
-    
-    [viewController presentViewController:alertController animated:YES completion:nil];
-}
-
 #pragma mark - Lifecycle
 
 - (instancetype)initWithStyle:(UITableViewStyle)style
@@ -480,7 +453,7 @@
     
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     typeof(self) __weak weakSelf = self;
-    [FWDebugFakeLocation showPrompt:self title:(indexPath.row > 1 ? @"Input Value" : @"Input Location") message:nil text:text block:^(BOOL confirm, NSString *text) {
+    [FWDebugManager fwDebugShowPrompt:self security:NO title:(indexPath.row > 1 ? @"Input Value" : @"Input Location") message:nil text:text block:^(BOOL confirm, NSString *text) {
         if (confirm) {
             if (indexPath.row == 0) {
                 [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugFakeLocationCurrent"];

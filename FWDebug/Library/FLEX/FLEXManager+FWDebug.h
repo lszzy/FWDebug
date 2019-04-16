@@ -13,4 +13,6 @@
 
 + (void)fwDebugLoad;
 
++ (void)fwDebugLaunch;
+
 @end

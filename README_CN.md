@@ -56,6 +56,11 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 执行`carthage update`并拷贝`FWDebug.framework`到项目即可。
 
 ## 更新日志
+1.6.0版本：
+
+	* 增加模拟器虚拟远程推送发送和接收功能
+	* 增加APNs远程推送发送功能
+
 1.5.3版本：
 
 	* 同步Vendor最新主干代码
@@ -133,6 +138,7 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 * [KSCrash](https://github.com/kstenerud/KSCrash)
 * [fishhook](https://github.com/facebook/fishhook)
 * [FBRetainCycleDetector](https://github.com/facebook/FBRetainCycleDetector)
+* [NWPusher](https://github.com/noodlewerk/NWPusher)
 
 ## 官方网站
 [大勇的网站](http://www.wuyong.site)

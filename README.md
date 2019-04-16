@@ -56,6 +56,11 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+Version 1.6.0:
+
+	* Added simulator virtual remote push send and receive function
+	* Added APNs remote push sending function
+
 1.5.3 version:
 
 	* Sync Vendor latest trunk code
@@ -133,6 +138,7 @@ This debug library uses a third-party library, thanks to all third-party library
 * [KSCrash](https://github.com/kstenerud/KSCrash)
 * [fishhook](https://github.com/facebook/fishhook)
 * [FBRetainCycleDetector](https://github.com/facebook/FBRetainCycleDetector)
+* [NWPusher](https://github.com/noodlewerk/NWPusher)
 
 ## Support
 [wuyong.site](http://www.wuyong.site)

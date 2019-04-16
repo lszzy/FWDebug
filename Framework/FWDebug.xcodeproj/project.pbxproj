@@ -7,6 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F22E61D2264EF940081B7AC /* NWSecTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F22E60F2264EF940081B7AC /* NWSecTools.m */; };
+		2F22E61E2264EF940081B7AC /* NWNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F22E6102264EF940081B7AC /* NWNotification.h */; };
+		2F22E61F2264EF940081B7AC /* NWHub.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F22E6112264EF940081B7AC /* NWHub.m */; };
+		2F22E6202264EF940081B7AC /* NWPushFeedback.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F22E6122264EF940081B7AC /* NWPushFeedback.m */; };
+		2F22E6212264EF940081B7AC /* NWPusher.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F22E6132264EF940081B7AC /* NWPusher.m */; };
+		2F22E6222264EF940081B7AC /* NWSSLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F22E6142264EF940081B7AC /* NWSSLConnection.m */; };
+		2F22E6232264EF940081B7AC /* NWType.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F22E6152264EF940081B7AC /* NWType.h */; };
+		2F22E6242264EF940081B7AC /* NWPushFeedback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F22E6162264EF940081B7AC /* NWPushFeedback.h */; };
+		2F22E6252264EF940081B7AC /* NWHub.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F22E6172264EF940081B7AC /* NWHub.h */; };
+		2F22E6262264EF940081B7AC /* NWNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F22E6182264EF940081B7AC /* NWNotification.m */; };
+		2F22E6272264EF940081B7AC /* NWSecTools.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F22E6192264EF940081B7AC /* NWSecTools.h */; };
+		2F22E6282264EF940081B7AC /* NWPusher.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F22E61A2264EF940081B7AC /* NWPusher.h */; };
+		2F22E6292264EF940081B7AC /* NWType.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F22E61B2264EF940081B7AC /* NWType.m */; };
+		2F22E62A2264EF940081B7AC /* NWSSLConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F22E61C2264EF940081B7AC /* NWSSLConnection.h */; };
+		2F2BB4D02261B98500D022D0 /* FWDebugFakeNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F2BB4CE2261B98500D022D0 /* FWDebugFakeNotification.h */; };
+		2F2BB4D12261B98500D022D0 /* FWDebugFakeNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F2BB4CF2261B98500D022D0 /* FWDebugFakeNotification.m */; };
 		2F2E3DC71E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F2E3DC51E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h */; };
 		2F2E3DC81E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F2E3DC61E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m */; };
 		2F32AD581F0B6A0C004072E5 /* FWDebugAppConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F32AD561F0B6A0C004072E5 /* FWDebugAppConfig.h */; };
@@ -479,6 +495,22 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2F22E60F2264EF940081B7AC /* NWSecTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWSecTools.m; sourceTree = "<group>"; };
+		2F22E6102264EF940081B7AC /* NWNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWNotification.h; sourceTree = "<group>"; };
+		2F22E6112264EF940081B7AC /* NWHub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWHub.m; sourceTree = "<group>"; };
+		2F22E6122264EF940081B7AC /* NWPushFeedback.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWPushFeedback.m; sourceTree = "<group>"; };
+		2F22E6132264EF940081B7AC /* NWPusher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWPusher.m; sourceTree = "<group>"; };
+		2F22E6142264EF940081B7AC /* NWSSLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWSSLConnection.m; sourceTree = "<group>"; };
+		2F22E6152264EF940081B7AC /* NWType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWType.h; sourceTree = "<group>"; };
+		2F22E6162264EF940081B7AC /* NWPushFeedback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWPushFeedback.h; sourceTree = "<group>"; };
+		2F22E6172264EF940081B7AC /* NWHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWHub.h; sourceTree = "<group>"; };
+		2F22E6182264EF940081B7AC /* NWNotification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWNotification.m; sourceTree = "<group>"; };
+		2F22E6192264EF940081B7AC /* NWSecTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWSecTools.h; sourceTree = "<group>"; };
+		2F22E61A2264EF940081B7AC /* NWPusher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWPusher.h; sourceTree = "<group>"; };
+		2F22E61B2264EF940081B7AC /* NWType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWType.m; sourceTree = "<group>"; };
+		2F22E61C2264EF940081B7AC /* NWSSLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWSSLConnection.h; sourceTree = "<group>"; };
+		2F2BB4CE2261B98500D022D0 /* FWDebugFakeNotification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FWDebugFakeNotification.h; sourceTree = "<group>"; };
+		2F2BB4CF2261B98500D022D0 /* FWDebugFakeNotification.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWDebugFakeNotification.m; sourceTree = "<group>"; };
 		2F2E3DC51E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FLEXSystemLogTableViewController+FWDebug.h"; sourceTree = "<group>"; };
 		2F2E3DC61E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FLEXSystemLogTableViewController+FWDebug.m"; sourceTree = "<group>"; };
 		2F32AD561F0B6A0C004072E5 /* FWDebugAppConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugAppConfig.h; sourceTree = "<group>"; };
@@ -969,6 +1001,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2F22E60E2264EF940081B7AC /* NWPusher */ = {
+			isa = PBXGroup;
+			children = (
+				2F22E6172264EF940081B7AC /* NWHub.h */,
+				2F22E6112264EF940081B7AC /* NWHub.m */,
+				2F22E6102264EF940081B7AC /* NWNotification.h */,
+				2F22E6182264EF940081B7AC /* NWNotification.m */,
+				2F22E61A2264EF940081B7AC /* NWPusher.h */,
+				2F22E6132264EF940081B7AC /* NWPusher.m */,
+				2F22E6162264EF940081B7AC /* NWPushFeedback.h */,
+				2F22E6122264EF940081B7AC /* NWPushFeedback.m */,
+				2F22E6192264EF940081B7AC /* NWSecTools.h */,
+				2F22E60F2264EF940081B7AC /* NWSecTools.m */,
+				2F22E61C2264EF940081B7AC /* NWSSLConnection.h */,
+				2F22E6142264EF940081B7AC /* NWSSLConnection.m */,
+				2F22E6152264EF940081B7AC /* NWType.h */,
+				2F22E61B2264EF940081B7AC /* NWType.m */,
+			);
+			path = NWPusher;
+			sourceTree = "<group>";
+		};
 		2F416FC11E63303B00DC5AD4 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
@@ -977,6 +1030,7 @@
 				2F416FC21E63303B00DC5AD4 /* FLEX */,
 				2F41706C1E63303B00DC5AD4 /* GCDWebServer */,
 				2F54B8452230BA86008411EF /* KSCrash */,
+				2F22E60E2264EF940081B7AC /* NWPusher */,
 				2F4171511E63303B00DC5AD4 /* RuntimeBrowser */,
 			);
 			path = Vendor;
@@ -1697,6 +1751,8 @@
 				2F57D0221E65647D0062B632 /* FWDebugSystemInfo.m */,
 				2F32AD561F0B6A0C004072E5 /* FWDebugAppConfig.h */,
 				2F32AD571F0B6A0C004072E5 /* FWDebugAppConfig.m */,
+				2F2BB4CE2261B98500D022D0 /* FWDebugFakeNotification.h */,
+				2F2BB4CF2261B98500D022D0 /* FWDebugFakeNotification.m */,
 				2F57D0251E65665D0062B632 /* FWDebugFpsInfo.h */,
 				2F57D0261E65665D0062B632 /* FWDebugFpsInfo.m */,
 			);
@@ -1988,6 +2044,7 @@
 				2F54B9942230BA86008411EF /* AlignOf.h in Headers */,
 				2F54B97A2230BA86008411EF /* KSStackCursor.h in Headers */,
 				2FA54B051FD5580900FE1CD1 /* FBObjectiveCObject.h in Headers */,
+				2F22E6252264EF940081B7AC /* NWHub.h in Headers */,
 				2F4E20692122C26A00A565C3 /* FLEXSystemLogTableViewCell.h in Headers */,
 				2F54B9222230BA86008411EF /* KSReachabilityKSCrash.h in Headers */,
 				2F54B9832230BA86008411EF /* KSSystemCapabilities.h in Headers */,
@@ -2002,6 +2059,7 @@
 				2F4E208B2122C26A00A565C3 /* FLEXManager+Private.h in Headers */,
 				2F4E20552122C26A00A565C3 /* FLEXRuntimeUtility.h in Headers */,
 				2F4E20432122C26A00A565C3 /* FLEXNetworkSettingsTableViewController.h in Headers */,
+				2F2BB4D02261B98500D022D0 /* FWDebugFakeNotification.h in Headers */,
 				2FA54B071FD5580900FE1CD1 /* FBObjectiveCGraphElement+Internal.h in Headers */,
 				2F54B9182230BA86008411EF /* NSMutableData+AppendUTF8.h in Headers */,
 				2F4E209E2122C26A00A565C3 /* FLEXViewExplorerViewController.h in Headers */,
@@ -2025,6 +2083,7 @@
 				2F57CFFE1E6535450062B632 /* FLEXExplorerToolbar+FWDebug.h in Headers */,
 				2F54B9A42230BA86008411EF /* KSCrashInstallationVictory.h in Headers */,
 				2F54B9262230BA86008411EF /* KSCrashReportSinkVictory.h in Headers */,
+				2F22E6232264EF940081B7AC /* NWType.h in Headers */,
 				2F4E20C72122C26A00A565C3 /* FLEXArgumentInputView.h in Headers */,
 				2F54B95A2230BA86008411EF /* KSID.h in Headers */,
 				2F54B96D2230BA86008411EF /* NSError+SimpleConstructor.h in Headers */,
@@ -2070,11 +2129,13 @@
 				2F4E20CB2122C26A00A565C3 /* FLEXArgumentInputJSONObjectView.h in Headers */,
 				2F54B9242230BA86008411EF /* KSCrashReportSinkStandard.h in Headers */,
 				2F4E207C2122C26A00A565C3 /* FLEXTableContentViewController.h in Headers */,
+				2F22E61E2264EF940081B7AC /* NWNotification.h in Headers */,
 				2F54B9572230BA86008411EF /* KSDemangle_Swift.h in Headers */,
 				2F54B97D2230BA86008411EF /* KSDynamicLinker.h in Headers */,
 				2F54B9882230BA86008411EF /* KSCrash.h in Headers */,
 				2F4E20CF2122C26A00A565C3 /* FLEXArgumentInputDateView.h in Headers */,
 				2F54B9782230BA86008411EF /* KSJSONCodecObjC.h in Headers */,
+				2F22E6272264EF940081B7AC /* NWSecTools.h in Headers */,
 				2F4E20C92122C26A00A565C3 /* FLEXArgumentInputStringView.h in Headers */,
 				2F54B9172230BA86008411EF /* KSHTTPRequestSender.h in Headers */,
 				2F54B9A52230BA86008411EF /* KSCrashInstallation+Private.h in Headers */,
@@ -2089,6 +2150,7 @@
 				2F4172001E63303B00DC5AD4 /* GCDWebServerConnection.h in Headers */,
 				2F4E208F2122C26A00A565C3 /* FLEXHierarchyTableViewController.h in Headers */,
 				2F54B9032230BA86008411EF /* KSCrashReportFilterAppleFmt.h in Headers */,
+				2F22E6242264EF940081B7AC /* NWPushFeedback.h in Headers */,
 				2F54B94D2230BA86008411EF /* KSCPU_Apple.h in Headers */,
 				2F4E206B2122C26A00A565C3 /* FLEXSystemLogTableViewController.h in Headers */,
 				2F4172141E63303B00DC5AD4 /* GCDWebServerErrorResponse.h in Headers */,
@@ -2114,6 +2176,7 @@
 				2F54B9A72230BA86008411EF /* SwiftStrings.h in Headers */,
 				2F54B93A2230BA86008411EF /* KSCrashMonitor_User.h in Headers */,
 				2F41720E1E63303B00DC5AD4 /* GCDWebServerMultiPartFormRequest.h in Headers */,
+				2F22E62A2264EF940081B7AC /* NWSSLConnection.h in Headers */,
 				2F4E204C2122C26A00A565C3 /* FLEXResources.h in Headers */,
 				2F4E20A92122C26A00A565C3 /* FLEXArrayExplorerViewController.h in Headers */,
 				2F54B9402230BA86008411EF /* KSCrashMonitor_MachException.h in Headers */,
@@ -2151,6 +2214,7 @@
 				2FA54B101FD5580900FE1CD1 /* FBClassStrongLayout.h in Headers */,
 				2F4E209B2122C26A00A565C3 /* FLEXSetExplorerViewController.h in Headers */,
 				2F54B93C2230BA86008411EF /* KSCrashMonitor_Deadlock.h in Headers */,
+				2F22E6282264EF940081B7AC /* NWPusher.h in Headers */,
 				2F4E20512122C26A00A565C3 /* FLEXHeapEnumerator.h in Headers */,
 				2F4E20722122C26A00A565C3 /* FLEXTableContentCell.h in Headers */,
 				2F4172101E63303B00DC5AD4 /* GCDWebServerURLEncodedFormRequest.h in Headers */,
@@ -2357,6 +2421,7 @@
 				2F4E20B92122C26A00A565C3 /* FLEXArgumentInputStringView.m in Sources */,
 				2F4E20BA2122C26A00A565C3 /* FLEXArgumentInputColorView.m in Sources */,
 				2F54B9872230BA86008411EF /* KSCrashReport.c in Sources */,
+				2F22E6212264EF940081B7AC /* NWPusher.m in Sources */,
 				2F54B9412230BA86008411EF /* KSCrashMonitor_User.c in Sources */,
 				2F57CFFF1E6535450062B632 /* FLEXExplorerToolbar+FWDebug.m in Sources */,
 				2FA54B021FD5580900FE1CD1 /* FBObjectiveCBlock.m in Sources */,
@@ -2388,6 +2453,7 @@
 				2FA54B131FD5580900FE1CD1 /* FBClassStrongLayoutHelpers.m in Sources */,
 				2FA54B1F1FD5580900FE1CD1 /* fishhook.c in Sources */,
 				2F4E20392122C26A00A565C3 /* FLEXNetworkTransaction.m in Sources */,
+				2F22E6262264EF940081B7AC /* NWNotification.m in Sources */,
 				2F4E206A2122C26A00A565C3 /* FLEXSystemLogMessage.m in Sources */,
 				2F4E209D2122C26A00A565C3 /* FLEXImageExplorerViewController.m in Sources */,
 				2F54B90C2230BA86008411EF /* KSCrashReportFilterJSON.m in Sources */,
@@ -2413,6 +2479,7 @@
 				2F54B97B2230BA86008411EF /* KSStackCursor_Backtrace.c in Sources */,
 				2F3C78721E62BADF0015206A /* FWDebugManager.m in Sources */,
 				2F54B9672230BA86008411EF /* KSDemangle_CPP.cpp in Sources */,
+				2F22E61D2264EF940081B7AC /* NWSecTools.m in Sources */,
 				2F54B92A2230BA86008411EF /* KSCrashReportSinkStandard.m in Sources */,
 				2F54B9702230BA86008411EF /* KSCPU.c in Sources */,
 				2FA54B161FD5580900FE1CD1 /* FBStructEncodingParser.mm in Sources */,
@@ -2451,6 +2518,7 @@
 				2F4172D51E63303B00DC5AD4 /* RTBTypeDecoder.m in Sources */,
 				2F4E20BE2122C26A00A565C3 /* FLEXArgumentInputJSONObjectView.m in Sources */,
 				2F4172D31E63303B00DC5AD4 /* RTBRuntimeHeader.m in Sources */,
+				2F22E61F2264EF940081B7AC /* NWHub.m in Sources */,
 				2F4E7E7A209089FD00E6157C /* FWDebugFakeLocation.m in Sources */,
 				2F4E20C12122C26A00A565C3 /* FLEXArgumentInputDateView.m in Sources */,
 				2F4172171E63303B00DC5AD4 /* GCDWebServerFileResponse.m in Sources */,
@@ -2467,7 +2535,10 @@
 				2F4E20542122C26A00A565C3 /* FLEXResources.m in Sources */,
 				2F54B9132230BA86008411EF /* KSCrashReportFilterGZip.m in Sources */,
 				2F4171FD1E63303B00DC5AD4 /* GCDWebDAVServer.m in Sources */,
+				2F22E6292264EF940081B7AC /* NWType.m in Sources */,
 				2F4E20CC2122C26A00A565C3 /* FLEXArgumentInputTextView.m in Sources */,
+				2F22E6202264EF940081B7AC /* NWPushFeedback.m in Sources */,
+				2F22E6222264EF940081B7AC /* NWSSLConnection.m in Sources */,
 				2FA54B091FD5580900FE1CD1 /* FBObjectiveCNSCFTimer.mm in Sources */,
 				2F4E20912122C26A00A565C3 /* FLEXHierarchyTableViewController.m in Sources */,
 				2FA54B181FD5580900FE1CD1 /* Struct.mm in Sources */,
@@ -2498,6 +2569,7 @@
 				2F4E208E2122C26A00A565C3 /* FLEXImagePreviewViewController.m in Sources */,
 				2F54B91F2230BA86008411EF /* KSHTTPRequestSender.m in Sources */,
 				2FA54AFA1FD5580900FE1CD1 /* FBRetainCycleDetector.mm in Sources */,
+				2F2BB4D12261B98500D022D0 /* FWDebugFakeNotification.m in Sources */,
 				2F4E20752122C26A00A565C3 /* FLEXTableColumnHeader.m in Sources */,
 				2F54B9A82230BA86008411EF /* Demangle.cpp in Sources */,
 				2F4E20412122C26A00A565C3 /* FLEXNetworkTransactionDetailTableViewController.m in Sources */,

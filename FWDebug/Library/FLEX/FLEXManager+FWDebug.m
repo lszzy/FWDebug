@@ -21,6 +21,7 @@
 #import "FWDebugWebServer.h"
 #import "FWDebugAppConfig.h"
 #import "FWDebugFakeLocation.h"
+#import "FWDebugFakeNotification.h"
 #import <objc/runtime.h>
 
 @interface FLEXManager ()
@@ -66,6 +67,10 @@
         return [[FWDebugFakeLocation alloc] init];
     }];
     
+    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"🔴  Fake Notification" viewControllerFutureBlock:^UIViewController *{
+        return [[FWDebugFakeNotification alloc] init];
+    }];
+    
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📘  App Browser" viewControllerFutureBlock:^UIViewController *{
         return [[FLEXFileBrowserTableViewController alloc] initWithPath:[NSBundle mainBundle].bundlePath];
     }];
@@ -85,6 +90,12 @@
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"💟  App Config" viewControllerFutureBlock:^UIViewController *{
         return [[FWDebugAppConfig alloc] init];
     }];
+}
+
++ (void)fwDebugLaunch
+{
+    [FWDebugAppConfig fwDebugLaunch];
+    [FWDebugFakeNotification fwDebugLaunch];
 }
 
 - (FWDebugFpsInfo *)fwDebugFpsInfo
