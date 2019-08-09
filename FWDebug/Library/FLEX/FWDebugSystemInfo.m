@@ -214,7 +214,6 @@
     sectionData = @{
                     @"title": @"Cellular",
                     @"rows": @[
-                            @{ @"Carrier" : self.carrierName },
                             @{ @"Carrier Name" : FWDebugDesc([info.subscriberCellularProvider.carrierName capitalizedString]) },
                             @{ @"Data Connection": FWDebugDesc([info.currentRadioAccessTechnology stringByReplacingOccurrencesOfString:@"CTRadioAccessTechnology" withString:@""]) },
                             @{ @"Country Code" : FWDebugDesc(info.subscriberCellularProvider.mobileCountryCode) },
@@ -510,7 +509,7 @@
             [architectures addObject:@"armv7s"];
         }
         
-        if (subtype == CPU_SUBTYPE_ARM64_V8)
+        if (subtype == CPU_SUBTYPE_ARM64_V8 || subtype == CPU_SUBTYPE_ARM64_ALL || subtype == CPU_SUBTYPE_ARM64E)
         {
             [architectures addObject:@"arm64"];
         }
@@ -870,46 +869,6 @@
     }
     
     return @[ @(WiFiSent), @(WiFiReceived), @(WWANSent), @(WWANReceived) ];
-}
-
-- (NSString *)carrierName
-{
-    NSString *statusBarString = [NSString stringWithFormat:@"%@ar", @"_statusB"];
-    UIView* statusBar = [[UIApplication sharedApplication] valueForKey:statusBarString];
-    
-    UIView* statusBarForegroundView = nil;
-    
-    for (UIView* view in statusBar.subviews)
-    {
-        if ([view isKindOfClass:NSClassFromString(@"UIStatusBarForegroundView")])
-        {
-            statusBarForegroundView = view;
-            break;
-        }
-    }
-    
-    UIView* statusBarServiceItem = nil;
-    
-    for (UIView* view in statusBarForegroundView.subviews)
-    {
-        if ([view isKindOfClass:NSClassFromString(@"UIStatusBarServiceItemView")])
-        {
-            statusBarServiceItem = view;
-            break;
-        }
-    }
-    
-    if (statusBarServiceItem)
-    {
-        id value = [statusBarServiceItem valueForKey:@"_serviceString"];
-        
-        if ([value isKindOfClass:[NSString class]])
-        {
-            return (NSString *)value;
-        }
-    }
-    
-    return @"Unavailable";
 }
 
 @end
