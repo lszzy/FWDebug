@@ -87,12 +87,6 @@ static BOOL isAppLocked = NO;
     return depth ? [depth integerValue] : 10;
 }
 
-+ (NSInteger)systemLogLimit
-{
-    NSNumber *limit = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugSystemLogLimit"];
-    return limit ? [limit integerValue] : 100;
-}
-
 + (BOOL)isInjectionEnabled
 {
 #if TARGET_OS_SIMULATOR
@@ -143,7 +137,7 @@ static BOOL isAppLocked = NO;
     } else if (section == 1) {
         return 1;
     } else {
-        return 2;
+        return 1;
     }
 }
 
@@ -233,9 +227,6 @@ static BOOL isAppLocked = NO;
         if (indexPath.row == 0) {
             cell.textLabel.text = @"Retain Cycle Depth";
             cellLabel.text = [NSString stringWithFormat:@"%@", @([self.class retainCycleDepth])];
-        } else {
-            cell.textLabel.text = @"System Log Limit";
-            cellLabel.text = [NSString stringWithFormat:@"%@", @([self.class systemLogLimit])];
         }
     }
 }
@@ -302,12 +293,6 @@ static BOOL isAppLocked = NO;
                         [[NSUserDefaults standardUserDefaults] setObject:@(value) forKey:@"FWDebugRetainCycleDepth"];
                     } else {
                         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugRetainCycleDepth"];
-                    }
-                } else {
-                    if (value > 0 && value <= 100) {
-                        [[NSUserDefaults standardUserDefaults] setObject:@(value) forKey:@"FWDebugSystemLogLimit"];
-                    } else {
-                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugSystemLogLimit"];
                     }
                 }
                 [[NSUserDefaults standardUserDefaults] synchronize];

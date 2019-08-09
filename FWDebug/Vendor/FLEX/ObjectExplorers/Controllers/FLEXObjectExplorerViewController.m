@@ -15,6 +15,7 @@
 #import "FLEXIvarEditorViewController.h"
 #import "FLEXMethodCallingViewController.h"
 #import "FLEXInstancesTableViewController.h"
+#import "FLEXTableView.h"
 #import <objc/runtime.h>
 
 typedef NS_ENUM(NSUInteger, FLEXObjectExplorerScope) {
@@ -90,10 +91,19 @@ typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
 
 @implementation FLEXObjectExplorerViewController
 
-- (id)initWithStyle:(UITableViewStyle)style
++ (void)initialize
 {
-    // Force grouped style
-    return [super initWithStyle:UITableViewStyleGrouped];
+    if (self == [FLEXObjectExplorerViewController class]) {
+        // Initialize custom menu items for entire app
+        UIMenuItem *copyObjectAddress = [[UIMenuItem alloc] initWithTitle:@"Copy Address" action:@selector(copyObjectAddress:)];
+        [UIMenuController sharedMenuController].menuItems = @[copyObjectAddress];
+        [[UIMenuController sharedMenuController] update];
+    }
+}
+
+- (void)loadView
+{
+    self.tableView = [[FLEXTableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
 }
 
 - (void)viewDidLoad
@@ -134,7 +144,8 @@ typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
 
 #pragma mark - Search
 
-- (void)refreshScopeTitles {
+- (void)refreshScopeTitles
+{
     if (!self.searchBar) return;
 
     Class parent = [self.object superclass];
@@ -172,7 +183,8 @@ typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
     [self updateDisplayedData];
 }
 
-- (NSArray *)metadata:(FLEXMetadataKind)metadataKind forScope:(FLEXObjectExplorerScope)scope {
+- (NSArray *)metadata:(FLEXMetadataKind)metadataKind forScope:(FLEXObjectExplorerScope)scope
+{
     switch (metadataKind) {
         case FLEXMetadataKindProperties:
             switch (self.scope) {
@@ -221,7 +233,8 @@ typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
     }
 }
 
-- (NSInteger)totalCountOfMetadata:(FLEXMetadataKind)metadataKind forScope:(FLEXObjectExplorerScope)scope {
+- (NSInteger)totalCountOfMetadata:(FLEXMetadataKind)metadataKind forScope:(FLEXObjectExplorerScope)scope
+{
     return [self metadata:metadataKind forScope:scope].count;
 }
 
@@ -273,20 +286,24 @@ typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
 
 - (BOOL)shouldShowDescription
 {
-    BOOL showDescription = YES;
-    
-    // Not if it's empty or nil.
-    NSString *descripition = [FLEXUtility safeDescriptionForObject:self.object];
-    if (showDescription) {
-        showDescription = [descripition length] > 0;
-    }
-    
     // Not if we have filter text that doesn't match the desctiption.
-    if (showDescription && [self.filterText length] > 0) {
-        showDescription = [descripition rangeOfString:self.filterText options:NSCaseInsensitiveSearch].length > 0;
+    if (self.filterText.length) {
+        NSString *description = [self displayedObjectDescription];
+        return [description rangeOfString:self.filterText options:NSCaseInsensitiveSearch].length > 0;
     }
     
-    return showDescription;
+    return YES;
+}
+
+- (NSString *)displayedObjectDescription {
+    NSString *desc = [FLEXUtility safeDescriptionForObject:self.object];
+
+    if (!desc.length) {
+        NSString *address = [FLEXUtility addressOfObject:self.object];
+        desc = [NSString stringWithFormat:@"Object at %@ returned empty description", address];
+    }
+
+    return desc;
 }
 
 
@@ -367,7 +384,10 @@ typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
     id value = nil;
     if ([self canHaveInstanceState]) {
         FLEXPropertyBox *propertyBox = self.filteredProperties[index];
+        NSString *typeString = [FLEXRuntimeUtility typeEncodingForProperty:propertyBox.property];
+        const FLEXTypeEncoding *encoding = [typeString cStringUsingEncoding:NSUTF8StringEncoding];
         value = [FLEXRuntimeUtility valueForProperty:propertyBox.property onObject:self.object];
+        value = [FLEXRuntimeUtility potentiallyUnwrapBoxedPointer:value type:encoding];
     }
     return value;
 }
@@ -449,7 +469,9 @@ typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
     id value = nil;
     if ([self canHaveInstanceState]) {
         FLEXIvarBox *ivarBox = self.filteredIvars[index];
+        const FLEXTypeEncoding *encoding = ivar_getTypeEncoding(ivarBox.ivar);
         value = [FLEXRuntimeUtility valueForIvar:ivarBox.ivar onObject:self.object];
+        value = [FLEXRuntimeUtility potentiallyUnwrapBoxedPointer:value type:encoding];
     }
     return value;
 }
@@ -683,7 +705,7 @@ typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
     NSString *title = nil;
     switch (section) {
         case FLEXObjectExplorerSectionDescription:
-            title = [FLEXUtility safeDescriptionForObject:self.object];
+            title = [self displayedObjectDescription];
             break;
             
         case FLEXObjectExplorerSectionCustom:
@@ -803,19 +825,9 @@ typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
     return canDrillIn;
 }
 
-- (BOOL)canCopyRow:(NSInteger)row inExplorerSection:(FLEXObjectExplorerSection)section
+- (BOOL)sectionHasActions:(NSInteger)section
 {
-    BOOL canCopy = NO;
-    
-    switch (section) {
-        case FLEXObjectExplorerSectionDescription:
-            canCopy = YES;
-            break;
-            
-        default:
-            break;
-    }
-    return canCopy;
+    return [self explorerSectionAtIndex:section] == FLEXObjectExplorerSectionDescription;
 }
 
 - (NSString *)titleForExplorerSection:(FLEXObjectExplorerSection)section
@@ -941,7 +953,8 @@ typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     FLEXObjectExplorerSection explorerSection = [self explorerSectionAtIndex:indexPath.section];
-    
+
+    BOOL isCustomSection = explorerSection == FLEXObjectExplorerSectionCustom;
     BOOL useDescriptionCell = explorerSection == FLEXObjectExplorerSectionDescription;
     NSString *cellIdentifier = useDescriptionCell ? kFLEXMultilineTableViewCellIdentifier : @"cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
@@ -957,7 +970,16 @@ typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
             cell.detailTextLabel.textColor = [UIColor grayColor];
         }
     }
-    
+
+
+    UIView *customView;
+    if (isCustomSection) {
+        customView = [self customViewForRowCookie:[self customSectionRowCookieForVisibleRow:indexPath.row]];
+        if (customView) {
+            [cell.contentView addSubview:customView];
+        }
+    }
+
     cell.textLabel.text = [self titleForRow:indexPath.row inExplorerSection:explorerSection];
     cell.detailTextLabel.text = [self subtitleForRow:indexPath.row inExplorerSection:explorerSection];
     cell.accessoryType = [self canDrillInToRow:indexPath.row inExplorerSection:explorerSection] ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
@@ -974,7 +996,11 @@ typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
         NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:text attributes:@{ NSFontAttributeName : [FLEXUtility defaultTableViewCellLabelFont] }];
         CGFloat preferredHeight = [FLEXMultilineTableViewCell preferredHeightWithAttributedText:attributedText inTableViewWidth:self.tableView.frame.size.width style:tableView.style showsAccessory:NO];
         height = MAX(height, preferredHeight);
+    } else if (explorerSection == FLEXObjectExplorerSectionCustom) {
+        id cookie = [self customSectionRowCookieForVisibleRow:indexPath.row];
+        height = [self heightForCustomViewRowForRowCookie:cookie];
     }
+    
     return height;
 }
 
@@ -1000,45 +1026,65 @@ typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
 
 - (BOOL)tableView:(UITableView *)tableView shouldShowMenuForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    FLEXObjectExplorerSection explorerSection = [self explorerSectionAtIndex:indexPath.section];
-    BOOL canCopy = [self canCopyRow:indexPath.row inExplorerSection:explorerSection];
-    return canCopy;
+    return [self sectionHasActions:indexPath.section];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender
 {
-    BOOL canPerformAction = NO;
-    
-    if (action == @selector(copy:)) {
-        FLEXObjectExplorerSection explorerSection = [self explorerSectionAtIndex:indexPath.section];
-        BOOL canCopy = [self canCopyRow:indexPath.row inExplorerSection:explorerSection];
-        canPerformAction = canCopy;
+    FLEXObjectExplorerSection explorerSection = [self explorerSectionAtIndex:indexPath.section];
+    switch (explorerSection) {
+        case FLEXObjectExplorerSectionDescription:
+            return action == @selector(copy:) || action == @selector(copyObjectAddress:);
+
+        default:
+            return NO;
     }
-    
-    return canPerformAction;
 }
 
 - (void)tableView:(UITableView *)tableView performAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender
 {
-    if (action == @selector(copy:)) {
-        FLEXObjectExplorerSection explorerSection = [self explorerSectionAtIndex:indexPath.section];
-        NSString *stringToCopy = @"";
-        
-        NSString *title = [self titleForRow:indexPath.row inExplorerSection:explorerSection];
-        if ([title length] > 0) {
-            stringToCopy = [stringToCopy stringByAppendingString:title];
-        }
-        
-        NSString *subtitle = [self subtitleForRow:indexPath.row inExplorerSection:explorerSection];
-        if ([subtitle length] > 0) {
-            if ([stringToCopy length] > 0) {
-                stringToCopy = [stringToCopy stringByAppendingString:@"\n\n"];
-            }
-            stringToCopy = [stringToCopy stringByAppendingString:subtitle];
-        }
-        
-        [[UIPasteboard generalPasteboard] setString:stringToCopy];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    [self performSelector:action withObject:indexPath];
+#pragma clang diagnostic pop
+}
+
+
+#pragma mark - UIMenuController
+
+/// Prevent the search bar from trying to use us as a responder
+///
+/// Our table cells will use the UITableViewDelegate methods
+/// to make sure we can perform the actions we want to
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender
+{
+    return NO;
+}
+
+- (void)copy:(NSIndexPath *)indexPath
+{
+    FLEXObjectExplorerSection explorerSection = [self explorerSectionAtIndex:indexPath.section];
+    NSString *stringToCopy = @"";
+
+    NSString *title = [self titleForRow:indexPath.row inExplorerSection:explorerSection];
+    if (title.length) {
+        stringToCopy = [stringToCopy stringByAppendingString:title];
     }
+
+    NSString *subtitle = [self subtitleForRow:indexPath.row inExplorerSection:explorerSection];
+    if (subtitle.length) {
+        if (stringToCopy.length) {
+            stringToCopy = [stringToCopy stringByAppendingString:@"\n\n"];
+        }
+        stringToCopy = [stringToCopy stringByAppendingString:subtitle];
+    }
+
+    [UIPasteboard generalPasteboard].string = stringToCopy;
+}
+
+- (void)copyObjectAddress:(NSIndexPath *)indexPath
+{
+    [UIPasteboard generalPasteboard].string = [FLEXUtility addressOfObject:self.object];
 }
 
 
@@ -1101,6 +1147,16 @@ typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
 - (UIViewController *)customSectionDrillInViewControllerForRowCookie:(id)rowCookie
 {
     return nil;
+}
+
+- (UIView *)customViewForRowCookie:(id)rowCookie
+{
+    return nil;
+}
+
+- (CGFloat)heightForCustomViewRowForRowCookie:(id)rowCookie
+{
+    return self.tableView.rowHeight;
 }
 
 - (BOOL)canHaveInstanceState
