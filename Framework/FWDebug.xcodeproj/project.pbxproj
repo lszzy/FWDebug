@@ -75,6 +75,50 @@
 		2F4172D51E63303B00DC5AD4 /* RTBTypeDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F41715D1E63303B00DC5AD4 /* RTBTypeDecoder.m */; };
 		2F4172D61E63303B00DC5AD4 /* RTBTypeDecoder2.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F41715E1E63303B00DC5AD4 /* RTBTypeDecoder2.h */; };
 		2F4172D71E63303B00DC5AD4 /* RTBTypeDecoder2.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F41715F1E63303B00DC5AD4 /* RTBTypeDecoder2.m */; };
+		2F47B21922FDC279005EEDAE /* FBAssociationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B1E222FDC279005EEDAE /* FBAssociationManager.h */; };
+		2F47B21A22FDC279005EEDAE /* FBAssociationManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B1E422FDC279005EEDAE /* FBAssociationManager+Internal.h */; };
+		2F47B21B22FDC279005EEDAE /* FBAssociationManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B1E522FDC279005EEDAE /* FBAssociationManager.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		2F47B21C22FDC279005EEDAE /* FBStandardGraphEdgeFilters.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B1E722FDC279005EEDAE /* FBStandardGraphEdgeFilters.mm */; };
+		2F47B21D22FDC279005EEDAE /* FBStandardGraphEdgeFilters.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B1E822FDC279005EEDAE /* FBStandardGraphEdgeFilters.h */; };
+		2F47B21E22FDC279005EEDAE /* FBBlockStrongLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B1EB22FDC279005EEDAE /* FBBlockStrongLayout.h */; };
+		2F47B21F22FDC279005EEDAE /* FBBlockStrongRelationDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B1EC22FDC279005EEDAE /* FBBlockStrongRelationDetector.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		2F47B22022FDC279005EEDAE /* Circle-LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 2F47B1ED22FDC279005EEDAE /* Circle-LICENSE */; };
+		2F47B22122FDC279005EEDAE /* FBBlockStrongRelationDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B1EE22FDC279005EEDAE /* FBBlockStrongRelationDetector.h */; };
+		2F47B22222FDC279005EEDAE /* FBBlockStrongLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B1EF22FDC279005EEDAE /* FBBlockStrongLayout.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		2F47B22322FDC279005EEDAE /* FBBlockInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B1F022FDC279005EEDAE /* FBBlockInterface.h */; };
+		2F47B22422FDC279005EEDAE /* FBClassStrongLayoutHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B1F222FDC279005EEDAE /* FBClassStrongLayoutHelpers.h */; };
+		2F47B22522FDC279005EEDAE /* Type.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B1F422FDC279005EEDAE /* Type.h */; };
+		2F47B22622FDC279005EEDAE /* Struct.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B1F522FDC279005EEDAE /* Struct.mm */; };
+		2F47B22722FDC279005EEDAE /* FBStructEncodingParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B1F622FDC279005EEDAE /* FBStructEncodingParser.h */; };
+		2F47B22822FDC279005EEDAE /* Struct.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B1F722FDC279005EEDAE /* Struct.h */; };
+		2F47B22922FDC279005EEDAE /* FBStructEncodingParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B1F822FDC279005EEDAE /* FBStructEncodingParser.mm */; };
+		2F47B22A22FDC279005EEDAE /* BaseType.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B1F922FDC279005EEDAE /* BaseType.h */; };
+		2F47B22B22FDC279005EEDAE /* FBClassStrongLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B1FA22FDC279005EEDAE /* FBClassStrongLayout.mm */; };
+		2F47B22C22FDC279005EEDAE /* FBClassStrongLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B1FB22FDC279005EEDAE /* FBClassStrongLayout.h */; };
+		2F47B22D22FDC279005EEDAE /* FBClassStrongLayoutHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B1FC22FDC279005EEDAE /* FBClassStrongLayoutHelpers.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		2F47B22E22FDC279005EEDAE /* FBObjectInStructReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B1FE22FDC279005EEDAE /* FBObjectInStructReference.m */; };
+		2F47B22F22FDC279005EEDAE /* FBIvarReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B1FF22FDC279005EEDAE /* FBIvarReference.h */; };
+		2F47B23022FDC279005EEDAE /* FBObjectInStructReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B20022FDC279005EEDAE /* FBObjectInStructReference.h */; };
+		2F47B23122FDC279005EEDAE /* FBObjectReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B20122FDC279005EEDAE /* FBObjectReference.h */; };
+		2F47B23222FDC279005EEDAE /* FBIvarReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B20222FDC279005EEDAE /* FBIvarReference.m */; };
+		2F47B23322FDC279005EEDAE /* FBObjectiveCBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B20422FDC279005EEDAE /* FBObjectiveCBlock.h */; };
+		2F47B23422FDC279005EEDAE /* FBObjectiveCNSCFTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B20622FDC279005EEDAE /* FBObjectiveCNSCFTimer.h */; };
+		2F47B23522FDC279005EEDAE /* FBObjectiveCNSCFTimer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B20722FDC279005EEDAE /* FBObjectiveCNSCFTimer.mm */; };
+		2F47B23622FDC279005EEDAE /* FBObjectGraphConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B20822FDC279005EEDAE /* FBObjectGraphConfiguration.h */; };
+		2F47B23722FDC279005EEDAE /* FBObjectiveCObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B20922FDC279005EEDAE /* FBObjectiveCObject.h */; };
+		2F47B23822FDC279005EEDAE /* FBObjectiveCGraphElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B20A22FDC279005EEDAE /* FBObjectiveCGraphElement.mm */; };
+		2F47B23922FDC279005EEDAE /* FBObjectiveCGraphElement+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B20C22FDC279005EEDAE /* FBObjectiveCGraphElement+Internal.h */; };
+		2F47B23A22FDC279005EEDAE /* FBObjectGraphConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B20D22FDC279005EEDAE /* FBObjectGraphConfiguration.m */; };
+		2F47B23B22FDC279005EEDAE /* FBObjectiveCBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B20E22FDC279005EEDAE /* FBObjectiveCBlock.m */; };
+		2F47B23C22FDC279005EEDAE /* FBObjectiveCObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B20F22FDC279005EEDAE /* FBObjectiveCObject.m */; };
+		2F47B23D22FDC279005EEDAE /* FBObjectiveCGraphElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B21022FDC279005EEDAE /* FBObjectiveCGraphElement.h */; };
+		2F47B23E22FDC279005EEDAE /* FBRetainCycleUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B21122FDC279005EEDAE /* FBRetainCycleUtils.h */; };
+		2F47B23F22FDC279005EEDAE /* FBRetainCycleDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B21322FDC279005EEDAE /* FBRetainCycleDetector.h */; };
+		2F47B24022FDC279005EEDAE /* FBNodeEnumerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B21422FDC279005EEDAE /* FBNodeEnumerator.mm */; };
+		2F47B24122FDC279005EEDAE /* FBNodeEnumerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B21522FDC279005EEDAE /* FBNodeEnumerator.h */; };
+		2F47B24222FDC279005EEDAE /* FBRetainCycleDetector.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B21622FDC279005EEDAE /* FBRetainCycleDetector.mm */; };
+		2F47B24322FDC279005EEDAE /* FBRetainCycleDetector+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F47B21722FDC279005EEDAE /* FBRetainCycleDetector+Internal.h */; };
+		2F47B24422FDC279005EEDAE /* FBRetainCycleUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B21822FDC279005EEDAE /* FBRetainCycleUtils.m */; };
 		2F4E20382122C26A00A565C3 /* FLEXNetworkCurlLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F4E1F8E2122C26800A565C3 /* FLEXNetworkCurlLogger.h */; };
 		2F4E20392122C26A00A565C3 /* FLEXNetworkTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F4E1F8F2122C26800A565C3 /* FLEXNetworkTransaction.m */; };
 		2F4E203A2122C26A00A565C3 /* FLEXNetworkHistoryTableViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F4E1F902122C26800A565C3 /* FLEXNetworkHistoryTableViewController.h */; };
@@ -433,49 +477,6 @@
 		2F57D0241E65647D0062B632 /* FWDebugSystemInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F57D0221E65647D0062B632 /* FWDebugSystemInfo.m */; };
 		2F57D0271E65665D0062B632 /* FWDebugFpsInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F57D0251E65665D0062B632 /* FWDebugFpsInfo.h */; };
 		2F57D0281E65665D0062B632 /* FWDebugFpsInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F57D0261E65665D0062B632 /* FWDebugFpsInfo.m */; };
-		2FA54AF31FD5580900FE1CD1 /* FBAssociationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AB91FD5580900FE1CD1 /* FBAssociationManager.h */; };
-		2FA54AF41FD5580900FE1CD1 /* FBAssociationManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54ABA1FD5580900FE1CD1 /* FBAssociationManager.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		2FA54AF51FD5580900FE1CD1 /* FBAssociationManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54ABC1FD5580900FE1CD1 /* FBAssociationManager+Internal.h */; };
-		2FA54AF61FD5580900FE1CD1 /* FBNodeEnumerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54ABE1FD5580900FE1CD1 /* FBNodeEnumerator.h */; };
-		2FA54AF71FD5580900FE1CD1 /* FBNodeEnumerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54ABF1FD5580900FE1CD1 /* FBNodeEnumerator.mm */; };
-		2FA54AF81FD5580900FE1CD1 /* FBRetainCycleDetector+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AC01FD5580900FE1CD1 /* FBRetainCycleDetector+Internal.h */; };
-		2FA54AF91FD5580900FE1CD1 /* FBRetainCycleDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AC11FD5580900FE1CD1 /* FBRetainCycleDetector.h */; };
-		2FA54AFA1FD5580900FE1CD1 /* FBRetainCycleDetector.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54AC21FD5580900FE1CD1 /* FBRetainCycleDetector.mm */; };
-		2FA54AFB1FD5580900FE1CD1 /* FBRetainCycleUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AC31FD5580900FE1CD1 /* FBRetainCycleUtils.h */; };
-		2FA54AFC1FD5580900FE1CD1 /* FBRetainCycleUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54AC41FD5580900FE1CD1 /* FBRetainCycleUtils.m */; };
-		2FA54AFD1FD5580900FE1CD1 /* FBStandardGraphEdgeFilters.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AC61FD5580900FE1CD1 /* FBStandardGraphEdgeFilters.h */; };
-		2FA54AFE1FD5580900FE1CD1 /* FBStandardGraphEdgeFilters.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54AC71FD5580900FE1CD1 /* FBStandardGraphEdgeFilters.mm */; };
-		2FA54AFF1FD5580900FE1CD1 /* FBObjectGraphConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AC91FD5580900FE1CD1 /* FBObjectGraphConfiguration.h */; };
-		2FA54B001FD5580900FE1CD1 /* FBObjectGraphConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54ACA1FD5580900FE1CD1 /* FBObjectGraphConfiguration.m */; };
-		2FA54B011FD5580900FE1CD1 /* FBObjectiveCBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54ACB1FD5580900FE1CD1 /* FBObjectiveCBlock.h */; };
-		2FA54B021FD5580900FE1CD1 /* FBObjectiveCBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54ACC1FD5580900FE1CD1 /* FBObjectiveCBlock.m */; };
-		2FA54B031FD5580900FE1CD1 /* FBObjectiveCGraphElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54ACD1FD5580900FE1CD1 /* FBObjectiveCGraphElement.h */; };
-		2FA54B041FD5580900FE1CD1 /* FBObjectiveCGraphElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54ACE1FD5580900FE1CD1 /* FBObjectiveCGraphElement.mm */; };
-		2FA54B051FD5580900FE1CD1 /* FBObjectiveCObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54ACF1FD5580900FE1CD1 /* FBObjectiveCObject.h */; };
-		2FA54B061FD5580900FE1CD1 /* FBObjectiveCObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54AD01FD5580900FE1CD1 /* FBObjectiveCObject.m */; };
-		2FA54B071FD5580900FE1CD1 /* FBObjectiveCGraphElement+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AD21FD5580900FE1CD1 /* FBObjectiveCGraphElement+Internal.h */; };
-		2FA54B081FD5580900FE1CD1 /* FBObjectiveCNSCFTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AD41FD5580900FE1CD1 /* FBObjectiveCNSCFTimer.h */; };
-		2FA54B091FD5580900FE1CD1 /* FBObjectiveCNSCFTimer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54AD51FD5580900FE1CD1 /* FBObjectiveCNSCFTimer.mm */; };
-		2FA54B0B1FD5580900FE1CD1 /* FBBlockInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AD91FD5580900FE1CD1 /* FBBlockInterface.h */; };
-		2FA54B0C1FD5580900FE1CD1 /* FBBlockStrongLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54ADA1FD5580900FE1CD1 /* FBBlockStrongLayout.h */; };
-		2FA54B0D1FD5580900FE1CD1 /* FBBlockStrongLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54ADB1FD5580900FE1CD1 /* FBBlockStrongLayout.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		2FA54B0E1FD5580900FE1CD1 /* FBBlockStrongRelationDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54ADC1FD5580900FE1CD1 /* FBBlockStrongRelationDetector.h */; };
-		2FA54B0F1FD5580900FE1CD1 /* FBBlockStrongRelationDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54ADD1FD5580900FE1CD1 /* FBBlockStrongRelationDetector.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		2FA54B101FD5580900FE1CD1 /* FBClassStrongLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54ADF1FD5580900FE1CD1 /* FBClassStrongLayout.h */; };
-		2FA54B111FD5580900FE1CD1 /* FBClassStrongLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54AE01FD5580900FE1CD1 /* FBClassStrongLayout.mm */; };
-		2FA54B121FD5580900FE1CD1 /* FBClassStrongLayoutHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AE11FD5580900FE1CD1 /* FBClassStrongLayoutHelpers.h */; };
-		2FA54B131FD5580900FE1CD1 /* FBClassStrongLayoutHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54AE21FD5580900FE1CD1 /* FBClassStrongLayoutHelpers.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		2FA54B141FD5580900FE1CD1 /* BaseType.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AE41FD5580900FE1CD1 /* BaseType.h */; };
-		2FA54B151FD5580900FE1CD1 /* FBStructEncodingParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AE51FD5580900FE1CD1 /* FBStructEncodingParser.h */; };
-		2FA54B161FD5580900FE1CD1 /* FBStructEncodingParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54AE61FD5580900FE1CD1 /* FBStructEncodingParser.mm */; };
-		2FA54B171FD5580900FE1CD1 /* Struct.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AE71FD5580900FE1CD1 /* Struct.h */; };
-		2FA54B181FD5580900FE1CD1 /* Struct.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54AE81FD5580900FE1CD1 /* Struct.mm */; };
-		2FA54B191FD5580900FE1CD1 /* Type.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AE91FD5580900FE1CD1 /* Type.h */; };
-		2FA54B1A1FD5580900FE1CD1 /* FBIvarReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AEB1FD5580900FE1CD1 /* FBIvarReference.h */; };
-		2FA54B1B1FD5580900FE1CD1 /* FBIvarReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54AEC1FD5580900FE1CD1 /* FBIvarReference.m */; };
-		2FA54B1C1FD5580900FE1CD1 /* FBObjectInStructReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AED1FD5580900FE1CD1 /* FBObjectInStructReference.h */; };
-		2FA54B1D1FD5580900FE1CD1 /* FBObjectInStructReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54AEE1FD5580900FE1CD1 /* FBObjectInStructReference.m */; };
-		2FA54B1E1FD5580900FE1CD1 /* FBObjectReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AEF1FD5580900FE1CD1 /* FBObjectReference.h */; };
 		2FA54B1F1FD5580900FE1CD1 /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54AF11FD5580900FE1CD1 /* fishhook.c */; };
 		2FA54B201FD5580900FE1CD1 /* fishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AF21FD5580900FE1CD1 /* fishhook.h */; };
 		2FA54B251FD5582A00FE1CD1 /* FWDebugFishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54B221FD5582A00FE1CD1 /* FWDebugFishhook.h */; };
@@ -563,6 +564,50 @@
 		2F41715D1E63303B00DC5AD4 /* RTBTypeDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RTBTypeDecoder.m; sourceTree = "<group>"; };
 		2F41715E1E63303B00DC5AD4 /* RTBTypeDecoder2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTBTypeDecoder2.h; sourceTree = "<group>"; };
 		2F41715F1E63303B00DC5AD4 /* RTBTypeDecoder2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RTBTypeDecoder2.m; sourceTree = "<group>"; };
+		2F47B1E222FDC279005EEDAE /* FBAssociationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBAssociationManager.h; sourceTree = "<group>"; };
+		2F47B1E422FDC279005EEDAE /* FBAssociationManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FBAssociationManager+Internal.h"; sourceTree = "<group>"; };
+		2F47B1E522FDC279005EEDAE /* FBAssociationManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBAssociationManager.mm; sourceTree = "<group>"; };
+		2F47B1E722FDC279005EEDAE /* FBStandardGraphEdgeFilters.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBStandardGraphEdgeFilters.mm; sourceTree = "<group>"; };
+		2F47B1E822FDC279005EEDAE /* FBStandardGraphEdgeFilters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBStandardGraphEdgeFilters.h; sourceTree = "<group>"; };
+		2F47B1EB22FDC279005EEDAE /* FBBlockStrongLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBBlockStrongLayout.h; sourceTree = "<group>"; };
+		2F47B1EC22FDC279005EEDAE /* FBBlockStrongRelationDetector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBBlockStrongRelationDetector.m; sourceTree = "<group>"; };
+		2F47B1ED22FDC279005EEDAE /* Circle-LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Circle-LICENSE"; sourceTree = "<group>"; };
+		2F47B1EE22FDC279005EEDAE /* FBBlockStrongRelationDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBBlockStrongRelationDetector.h; sourceTree = "<group>"; };
+		2F47B1EF22FDC279005EEDAE /* FBBlockStrongLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBBlockStrongLayout.m; sourceTree = "<group>"; };
+		2F47B1F022FDC279005EEDAE /* FBBlockInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBBlockInterface.h; sourceTree = "<group>"; };
+		2F47B1F222FDC279005EEDAE /* FBClassStrongLayoutHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBClassStrongLayoutHelpers.h; sourceTree = "<group>"; };
+		2F47B1F422FDC279005EEDAE /* Type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Type.h; sourceTree = "<group>"; };
+		2F47B1F522FDC279005EEDAE /* Struct.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Struct.mm; sourceTree = "<group>"; };
+		2F47B1F622FDC279005EEDAE /* FBStructEncodingParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBStructEncodingParser.h; sourceTree = "<group>"; };
+		2F47B1F722FDC279005EEDAE /* Struct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Struct.h; sourceTree = "<group>"; };
+		2F47B1F822FDC279005EEDAE /* FBStructEncodingParser.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBStructEncodingParser.mm; sourceTree = "<group>"; };
+		2F47B1F922FDC279005EEDAE /* BaseType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseType.h; sourceTree = "<group>"; };
+		2F47B1FA22FDC279005EEDAE /* FBClassStrongLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBClassStrongLayout.mm; sourceTree = "<group>"; };
+		2F47B1FB22FDC279005EEDAE /* FBClassStrongLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBClassStrongLayout.h; sourceTree = "<group>"; };
+		2F47B1FC22FDC279005EEDAE /* FBClassStrongLayoutHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBClassStrongLayoutHelpers.m; sourceTree = "<group>"; };
+		2F47B1FE22FDC279005EEDAE /* FBObjectInStructReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBObjectInStructReference.m; sourceTree = "<group>"; };
+		2F47B1FF22FDC279005EEDAE /* FBIvarReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBIvarReference.h; sourceTree = "<group>"; };
+		2F47B20022FDC279005EEDAE /* FBObjectInStructReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBObjectInStructReference.h; sourceTree = "<group>"; };
+		2F47B20122FDC279005EEDAE /* FBObjectReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBObjectReference.h; sourceTree = "<group>"; };
+		2F47B20222FDC279005EEDAE /* FBIvarReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBIvarReference.m; sourceTree = "<group>"; };
+		2F47B20422FDC279005EEDAE /* FBObjectiveCBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBObjectiveCBlock.h; sourceTree = "<group>"; };
+		2F47B20622FDC279005EEDAE /* FBObjectiveCNSCFTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBObjectiveCNSCFTimer.h; sourceTree = "<group>"; };
+		2F47B20722FDC279005EEDAE /* FBObjectiveCNSCFTimer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBObjectiveCNSCFTimer.mm; sourceTree = "<group>"; };
+		2F47B20822FDC279005EEDAE /* FBObjectGraphConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBObjectGraphConfiguration.h; sourceTree = "<group>"; };
+		2F47B20922FDC279005EEDAE /* FBObjectiveCObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBObjectiveCObject.h; sourceTree = "<group>"; };
+		2F47B20A22FDC279005EEDAE /* FBObjectiveCGraphElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBObjectiveCGraphElement.mm; sourceTree = "<group>"; };
+		2F47B20C22FDC279005EEDAE /* FBObjectiveCGraphElement+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FBObjectiveCGraphElement+Internal.h"; sourceTree = "<group>"; };
+		2F47B20D22FDC279005EEDAE /* FBObjectGraphConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBObjectGraphConfiguration.m; sourceTree = "<group>"; };
+		2F47B20E22FDC279005EEDAE /* FBObjectiveCBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBObjectiveCBlock.m; sourceTree = "<group>"; };
+		2F47B20F22FDC279005EEDAE /* FBObjectiveCObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBObjectiveCObject.m; sourceTree = "<group>"; };
+		2F47B21022FDC279005EEDAE /* FBObjectiveCGraphElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBObjectiveCGraphElement.h; sourceTree = "<group>"; };
+		2F47B21122FDC279005EEDAE /* FBRetainCycleUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBRetainCycleUtils.h; sourceTree = "<group>"; };
+		2F47B21322FDC279005EEDAE /* FBRetainCycleDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBRetainCycleDetector.h; sourceTree = "<group>"; };
+		2F47B21422FDC279005EEDAE /* FBNodeEnumerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBNodeEnumerator.mm; sourceTree = "<group>"; };
+		2F47B21522FDC279005EEDAE /* FBNodeEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBNodeEnumerator.h; sourceTree = "<group>"; };
+		2F47B21622FDC279005EEDAE /* FBRetainCycleDetector.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBRetainCycleDetector.mm; sourceTree = "<group>"; };
+		2F47B21722FDC279005EEDAE /* FBRetainCycleDetector+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FBRetainCycleDetector+Internal.h"; sourceTree = "<group>"; };
+		2F47B21822FDC279005EEDAE /* FBRetainCycleUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBRetainCycleUtils.m; sourceTree = "<group>"; };
 		2F4E1F8E2122C26800A565C3 /* FLEXNetworkCurlLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXNetworkCurlLogger.h; sourceTree = "<group>"; };
 		2F4E1F8F2122C26800A565C3 /* FLEXNetworkTransaction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEXNetworkTransaction.m; sourceTree = "<group>"; };
 		2F4E1F902122C26800A565C3 /* FLEXNetworkHistoryTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXNetworkHistoryTableViewController.h; sourceTree = "<group>"; };
@@ -923,50 +968,6 @@
 		2F57D0221E65647D0062B632 /* FWDebugSystemInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugSystemInfo.m; sourceTree = "<group>"; };
 		2F57D0251E65665D0062B632 /* FWDebugFpsInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugFpsInfo.h; sourceTree = "<group>"; };
 		2F57D0261E65665D0062B632 /* FWDebugFpsInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugFpsInfo.m; sourceTree = "<group>"; };
-		2FA54AB91FD5580900FE1CD1 /* FBAssociationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBAssociationManager.h; sourceTree = "<group>"; };
-		2FA54ABA1FD5580900FE1CD1 /* FBAssociationManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBAssociationManager.mm; sourceTree = "<group>"; };
-		2FA54ABC1FD5580900FE1CD1 /* FBAssociationManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FBAssociationManager+Internal.h"; sourceTree = "<group>"; };
-		2FA54ABE1FD5580900FE1CD1 /* FBNodeEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBNodeEnumerator.h; sourceTree = "<group>"; };
-		2FA54ABF1FD5580900FE1CD1 /* FBNodeEnumerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBNodeEnumerator.mm; sourceTree = "<group>"; };
-		2FA54AC01FD5580900FE1CD1 /* FBRetainCycleDetector+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FBRetainCycleDetector+Internal.h"; sourceTree = "<group>"; };
-		2FA54AC11FD5580900FE1CD1 /* FBRetainCycleDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBRetainCycleDetector.h; sourceTree = "<group>"; };
-		2FA54AC21FD5580900FE1CD1 /* FBRetainCycleDetector.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBRetainCycleDetector.mm; sourceTree = "<group>"; };
-		2FA54AC31FD5580900FE1CD1 /* FBRetainCycleUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBRetainCycleUtils.h; sourceTree = "<group>"; };
-		2FA54AC41FD5580900FE1CD1 /* FBRetainCycleUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBRetainCycleUtils.m; sourceTree = "<group>"; };
-		2FA54AC61FD5580900FE1CD1 /* FBStandardGraphEdgeFilters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBStandardGraphEdgeFilters.h; sourceTree = "<group>"; };
-		2FA54AC71FD5580900FE1CD1 /* FBStandardGraphEdgeFilters.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBStandardGraphEdgeFilters.mm; sourceTree = "<group>"; };
-		2FA54AC91FD5580900FE1CD1 /* FBObjectGraphConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBObjectGraphConfiguration.h; sourceTree = "<group>"; };
-		2FA54ACA1FD5580900FE1CD1 /* FBObjectGraphConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBObjectGraphConfiguration.m; sourceTree = "<group>"; };
-		2FA54ACB1FD5580900FE1CD1 /* FBObjectiveCBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBObjectiveCBlock.h; sourceTree = "<group>"; };
-		2FA54ACC1FD5580900FE1CD1 /* FBObjectiveCBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBObjectiveCBlock.m; sourceTree = "<group>"; };
-		2FA54ACD1FD5580900FE1CD1 /* FBObjectiveCGraphElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBObjectiveCGraphElement.h; sourceTree = "<group>"; };
-		2FA54ACE1FD5580900FE1CD1 /* FBObjectiveCGraphElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBObjectiveCGraphElement.mm; sourceTree = "<group>"; };
-		2FA54ACF1FD5580900FE1CD1 /* FBObjectiveCObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBObjectiveCObject.h; sourceTree = "<group>"; };
-		2FA54AD01FD5580900FE1CD1 /* FBObjectiveCObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBObjectiveCObject.m; sourceTree = "<group>"; };
-		2FA54AD21FD5580900FE1CD1 /* FBObjectiveCGraphElement+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FBObjectiveCGraphElement+Internal.h"; sourceTree = "<group>"; };
-		2FA54AD41FD5580900FE1CD1 /* FBObjectiveCNSCFTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBObjectiveCNSCFTimer.h; sourceTree = "<group>"; };
-		2FA54AD51FD5580900FE1CD1 /* FBObjectiveCNSCFTimer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBObjectiveCNSCFTimer.mm; sourceTree = "<group>"; };
-		2FA54AD81FD5580900FE1CD1 /* Circle-LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Circle-LICENSE"; sourceTree = "<group>"; };
-		2FA54AD91FD5580900FE1CD1 /* FBBlockInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBBlockInterface.h; sourceTree = "<group>"; };
-		2FA54ADA1FD5580900FE1CD1 /* FBBlockStrongLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBBlockStrongLayout.h; sourceTree = "<group>"; };
-		2FA54ADB1FD5580900FE1CD1 /* FBBlockStrongLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBBlockStrongLayout.m; sourceTree = "<group>"; };
-		2FA54ADC1FD5580900FE1CD1 /* FBBlockStrongRelationDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBBlockStrongRelationDetector.h; sourceTree = "<group>"; };
-		2FA54ADD1FD5580900FE1CD1 /* FBBlockStrongRelationDetector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBBlockStrongRelationDetector.m; sourceTree = "<group>"; };
-		2FA54ADF1FD5580900FE1CD1 /* FBClassStrongLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBClassStrongLayout.h; sourceTree = "<group>"; };
-		2FA54AE01FD5580900FE1CD1 /* FBClassStrongLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBClassStrongLayout.mm; sourceTree = "<group>"; };
-		2FA54AE11FD5580900FE1CD1 /* FBClassStrongLayoutHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBClassStrongLayoutHelpers.h; sourceTree = "<group>"; };
-		2FA54AE21FD5580900FE1CD1 /* FBClassStrongLayoutHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBClassStrongLayoutHelpers.m; sourceTree = "<group>"; };
-		2FA54AE41FD5580900FE1CD1 /* BaseType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseType.h; sourceTree = "<group>"; };
-		2FA54AE51FD5580900FE1CD1 /* FBStructEncodingParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBStructEncodingParser.h; sourceTree = "<group>"; };
-		2FA54AE61FD5580900FE1CD1 /* FBStructEncodingParser.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBStructEncodingParser.mm; sourceTree = "<group>"; };
-		2FA54AE71FD5580900FE1CD1 /* Struct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Struct.h; sourceTree = "<group>"; };
-		2FA54AE81FD5580900FE1CD1 /* Struct.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Struct.mm; sourceTree = "<group>"; };
-		2FA54AE91FD5580900FE1CD1 /* Type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Type.h; sourceTree = "<group>"; };
-		2FA54AEB1FD5580900FE1CD1 /* FBIvarReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBIvarReference.h; sourceTree = "<group>"; };
-		2FA54AEC1FD5580900FE1CD1 /* FBIvarReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBIvarReference.m; sourceTree = "<group>"; };
-		2FA54AED1FD5580900FE1CD1 /* FBObjectInStructReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBObjectInStructReference.h; sourceTree = "<group>"; };
-		2FA54AEE1FD5580900FE1CD1 /* FBObjectInStructReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBObjectInStructReference.m; sourceTree = "<group>"; };
-		2FA54AEF1FD5580900FE1CD1 /* FBObjectReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBObjectReference.h; sourceTree = "<group>"; };
 		2FA54AF11FD5580900FE1CD1 /* fishhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fishhook.c; sourceTree = "<group>"; };
 		2FA54AF21FD5580900FE1CD1 /* fishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fishhook.h; sourceTree = "<group>"; };
 		2FA54B221FD5582A00FE1CD1 /* FWDebugFishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugFishhook.h; sourceTree = "<group>"; };
@@ -1025,7 +1026,7 @@
 		2F416FC11E63303B00DC5AD4 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
-				2FA54AB71FD5580900FE1CD1 /* FBRetainCycleDetector */,
+				2F47B1E022FDC279005EEDAE /* FBRetainCycleDetector */,
 				2FA54AF01FD5580900FE1CD1 /* fishhook */,
 				2F416FC21E63303B00DC5AD4 /* FLEX */,
 				2F41706C1E63303B00DC5AD4 /* GCDWebServer */,
@@ -1160,6 +1161,153 @@
 				2F41715F1E63303B00DC5AD4 /* RTBTypeDecoder2.m */,
 			);
 			path = RuntimeBrowser;
+			sourceTree = "<group>";
+		};
+		2F47B1E022FDC279005EEDAE /* FBRetainCycleDetector */ = {
+			isa = PBXGroup;
+			children = (
+				2F47B1E122FDC279005EEDAE /* Associations */,
+				2F47B21222FDC279005EEDAE /* Detector */,
+				2F47B21122FDC279005EEDAE /* FBRetainCycleUtils.h */,
+				2F47B21822FDC279005EEDAE /* FBRetainCycleUtils.m */,
+				2F47B1E622FDC279005EEDAE /* Filtering */,
+				2F47B20322FDC279005EEDAE /* Graph */,
+				2F47B1E922FDC279005EEDAE /* Layout */,
+			);
+			path = FBRetainCycleDetector;
+			sourceTree = "<group>";
+		};
+		2F47B1E122FDC279005EEDAE /* Associations */ = {
+			isa = PBXGroup;
+			children = (
+				2F47B1E222FDC279005EEDAE /* FBAssociationManager.h */,
+				2F47B1E522FDC279005EEDAE /* FBAssociationManager.mm */,
+				2F47B1E322FDC279005EEDAE /* Internal */,
+			);
+			path = Associations;
+			sourceTree = "<group>";
+		};
+		2F47B1E322FDC279005EEDAE /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				2F47B1E422FDC279005EEDAE /* FBAssociationManager+Internal.h */,
+			);
+			path = Internal;
+			sourceTree = "<group>";
+		};
+		2F47B1E622FDC279005EEDAE /* Filtering */ = {
+			isa = PBXGroup;
+			children = (
+				2F47B1E822FDC279005EEDAE /* FBStandardGraphEdgeFilters.h */,
+				2F47B1E722FDC279005EEDAE /* FBStandardGraphEdgeFilters.mm */,
+			);
+			path = Filtering;
+			sourceTree = "<group>";
+		};
+		2F47B1E922FDC279005EEDAE /* Layout */ = {
+			isa = PBXGroup;
+			children = (
+				2F47B1EA22FDC279005EEDAE /* Blocks */,
+				2F47B1F122FDC279005EEDAE /* Classes */,
+			);
+			path = Layout;
+			sourceTree = "<group>";
+		};
+		2F47B1EA22FDC279005EEDAE /* Blocks */ = {
+			isa = PBXGroup;
+			children = (
+				2F47B1ED22FDC279005EEDAE /* Circle-LICENSE */,
+				2F47B1F022FDC279005EEDAE /* FBBlockInterface.h */,
+				2F47B1EB22FDC279005EEDAE /* FBBlockStrongLayout.h */,
+				2F47B1EF22FDC279005EEDAE /* FBBlockStrongLayout.m */,
+				2F47B1EE22FDC279005EEDAE /* FBBlockStrongRelationDetector.h */,
+				2F47B1EC22FDC279005EEDAE /* FBBlockStrongRelationDetector.m */,
+			);
+			path = Blocks;
+			sourceTree = "<group>";
+		};
+		2F47B1F122FDC279005EEDAE /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				2F47B1FB22FDC279005EEDAE /* FBClassStrongLayout.h */,
+				2F47B1FA22FDC279005EEDAE /* FBClassStrongLayout.mm */,
+				2F47B1F222FDC279005EEDAE /* FBClassStrongLayoutHelpers.h */,
+				2F47B1FC22FDC279005EEDAE /* FBClassStrongLayoutHelpers.m */,
+				2F47B1F322FDC279005EEDAE /* Parser */,
+				2F47B1FD22FDC279005EEDAE /* Reference */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		2F47B1F322FDC279005EEDAE /* Parser */ = {
+			isa = PBXGroup;
+			children = (
+				2F47B1F922FDC279005EEDAE /* BaseType.h */,
+				2F47B1F622FDC279005EEDAE /* FBStructEncodingParser.h */,
+				2F47B1F822FDC279005EEDAE /* FBStructEncodingParser.mm */,
+				2F47B1F722FDC279005EEDAE /* Struct.h */,
+				2F47B1F522FDC279005EEDAE /* Struct.mm */,
+				2F47B1F422FDC279005EEDAE /* Type.h */,
+			);
+			path = Parser;
+			sourceTree = "<group>";
+		};
+		2F47B1FD22FDC279005EEDAE /* Reference */ = {
+			isa = PBXGroup;
+			children = (
+				2F47B1FF22FDC279005EEDAE /* FBIvarReference.h */,
+				2F47B20222FDC279005EEDAE /* FBIvarReference.m */,
+				2F47B20022FDC279005EEDAE /* FBObjectInStructReference.h */,
+				2F47B1FE22FDC279005EEDAE /* FBObjectInStructReference.m */,
+				2F47B20122FDC279005EEDAE /* FBObjectReference.h */,
+			);
+			path = Reference;
+			sourceTree = "<group>";
+		};
+		2F47B20322FDC279005EEDAE /* Graph */ = {
+			isa = PBXGroup;
+			children = (
+				2F47B20822FDC279005EEDAE /* FBObjectGraphConfiguration.h */,
+				2F47B20D22FDC279005EEDAE /* FBObjectGraphConfiguration.m */,
+				2F47B20422FDC279005EEDAE /* FBObjectiveCBlock.h */,
+				2F47B20E22FDC279005EEDAE /* FBObjectiveCBlock.m */,
+				2F47B21022FDC279005EEDAE /* FBObjectiveCGraphElement.h */,
+				2F47B20A22FDC279005EEDAE /* FBObjectiveCGraphElement.mm */,
+				2F47B20922FDC279005EEDAE /* FBObjectiveCObject.h */,
+				2F47B20F22FDC279005EEDAE /* FBObjectiveCObject.m */,
+				2F47B20B22FDC279005EEDAE /* Internal */,
+				2F47B20522FDC279005EEDAE /* Specialization */,
+			);
+			path = Graph;
+			sourceTree = "<group>";
+		};
+		2F47B20522FDC279005EEDAE /* Specialization */ = {
+			isa = PBXGroup;
+			children = (
+				2F47B20622FDC279005EEDAE /* FBObjectiveCNSCFTimer.h */,
+				2F47B20722FDC279005EEDAE /* FBObjectiveCNSCFTimer.mm */,
+			);
+			path = Specialization;
+			sourceTree = "<group>";
+		};
+		2F47B20B22FDC279005EEDAE /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				2F47B20C22FDC279005EEDAE /* FBObjectiveCGraphElement+Internal.h */,
+			);
+			path = Internal;
+			sourceTree = "<group>";
+		};
+		2F47B21222FDC279005EEDAE /* Detector */ = {
+			isa = PBXGroup;
+			children = (
+				2F47B21522FDC279005EEDAE /* FBNodeEnumerator.h */,
+				2F47B21422FDC279005EEDAE /* FBNodeEnumerator.mm */,
+				2F47B21322FDC279005EEDAE /* FBRetainCycleDetector.h */,
+				2F47B21622FDC279005EEDAE /* FBRetainCycleDetector.mm */,
+				2F47B21722FDC279005EEDAE /* FBRetainCycleDetector+Internal.h */,
+			);
+			path = Detector;
 			sourceTree = "<group>";
 		};
 		2F4E1F8D2122C26800A565C3 /* Network */ = {
@@ -1792,153 +1940,6 @@
 			path = GCDWebServer;
 			sourceTree = "<group>";
 		};
-		2FA54AB71FD5580900FE1CD1 /* FBRetainCycleDetector */ = {
-			isa = PBXGroup;
-			children = (
-				2FA54AB81FD5580900FE1CD1 /* Associations */,
-				2FA54ABD1FD5580900FE1CD1 /* Detector */,
-				2FA54AC31FD5580900FE1CD1 /* FBRetainCycleUtils.h */,
-				2FA54AC41FD5580900FE1CD1 /* FBRetainCycleUtils.m */,
-				2FA54AC51FD5580900FE1CD1 /* Filtering */,
-				2FA54AC81FD5580900FE1CD1 /* Graph */,
-				2FA54AD61FD5580900FE1CD1 /* Layout */,
-			);
-			path = FBRetainCycleDetector;
-			sourceTree = "<group>";
-		};
-		2FA54AB81FD5580900FE1CD1 /* Associations */ = {
-			isa = PBXGroup;
-			children = (
-				2FA54AB91FD5580900FE1CD1 /* FBAssociationManager.h */,
-				2FA54ABA1FD5580900FE1CD1 /* FBAssociationManager.mm */,
-				2FA54ABB1FD5580900FE1CD1 /* Internal */,
-			);
-			path = Associations;
-			sourceTree = "<group>";
-		};
-		2FA54ABB1FD5580900FE1CD1 /* Internal */ = {
-			isa = PBXGroup;
-			children = (
-				2FA54ABC1FD5580900FE1CD1 /* FBAssociationManager+Internal.h */,
-			);
-			path = Internal;
-			sourceTree = "<group>";
-		};
-		2FA54ABD1FD5580900FE1CD1 /* Detector */ = {
-			isa = PBXGroup;
-			children = (
-				2FA54ABE1FD5580900FE1CD1 /* FBNodeEnumerator.h */,
-				2FA54ABF1FD5580900FE1CD1 /* FBNodeEnumerator.mm */,
-				2FA54AC01FD5580900FE1CD1 /* FBRetainCycleDetector+Internal.h */,
-				2FA54AC11FD5580900FE1CD1 /* FBRetainCycleDetector.h */,
-				2FA54AC21FD5580900FE1CD1 /* FBRetainCycleDetector.mm */,
-			);
-			path = Detector;
-			sourceTree = "<group>";
-		};
-		2FA54AC51FD5580900FE1CD1 /* Filtering */ = {
-			isa = PBXGroup;
-			children = (
-				2FA54AC61FD5580900FE1CD1 /* FBStandardGraphEdgeFilters.h */,
-				2FA54AC71FD5580900FE1CD1 /* FBStandardGraphEdgeFilters.mm */,
-			);
-			path = Filtering;
-			sourceTree = "<group>";
-		};
-		2FA54AC81FD5580900FE1CD1 /* Graph */ = {
-			isa = PBXGroup;
-			children = (
-				2FA54AC91FD5580900FE1CD1 /* FBObjectGraphConfiguration.h */,
-				2FA54ACA1FD5580900FE1CD1 /* FBObjectGraphConfiguration.m */,
-				2FA54ACB1FD5580900FE1CD1 /* FBObjectiveCBlock.h */,
-				2FA54ACC1FD5580900FE1CD1 /* FBObjectiveCBlock.m */,
-				2FA54ACD1FD5580900FE1CD1 /* FBObjectiveCGraphElement.h */,
-				2FA54ACE1FD5580900FE1CD1 /* FBObjectiveCGraphElement.mm */,
-				2FA54ACF1FD5580900FE1CD1 /* FBObjectiveCObject.h */,
-				2FA54AD01FD5580900FE1CD1 /* FBObjectiveCObject.m */,
-				2FA54AD11FD5580900FE1CD1 /* Internal */,
-				2FA54AD31FD5580900FE1CD1 /* Specialization */,
-			);
-			path = Graph;
-			sourceTree = "<group>";
-		};
-		2FA54AD11FD5580900FE1CD1 /* Internal */ = {
-			isa = PBXGroup;
-			children = (
-				2FA54AD21FD5580900FE1CD1 /* FBObjectiveCGraphElement+Internal.h */,
-			);
-			path = Internal;
-			sourceTree = "<group>";
-		};
-		2FA54AD31FD5580900FE1CD1 /* Specialization */ = {
-			isa = PBXGroup;
-			children = (
-				2FA54AD41FD5580900FE1CD1 /* FBObjectiveCNSCFTimer.h */,
-				2FA54AD51FD5580900FE1CD1 /* FBObjectiveCNSCFTimer.mm */,
-			);
-			path = Specialization;
-			sourceTree = "<group>";
-		};
-		2FA54AD61FD5580900FE1CD1 /* Layout */ = {
-			isa = PBXGroup;
-			children = (
-				2FA54AD71FD5580900FE1CD1 /* Blocks */,
-				2FA54ADE1FD5580900FE1CD1 /* Classes */,
-			);
-			path = Layout;
-			sourceTree = "<group>";
-		};
-		2FA54AD71FD5580900FE1CD1 /* Blocks */ = {
-			isa = PBXGroup;
-			children = (
-				2FA54AD81FD5580900FE1CD1 /* Circle-LICENSE */,
-				2FA54AD91FD5580900FE1CD1 /* FBBlockInterface.h */,
-				2FA54ADA1FD5580900FE1CD1 /* FBBlockStrongLayout.h */,
-				2FA54ADB1FD5580900FE1CD1 /* FBBlockStrongLayout.m */,
-				2FA54ADC1FD5580900FE1CD1 /* FBBlockStrongRelationDetector.h */,
-				2FA54ADD1FD5580900FE1CD1 /* FBBlockStrongRelationDetector.m */,
-			);
-			path = Blocks;
-			sourceTree = "<group>";
-		};
-		2FA54ADE1FD5580900FE1CD1 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				2FA54ADF1FD5580900FE1CD1 /* FBClassStrongLayout.h */,
-				2FA54AE01FD5580900FE1CD1 /* FBClassStrongLayout.mm */,
-				2FA54AE11FD5580900FE1CD1 /* FBClassStrongLayoutHelpers.h */,
-				2FA54AE21FD5580900FE1CD1 /* FBClassStrongLayoutHelpers.m */,
-				2FA54AE31FD5580900FE1CD1 /* Parser */,
-				2FA54AEA1FD5580900FE1CD1 /* Reference */,
-			);
-			path = Classes;
-			sourceTree = "<group>";
-		};
-		2FA54AE31FD5580900FE1CD1 /* Parser */ = {
-			isa = PBXGroup;
-			children = (
-				2FA54AE41FD5580900FE1CD1 /* BaseType.h */,
-				2FA54AE51FD5580900FE1CD1 /* FBStructEncodingParser.h */,
-				2FA54AE61FD5580900FE1CD1 /* FBStructEncodingParser.mm */,
-				2FA54AE71FD5580900FE1CD1 /* Struct.h */,
-				2FA54AE81FD5580900FE1CD1 /* Struct.mm */,
-				2FA54AE91FD5580900FE1CD1 /* Type.h */,
-			);
-			path = Parser;
-			sourceTree = "<group>";
-		};
-		2FA54AEA1FD5580900FE1CD1 /* Reference */ = {
-			isa = PBXGroup;
-			children = (
-				2FA54AEB1FD5580900FE1CD1 /* FBIvarReference.h */,
-				2FA54AEC1FD5580900FE1CD1 /* FBIvarReference.m */,
-				2FA54AED1FD5580900FE1CD1 /* FBObjectInStructReference.h */,
-				2FA54AEE1FD5580900FE1CD1 /* FBObjectInStructReference.m */,
-				2FA54AEF1FD5580900FE1CD1 /* FBObjectReference.h */,
-			);
-			path = Reference;
-			sourceTree = "<group>";
-		};
 		2FA54AF01FD5580900FE1CD1 /* fishhook */ = {
 			isa = PBXGroup;
 			children = (
@@ -2030,7 +2031,6 @@
 				2F3C78711E62BADF0015206A /* FWDebugManager.h in Headers */,
 				2F4E20902122C26A00A565C3 /* FLEXHierarchyTableViewCell.h in Headers */,
 				2F54B9AD2230BA86008411EF /* Punycode.h in Headers */,
-				2FA54AF31FD5580900FE1CD1 /* FBAssociationManager.h in Headers */,
 				2F4E205E2122C26A00A565C3 /* FLEXClassesTableViewController.h in Headers */,
 				2F54B91A2230BA86008411EF /* NSString+URLEncode.h in Headers */,
 				2F4E20B32122C26A00A565C3 /* FLEXFieldEditorViewController.h in Headers */,
@@ -2043,9 +2043,11 @@
 				2F54B9812230BA86008411EF /* KSCrashC.h in Headers */,
 				2F54B9942230BA86008411EF /* AlignOf.h in Headers */,
 				2F54B97A2230BA86008411EF /* KSStackCursor.h in Headers */,
-				2FA54B051FD5580900FE1CD1 /* FBObjectiveCObject.h in Headers */,
 				2F22E6252264EF940081B7AC /* NWHub.h in Headers */,
+				2F47B23F22FDC279005EEDAE /* FBRetainCycleDetector.h in Headers */,
+				2F47B23322FDC279005EEDAE /* FBObjectiveCBlock.h in Headers */,
 				2F4E20692122C26A00A565C3 /* FLEXSystemLogTableViewCell.h in Headers */,
+				2F47B22F22FDC279005EEDAE /* FBIvarReference.h in Headers */,
 				2F54B9222230BA86008411EF /* KSReachabilityKSCrash.h in Headers */,
 				2F54B9832230BA86008411EF /* KSSystemCapabilities.h in Headers */,
 				2F4172081E63303B00DC5AD4 /* GCDWebServerResponse.h in Headers */,
@@ -2057,21 +2059,21 @@
 				2F4E20C52122C26A00A565C3 /* FLEXArgumentInputViewFactory.h in Headers */,
 				2F54B9AA2230BA86008411EF /* DemangleNodes.h in Headers */,
 				2F4E208B2122C26A00A565C3 /* FLEXManager+Private.h in Headers */,
+				2F47B22522FDC279005EEDAE /* Type.h in Headers */,
 				2F4E20552122C26A00A565C3 /* FLEXRuntimeUtility.h in Headers */,
 				2F4E20432122C26A00A565C3 /* FLEXNetworkSettingsTableViewController.h in Headers */,
 				2F2BB4D02261B98500D022D0 /* FWDebugFakeNotification.h in Headers */,
-				2FA54B071FD5580900FE1CD1 /* FBObjectiveCGraphElement+Internal.h in Headers */,
 				2F54B9182230BA86008411EF /* NSMutableData+AppendUTF8.h in Headers */,
+				2F47B22822FDC279005EEDAE /* Struct.h in Headers */,
 				2F4E209E2122C26A00A565C3 /* FLEXViewExplorerViewController.h in Headers */,
 				2F4E207E2122C26A00A565C3 /* FLEXMultiColumnTableView.h in Headers */,
 				2F54B9332230BA86008411EF /* KSCrashMonitor_Signal.h in Headers */,
 				2F54B9A12230BA86008411EF /* KSCrashInstallationEmail.h in Headers */,
-				2FA54B191FD5580900FE1CD1 /* Type.h in Headers */,
 				2F54B9AC2230BA86008411EF /* Demangle.h in Headers */,
 				2F54B9602230BA86008411EF /* KSObjCApple.h in Headers */,
-				2FA54B0C1FD5580900FE1CD1 /* FBBlockStrongLayout.h in Headers */,
 				2F4E20B02122C26A00A565C3 /* FLEXIvarEditorViewController.h in Headers */,
 				2F4E20782122C26A00A565C3 /* FLEXTableLeftCell.h in Headers */,
+				2F47B23022FDC279005EEDAE /* FBObjectInStructReference.h in Headers */,
 				2F41721A1E63303B00DC5AD4 /* GCDWebUploader.h in Headers */,
 				2F54B9502230BA86008411EF /* KSSignalInfo.h in Headers */,
 				2F32AD581F0B6A0C004072E5 /* FWDebugAppConfig.h in Headers */,
@@ -2084,6 +2086,8 @@
 				2F54B9A42230BA86008411EF /* KSCrashInstallationVictory.h in Headers */,
 				2F54B9262230BA86008411EF /* KSCrashReportSinkVictory.h in Headers */,
 				2F22E6232264EF940081B7AC /* NWType.h in Headers */,
+				2F47B23622FDC279005EEDAE /* FBObjectGraphConfiguration.h in Headers */,
+				2F47B21D22FDC279005EEDAE /* FBStandardGraphEdgeFilters.h in Headers */,
 				2F4E20C72122C26A00A565C3 /* FLEXArgumentInputView.h in Headers */,
 				2F54B95A2230BA86008411EF /* KSID.h in Headers */,
 				2F54B96D2230BA86008411EF /* NSError+SimpleConstructor.h in Headers */,
@@ -2092,23 +2096,19 @@
 				2F4E20672122C26A00A565C3 /* FLEXInstancesTableViewController.h in Headers */,
 				2F4E20D02122C26A00A565C3 /* FLEXArgumentInputStructView.h in Headers */,
 				2F54B9352230BA86008411EF /* KSCrashMonitor_CPPException.h in Headers */,
-				2FA54B081FD5580900FE1CD1 /* FBObjectiveCNSCFTimer.h in Headers */,
 				2F57CFF21E65338A0062B632 /* KSCrash+FWDebug.h in Headers */,
 				2F54B95F2230BA86008411EF /* KSThread.h in Headers */,
-				2FA54AF91FD5580900FE1CD1 /* FBRetainCycleDetector.h in Headers */,
 				2F4E20BC2122C26A00A565C3 /* FLEXArgumentInputFontView.h in Headers */,
 				2F4E20802122C26A00A565C3 /* FLEXTableListViewController.h in Headers */,
-				2FA54AFB1FD5580900FE1CD1 /* FBRetainCycleUtils.h in Headers */,
 				2F4E20452122C26A00A565C3 /* FLEXNetworkTransactionTableViewCell.h in Headers */,
 				2F4E20662122C26A00A565C3 /* FLEXObjectRef.h in Headers */,
 				2F54B90E2230BA86008411EF /* KSCrashReportFilter.h in Headers */,
 				2F4172D01E63303B00DC5AD4 /* RTBRuntime.h in Headers */,
+				2F47B22122FDC279005EEDAE /* FBBlockStrongRelationDetector.h in Headers */,
 				2F4E20772122C26A00A565C3 /* FLEXSQLiteDatabaseManager.h in Headers */,
 				2F54B9252230BA86008411EF /* KSCrashReportSinkEMail.h in Headers */,
-				2FA54AF61FD5580900FE1CD1 /* FBNodeEnumerator.h in Headers */,
 				2F4E208A2122C26A00A565C3 /* FLEXWindow.h in Headers */,
 				2F4E203F2122C26A00A565C3 /* FLEXNetworkTransaction.h in Headers */,
-				2FA54B141FD5580900FE1CD1 /* BaseType.h in Headers */,
 				2F57D00F1E6537110062B632 /* FWDebugRuntimeBrowser.h in Headers */,
 				2F54B98A2230BA86008411EF /* KSCrashCachedData.h in Headers */,
 				2F4E20B42122C26A00A565C3 /* FLEXFieldEditorView.h in Headers */,
@@ -2142,11 +2142,10 @@
 				2F4E20492122C26A00A565C3 /* FLEX.h in Headers */,
 				2F54B9AF2230BA86008411EF /* LLVM.h in Headers */,
 				2F54B9952230BA86008411EF /* Compiler.h in Headers */,
+				2F47B21A22FDC279005EEDAE /* FBAssociationManager+Internal.h in Headers */,
 				2F4E206D2122C26A00A565C3 /* FLEXSystemLogMessage.h in Headers */,
 				2F54B9512230BA86008411EF /* KSSysCtl.h in Headers */,
-				2FA54B1E1FD5580900FE1CD1 /* FBObjectReference.h in Headers */,
 				2F54B98C2230BA86008411EF /* KSCrashReportFields.h in Headers */,
-				2FA54B1C1FD5580900FE1CD1 /* FBObjectInStructReference.h in Headers */,
 				2F4172001E63303B00DC5AD4 /* GCDWebServerConnection.h in Headers */,
 				2F4E208F2122C26A00A565C3 /* FLEXHierarchyTableViewController.h in Headers */,
 				2F54B9032230BA86008411EF /* KSCrashReportFilterAppleFmt.h in Headers */,
@@ -2155,7 +2154,6 @@
 				2F4E206B2122C26A00A565C3 /* FLEXSystemLogTableViewController.h in Headers */,
 				2F4172141E63303B00DC5AD4 /* GCDWebServerErrorResponse.h in Headers */,
 				2F54B98F2230BA86008411EF /* None.h in Headers */,
-				2FA54B121FD5580900FE1CD1 /* FBClassStrongLayoutHelpers.h in Headers */,
 				2F4172CC1E63303B00DC5AD4 /* RTBMethod.h in Headers */,
 				2F54B90F2230BA86008411EF /* KSCrashReportFilterBasic.h in Headers */,
 				2F4E20522122C26A00A565C3 /* FLEXUtility.h in Headers */,
@@ -2165,6 +2163,7 @@
 				2F54B9452230BA86008411EF /* KSCrashMonitor_Zombie.h in Headers */,
 				2F54B9192230BA86008411EF /* KSHTTPMultipartPostBody.h in Headers */,
 				2F54B9652230BA86008411EF /* KSJSONCodec.h in Headers */,
+				2F47B23122FDC279005EEDAE /* FBObjectReference.h in Headers */,
 				2F4E203D2122C26A00A565C3 /* FLEXNetworkTransactionDetailTableViewController.h in Headers */,
 				2F57D0271E65665D0062B632 /* FWDebugFpsInfo.h in Headers */,
 				2F54B9902230BA86008411EF /* Optional.h in Headers */,
@@ -2185,12 +2184,12 @@
 				2F54B9A62230BA86008411EF /* KSCrashInstallation.h in Headers */,
 				2F54B93F2230BA86008411EF /* KSCrashMonitor_System.h in Headers */,
 				2F4E206E2122C26A00A565C3 /* FLEXRealmDefines.h in Headers */,
-				2FA54AFF1FD5580900FE1CD1 /* FBObjectGraphConfiguration.h in Headers */,
 				2F4172051E63303B00DC5AD4 /* GCDWebServerPrivate.h in Headers */,
 				2F4E20C22122C26A00A565C3 /* FLEXArgumentInputNumberView.h in Headers */,
 				2F4E20CA2122C26A00A565C3 /* FLEXArgumentInputSwitchView.h in Headers */,
 				2FA54B291FD5585600FE1CD1 /* FBRetainCycleDetector+FWDebug.h in Headers */,
 				2F4E203A2122C26A00A565C3 /* FLEXNetworkHistoryTableViewController.h in Headers */,
+				2F47B23422FDC279005EEDAE /* FBObjectiveCNSCFTimer.h in Headers */,
 				2F4E20562122C26A00A565C3 /* FLEXKeyboardShortcutManager.h in Headers */,
 				2F4172121E63303B00DC5AD4 /* GCDWebServerDataResponse.h in Headers */,
 				2F54B9752230BA86008411EF /* KSDate.h in Headers */,
@@ -2199,21 +2198,23 @@
 				2FA54B201FD5580900FE1CD1 /* fishhook.h in Headers */,
 				2F4172CA1E63303B00DC5AD4 /* RTBClass.h in Headers */,
 				2F54B95B2230BA86008411EF /* KSDemangle_CPP.h in Headers */,
+				2F47B21922FDC279005EEDAE /* FBAssociationManager.h in Headers */,
 				2F4172181E63303B00DC5AD4 /* GCDWebServerStreamedResponse.h in Headers */,
 				2F4E20C32122C26A00A565C3 /* FLEXArgumentInputFontsPickerView.h in Headers */,
-				2FA54B011FD5580900FE1CD1 /* FBObjectiveCBlock.h in Headers */,
 				2F57D00A1E65369B0062B632 /* FWDebugKSCrashReportSinkFile.h in Headers */,
 				2F4E20892122C26A00A565C3 /* FLEXExplorerViewController.h in Headers */,
 				2F4171FC1E63303B00DC5AD4 /* GCDWebDAVServer.h in Headers */,
-				2FA54AF51FD5580900FE1CD1 /* FBAssociationManager+Internal.h in Headers */,
 				2F54B9552230BA86008411EF /* KSStackCursor_SelfThread.h in Headers */,
 				2F54B95C2230BA86008411EF /* KSMachineContext_Apple.h in Headers */,
 				2FA54B2E1FD55D1800FE1CD1 /* FWDebugRetainCycle.h in Headers */,
+				2F47B22A22FDC279005EEDAE /* BaseType.h in Headers */,
 				2F54B9062230BA86008411EF /* Container+DeepSearch.h in Headers */,
+				2F47B23D22FDC279005EEDAE /* FBObjectiveCGraphElement.h in Headers */,
 				2F54B9302230BA86008411EF /* KSCrashMonitorContext.h in Headers */,
-				2FA54B101FD5580900FE1CD1 /* FBClassStrongLayout.h in Headers */,
+				2F47B23922FDC279005EEDAE /* FBObjectiveCGraphElement+Internal.h in Headers */,
 				2F4E209B2122C26A00A565C3 /* FLEXSetExplorerViewController.h in Headers */,
 				2F54B93C2230BA86008411EF /* KSCrashMonitor_Deadlock.h in Headers */,
+				2F47B23722FDC279005EEDAE /* FBObjectiveCObject.h in Headers */,
 				2F22E6282264EF940081B7AC /* NWPusher.h in Headers */,
 				2F4E20512122C26A00A565C3 /* FLEXHeapEnumerator.h in Headers */,
 				2F4E20722122C26A00A565C3 /* FLEXTableContentCell.h in Headers */,
@@ -2226,22 +2227,23 @@
 				2F57D0081E65369B0062B632 /* FWDebugKSCrashInstallationFile.h in Headers */,
 				2F54B9482230BA86008411EF /* KSSymbolicator.h in Headers */,
 				2F54B9732230BA86008411EF /* KSFileUtils.h in Headers */,
+				2F47B22322FDC279005EEDAE /* FBBlockInterface.h in Headers */,
+				2F47B24322FDC279005EEDAE /* FBRetainCycleDetector+Internal.h in Headers */,
 				2F54B9582230BA86008411EF /* KSMemory.h in Headers */,
 				2F54B9622230BA86008411EF /* KSStackCursor_Backtrace.h in Headers */,
+				2F47B21E22FDC279005EEDAE /* FBBlockStrongLayout.h in Headers */,
 				2F4E209A2122C26A00A565C3 /* FLEXLayerExplorerViewController.h in Headers */,
 				2F2E3DC71E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.h in Headers */,
 				2F4E20632122C26A00A565C3 /* FLEXFileBrowserSearchOperation.h in Headers */,
-				2FA54B0E1FD5580900FE1CD1 /* FBBlockStrongRelationDetector.h in Headers */,
 				2F4172D41E63303B00DC5AD4 /* RTBTypeDecoder.h in Headers */,
 				2F4172061E63303B00DC5AD4 /* GCDWebServerRequest.h in Headers */,
 				2F4171FE1E63303B00DC5AD4 /* GCDWebServer.h in Headers */,
-				2FA54B171FD5580900FE1CD1 /* Struct.h in Headers */,
 				2F54B9A92230BA86008411EF /* Malloc.h in Headers */,
 				2F57D0001E6535450062B632 /* FLEXFileBrowserTableViewController+FWDebug.h in Headers */,
 				2FA54B251FD5582A00FE1CD1 /* FWDebugFishhook.h in Headers */,
 				2F57CFED1E652F860062B632 /* FLEXManager+FWDebug.h in Headers */,
 				2F41720A1E63303B00DC5AD4 /* GCDWebServerDataRequest.h in Headers */,
-				2FA54AFD1FD5580900FE1CD1 /* FBStandardGraphEdgeFilters.h in Headers */,
+				2F47B24122FDC279005EEDAE /* FBNodeEnumerator.h in Headers */,
 				2F4E20972122C26A00A565C3 /* FLEXManager.h in Headers */,
 				2F54B9852230BA86008411EF /* KSCrashReportFixer.h in Headers */,
 				2F4E20AA2122C26A00A565C3 /* FLEXClassExplorerViewController.h in Headers */,
@@ -2249,12 +2251,10 @@
 				2F4E20D32122C26A00A565C3 /* FLEXPropertyEditorViewController.h in Headers */,
 				2F54B9722230BA86008411EF /* KSObjC.h in Headers */,
 				2F4E20D42122C26A00A565C3 /* FLEXMethodCallingViewController.h in Headers */,
-				2FA54B1A1FD5580900FE1CD1 /* FBIvarReference.h in Headers */,
 				2F54B9092230BA86008411EF /* KSCrashReportFilterStringify.h in Headers */,
-				2FA54B0B1FD5580900FE1CD1 /* FBBlockInterface.h in Headers */,
+				2F47B22422FDC279005EEDAE /* FBClassStrongLayoutHelpers.h in Headers */,
 				2F4E20702122C26A00A565C3 /* FLEXRealmDatabaseManager.h in Headers */,
 				2F4172041E63303B00DC5AD4 /* GCDWebServerHTTPStatusCodes.h in Headers */,
-				2FA54AF81FD5580900FE1CD1 /* FBRetainCycleDetector+Internal.h in Headers */,
 				2F4E20582122C26A00A565C3 /* FLEXFileBrowserFileOperationController.h in Headers */,
 				2F54B94E2230BA86008411EF /* KSLogger.h in Headers */,
 				2F54B9232230BA86008411EF /* KSCrashReportSinkConsole.h in Headers */,
@@ -2263,18 +2263,19 @@
 				2F4E20A42122C26A00A565C3 /* FLEXGlobalsTableViewControllerEntry.h in Headers */,
 				2F54B9962230BA86008411EF /* type_traits.h in Headers */,
 				2F4172CE1E63303B00DC5AD4 /* RTBProtocol.h in Headers */,
+				2F47B22722FDC279005EEDAE /* FBStructEncodingParser.h in Headers */,
 				2F57D01D1E6545320062B632 /* FWDebugWebServer.h in Headers */,
-				2FA54B031FD5580900FE1CD1 /* FBObjectiveCGraphElement.h in Headers */,
-				2FA54B151FD5580900FE1CD1 /* FBStructEncodingParser.h in Headers */,
 				2F57D0021E6535450062B632 /* FLEXObjectExplorerViewController+FWDebug.h in Headers */,
 				2F4E20382122C26A00A565C3 /* FLEXNetworkCurlLogger.h in Headers */,
 				2F4172D61E63303B00DC5AD4 /* RTBTypeDecoder2.h in Headers */,
 				2F54B9382230BA86008411EF /* KSCrashMonitor.h in Headers */,
 				2F4E20812122C26A00A565C3 /* FLEXWebViewController.h in Headers */,
+				2F47B22C22FDC279005EEDAE /* FBClassStrongLayout.h in Headers */,
 				2F4E20922122C26A00A565C3 /* FLEXImagePreviewViewController.h in Headers */,
 				2F54B9932230BA86008411EF /* Casting.h in Headers */,
 				2F4E20A22122C26A00A565C3 /* FLEXObjectExplorerViewController.h in Headers */,
 				2F54B90D2230BA86008411EF /* KSCrashReportFilterAlert.h in Headers */,
+				2F47B23E22FDC279005EEDAE /* FBRetainCycleUtils.h in Headers */,
 				2F54B9492230BA86008411EF /* KSString.h in Headers */,
 				2F4E20AF2122C26A00A565C3 /* FLEXViewControllerExplorerViewController.h in Headers */,
 				2F4E20602122C26A00A565C3 /* FLEXGlobalsTableViewController.h in Headers */,
@@ -2344,6 +2345,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F47B22022FDC279005EEDAE /* Circle-LICENSE in Resources */,
 				2F54B9B02230BA86008411EF /* LICENSE.txt in Resources */,
 				2F54B9972230BA86008411EF /* LICENSE.TXT in Resources */,
 			);
@@ -2380,8 +2382,6 @@
 				2F54B94F2230BA86008411EF /* KSCPU_x86_32.c in Sources */,
 				2F54B9202230BA86008411EF /* KSCString.m in Sources */,
 				2F54B97E2230BA86008411EF /* KSCPU_arm64.c in Sources */,
-				2FA54B1B1FD5580900FE1CD1 /* FBIvarReference.m in Sources */,
-				2FA54AF71FD5580900FE1CD1 /* FBNodeEnumerator.mm in Sources */,
 				2F54B92B2230BA86008411EF /* KSCrashReportSinkEMail.m in Sources */,
 				2F4E20882122C26A00A565C3 /* FLEXWindow.m in Sources */,
 				2F54B9322230BA86008411EF /* KSCrashMonitor_System.m in Sources */,
@@ -2389,16 +2389,14 @@
 				2F4E20AC2122C26A00A565C3 /* FLEXObjectExplorerViewController.m in Sources */,
 				2F4E20932122C26A00A565C3 /* FLEXToolbarItem.m in Sources */,
 				2F4172091E63303B00DC5AD4 /* GCDWebServerResponse.m in Sources */,
-				2FA54AF41FD5580900FE1CD1 /* FBAssociationManager.mm in Sources */,
 				2F4E205B2122C26A00A565C3 /* FLEXObjectRef.m in Sources */,
 				2F54B95E2230BA86008411EF /* KSDynamicLinker.c in Sources */,
 				2F4E205D2122C26A00A565C3 /* FLEXInstancesTableViewController.m in Sources */,
-				2FA54B001FD5580900FE1CD1 /* FBObjectGraphConfiguration.m in Sources */,
 				2F4E20962122C26A00A565C3 /* FLEXExplorerToolbar.m in Sources */,
 				2F4E204E2122C26A00A565C3 /* FLEXRuntimeUtility.m in Sources */,
 				2F4E205A2122C26A00A565C3 /* FLEXFileBrowserSearchOperation.m in Sources */,
 				2F54B9662230BA86008411EF /* KSDate.c in Sources */,
-				2FA54AFC1FD5580900FE1CD1 /* FBRetainCycleUtils.m in Sources */,
+				2F47B21C22FDC279005EEDAE /* FBStandardGraphEdgeFilters.mm in Sources */,
 				2F54B9112230BA86008411EF /* KSCrashReportFilterAlert.m in Sources */,
 				2F2E3DC81E691E9600307BAD /* FLEXSystemLogTableViewController+FWDebug.m in Sources */,
 				2F4172191E63303B00DC5AD4 /* GCDWebServerStreamedResponse.m in Sources */,
@@ -2408,8 +2406,8 @@
 				2F54B96C2230BA86008411EF /* KSSignalInfo.c in Sources */,
 				2F4E20992122C26A00A565C3 /* FLEXObjectExplorerFactory.m in Sources */,
 				2F54B9862230BA86008411EF /* KSCrashDoctor.m in Sources */,
-				2FA54B041FD5580900FE1CD1 /* FBObjectiveCGraphElement.mm in Sources */,
 				2F4E20D22122C26A00A565C3 /* FLEXArgumentInputNotSupportedView.m in Sources */,
+				2F47B24222FDC279005EEDAE /* FBRetainCycleDetector.mm in Sources */,
 				2F4E20532122C26A00A565C3 /* FLEXKeyboardHelpViewController.m in Sources */,
 				2F54B96F2230BA86008411EF /* KSMemory.c in Sources */,
 				2F4E205C2122C26A00A565C3 /* FLEXWebViewController.m in Sources */,
@@ -2424,9 +2422,10 @@
 				2F22E6212264EF940081B7AC /* NWPusher.m in Sources */,
 				2F54B9412230BA86008411EF /* KSCrashMonitor_User.c in Sources */,
 				2F57CFFF1E6535450062B632 /* FLEXExplorerToolbar+FWDebug.m in Sources */,
-				2FA54B021FD5580900FE1CD1 /* FBObjectiveCBlock.m in Sources */,
+				2F47B22922FDC279005EEDAE /* FBStructEncodingParser.mm in Sources */,
 				2F54B98B2230BA86008411EF /* KSCrashC.c in Sources */,
 				2F4E203C2122C26A00A565C3 /* FLEXNetworkRecorder.m in Sources */,
+				2F47B23822FDC279005EEDAE /* FBObjectiveCGraphElement.mm in Sources */,
 				2F4172131E63303B00DC5AD4 /* GCDWebServerDataResponse.m in Sources */,
 				2F54B9762230BA86008411EF /* KSJSONCodec.c in Sources */,
 				2F4E20832122C26A00A565C3 /* FLEXLibrariesTableViewController.m in Sources */,
@@ -2441,6 +2440,7 @@
 				2F54B9292230BA86008411EF /* KSCrashReportSinkVictory.m in Sources */,
 				2F54B96A2230BA86008411EF /* KSSymbolicator.c in Sources */,
 				2F57D0241E65647D0062B632 /* FWDebugSystemInfo.m in Sources */,
+				2F47B24422FDC279005EEDAE /* FBRetainCycleUtils.m in Sources */,
 				2F4E20872122C26A00A565C3 /* FLEXExplorerViewController.m in Sources */,
 				2F4E20762122C26A00A565C3 /* FLEXMultiColumnTableView.m in Sources */,
 				2F54B9212230BA86008411EF /* NSString+URLEncode.m in Sources */,
@@ -2450,47 +2450,50 @@
 				2F54B9682230BA86008411EF /* KSString.c in Sources */,
 				2F54B9442230BA86008411EF /* KSCrashMonitor_CPPException.cpp in Sources */,
 				2F4E20402122C26A00A565C3 /* FLEXNetworkCurlLogger.m in Sources */,
-				2FA54B131FD5580900FE1CD1 /* FBClassStrongLayoutHelpers.m in Sources */,
 				2FA54B1F1FD5580900FE1CD1 /* fishhook.c in Sources */,
 				2F4E20392122C26A00A565C3 /* FLEXNetworkTransaction.m in Sources */,
 				2F22E6262264EF940081B7AC /* NWNotification.m in Sources */,
 				2F4E206A2122C26A00A565C3 /* FLEXSystemLogMessage.m in Sources */,
 				2F4E209D2122C26A00A565C3 /* FLEXImageExplorerViewController.m in Sources */,
 				2F54B90C2230BA86008411EF /* KSCrashReportFilterJSON.m in Sources */,
-				2FA54B061FD5580900FE1CD1 /* FBObjectiveCObject.m in Sources */,
+				2F47B23A22FDC279005EEDAE /* FBObjectGraphConfiguration.m in Sources */,
 				2F54B99E2230BA86008411EF /* KSCrashInstallationVictory.m in Sources */,
 				2F4E20A72122C26A00A565C3 /* FLEXLayerExplorerViewController.m in Sources */,
 				2F57D0031E6535450062B632 /* FLEXObjectExplorerViewController+FWDebug.m in Sources */,
 				2F4E20792122C26A00A565C3 /* FLEXTableContentCell.m in Sources */,
+				2F47B22622FDC279005EEDAE /* Struct.mm in Sources */,
 				2F54B9982230BA86008411EF /* KSCrashInstallationStandard.m in Sources */,
 				2F54B9162230BA86008411EF /* KSCrashReportFilterBasic.m in Sources */,
-				2FA54B111FD5580900FE1CD1 /* FBClassStrongLayout.mm in Sources */,
 				2F54B9692230BA86008411EF /* KSCPU_x86_64.c in Sources */,
 				2F57D00B1E65369B0062B632 /* FWDebugKSCrashReportSinkFile.m in Sources */,
 				2F54B9372230BA86008411EF /* KSCrashMonitor_NSException.m in Sources */,
 				2F4172D11E63303B00DC5AD4 /* RTBRuntime.m in Sources */,
+				2F47B23C22FDC279005EEDAE /* FBObjectiveCObject.m in Sources */,
 				2FB7FEF21FFE2A2000141F1B /* FWDebugManager+FWDebug.m in Sources */,
 				2F54B97C2230BA86008411EF /* KSMach.c in Sources */,
+				2F47B23B22FDC279005EEDAE /* FBObjectiveCBlock.m in Sources */,
 				2F4172011E63303B00DC5AD4 /* GCDWebServerConnection.m in Sources */,
 				2F54B99C2230BA86008411EF /* KSCrashInstallationEmail.m in Sources */,
 				2F54B92D2230BA86008411EF /* KSCrash.m in Sources */,
 				2F4172151E63303B00DC5AD4 /* GCDWebServerErrorResponse.m in Sources */,
+				2F47B22222FDC279005EEDAE /* FBBlockStrongLayout.m in Sources */,
 				2F4172CB1E63303B00DC5AD4 /* RTBClass.m in Sources */,
 				2F54B97B2230BA86008411EF /* KSStackCursor_Backtrace.c in Sources */,
 				2F3C78721E62BADF0015206A /* FWDebugManager.m in Sources */,
 				2F54B9672230BA86008411EF /* KSDemangle_CPP.cpp in Sources */,
+				2F47B21B22FDC279005EEDAE /* FBAssociationManager.mm in Sources */,
 				2F22E61D2264EF940081B7AC /* NWSecTools.m in Sources */,
 				2F54B92A2230BA86008411EF /* KSCrashReportSinkStandard.m in Sources */,
 				2F54B9702230BA86008411EF /* KSCPU.c in Sources */,
-				2FA54B161FD5580900FE1CD1 /* FBStructEncodingParser.mm in Sources */,
 				2F4E20A02122C26A00A565C3 /* FLEXDictionaryExplorerViewController.m in Sources */,
 				2F54B99D2230BA86008411EF /* KSCrashInstallation.m in Sources */,
-				2FA54B0D1FD5580900FE1CD1 /* FBBlockStrongLayout.m in Sources */,
 				2F32AD591F0B6A0C004072E5 /* FWDebugAppConfig.m in Sources */,
+				2F47B23222FDC279005EEDAE /* FBIvarReference.m in Sources */,
 				2F4E207B2122C26A00A565C3 /* FLEXRealmDatabaseManager.m in Sources */,
 				2FB7FEE81FFE261E00141F1B /* FLEXInstancesTableViewController+FWDebug.m in Sources */,
 				2F41720D1E63303B00DC5AD4 /* GCDWebServerFileRequest.m in Sources */,
 				2F54B9802230BA86008411EF /* KSID.c in Sources */,
+				2F47B23522FDC279005EEDAE /* FBObjectiveCNSCFTimer.mm in Sources */,
 				2F41720B1E63303B00DC5AD4 /* GCDWebServerDataRequest.m in Sources */,
 				2F54B9642230BA86008411EF /* KSStackCursor_MachineContext.c in Sources */,
 				2F4172CD1E63303B00DC5AD4 /* RTBMethod.m in Sources */,
@@ -2500,12 +2503,12 @@
 				2F54B91E2230BA86008411EF /* NSMutableData+AppendUTF8.m in Sources */,
 				2F4E20B72122C26A00A565C3 /* FLEXFieldEditorViewController.m in Sources */,
 				2F54B96B2230BA86008411EF /* KSLogger.c in Sources */,
-				2FA54B0F1FD5580900FE1CD1 /* FBBlockStrongRelationDetector.m in Sources */,
 				2FA54B261FD5582A00FE1CD1 /* FWDebugFishhook.m in Sources */,
 				2F54B9992230BA86008411EF /* KSCrashInstallationConsole.m in Sources */,
 				2F4E20862122C26A00A565C3 /* FLEXClassesTableViewController.m in Sources */,
 				2F4E206C2122C26A00A565C3 /* FLEXSystemLogTableViewCell.m in Sources */,
 				2F54B93D2230BA86008411EF /* KSCrashMonitor_Signal.c in Sources */,
+				2F47B24022FDC279005EEDAE /* FBNodeEnumerator.mm in Sources */,
 				2F4172031E63303B00DC5AD4 /* GCDWebServerFunctions.m in Sources */,
 				2F54B94A2230BA86008411EF /* KSDemangle_Swift.cpp in Sources */,
 				2F4E20842122C26A00A565C3 /* FLEXGlobalsTableViewController.m in Sources */,
@@ -2514,7 +2517,6 @@
 				2F54B92C2230BA86008411EF /* KSCrashReportSinkQuincyHockey.m in Sources */,
 				2F57CFF31E65338A0062B632 /* KSCrash+FWDebug.m in Sources */,
 				2F4E20A12122C26A00A565C3 /* FLEXDefaultsExplorerViewController.m in Sources */,
-				2FA54AFE1FD5580900FE1CD1 /* FBStandardGraphEdgeFilters.mm in Sources */,
 				2F4172D51E63303B00DC5AD4 /* RTBTypeDecoder.m in Sources */,
 				2F4E20BE2122C26A00A565C3 /* FLEXArgumentInputJSONObjectView.m in Sources */,
 				2F4172D31E63303B00DC5AD4 /* RTBRuntimeHeader.m in Sources */,
@@ -2522,7 +2524,6 @@
 				2F4E7E7A209089FD00E6157C /* FWDebugFakeLocation.m in Sources */,
 				2F4E20C12122C26A00A565C3 /* FLEXArgumentInputDateView.m in Sources */,
 				2F4172171E63303B00DC5AD4 /* GCDWebServerFileResponse.m in Sources */,
-				2FA54B1D1FD5580900FE1CD1 /* FBObjectInStructReference.m in Sources */,
 				2F54B9712230BA86008411EF /* KSStackCursor_SelfThread.c in Sources */,
 				2F4E20D12122C26A00A565C3 /* FLEXArgumentInputViewFactory.m in Sources */,
 				2F54B96E2230BA86008411EF /* KSDebug.c in Sources */,
@@ -2533,15 +2534,14 @@
 				2F4E20732122C26A00A565C3 /* FLEXTableContentViewController.m in Sources */,
 				2F4E203E2122C26A00A565C3 /* FLEXNetworkTransactionTableViewCell.m in Sources */,
 				2F4E20542122C26A00A565C3 /* FLEXResources.m in Sources */,
+				2F47B22B22FDC279005EEDAE /* FBClassStrongLayout.mm in Sources */,
 				2F54B9132230BA86008411EF /* KSCrashReportFilterGZip.m in Sources */,
 				2F4171FD1E63303B00DC5AD4 /* GCDWebDAVServer.m in Sources */,
 				2F22E6292264EF940081B7AC /* NWType.m in Sources */,
 				2F4E20CC2122C26A00A565C3 /* FLEXArgumentInputTextView.m in Sources */,
 				2F22E6202264EF940081B7AC /* NWPushFeedback.m in Sources */,
 				2F22E6222264EF940081B7AC /* NWSSLConnection.m in Sources */,
-				2FA54B091FD5580900FE1CD1 /* FBObjectiveCNSCFTimer.mm in Sources */,
 				2F4E20912122C26A00A565C3 /* FLEXHierarchyTableViewController.m in Sources */,
-				2FA54B181FD5580900FE1CD1 /* Struct.mm in Sources */,
 				2F54B9072230BA86008411EF /* NSData+GZip.m in Sources */,
 				2F4E20652122C26A00A565C3 /* FLEXFileBrowserFileOperationController.m in Sources */,
 				2F4E204B2122C26A00A565C3 /* FLEXHeapEnumerator.m in Sources */,
@@ -2564,12 +2564,14 @@
 				2F54B94B2230BA86008411EF /* NSError+SimpleConstructor.m in Sources */,
 				2F4E20852122C26A00A565C3 /* FLEXLiveObjectsTableViewController.m in Sources */,
 				2F4E20572122C26A00A565C3 /* FLEXMultilineTableViewCell.m in Sources */,
+				2F47B22D22FDC279005EEDAE /* FBClassStrongLayoutHelpers.m in Sources */,
 				2F54B91D2230BA86008411EF /* KSHTTPMultipartPostBody.m in Sources */,
+				2F47B21F22FDC279005EEDAE /* FBBlockStrongRelationDetector.m in Sources */,
 				2F4E204A2122C26A00A565C3 /* FLEXUtility.m in Sources */,
 				2F4E208E2122C26A00A565C3 /* FLEXImagePreviewViewController.m in Sources */,
 				2F54B91F2230BA86008411EF /* KSHTTPRequestSender.m in Sources */,
-				2FA54AFA1FD5580900FE1CD1 /* FBRetainCycleDetector.mm in Sources */,
 				2F2BB4D12261B98500D022D0 /* FWDebugFakeNotification.m in Sources */,
+				2F47B22E22FDC279005EEDAE /* FBObjectInStructReference.m in Sources */,
 				2F4E20752122C26A00A565C3 /* FLEXTableColumnHeader.m in Sources */,
 				2F54B9A82230BA86008411EF /* Demangle.cpp in Sources */,
 				2F4E20412122C26A00A565C3 /* FLEXNetworkTransactionDetailTableViewController.m in Sources */,
