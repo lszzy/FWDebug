@@ -12,6 +12,8 @@
 #import "FLEXWebViewController.h"
 #import "FLEXImagePreviewViewController.h"
 #import "FLEXTableListViewController.h"
+#import "FLEXObjectExplorerFactory.h"
+#import "FLEXObjectExplorerViewController.h"
 
 @interface FLEXFileBrowserTableViewCell : UITableViewCell
 @end
@@ -86,6 +88,12 @@
 {
     [super viewDidLoad];
 
+}
+
+#pragma mark - Misc
+
+- (void)alert:(NSString *)title message:(NSString *)message {
+    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 }
 
 #pragma mark - FLEXFileBrowserSearchOperationDelegate
@@ -185,56 +193,70 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+
     NSString *fullPath = [self filePathAtIndexPath:indexPath];
-    NSString *subpath = [fullPath lastPathComponent];
-    NSString *pathExtension = [subpath pathExtension];
+    NSString *subpath = fullPath.lastPathComponent;
+    NSString *pathExtension = subpath.pathExtension;
 
     BOOL isDirectory = NO;
     BOOL stillExists = [[NSFileManager defaultManager] fileExistsAtPath:fullPath isDirectory:&isDirectory];
-    if (stillExists) {
-        UIViewController *drillInViewController = nil;
-        if (isDirectory) {
-            drillInViewController = [[[self class] alloc] initWithPath:fullPath];
-        } else if ([FLEXUtility isImagePathExtension:pathExtension]) {
-            UIImage *image = [UIImage imageWithContentsOfFile:fullPath];
-            drillInViewController = [[FLEXImagePreviewViewController alloc] initWithImage:image];
+
+    if (!stillExists) {
+        [self alert:@"File Not Found" message:@"The file at the specified path no longer exists."];
+        [self reloadDisplayedPaths];
+        return;
+    }
+
+    UIViewController *drillInViewController = nil;
+    if (isDirectory) {
+        drillInViewController = [[[self class] alloc] initWithPath:fullPath];
+    } else if ([FLEXUtility isImagePathExtension:pathExtension]) {
+        UIImage *image = [UIImage imageWithContentsOfFile:fullPath];
+        drillInViewController = [[FLEXImagePreviewViewController alloc] initWithImage:image];
+    } else {
+        NSData *fileData = [NSData dataWithContentsOfFile:fullPath];
+        if (!fileData.length) {
+            [self alert:@"Empty File" message:@"No data returned from the file."];
+            return;
+        }
+
+        // Special case keyed archives, json, and plists to get more readable data.
+        NSString *prettyString = nil;
+        if ([pathExtension isEqualToString:@"json"]) {
+            prettyString = [FLEXUtility prettyJSONStringFromData:fileData];
         } else {
-            // Special case keyed archives, json, and plists to get more readable data.
-            NSString *prettyString = nil;
-            if ([pathExtension isEqual:@"archive"] || [pathExtension isEqual:@"coded"]) {
-                prettyString = [[NSKeyedUnarchiver unarchiveObjectWithFile:fullPath] description];
-            } else if ([pathExtension isEqualToString:@"json"]) {
-                prettyString = [FLEXUtility prettyJSONStringFromData:[NSData dataWithContentsOfFile:fullPath]];
-            } else if ([pathExtension isEqualToString:@"plist"]) {
-                NSData *fileData = [NSData dataWithContentsOfFile:fullPath];
+            @try {
+                // Try to decode an archived object regardless of file extension
+                id object = [NSKeyedUnarchiver unarchiveObjectWithData:fileData];
+                drillInViewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:object];
+            } @catch (NSException *e) {
+                // Try to decode a property list instead, also regardless of file extension
                 prettyString = [[NSPropertyListSerialization propertyListWithData:fileData options:0 format:NULL error:NULL] description];
             }
-
-            if ([prettyString length] > 0) {
-                drillInViewController = [[FLEXWebViewController alloc] initWithText:prettyString];
-            } else if ([FLEXWebViewController supportsPathExtension:pathExtension]) {
-                drillInViewController = [[FLEXWebViewController alloc] initWithURL:[NSURL fileURLWithPath:fullPath]];
-            } else if ([FLEXTableListViewController supportsExtension:subpath.pathExtension]) {
-                drillInViewController = [[FLEXTableListViewController alloc] initWithPath:fullPath];
-            }
-            else {
-                NSString *fileString = [NSString stringWithContentsOfFile:fullPath encoding:NSUTF8StringEncoding error:NULL];
-                if ([fileString length] > 0) {
-                    drillInViewController = [[FLEXWebViewController alloc] initWithText:fileString];
-                }
-            }
         }
 
-        if (drillInViewController) {
-            drillInViewController.title = [subpath lastPathComponent];
-            [self.navigationController pushViewController:drillInViewController animated:YES];
-        } else {
-            [self openFileController:fullPath];
-            [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+        if (prettyString.length) {
+            drillInViewController = [[FLEXWebViewController alloc] initWithText:prettyString];
+        } else if ([FLEXWebViewController supportsPathExtension:pathExtension]) {
+            drillInViewController = [[FLEXWebViewController alloc] initWithURL:[NSURL fileURLWithPath:fullPath]];
+        } else if ([FLEXTableListViewController supportsExtension:pathExtension]) {
+            drillInViewController = [[FLEXTableListViewController alloc] initWithPath:fullPath];
         }
+        else if (!drillInViewController) {
+            NSString *fileString = [NSString stringWithUTF8String:fileData.bytes];
+            if (fileString.length) {
+                drillInViewController = [[FLEXWebViewController alloc] initWithText:fileString];
+            }
+        }
+    }
+
+    if (drillInViewController) {
+        drillInViewController.title = subpath.lastPathComponent;
+        [self.navigationController pushViewController:drillInViewController animated:YES];
     } else {
-        [[[UIAlertView alloc] initWithTitle:@"File Removed" message:@"The file at the specified path no longer exists." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-        [self reloadDisplayedPaths];
+        // Share the file otherwise
+        [self openFileController:fullPath];
     }
 }
 

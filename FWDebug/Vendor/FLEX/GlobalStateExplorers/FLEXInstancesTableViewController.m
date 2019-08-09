@@ -79,6 +79,11 @@
 {
     NSMutableArray<FLEXObjectRef *> *instances = [NSMutableArray array];
     [FLEXHeapEnumerator enumerateLiveObjectsUsingBlock:^(__unsafe_unretained id tryObject, __unsafe_unretained Class actualClass) {
+        // Skip Swift objects
+        if ([actualClass isKindOfClass:NSClassFromString(@"SwiftObject")]) {
+            return;
+        }
+        
         // Get all the ivars on the object. Start with the class and and travel up the inheritance chain.
         // Once we find a match, record it and move on to the next object. There's no reason to find multiple matches within the same object.
         Class tryClass = actualClass;
@@ -232,7 +237,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    id instance = self.instances[indexPath.row];
+    id instance = self.instances[indexPath.row].object;
     FLEXObjectExplorerViewController *drillInViewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:instance];
     [self.navigationController pushViewController:drillInViewController animated:YES];
 }

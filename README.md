@@ -23,10 +23,12 @@ Real machine or simulator shaking within 5 seconds twice to appear debug menu. F
 * App crash log records, view
 * App file manager
 * Documents file http, webdav server
-* iOS10 + real machine NSLog display
+* real machine NSLog display
 * Generate dylib dynamic library and inject other App
 * App encryption tools
 * CLLocationManager virtual positioning
+* simulator virtual remote push send and receive
+* APNs remote push sending
 
 ## Review
 For everyone concerned about the issue of shelf audit, in particular, explain:
@@ -56,6 +58,11 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+Version 1.7.0:
+
+	* Sync the latest trunk code such as FLEX 3
+	* Compatible with Xcode 11
+
 Version 1.6.0:
 
 	* Added simulator virtual remote push send and receive function
