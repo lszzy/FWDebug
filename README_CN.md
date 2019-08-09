@@ -23,10 +23,12 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 * App崩溃日志的记录、查看
 * App文件管理器
 * Documents文件http、webdav服务器
-* iOS10+真机NSLog显示
+* 真机NSLog显示
 * 生成dylib动态库并注入其它App
 * App加密工具
 * CLLocationManager虚拟定位
+* 模拟器虚拟远程推送发送和接收功能
+* APNs远程推送发送功能
 
 ## 审核说明
 针对大家关心的上架审核问题，特别说明一下：
@@ -56,6 +58,11 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 执行`carthage update`并拷贝`FWDebug.framework`到项目即可。
 
 ## 更新日志
+1.7.0版本：
+
+	* 同步FLEX 3等最新主干代码
+	* 兼容Xcode 11
+
 1.6.0版本：
 
 	* 增加模拟器虚拟远程推送发送和接收功能
