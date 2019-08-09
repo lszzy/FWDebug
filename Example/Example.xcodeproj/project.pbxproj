@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2F51D8211E5C25B0009FD40F /* FWDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F51D8201E5C24E2009FD40F /* FWDebug.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		2F67301F22FDCFDC0031F667 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2F67301E22FDCFDC0031F667 /* LaunchScreen.storyboard */; };
 		2F86218F204959F600C98429 /* ObjectivecController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F86218E204959F600C98429 /* ObjectivecController.m */; };
 		2FA74FC71E5E8D910040732E /* FWDebug.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2F51D8201E5C24E2009FD40F /* FWDebug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2FBCA7C91E55768600B7170A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FBCA7C81E55768600B7170A /* main.m */; };
@@ -49,6 +50,7 @@
 
 /* Begin PBXFileReference section */
 		2F51D81B1E5C24E2009FD40F /* FWDebug.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FWDebug.xcodeproj; path = ../Framework/FWDebug.xcodeproj; sourceTree = "<group>"; };
+		2F67301E22FDCFDC0031F667 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2F8621642049287800C98429 /* Example-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Example-Bridging-Header.h"; sourceTree = "<group>"; };
 		2F8621652049287800C98429 /* SwiftController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftController.swift; sourceTree = "<group>"; };
 		2F8621672049289E00C98429 /* SwiftHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftHeader.h; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 				2F86218E204959F600C98429 /* ObjectivecController.m */,
 				2F8621652049287800C98429 /* SwiftController.swift */,
 				2FBCA7D31E55768600B7170A /* Assets.xcassets */,
+				2F67301E22FDCFDC0031F667 /* LaunchScreen.storyboard */,
 				2FBCA7D81E55768600B7170A /* Info.plist */,
 				2FBCA7C71E55768600B7170A /* Supporting Files */,
 			);
@@ -206,6 +209,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2FBCA7D41E55768600B7170A /* Assets.xcassets in Resources */,
+				2F67301F22FDCFDC0031F667 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,7 +351,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -374,7 +377,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";

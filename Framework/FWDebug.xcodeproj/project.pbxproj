@@ -2313,7 +2313,7 @@
 		2FCA043C1E5A8AE2008ECDD4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1100;
 				ORGANIZATIONNAME = wuyong.site;
 				TargetAttributes = {
 					2FCA04441E5A8AE2008ECDD4 = {
