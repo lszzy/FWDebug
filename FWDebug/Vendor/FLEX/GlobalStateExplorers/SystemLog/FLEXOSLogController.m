@@ -178,9 +178,18 @@ static uint8_t (*OSLogGetType)(void *);
             if (entry->log_message.format && !(strcmp(entry->log_message.format, messageText))) {
                 messageText = (char *)entry->log_message.format;
             }
-
+            
+            // FWDebug
+            if (log_message->category != NULL || log_message->subsystem != NULL || [@(log_message->image_path) containsString:@"CFNetwork"]) {
+                return YES;
+            }
+            NSString *logText = @(messageText);
+            if (logText.length < 1) {
+                return YES;
+            }
+            
             dispatch_async(dispatch_get_main_queue(), ^{
-                FLEXSystemLogMessage *message = [FLEXSystemLogMessage logMessageFromDate:date text:@(messageText)];
+                FLEXSystemLogMessage *message = [FLEXSystemLogMessage logMessageFromDate:date text:logText];
                 if (self.persistent) {
                     [self.messages addObject:message];
                 }
