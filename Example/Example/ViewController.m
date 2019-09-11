@@ -31,8 +31,6 @@
     [self.view addSubview:objectivecButton];
     
     UIButton *swiftButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    // swiftButton.hidden = YES;
-    swiftButton.hidden = YES;
     [swiftButton setTitle:@"Swift" forState:UIControlStateNormal];
     [swiftButton addTarget:self action:@selector(onSwift) forControlEvents:UIControlEventTouchUpInside];
     swiftButton.frame = CGRectMake(self.view.frame.size.width / 2 - 50, 70, 100, 30);
@@ -41,8 +39,7 @@
 
 #pragma mark - Action
 - (void)onSwift {
-    // SwiftController *viewController = [[SwiftController alloc] init];
-    ObjectivecController *viewController = [[ObjectivecController alloc] init];
+    SwiftController *viewController = [[SwiftController alloc] init];
     [self.navigationController pushViewController:viewController animated:YES];
 }
 

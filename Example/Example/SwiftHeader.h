@@ -9,6 +9,6 @@
 #ifndef SwiftHeader_h
 #define SwiftHeader_h
 
-// #import "Example-Swift.h"
+#import "Example-Swift.h"
 
 #endif /* SwiftHeader_h */
