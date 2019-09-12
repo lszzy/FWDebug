@@ -13,7 +13,7 @@
 
 static CFMutableSetRef registeredClasses;
 
-// Mimics the objective-c object stucture for checking if a range of memory is an object.
+// Mimics the objective-c object structure for checking if a range of memory is an object.
 typedef struct {
     Class isa;
 } flex_maybe_object_t;
@@ -60,7 +60,7 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
     [self updateRegisteredClasses];
     
     // Inspired by:
-    // http://llvm.org/svn/llvm-project/lldb/tags/RELEASE_34/final/examples/darwin/heap_find/heap/heap_find.cpp
+    // https://llvm.org/svn/llvm-project/lldb/tags/RELEASE_34/final/examples/darwin/heap_find/heap/heap_find.cpp
     // https://gist.github.com/samdmarshall/17f4e66b5e2e579fd396
     
     vm_address_t *zones = NULL;
@@ -71,12 +71,15 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
         for (unsigned int i = 0; i < zoneCount; i++) {
             malloc_zone_t *zone = (malloc_zone_t *)zones[i];
             malloc_introspection_t *introspection = zone->introspect;
-            NSString *zoneName = @(zone->zone_name);
+            // FWDebug
+            // NSString *zoneName = @(zone->zone_name);
 
             // We only need to look at the default malloc zone.
             // This may explain why some zone functions are
             // sometimes invalid; perhaps not all zones support them?
-            if (![zoneName isEqualToString:@"DefaultMallocZone"] || !introspection) {
+            // FWDebug
+            // if (![zoneName isEqualToString:@"DefaultMallocZone"] || !introspection) {
+            if (!introspection) {
                 continue;
             }
 
@@ -116,7 +119,8 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
             }
 
             // Only one zone to enumerate
-            break;
+            // FWDebug
+            // break;
         }
     }
 }

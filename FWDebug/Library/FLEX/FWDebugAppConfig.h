@@ -14,6 +14,8 @@
 
 + (BOOL)isAppLocked;
 
++ (BOOL)filterSystemLog;
+
 + (NSInteger)retainCycleDepth;
 
 @end

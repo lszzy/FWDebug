@@ -43,8 +43,8 @@
 
 @interface FLEXToolbarItem ()
 
-@property (nonatomic, copy) NSAttributedString *attributedTitle;
-@property (nonatomic, strong) UIImage *image;
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic) UIImage *image;
 
 @end
 
@@ -59,7 +59,7 @@
                                  NSForegroundColorAttributeName: [self colorForFpsState:fpsData.memoryState],
                                  };
     NSAttributedString *attrTitle = [[NSAttributedString alloc] initWithString:memoryStr attributes:memoryAttr];
-    self.attributedTitle = attrTitle;
+    self.title = memoryStr;
     [self setAttributedTitle:attrTitle forState:UIControlStateNormal];
     
     // image

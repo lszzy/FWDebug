@@ -9,6 +9,7 @@
 #import "FLEXOSLogController.h"
 #include <dlfcn.h>
 #include "ActivityStreamAPI.h"
+#import "FWDebugAppConfig.h"
 
 NSString * const kFLEXiOSPersistentOSLogKey = @"com.flex.enablePersistentOSLogLogging";
 
@@ -40,7 +41,7 @@ static uint8_t (*OSLogGetType)(void *);
 
 + (void)load
 {
-    // Persist logs when the app launches on iOS 10 if we have persitent logs turned on
+    // Persist logs when the app launches on iOS 10 if we have persistent logs turned on
     if (FLEXOSLogAvailable()) {
         BOOL persistent = [[NSUserDefaults standardUserDefaults] boolForKey:kFLEXiOSPersistentOSLogKey];
         if (persistent) {
@@ -73,7 +74,7 @@ static uint8_t (*OSLogGetType)(void *);
 
     self = [super init];
     if (self) {
-        _filterPid = [NSProcessInfo processInfo].processIdentifier;
+        _filterPid = NSProcessInfo.processInfo.processIdentifier;
         _levelInfo = NO;
         _subsystemInfo = NO;
     }
@@ -178,7 +179,28 @@ static uint8_t (*OSLogGetType)(void *);
             if (entry->log_message.format && !(strcmp(entry->log_message.format, messageText))) {
                 messageText = (char *)entry->log_message.format;
             }
-
+            
+            // FWDebug
+            if ([FWDebugAppConfig filterSystemLog]) {
+                if (log_message->category != NULL || log_message->subsystem != NULL || [@(log_message->image_path) containsString:@"CFNetwork"]) {
+                    return YES;
+                }
+                NSString *logText = @(messageText);
+                if (logText.length < 1) {
+                    return YES;
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    FLEXSystemLogMessage *message = [FLEXSystemLogMessage logMessageFromDate:date text:logText];
+                    if (self.persistent) {
+                        [self.messages addObject:message];
+                    }
+                    if (self.updateHandler) {
+                        self.updateHandler(@[message]);
+                    }
+                });
+                return YES;
+            }
+            
             dispatch_async(dispatch_get_main_queue(), ^{
                 FLEXSystemLogMessage *message = [FLEXSystemLogMessage logMessageFromDate:date text:@(messageText)];
                 if (self.persistent) {

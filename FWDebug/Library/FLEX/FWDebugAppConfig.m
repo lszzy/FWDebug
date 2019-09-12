@@ -81,6 +81,12 @@ static BOOL isAppLocked = NO;
     return secret && secret.length > 0;
 }
 
++ (BOOL)filterSystemLog
+{
+    NSNumber *filter = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFilterSystemLog"];
+    return filter ? [filter boolValue] : NO;
+}
+
 + (NSInteger)retainCycleDepth
 {
     NSNumber *depth = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugRetainCycleDepth"];
@@ -137,7 +143,7 @@ static BOOL isAppLocked = NO;
     } else if (section == 1) {
         return 1;
     } else {
-        return 1;
+        return 2;
     }
 }
 
@@ -159,13 +165,8 @@ static BOOL isAppLocked = NO;
         cell.textLabel.font = [UIFont systemFontOfSize:14];
     }
     
-    if (indexPath.section == 0) {
-        UISwitch *accessoryView = [[UISwitch alloc] initWithFrame:CGRectZero];
-        accessoryView.userInteractionEnabled = NO;
-        cell.accessoryView = accessoryView;
-        
-        [self configSwitch:cell indexPath:indexPath];
-    } else if (indexPath.section == 1) {
+    if (indexPath.section == 0 || indexPath.section == 1 ||
+        (indexPath.section == 2 && indexPath.row == 0)) {
         UISwitch *accessoryView = [[UISwitch alloc] initWithFrame:CGRectZero];
         accessoryView.userInteractionEnabled = NO;
         cell.accessoryView = accessoryView;
@@ -186,9 +187,8 @@ static BOOL isAppLocked = NO;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if (indexPath.section == 0) {
-        [self actionSwitch:indexPath];
-    } else if (indexPath.section == 1) {
+    if (indexPath.section == 0 || indexPath.section == 1 ||
+        (indexPath.section == 2 && indexPath.row == 0)) {
         [self actionSwitch:indexPath];
     } else {
         [self actionLabel:indexPath];
@@ -217,6 +217,16 @@ static BOOL isAppLocked = NO;
             cell.detailTextLabel.text = nil;
             cellSwitch.on = NO;
         }
+    } else if (indexPath.section == 2) {
+        if ([self.class filterSystemLog]) {
+            cell.textLabel.text = @"Filter System Log";
+            cell.detailTextLabel.text = nil;
+            cellSwitch.on = YES;
+        } else {
+            cell.textLabel.text = @"Filter System Log";
+            cell.detailTextLabel.text = nil;
+            cellSwitch.on = NO;
+        }
     }
 }
 
@@ -224,7 +234,7 @@ static BOOL isAppLocked = NO;
     UILabel *cellLabel = (UILabel *)cell.accessoryView;
     if (indexPath.section == 2) {
         cell.detailTextLabel.text = nil;
-        if (indexPath.row == 0) {
+        if (indexPath.row == 1) {
             cell.textLabel.text = @"Retain Cycle Depth";
             cellLabel.text = [NSString stringWithFormat:@"%@", @([self.class retainCycleDepth])];
         }
@@ -278,6 +288,16 @@ static BOOL isAppLocked = NO;
             [self configSwitch:cell indexPath:indexPath];
         }
 #endif
+    } else if (indexPath.section == 2) {
+        if (!cellSwitch.on) {
+            [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugFilterSystemLog"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self configSwitch:cell indexPath:indexPath];
+        } else {
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFilterSystemLog"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self configSwitch:cell indexPath:indexPath];
+        }
     }
 }
 
@@ -288,7 +308,7 @@ static BOOL isAppLocked = NO;
         [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:nil block:^(BOOL confirm, NSString *text) {
             if (confirm && text.length > 0) {
                 NSInteger value = [text integerValue];
-                if (indexPath.row == 0) {
+                if (indexPath.row == 1) {
                     if (value > 0 && value <= 10) {
                         [[NSUserDefaults standardUserDefaults] setObject:@(value) forKey:@"FWDebugRetainCycleDepth"];
                     } else {

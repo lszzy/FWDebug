@@ -11,6 +11,9 @@
 #import <SystemConfiguration/CaptiveNetwork.h>
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
+#import <CoreLocation/CoreLocation.h>
+#import <AVFoundation/AVFoundation.h>
+#import <Photos/Photos.h>
 
 #include <Endian.h>
 
@@ -220,6 +223,19 @@
                             @{ @"Network Code" : FWDebugDesc(info.subscriberCellularProvider.mobileNetworkCode) },
                             @{ @"ISO Country Code" : FWDebugDesc(info.subscriberCellularProvider.isoCountryCode) },
                             @{ @"VoIP Enabled" : FWDebugBool(info.subscriberCellularProvider.allowsVOIP) }
+                            ]
+                    };
+    [self.systemInfo addObject:sectionData];
+    
+    //Authorization
+    sectionData = @{
+                    @"title": @"Authorization",
+                    @"rows": @[
+                            @{ @"Notification" : [self notificationAuthorization] },
+                            @{ @"Location" : [self locationAuthorization] },
+                            @{ @"Camera" : [self cameraAuthority] },
+                            @{ @"Audio" : [self audioAuthority] },
+                            @{ @"Photo" : [self photoAuthority] },
                             ]
                     };
     [self.systemInfo addObject:sectionData];
@@ -869,6 +885,109 @@
     }
     
     return @[ @(WiFiSent), @(WiFiReceived), @(WWANSent), @(WWANReceived) ];
+}
+
+#pragma mark - Authorization
+
+- (NSString *)locationAuthorization
+{
+    NSString *authority = @"";
+    if ([CLLocationManager locationServicesEnabled]) {
+        CLAuthorizationStatus state = [CLLocationManager authorizationStatus];
+        if (state == kCLAuthorizationStatusNotDetermined) {
+            authority = @"NotDetermined";
+        } else if (state == kCLAuthorizationStatusRestricted) {
+            authority = @"Restricted";
+        } else if (state == kCLAuthorizationStatusDenied) {
+            authority = @"Denied";
+        } else if (state == kCLAuthorizationStatusAuthorizedAlways) {
+            authority = @"Always";
+        } else if (state == kCLAuthorizationStatusAuthorizedWhenInUse) {
+            authority = @"WhenInUse";
+        }
+    } else {
+        authority = @"NotEnabled";
+    }
+    return authority;
+}
+
+- (NSString *)notificationAuthorization
+{
+    if ([[UIApplication sharedApplication] currentUserNotificationSettings].types == UIUserNotificationTypeNone) {
+        return @"NO";
+    }
+    return @"YES";
+}
+
+- (NSString *)cameraAuthority
+{
+    NSString *authority = @"";
+    NSString *mediaType = AVMediaTypeVideo;
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];
+    switch (authStatus) {
+        case AVAuthorizationStatusNotDetermined:
+            authority = @"NotDetermined";
+            break;
+        case AVAuthorizationStatusRestricted:
+            authority = @"Restricted";
+            break;
+        case AVAuthorizationStatusDenied:
+            authority = @"Denied";
+            break;
+        case AVAuthorizationStatusAuthorized:
+            authority = @"Authorized";
+            break;
+        default:
+            break;
+    }
+    return authority;
+}
+
+- (NSString *)audioAuthority
+{
+    NSString *authority = @"";
+    NSString *mediaType = AVMediaTypeAudio;
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];
+    switch (authStatus) {
+        case AVAuthorizationStatusNotDetermined:
+            authority = @"NotDetermined";
+            break;
+        case AVAuthorizationStatusRestricted:
+            authority = @"Restricted";
+            break;
+        case AVAuthorizationStatusDenied:
+            authority = @"Denied";
+            break;
+        case AVAuthorizationStatusAuthorized:
+            authority = @"Authorized";
+            break;
+        default:
+            break;
+    }
+    return authority;
+}
+
+- (NSString *)photoAuthority
+{
+    NSString *authority = @"";
+    PHAuthorizationStatus current = [PHPhotoLibrary authorizationStatus];
+    switch (current) {
+        case PHAuthorizationStatusNotDetermined:
+            authority = @"NotDetermined";
+            break;
+        case PHAuthorizationStatusRestricted:
+            authority = @"Restricted";
+            break;
+        case PHAuthorizationStatusDenied:
+            authority = @"Denied";
+            break;
+        case PHAuthorizationStatusAuthorized:
+            authority = @"Authorized";
+            break;
+        default:
+            break;
+    }
+    return authority;
 }
 
 @end

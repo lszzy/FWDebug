@@ -67,6 +67,8 @@ NS_ASSUME_NONNULL_END
 
 - (instancetype)initWithUploadDirectory:(NSString*)path {
   if ((self = [super init])) {
+    // FWDebug
+    // NSString* bundlePath = [[NSBundle bundleForClass:[GCDWebUploader class]] pathForResource:@"GCDWebUploader" ofType:@"bundle"];
     NSString* bundlePath = [[NSBundle bundleWithPath:[FWDebugWebBundle fwDebugBundlePath]] pathForResource:@"GCDWebUploader" ofType:@"bundle"];
     if (bundlePath == nil) {
       return nil;

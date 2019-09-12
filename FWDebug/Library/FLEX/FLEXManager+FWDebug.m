@@ -58,10 +58,6 @@
         return [[FWDebugSystemInfo alloc] init];
     }];
     
-    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📘  App Browser" viewControllerFutureBlock:^UIViewController *{
-        return [[FLEXFileBrowserTableViewController alloc] initWithPath:[NSBundle mainBundle].bundlePath];
-    }];
-    
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📳  Web Server" viewControllerFutureBlock:^UIViewController *{
         return [[FWDebugWebServer alloc] init];
     }];
