@@ -39,38 +39,23 @@
 #define FWDebugBool(expr) ((expr) ? @"Yes" : @"No")
 #define FWDebugDesc(expr) ((expr != nil) ? [expr description] : @"-")
 
-@interface FWDebugSystemInfo () <UISearchResultsUpdating, UISearchControllerDelegate>
+@interface FWDebugSystemInfo ()
 
 @property (nonatomic, strong) NSMutableArray *systemInfo;
-
 @property (nonatomic, strong) NSMutableArray *tableData;
-@property (nonatomic, strong) UISearchController *searchController;
 
 @end
 
 @implementation FWDebugSystemInfo
-
-- (instancetype)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:UITableViewStyleGrouped];
-    if (self) {
-        self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
-        self.searchController.searchResultsUpdater = self;
-        self.searchController.delegate = self;
-        self.searchController.dimsBackgroundDuringPresentation = NO;
-        self.tableView.tableHeaderView = self.searchController.searchBar;
-    }
-    return self;
-}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
     self.title = @"Device Info";
+    self.showsSearchBar = YES;
     
     [self initSystemInfo];
-    
     self.tableData = self.systemInfo;
 }
 
@@ -313,48 +298,36 @@
     }
 }
 
-#pragma mark - UISearchController
+#pragma mark - Search bar
 
-- (void)updateSearchResultsForSearchController:(UISearchController *)searchController
+- (void)updateSearchResults:(NSString *)searchText
 {
-    if (!self.searchController.isActive) {
-        self.tableData = self.systemInfo;
-        [self.tableView reloadData];
-        return;
-    }
-    
-    //Search Rows
-    NSMutableArray *sectionRows = [NSMutableArray array];
-    NSString *searchKey = self.searchController.searchBar.text;
-    if (searchKey.length > 0) {
+    if (searchText.length > 0) {
+        NSMutableArray *sectionRows = [NSMutableArray array];
         for (NSDictionary *sectionData in self.systemInfo) {
             NSArray *cellDatas = [sectionData objectForKey:@"rows"];
             for (NSDictionary *cellData in cellDatas) {
                 for (NSString *cellKey in cellData) {
-                    if ([cellKey rangeOfString:searchKey].location != NSNotFound ||
-                        [[cellData objectForKey:cellKey] rangeOfString:searchKey].location != NSNotFound) {
+                    if ([cellKey rangeOfString:searchText].location != NSNotFound ||
+                        [[cellData objectForKey:cellKey] rangeOfString:searchText].location != NSNotFound) {
                         [sectionRows addObject:cellData];
                     }
                     break;
                 }
             }
         }
+        
+        self.tableData = [NSMutableArray array];
+        NSDictionary *sectionData = @{
+                                      @"title": [NSString stringWithFormat:@"%@ Results", @(sectionRows.count)],
+                                      @"rows": sectionRows,
+                                      };
+        [self.tableData addObject:sectionData];
+        [self.tableView reloadData];
+    } else {
+        self.tableData = self.systemInfo;
+        [self.tableView reloadData];
     }
-    
-    //Show Results
-    self.tableData = [NSMutableArray array];
-    NSDictionary *sectionData = @{
-                                  @"title": [NSString stringWithFormat:@"%@ Results", @(sectionRows.count)],
-                                  @"rows": sectionRows,
-                                  };
-    [self.tableData addObject:sectionData];
-    [self.tableView reloadData];
-}
-
-- (void)willDismissSearchController:(UISearchController *)searchController
-{
-    self.tableData = self.systemInfo;
-    [self.tableView reloadData];
 }
 
 #pragma mark - Private
