@@ -9,7 +9,6 @@
 #import "FLEXOSLogController.h"
 #include <dlfcn.h>
 #include "ActivityStreamAPI.h"
-#import "FWDebugAppConfig.h"
 
 NSString * const kFLEXiOSPersistentOSLogKey = @"com.flex.enablePersistentOSLogLogging";
 
@@ -179,30 +178,11 @@ static uint8_t (*OSLogGetType)(void *);
             if (entry->log_message.format && !(strcmp(entry->log_message.format, messageText))) {
                 messageText = (char *)entry->log_message.format;
             }
-            
-            // FWDebug
-            if ([FWDebugAppConfig filterSystemLog]) {
-                if (log_message->category != NULL || log_message->subsystem != NULL || [@(log_message->image_path) containsString:@"CFNetwork"]) {
-                    return YES;
-                }
-                NSString *logText = @(messageText);
-                if (logText.length < 1) {
-                    return YES;
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    FLEXSystemLogMessage *message = [FLEXSystemLogMessage logMessageFromDate:date text:logText];
-                    if (self.persistent) {
-                        [self.messages addObject:message];
-                    }
-                    if (self.updateHandler) {
-                        self.updateHandler(@[message]);
-                    }
-                });
-                return YES;
-            }
-            
+            // move messageText from stack to heap
+            NSString *msg = [NSString stringWithUTF8String:messageText];
+
             dispatch_async(dispatch_get_main_queue(), ^{
-                FLEXSystemLogMessage *message = [FLEXSystemLogMessage logMessageFromDate:date text:@(messageText)];
+                FLEXSystemLogMessage *message = [FLEXSystemLogMessage logMessageFromDate:date text:msg];
                 if (self.persistent) {
                     [self.messages addObject:message];
                 }
