@@ -15,7 +15,6 @@
  * Vendor修改文件列表如下：
  *     FBRetainCycleDetector.h
  *     FLEXOSLogController.m
- *     FLEXHeapEnumerator.m
  *     GCDWebUploader.m
  * Vendor更新替换完毕后统一还原修改即可
  */
