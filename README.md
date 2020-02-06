@@ -58,6 +58,14 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+Version 1.7.3:
+
+	* Sync Vendor latest trunk code
+
+Version 1.7.2:
+
+	* Sync Vendor latest trunk code
+
 Version 1.7.1:
 
 	* Sync Vendor latest trunk code

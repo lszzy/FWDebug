@@ -71,14 +71,9 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
         for (unsigned int i = 0; i < zoneCount; i++) {
             malloc_zone_t *zone = (malloc_zone_t *)zones[i];
             malloc_introspection_t *introspection = zone->introspect;
-            // FWDebug
-            // NSString *zoneName = @(zone->zone_name);
 
-            // We only need to look at the default malloc zone.
             // This may explain why some zone functions are
             // sometimes invalid; perhaps not all zones support them?
-            // FWDebug
-            // if (![zoneName isEqualToString:@"DefaultMallocZone"] || !introspection) {
             if (!introspection) {
                 continue;
             }
@@ -117,10 +112,6 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
                 introspection->enumerator(TASK_NULL, (void *)&callback, MALLOC_PTR_IN_USE_RANGE_TYPE, (vm_address_t)zone, reader, &range_callback);
                 unlock_zone(zone);
             }
-
-            // Only one zone to enumerate
-            // FWDebug
-            // break;
         }
     }
 }
