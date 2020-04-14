@@ -7,7 +7,7 @@
 
 # [English](README.md)
 
-iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试。
+iOS调试库，支持iOS9+，无需添加任何代码，方便iOS开发和测试。
 
 ## 屏幕截图
 ![屏幕截图](FWDebug.gif)
@@ -43,7 +43,7 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 ### CocoaPods
 本调试库支持Debug和Release环境，建议Debug模式开启。Podfile示例：
 
-	platform :ios, '8.0'
+	platform :ios, '9.0'
 	# use_frameworks!
 
 	target 'Example' do
@@ -58,6 +58,11 @@ iOS调试库，支持iOS8+，无需添加任何代码，方便iOS开发和测试
 执行`carthage update`并拷贝`FWDebug.framework`到项目即可。
 
 ## 更新日志
+1.8.0版本：
+
+	* 更新FLEX为4.1.1版本
+	* 最低兼容iOS9
+
 1.7.3版本：
 
 	* 同步Vendor最新主干代码
