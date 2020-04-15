@@ -1,18 +1,18 @@
 //
-//  FLEXFileBrowserTableViewController+FWDebugFLEX.m
+//  FLEXFileBrowserController+FWDebug.m
 //  FWDebug
 //
 //  Created by wuyong on 17/2/24.
 //  Copyright © 2017年 wuyong.site. All rights reserved.
 //
 
-#import "FLEXFileBrowserTableViewController+FWDebug.h"
+#import "FLEXFileBrowserController+FWDebug.h"
 #import "FWDebugManager+FWDebug.h"
 #import <objc/runtime.h>
 
 static NSString *fwDebugCopyPath = nil;
 
-@implementation FLEXFileBrowserTableViewController (FWDebug)
+@implementation FLEXFileBrowserController (FWDebug)
 
 + (void)load
 {
