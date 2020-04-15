@@ -152,8 +152,8 @@
 		2FA54B2F1FD55D1800FE1CD1 /* FWDebugRetainCycle.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54B2D1FD55D1800FE1CD1 /* FWDebugRetainCycle.m */; };
 		2FA750321E5EBB5F0040732E /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA750311E5EBB5F0040732E /* libxml2.tbd */; };
 		2FA750371E5EBC4A0040732E /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA750331E5EBC170040732E /* libz.tbd */; };
-		2FB7FEE71FFE261E00141F1B /* FLEXInstancesTableViewController+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FB7FEE51FFE261E00141F1B /* FLEXInstancesTableViewController+FWDebug.h */; };
-		2FB7FEE81FFE261E00141F1B /* FLEXInstancesTableViewController+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FB7FEE61FFE261E00141F1B /* FLEXInstancesTableViewController+FWDebug.m */; };
+		2FB7FEE71FFE261E00141F1B /* FLEXObjectListViewController+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FB7FEE51FFE261E00141F1B /* FLEXObjectListViewController+FWDebug.h */; };
+		2FB7FEE81FFE261E00141F1B /* FLEXObjectListViewController+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FB7FEE61FFE261E00141F1B /* FLEXObjectListViewController+FWDebug.m */; };
 		2FB7FEF11FFE2A2000141F1B /* FWDebugManager+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FB7FEEF1FFE2A1F00141F1B /* FWDebugManager+FWDebug.h */; };
 		2FB7FEF21FFE2A2000141F1B /* FWDebugManager+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FB7FEF01FFE2A2000141F1B /* FWDebugManager+FWDebug.m */; };
 		2FC91DE01E602330001E1C19 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA750351E5EBC1D0040732E /* libsqlite3.tbd */; };
@@ -813,8 +813,8 @@
 		2FA750311E5EBB5F0040732E /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		2FA750331E5EBC170040732E /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		2FA750351E5EBC1D0040732E /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
-		2FB7FEE51FFE261E00141F1B /* FLEXInstancesTableViewController+FWDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FLEXInstancesTableViewController+FWDebug.h"; sourceTree = "<group>"; };
-		2FB7FEE61FFE261E00141F1B /* FLEXInstancesTableViewController+FWDebug.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FLEXInstancesTableViewController+FWDebug.m"; sourceTree = "<group>"; };
+		2FB7FEE51FFE261E00141F1B /* FLEXObjectListViewController+FWDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FLEXObjectListViewController+FWDebug.h"; sourceTree = "<group>"; };
+		2FB7FEE61FFE261E00141F1B /* FLEXObjectListViewController+FWDebug.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FLEXObjectListViewController+FWDebug.m"; sourceTree = "<group>"; };
 		2FB7FEEF1FFE2A1F00141F1B /* FWDebugManager+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FWDebugManager+FWDebug.h"; sourceTree = "<group>"; };
 		2FB7FEF01FFE2A2000141F1B /* FWDebugManager+FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FWDebugManager+FWDebug.m"; sourceTree = "<group>"; };
 		2FCA04451E5A8AE3008ECDD4 /* FWDebug.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FWDebug.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1657,8 +1657,8 @@
 				2F57CFF91E6535450062B632 /* FLEXFileBrowserController+FWDebug.m */,
 				2F57CFFA1E6535450062B632 /* FLEXObjectExplorerViewController+FWDebug.h */,
 				2F57CFFB1E6535450062B632 /* FLEXObjectExplorerViewController+FWDebug.m */,
-				2FB7FEE51FFE261E00141F1B /* FLEXInstancesTableViewController+FWDebug.h */,
-				2FB7FEE61FFE261E00141F1B /* FLEXInstancesTableViewController+FWDebug.m */,
+				2FB7FEE51FFE261E00141F1B /* FLEXObjectListViewController+FWDebug.h */,
+				2FB7FEE61FFE261E00141F1B /* FLEXObjectListViewController+FWDebug.m */,
 				2F4E7E77209089FD00E6157C /* FWDebugFakeLocation.h */,
 				2F4E7E78209089FD00E6157C /* FWDebugFakeLocation.m */,
 				2F57D0211E65647D0062B632 /* FWDebugSystemInfo.h */,
@@ -2986,7 +2986,7 @@
 				2FD0E97322FDC8F90060A72D /* NSString+URLEncode.h in Headers */,
 				2FD0E9F422FDC8F90060A72D /* KSCrashInstallationQuincyHockey.h in Headers */,
 				2F4172101E63303B00DC5AD4 /* GCDWebServerURLEncodedFormRequest.h in Headers */,
-				2FB7FEE71FFE261E00141F1B /* FLEXInstancesTableViewController+FWDebug.h in Headers */,
+				2FB7FEE71FFE261E00141F1B /* FLEXObjectListViewController+FWDebug.h in Headers */,
 				2FF178FB2445BC3900B852AE /* FLEXDatabaseManager.h in Headers */,
 				2F4172D21E63303B00DC5AD4 /* RTBRuntimeHeader.h in Headers */,
 				2FF178DF2445BC3900B852AE /* FLEXFileBrowserSearchOperation.h in Headers */,
@@ -3307,7 +3307,7 @@
 				2F32AD591F0B6A0C004072E5 /* FWDebugAppConfig.m in Sources */,
 				2FF178F72445BC3900B852AE /* FLEXTableColumnHeader.m in Sources */,
 				2F47B23222FDC279005EEDAE /* FBIvarReference.m in Sources */,
-				2FB7FEE81FFE261E00141F1B /* FLEXInstancesTableViewController+FWDebug.m in Sources */,
+				2FB7FEE81FFE261E00141F1B /* FLEXObjectListViewController+FWDebug.m in Sources */,
 				2FD0E95D22FDC8F90060A72D /* Container+DeepSearch.m in Sources */,
 				2FF178992445BC3900B852AE /* FLEXFieldEditorViewController.m in Sources */,
 				2F41720D1E63303B00DC5AD4 /* GCDWebServerFileRequest.m in Sources */,

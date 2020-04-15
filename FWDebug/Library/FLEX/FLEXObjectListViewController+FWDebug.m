@@ -6,19 +6,19 @@
 //  Copyright © 2018年 wuyong.site. All rights reserved.
 //
 
-#import "FLEXInstancesTableViewController+FWDebug.h"
+#import "FLEXObjectListViewController+FWDebug.h"
 #import "FWDebugManager+FWDebug.h"
 #import "FBRetainCycleDetector+FWDebug.h"
 #import "FWDebugRetainCycle.h"
 #import "FLEXObjectRef.h"
 
-@interface FLEXInstancesTableViewController ()
+@interface FLEXObjectListViewController ()
 
-@property (nonatomic) NSArray<FLEXObjectRef *> *instances;
+@property (nonatomic, readonly) NSArray<FLEXObjectRef *> *references;
 
 @end
 
-@implementation FLEXInstancesTableViewController (FWDebug)
+@implementation FLEXObjectListViewController (FWDebug)
 
 + (void)load
 {
@@ -46,7 +46,7 @@
 
 - (void)fwDebugRetainCycles
 {
-    NSSet *retainCycles = [FBRetainCycleDetector fwDebugRetainCycleWithObjects:self.instances];
+    NSSet *retainCycles = [FBRetainCycleDetector fwDebugRetainCycleWithObjects:self.references];
     FWDebugRetainCycle *viewController = [[FWDebugRetainCycle alloc] init];
     viewController.retainCycles = [retainCycles allObjects];
     [self.navigationController pushViewController:viewController animated:YES];
