@@ -9,6 +9,7 @@
 #import "FLEXObjectExplorerViewController+FWDebug.h"
 #import "FLEXHeapEnumerator.h"
 #import "FLEXObjectRef.h"
+#import "FLEXAlert.h"
 #import "FWDebugManager+FWDebug.h"
 #import "FWDebugRetainCycle.h"
 #import "FBRetainCycleDetector+FWDebug.h"
@@ -30,14 +31,24 @@
 {
     [self fwDebugViewDidLoad];
     
-    UIBarButtonItem *retainItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(fwDebugRetainCycles)];
+    UIBarButtonItem *searchItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(fwDebugSearchPressed:)];
     if (self.navigationItem.rightBarButtonItems.count > 0) {
         NSMutableArray *rightItems = [NSMutableArray arrayWithArray:self.navigationItem.rightBarButtonItems];
-        [rightItems addObject:retainItem];
+        [rightItems addObject:searchItem];
         self.navigationItem.rightBarButtonItems = rightItems;
     } else {
-        self.navigationItem.rightBarButtonItem = retainItem;
+        self.navigationItem.rightBarButtonItem = searchItem;
     }
+}
+
+- (void)fwDebugSearchPressed:(UIBarButtonItem *)sender
+{
+    [FLEXAlert makeSheet:^(FLEXAlert *make) {
+        make.button(@"Retain Cycles").handler(^(NSArray<NSString *> *strings) {
+            [self fwDebugRetainCycles];
+        });
+        make.button(@"Cancel").cancelStyle();
+    } showFrom:self source:sender];
 }
 
 - (void)fwDebugRetainCycles
