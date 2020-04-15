@@ -1,5 +1,5 @@
 //
-//  FLEXObjectExplorerViewController+FWDebugFLEX.h
+//  FLEXObjectExplorerViewController+FWDebug.h
 //  FWDebug
 //
 //  Created by wuyong on 17/2/23.

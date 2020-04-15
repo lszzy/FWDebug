@@ -1,5 +1,5 @@
 //
-//  FLEXObjectExplorerViewController+FWDebugFLEX.m
+//  FLEXObjectExplorerViewController+FWDebug.m
 //  FWDebug
 //
 //  Created by wuyong on 17/2/23.
@@ -7,34 +7,21 @@
 //
 
 #import "FLEXObjectExplorerViewController+FWDebug.h"
-#import "FLEXObjectExplorerFactory.h"
-#import "FLEXInstancesTableViewController.h"
 #import "FLEXHeapEnumerator.h"
 #import "FLEXObjectRef.h"
-#import "FWDebugRetainCycle.h"
 #import "FWDebugManager+FWDebug.h"
+#import "FWDebugRetainCycle.h"
 #import "FBRetainCycleDetector+FWDebug.h"
-#import <objc/runtime.h>
-
-@interface FLEXInstancesTableViewController ()
-
-@property (nonatomic) NSArray<FLEXObjectRef *> *instances;
-
-@end
+#import <malloc/malloc.h>
 
 @implementation FLEXObjectExplorerViewController (FWDebug)
 
 + (void)load
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundeclared-selector"
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [FWDebugManager fwDebugSwizzleInstance:self method:@selector(viewDidLoad) with:@selector(fwDebugViewDidLoad)];
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(canDrillInToRow:inExplorerSection:) with:@selector(fwDebugCanDrillInToRow:inExplorerSection:)];
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(drillInViewControllerForRow:inExplorerSection:) with:@selector(fwDebugDrillInViewControllerForRow:inExplorerSection:)];
     });
-#pragma clang diagnostic pop
 }
 
 #pragma mark - FWDebug
@@ -56,38 +43,27 @@
 - (void)fwDebugRetainCycles
 {
     NSSet *retainCycles = nil;
-    if (!class_isMetaClass(object_getClass(self.object))) {
+    if (self.explorer.objectIsInstance) {
         retainCycles = [FBRetainCycleDetector fwDebugRetainCycleWithObject:self.object];
     } else {
-        FLEXInstancesTableViewController *tempObject = [FLEXInstancesTableViewController instancesTableViewControllerForClassName:NSStringFromClass(object_getClass(self.object))];
-        retainCycles = [FBRetainCycleDetector fwDebugRetainCycleWithObjects:tempObject.instances];
+        NSString *className = NSStringFromClass(object_getClass(self.object));
+        const char *classNameCString = className.UTF8String;
+        NSMutableArray *instances = [NSMutableArray new];
+        [FLEXHeapEnumerator enumerateLiveObjectsUsingBlock:^(__unsafe_unretained id object, __unsafe_unretained Class actualClass) {
+            if (strcmp(classNameCString, class_getName(actualClass)) == 0) {
+                if (malloc_size((__bridge const void *)(object)) > 0) {
+                    [instances addObject:object];
+                }
+            }
+        }];
+        
+        NSArray<FLEXObjectRef *> *references = [FLEXObjectRef referencingAll:instances];
+        retainCycles = [FBRetainCycleDetector fwDebugRetainCycleWithObjects:references];
     }
     
     FWDebugRetainCycle *viewController = [[FWDebugRetainCycle alloc] init];
     viewController.retainCycles = [retainCycles allObjects];
     [self.navigationController pushViewController:viewController animated:YES];
-}
-
-- (BOOL)fwDebugCanDrillInToRow:(NSInteger)row inExplorerSection:(FLEXObjectExplorerSection)section
-{
-    if (section == FLEXObjectExplorerSectionDescription) {
-        return object_getClass(self.object) != Nil;
-    } else {
-        return [self fwDebugCanDrillInToRow:row inExplorerSection:section];
-    }
-}
-
-- (UIViewController *)fwDebugDrillInViewControllerForRow:(NSUInteger)row inExplorerSection:(FLEXObjectExplorerSection)section
-{
-    if (section == FLEXObjectExplorerSectionDescription) {
-        UIViewController *viewController = nil;
-        if (object_getClass(self.object) != Nil) {
-            viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:object_getClass(self.object)];
-        }
-        return viewController;
-    } else {
-        return [self fwDebugDrillInViewControllerForRow:row inExplorerSection:section];
-    }
 }
 
 @end
