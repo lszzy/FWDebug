@@ -7,9 +7,9 @@
 //
 
 #import "FLEXExplorerToolbar+FWDebug.h"
-#import "FLEXUtility.h"
 #import "FWDebugFpsInfo.h"
 #import "FWDebugManager+FWDebug.h"
+#import <objc/runtime.h>
 
 @implementation FLEXExplorerToolbar (FWDebug)
 
@@ -21,11 +21,11 @@
     });
 }
 
-- (FLEXToolbarItem *)fwDebugFpsItem
+- (FLEXExplorerToolbarItem *)fwDebugFpsItem
 {
-    FLEXToolbarItem *item = objc_getAssociatedObject(self, _cmd);
+    FLEXExplorerToolbarItem *item = objc_getAssociatedObject(self, _cmd);
     if (!item) {
-        item = [FLEXToolbarItem toolbarItemWithTitle:@"" image:nil];
+        item = [FLEXExplorerToolbarItem itemWithTitle:@"" image:[UIImage new]];
         [self addSubview:item];
         objc_setAssociatedObject(self, _cmd, item, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
@@ -41,21 +41,21 @@
 
 @end
 
-@interface FLEXToolbarItem ()
+@interface FLEXExplorerToolbarItem ()
 
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic) UIImage *image;
 
 @end
 
-@implementation FLEXToolbarItem (FWDebug)
+@implementation FLEXExplorerToolbarItem (FWDebug)
 
 - (void)setFpsData:(FWDebugFpsData *)fpsData
 {
     // memory
     NSString *memoryStr = [NSString stringWithFormat:@"%.0fMB", fpsData.memory];
     NSDictionary *memoryAttr = @{
-                                 NSFontAttributeName: [FLEXUtility defaultFontOfSize:10.0],
+                                 NSFontAttributeName: [UIFont systemFontOfSize:10.0],
                                  NSForegroundColorAttributeName: [self colorForFpsState:fpsData.memoryState],
                                  };
     NSAttributedString *attrTitle = [[NSAttributedString alloc] initWithString:memoryStr attributes:memoryAttr];
@@ -94,7 +94,7 @@
         fpsColor = [self colorForFpsState:fpsData.fpsState];
     }
     NSDictionary *fpsAttr = @{
-                              NSFontAttributeName: [FLEXUtility defaultFontOfSize:12.0],
+                              NSFontAttributeName: [UIFont systemFontOfSize:12.0],
                               NSForegroundColorAttributeName: fpsColor,
                               };
     CGSize fpsSize = [fpsStr boundingRectWithSize:size
