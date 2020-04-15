@@ -10,6 +10,7 @@
 #import "NSUserDefaults+FLEX.h"
 #include <dlfcn.h>
 #include "ActivityStreamAPI.h"
+#import "FWDebugAppConfig.h"
 
 static os_activity_stream_for_pid_t OSActivityStreamForPID;
 static os_activity_stream_resume_t OSActivityStreamResume;
@@ -163,6 +164,14 @@ static uint8_t (*OSLogGetType)(void *);
         if (entry->type == OS_ACTIVITY_STREAM_TYPE_LOG_MESSAGE ||
             entry->type == OS_ACTIVITY_STREAM_TYPE_LEGACY_LOG_MESSAGE) {
             os_log_message_t log_message = &entry->log_message;
+            
+            // FWDebug
+            if ([FWDebugAppConfig filterSystemLog]) {
+                if (log_message->category != NULL || log_message->subsystem != NULL ||
+                    [@(log_message->image_path) containsString:@"CFNetwork"]) {
+                    return YES;
+                }
+            }
             
             // Get date
             NSDate *date = [NSDate dateWithTimeIntervalSince1970:log_message->tv_gmt.tv_sec];
