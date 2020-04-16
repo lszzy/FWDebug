@@ -142,8 +142,6 @@
 		2F57D0241E65647D0062B632 /* FWDebugSystemInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F57D0221E65647D0062B632 /* FWDebugSystemInfo.m */; };
 		2F57D0271E65665D0062B632 /* FWDebugFpsInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F57D0251E65665D0062B632 /* FWDebugFpsInfo.h */; };
 		2F57D0281E65665D0062B632 /* FWDebugFpsInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F57D0261E65665D0062B632 /* FWDebugFpsInfo.m */; };
-		2FA54B1F1FD5580900FE1CD1 /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54AF11FD5580900FE1CD1 /* fishhook.c */; };
-		2FA54B201FD5580900FE1CD1 /* fishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54AF21FD5580900FE1CD1 /* fishhook.h */; };
 		2FA54B291FD5585600FE1CD1 /* FBRetainCycleDetector+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54B271FD5585600FE1CD1 /* FBRetainCycleDetector+FWDebug.h */; };
 		2FA54B2A1FD5585600FE1CD1 /* FBRetainCycleDetector+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FA54B281FD5585600FE1CD1 /* FBRetainCycleDetector+FWDebug.m */; };
 		2FA54B2E1FD55D1800FE1CD1 /* FWDebugRetainCycle.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA54B2C1FD55D1800FE1CD1 /* FWDebugRetainCycle.h */; };
@@ -800,8 +798,6 @@
 		2F57D0221E65647D0062B632 /* FWDebugSystemInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugSystemInfo.m; sourceTree = "<group>"; };
 		2F57D0251E65665D0062B632 /* FWDebugFpsInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugFpsInfo.h; sourceTree = "<group>"; };
 		2F57D0261E65665D0062B632 /* FWDebugFpsInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugFpsInfo.m; sourceTree = "<group>"; };
-		2FA54AF11FD5580900FE1CD1 /* fishhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fishhook.c; sourceTree = "<group>"; };
-		2FA54AF21FD5580900FE1CD1 /* fishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fishhook.h; sourceTree = "<group>"; };
 		2FA54B271FD5585600FE1CD1 /* FBRetainCycleDetector+FWDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FBRetainCycleDetector+FWDebug.h"; sourceTree = "<group>"; };
 		2FA54B281FD5585600FE1CD1 /* FBRetainCycleDetector+FWDebug.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FBRetainCycleDetector+FWDebug.m"; sourceTree = "<group>"; };
 		2FA54B2C1FD55D1800FE1CD1 /* FWDebugRetainCycle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FWDebugRetainCycle.h; sourceTree = "<group>"; };
@@ -1363,7 +1359,6 @@
 			isa = PBXGroup;
 			children = (
 				2F47B1E022FDC279005EEDAE /* FBRetainCycleDetector */,
-				2FA54AF01FD5580900FE1CD1 /* fishhook */,
 				2FF176BB2445BC3800B852AE /* FLEX */,
 				2F41706C1E63303B00DC5AD4 /* GCDWebServer */,
 				2FD0E89E22FDC8F90060A72D /* KSCrash */,
@@ -1698,15 +1693,6 @@
 				2F57D0151E653B450062B632 /* FWDebugWebBundle.m */,
 			);
 			path = GCDWebServer;
-			sourceTree = "<group>";
-		};
-		2FA54AF01FD5580900FE1CD1 /* fishhook */ = {
-			isa = PBXGroup;
-			children = (
-				2FA54AF21FD5580900FE1CD1 /* fishhook.h */,
-				2FA54AF11FD5580900FE1CD1 /* fishhook.c */,
-			);
-			path = fishhook;
 			sourceTree = "<group>";
 		};
 		2FA54B241FD5582A00FE1CD1 /* FBRetainCycleDetector */ = {
@@ -2932,7 +2918,6 @@
 				2F4172121E63303B00DC5AD4 /* GCDWebServerDataResponse.h in Headers */,
 				2FF1787B2445BC3900B852AE /* FLEXNetworkTransaction.h in Headers */,
 				2FD0E9DA22FDC8F90060A72D /* KSCrashC.h in Headers */,
-				2FA54B201FD5580900FE1CD1 /* fishhook.h in Headers */,
 				2FD0E97122FDC8F90060A72D /* NSMutableData+AppendUTF8.h in Headers */,
 				2FF1793D2445BC3900B852AE /* FLEXRuntimeConstants.h in Headers */,
 				2FD0E9E822FDC8F90060A72D /* None.h in Headers */,
@@ -3249,7 +3234,6 @@
 				2FD0E9E422FDC8F90060A72D /* KSCrashC.c in Sources */,
 				2F57D0281E65665D0062B632 /* FWDebugFpsInfo.m in Sources */,
 				2FD0E9C322FDC8F90060A72D /* KSSymbolicator.c in Sources */,
-				2FA54B1F1FD5580900FE1CD1 /* fishhook.c in Sources */,
 				2F22E6262264EF940081B7AC /* NWNotification.m in Sources */,
 				2FF178D02445BC3900B852AE /* FLEXWebViewController.m in Sources */,
 				2FF1793E2445BC3900B852AE /* FLEXRuntimeSafety.m in Sources */,

@@ -73,7 +73,7 @@
 #pragma mark - Search
 
 - (void)updateSearchResults:(NSString *)newText {
-    NSArray *(^filter)() = ^NSArray *{
+    NSArray *(^filter)(void) = ^NSArray *{
         self.filterText = newText;
 
         // Sections will adjust data based on this property

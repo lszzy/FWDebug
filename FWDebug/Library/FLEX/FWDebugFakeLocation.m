@@ -516,20 +516,14 @@
     if (annotationIndex == 0) {
         if (@available(iOS 9.0, *)) {
             annotationView.pinTintColor = [MKPinAnnotationView purplePinColor];
-        } else {
-            annotationView.pinColor = MKPinAnnotationColorPurple;
         }
     } else if (annotationIndex == 1) {
         if (@available(iOS 9.0, *)) {
             annotationView.pinTintColor = [MKPinAnnotationView redPinColor];
-        } else {
-            annotationView.pinColor = MKPinAnnotationColorRed;
         }
     } else {
         if (@available(iOS 9.0, *)) {
             annotationView.pinTintColor = [MKPinAnnotationView greenPinColor];
-        } else {
-            annotationView.pinColor = MKPinAnnotationColorGreen;
         }
     }
     return annotationView;

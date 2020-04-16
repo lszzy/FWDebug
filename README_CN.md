@@ -58,7 +58,7 @@ iOS调试库，支持iOS9+，无需添加任何代码，方便iOS开发和测试
 执行`carthage update`并拷贝`FWDebug.framework`到项目即可。
 
 ## 更新日志
-1.8.0版本：
+1.7.4版本：
 
 	* 更新FLEX为4.1.1版本
 	* 最低兼容iOS9
@@ -161,7 +161,6 @@ iOS调试库，支持iOS9+，无需添加任何代码，方便iOS开发和测试
 * [GCDWebServer](https://github.com/swisspol/GCDWebServer)
 * [RuntimeBrowser](https://github.com/nst/RuntimeBrowser)
 * [KSCrash](https://github.com/kstenerud/KSCrash)
-* [fishhook](https://github.com/facebook/fishhook)
 * [FBRetainCycleDetector](https://github.com/facebook/FBRetainCycleDetector)
 * [NWPusher](https://github.com/noodlewerk/NWPusher)
 

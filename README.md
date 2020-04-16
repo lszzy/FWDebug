@@ -58,7 +58,7 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
-Version 1.8.0:
+Version 1.7.4:
 
 	* Updated FLEX to version 4.1.1
 	* Minimum compatible with iOS9
@@ -161,7 +161,6 @@ This debug library uses a third-party library, thanks to all third-party library
 * [GCDWebServer](https://github.com/swisspol/GCDWebServer)
 * [RuntimeBrowser](https://github.com/nst/RuntimeBrowser)
 * [KSCrash](https://github.com/kstenerud/KSCrash)
-* [fishhook](https://github.com/facebook/fishhook)
 * [FBRetainCycleDetector](https://github.com/facebook/FBRetainCycleDetector)
 * [NWPusher](https://github.com/noodlewerk/NWPusher)
 

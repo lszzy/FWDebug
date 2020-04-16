@@ -21,7 +21,7 @@
 #import "FBAssociationManager+Internal.h"
 #import "FBRetainCycleDetector.h"
 
-#import "fishhook.h"
+#import "flex_fishhook.h"
 
 #if _INTERNAL_RCD_ENABLED
 
@@ -160,7 +160,7 @@ namespace FB { namespace AssociationManager {
 {
 #if _INTERNAL_RCD_ENABLED
   std::lock_guard<std::mutex> l(*FB::AssociationManager::hookMutex);
-  rcd_rebind_symbols((struct rcd_rebinding[2]){
+  flex_rebind_symbols((struct rebinding[2]){
     {
       "objc_setAssociatedObject",
       (void *)FB::AssociationManager::fb_objc_setAssociatedObject,
@@ -180,7 +180,7 @@ namespace FB { namespace AssociationManager {
 #if _INTERNAL_RCD_ENABLED
   std::lock_guard<std::mutex> l(*FB::AssociationManager::hookMutex);
   if (FB::AssociationManager::hookTaken) {
-    rcd_rebind_symbols((struct rcd_rebinding[2]){
+    flex_rebind_symbols((struct rebinding[2]){
       {
         "objc_setAssociatedObject",
         (void *)FB::AssociationManager::fb_orig_objc_setAssociatedObject,
