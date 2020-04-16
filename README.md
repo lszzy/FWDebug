@@ -62,6 +62,7 @@ Version 1.7.4:
 
 	* Updated FLEX to version 4.1.1
 	* Minimum compatible with iOS9
+	* Compatible with dark mode
 
 Version 1.7.3:
 
