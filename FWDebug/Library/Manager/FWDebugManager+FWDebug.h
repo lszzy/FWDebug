@@ -16,6 +16,7 @@
  *     FBRetainCycleDetector.h
  *     FLEXOSLogController.m
  *     GCDWebUploader.m
+ *     KSSystemCapabilities.h
  * Vendor更新替换完毕后统一还原修改即可
  */
 @interface FWDebugManager (FWDebug)

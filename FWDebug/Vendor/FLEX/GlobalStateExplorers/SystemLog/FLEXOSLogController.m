@@ -7,11 +7,10 @@
 //
 
 #import "FLEXOSLogController.h"
+#import "NSUserDefaults+FLEX.h"
 #include <dlfcn.h>
 #include "ActivityStreamAPI.h"
 #import "FWDebugAppConfig.h"
-
-NSString * const kFLEXiOSPersistentOSLogKey = @"com.flex.enablePersistentOSLogLogging";
 
 static os_activity_stream_for_pid_t OSActivityStreamForPID;
 static os_activity_stream_resume_t OSActivityStreamResume;
@@ -39,12 +38,10 @@ static uint8_t (*OSLogGetType)(void *);
 
 @implementation FLEXOSLogController
 
-+ (void)load
-{
++ (void)load {
     // Persist logs when the app launches on iOS 10 if we have persistent logs turned on
     if (FLEXOSLogAvailable()) {
-        BOOL persistent = [[NSUserDefaults standardUserDefaults] boolForKey:kFLEXiOSPersistentOSLogKey];
-        if (persistent) {
+        if (NSUserDefaults.standardUserDefaults.flex_cacheOSLogMessages) {
             [self sharedLogController].persistent = YES;
             [[self sharedLogController] startMonitoring];
         }
@@ -61,15 +58,13 @@ static uint8_t (*OSLogGetType)(void *);
     return shared;
 }
 
-+ (instancetype)withUpdateHandler:(void(^)(NSArray<FLEXSystemLogMessage *> *newMessages))newMessagesHandler
-{
++ (instancetype)withUpdateHandler:(void(^)(NSArray<FLEXSystemLogMessage *> *newMessages))newMessagesHandler {
     FLEXOSLogController *shared = [self sharedLogController];
     shared.updateHandler = newMessagesHandler;
     return shared;
 }
 
-- (id)init
-{
+- (id)init {
     NSAssert(FLEXOSLogAvailable(), @"os_log is only available on iOS 10 and up");
 
     self = [super init];
@@ -91,7 +86,7 @@ static uint8_t (*OSLogGetType)(void *);
     if (_persistent == persistent) return;
     
     _persistent = persistent;
-    self.messages = persistent ? [NSMutableArray array] : nil;
+    self.messages = persistent ? [NSMutableArray new] : nil;
 }
 
 - (BOOL)startMonitoring {
@@ -170,6 +165,14 @@ static uint8_t (*OSLogGetType)(void *);
             entry->type == OS_ACTIVITY_STREAM_TYPE_LEGACY_LOG_MESSAGE) {
             os_log_message_t log_message = &entry->log_message;
             
+            // FWDebug
+            if ([FWDebugAppConfig filterSystemLog]) {
+                if (log_message->category != NULL || log_message->subsystem != NULL ||
+                    [@(log_message->image_path) containsString:@"CFNetwork"]) {
+                    return YES;
+                }
+            }
+            
             // Get date
             NSDate *date = [NSDate dateWithTimeIntervalSince1970:log_message->tv_gmt.tv_sec];
             
@@ -179,30 +182,11 @@ static uint8_t (*OSLogGetType)(void *);
             if (entry->log_message.format && !(strcmp(entry->log_message.format, messageText))) {
                 messageText = (char *)entry->log_message.format;
             }
-            
-            // FWDebug
-            if ([FWDebugAppConfig filterSystemLog]) {
-                if (log_message->category != NULL || log_message->subsystem != NULL || [@(log_message->image_path) containsString:@"CFNetwork"]) {
-                    return YES;
-                }
-                NSString *logText = @(messageText);
-                if (logText.length < 1) {
-                    return YES;
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    FLEXSystemLogMessage *message = [FLEXSystemLogMessage logMessageFromDate:date text:logText];
-                    if (self.persistent) {
-                        [self.messages addObject:message];
-                    }
-                    if (self.updateHandler) {
-                        self.updateHandler(@[message]);
-                    }
-                });
-                return YES;
-            }
-            
+            // move messageText from stack to heap
+            NSString *msg = [NSString stringWithUTF8String:messageText];
+
             dispatch_async(dispatch_get_main_queue(), ^{
-                FLEXSystemLogMessage *message = [FLEXSystemLogMessage logMessageFromDate:date text:@(messageText)];
+                FLEXSystemLogMessage *message = [FLEXSystemLogMessage logMessageFromDate:date text:msg];
                 if (self.persistent) {
                     [self.messages addObject:message];
                 }

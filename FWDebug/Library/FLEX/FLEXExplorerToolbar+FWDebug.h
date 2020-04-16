@@ -7,17 +7,17 @@
 //
 
 #import "FLEXExplorerToolbar.h"
-#import "FLEXToolbarItem.h"
+#import "FLEXExplorerToolbarItem.h"
 
 @class FWDebugFpsData;
 
 @interface FLEXExplorerToolbar (FWDebug)
 
-- (FLEXToolbarItem *)fwDebugFpsItem;
+- (FLEXExplorerToolbarItem *)fwDebugFpsItem;
 
 @end
 
-@interface FLEXToolbarItem (FWDebug)
+@interface FLEXExplorerToolbarItem (FWDebug)
 
 - (void)setFpsData:(FWDebugFpsData *)fpsData;
 

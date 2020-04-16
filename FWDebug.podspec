@@ -1,11 +1,11 @@
 Pod::Spec.new do |spec|
   spec.name                = "FWDebug"
-  spec.version             = "1.7.3"
+  spec.version             = "1.7.4"
   spec.summary             = "ios debug library"
   spec.homepage            = "http://wuyong.site"
   spec.license             = "MIT"
   spec.author              = { "Wu Yong" => "admin@wuyong.site" }
-  spec.platform            = :ios, "8.0"
+  spec.platform            = :ios, "9.0"
   spec.source              = { :git => "https://github.com/lszzy/FWDebug.git", :tag => "#{spec.version}" }
 
   spec_mrr_files           = [

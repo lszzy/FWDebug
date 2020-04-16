@@ -7,7 +7,7 @@
 
 # [中文](README_CN.md)
 
-iOS debugging library, support for iOS8 +, without adding any code to facilitate iOS development and testing.
+iOS debugging library, support for iOS9 +, without adding any code to facilitate iOS development and testing.
 
 ## Screenshot
 ![Screenshot](FWDebug.gif)
@@ -43,7 +43,7 @@ CocoaPods installation is recommended for automatic management of dependencies a
 ### CocoaPods
 The debug library supports Debug and Release environment, it is recommended Debug mode is turned on. Podfile example:
 
-	platform :ios, '8.0'
+	platform :ios, '9.0'
 	# use_frameworks!
 
 	target 'Example' do
@@ -58,6 +58,11 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+Version 1.7.4:
+
+	* Updated FLEX to version 4.1.1
+	* Minimum compatible with iOS9
+
 Version 1.7.3:
 
 	* Sync Vendor latest trunk code
@@ -156,7 +161,6 @@ This debug library uses a third-party library, thanks to all third-party library
 * [GCDWebServer](https://github.com/swisspol/GCDWebServer)
 * [RuntimeBrowser](https://github.com/nst/RuntimeBrowser)
 * [KSCrash](https://github.com/kstenerud/KSCrash)
-* [fishhook](https://github.com/facebook/fishhook)
 * [FBRetainCycleDetector](https://github.com/facebook/FBRetainCycleDetector)
 * [NWPusher](https://github.com/noodlewerk/NWPusher)
 

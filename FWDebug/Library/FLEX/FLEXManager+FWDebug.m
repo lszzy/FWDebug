@@ -7,37 +7,23 @@
 //
 
 #import "FLEXManager+FWDebug.h"
+#import "FLEXManager+Extensibility.h"
+#import "FLEXManager+Networking.h"
+#import "FLEXManager+Private.h"
 #import "FWDebugManager+FWDebug.h"
 #import "FLEXExplorerViewController.h"
-#import "FLEXFileBrowserTableViewController.h"
-#import "FLEXObjectExplorerViewController+FWDebug.h"
-#import "FLEXClassExplorerViewController+FWDebug.h"
-#import "FLEXFileBrowserTableViewController+FWDebug.h"
-#import "FLEXExplorerToolbar+FWDebug.h"
-#import "FLEXInstancesTableViewController+FWDebug.h"
 #import "FLEXObjectExplorerFactory.h"
+#import "FLEXNavigationController.h"
+#import "FLEXObjectExplorerViewController+FWDebug.h"
+#import "FLEXFileBrowserController+FWDebug.h"
+#import "FLEXExplorerToolbar+FWDebug.h"
+#import "FLEXObjectListViewController+FWDebug.h"
 #import "FWDebugSystemInfo.h"
 #import "FWDebugWebServer.h"
 #import "FWDebugAppConfig.h"
 #import "FWDebugFakeLocation.h"
 #import "FWDebugFakeNotification.h"
 #import <objc/runtime.h>
-
-@interface FLEXManager ()
-
-@property (nonatomic, strong) FLEXExplorerViewController *explorerViewController;
-
-@end
-
-@interface FLEXExplorerViewController ()
-
-@property (nonatomic, strong) FLEXExplorerToolbar *explorerToolbar;
-
-- (void)makeKeyAndPresentViewController:(UIViewController *)viewController animated:(BOOL)animated completion:(void (^)(void))completion;
-
-- (void)selectedViewExplorerFinished:(id)sender;
-
-@end
 
 @implementation FLEXManager (FWDebug)
 
@@ -73,7 +59,7 @@
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📝  Crash Log" viewControllerFutureBlock:^UIViewController *{
         NSString *crashLogPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
         crashLogPath = [[crashLogPath stringByAppendingPathComponent:@"FWDebug"] stringByAppendingPathComponent:@"CrashLog"];
-        return [[FLEXFileBrowserTableViewController alloc] initWithPath:crashLogPath];
+        return [[FLEXFileBrowserController alloc] initWithPath:crashLogPath];
     }];
     
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"🍀  App Config" viewControllerFutureBlock:^UIViewController *{
@@ -128,12 +114,10 @@
     [self.explorerViewController.explorerToolbar.fwDebugFpsItem setFpsData:fpsData];
 }
 
-- (void)fwDebugFpsItemClicked:(FLEXToolbarItem *)sender
+- (void)fwDebugFpsItemClicked:(FLEXExplorerToolbarItem *)sender
 {
     FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:[self fwDebugViewController]];
-    viewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemStop target:self.explorerViewController action:@selector(selectedViewExplorerFinished:)];
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
-    [self.explorerViewController makeKeyAndPresentViewController:navigationController animated:YES completion:nil];
+    [self.explorerViewController presentViewController:[FLEXNavigationController withRootViewController:viewController] animated:YES completion:nil];
 }
 
 - (UIViewController *)fwDebugViewController
