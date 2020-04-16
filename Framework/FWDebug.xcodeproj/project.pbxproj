@@ -122,8 +122,6 @@
 		2F57CFEE1E652F860062B632 /* FLEXManager+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F57CFEC1E652F860062B632 /* FLEXManager+FWDebug.m */; };
 		2F57CFF21E65338A0062B632 /* KSCrash+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F57CFF01E65338A0062B632 /* KSCrash+FWDebug.h */; };
 		2F57CFF31E65338A0062B632 /* KSCrash+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F57CFF11E65338A0062B632 /* KSCrash+FWDebug.m */; };
-		2F57CFFC1E6535450062B632 /* FLEXClassExplorerViewController+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F57CFF41E6535450062B632 /* FLEXClassExplorerViewController+FWDebug.h */; };
-		2F57CFFD1E6535450062B632 /* FLEXClassExplorerViewController+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F57CFF51E6535450062B632 /* FLEXClassExplorerViewController+FWDebug.m */; };
 		2F57CFFE1E6535450062B632 /* FLEXExplorerToolbar+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F57CFF61E6535450062B632 /* FLEXExplorerToolbar+FWDebug.h */; };
 		2F57CFFF1E6535450062B632 /* FLEXExplorerToolbar+FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F57CFF71E6535450062B632 /* FLEXExplorerToolbar+FWDebug.m */; };
 		2F57D0001E6535450062B632 /* FLEXFileBrowserController+FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F57CFF81E6535450062B632 /* FLEXFileBrowserController+FWDebug.h */; };
@@ -782,8 +780,6 @@
 		2F57CFEC1E652F860062B632 /* FLEXManager+FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FLEXManager+FWDebug.m"; sourceTree = "<group>"; };
 		2F57CFF01E65338A0062B632 /* KSCrash+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KSCrash+FWDebug.h"; sourceTree = "<group>"; };
 		2F57CFF11E65338A0062B632 /* KSCrash+FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "KSCrash+FWDebug.m"; sourceTree = "<group>"; };
-		2F57CFF41E6535450062B632 /* FLEXClassExplorerViewController+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FLEXClassExplorerViewController+FWDebug.h"; sourceTree = "<group>"; };
-		2F57CFF51E6535450062B632 /* FLEXClassExplorerViewController+FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FLEXClassExplorerViewController+FWDebug.m"; sourceTree = "<group>"; };
 		2F57CFF61E6535450062B632 /* FLEXExplorerToolbar+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FLEXExplorerToolbar+FWDebug.h"; sourceTree = "<group>"; };
 		2F57CFF71E6535450062B632 /* FLEXExplorerToolbar+FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FLEXExplorerToolbar+FWDebug.m"; sourceTree = "<group>"; };
 		2F57CFF81E6535450062B632 /* FLEXFileBrowserController+FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FLEXFileBrowserController+FWDebug.h"; sourceTree = "<group>"; };
@@ -1649,8 +1645,6 @@
 			children = (
 				2F57CFEB1E652F860062B632 /* FLEXManager+FWDebug.h */,
 				2F57CFEC1E652F860062B632 /* FLEXManager+FWDebug.m */,
-				2F57CFF41E6535450062B632 /* FLEXClassExplorerViewController+FWDebug.h */,
-				2F57CFF51E6535450062B632 /* FLEXClassExplorerViewController+FWDebug.m */,
 				2F57CFF61E6535450062B632 /* FLEXExplorerToolbar+FWDebug.h */,
 				2F57CFF71E6535450062B632 /* FLEXExplorerToolbar+FWDebug.m */,
 				2F57CFF81E6535450062B632 /* FLEXFileBrowserController+FWDebug.h */,
@@ -2767,7 +2761,6 @@
 				2FD0E97B22FDC8F90060A72D /* KSReachabilityKSCrash.h in Headers */,
 				2FF1786D2445BC3900B852AE /* FLEXObjectInfoSection.h in Headers */,
 				2FD0E9B022FDC8F90060A72D /* KSDemangle_Swift.h in Headers */,
-				2F57CFFC1E6535450062B632 /* FLEXClassExplorerViewController+FWDebug.h in Headers */,
 				2FF178B02445BC3900B852AE /* FLEXArgumentInputDateView.h in Headers */,
 				2FF178982445BC3900B852AE /* FLEXArgumentInputViewFactory.h in Headers */,
 				2F47B22522FDC279005EEDAE /* Type.h in Headers */,
@@ -3397,7 +3390,6 @@
 				2FD0E9B722FDC8F90060A72D /* KSDynamicLinker.c in Sources */,
 				2FF178C92445BC3900B852AE /* FLEXGlobalsSection.m in Sources */,
 				2FF178A82445BC3900B852AE /* FLEXArgumentInputFontView.m in Sources */,
-				2F57CFFD1E6535450062B632 /* FLEXClassExplorerViewController+FWDebug.m in Sources */,
 				2FD0E9C222FDC8F90060A72D /* KSCPU_x86_64.c in Sources */,
 				2F57D01E1E6545320062B632 /* FWDebugWebServer.m in Sources */,
 				2FF178552445BC3900B852AE /* FLEXCollectionContentSection.m in Sources */,

@@ -10,7 +10,9 @@
 #import "FLEXHeapEnumerator.h"
 #import "FLEXObjectRef.h"
 #import "FLEXAlert.h"
+#import "RTBClass.h"
 #import "FWDebugManager+FWDebug.h"
+#import "FWDebugRuntimeBrowser.h"
 #import "FWDebugRetainCycle.h"
 #import "FBRetainCycleDetector+FWDebug.h"
 #import <malloc/malloc.h>
@@ -43,12 +45,40 @@
 
 - (void)fwDebugSearchPressed:(UIBarButtonItem *)sender
 {
+    if (self.explorer.objectIsInstance) {
+        [self fwDebugRetainCycles];
+    } else {
+        [FLEXAlert makeSheet:^(FLEXAlert *make) {
+            make.button(@"Retain Cycles").handler(^(NSArray<NSString *> *strings) {
+                [self fwDebugRetainCycles];
+            });
+            make.button(@"Runtime Headers").handler(^(NSArray<NSString *> *strings) {
+                [self fwDebugRuntimeHeaders];
+            });
+            make.button(@"Cancel").cancelStyle();
+        } showFrom:self source:sender];
+    }
+}
+
+- (void)fwDebugRuntimeHeaders
+{
     [FLEXAlert makeSheet:^(FLEXAlert *make) {
-        make.button(@"Retain Cycles").handler(^(NSArray<NSString *> *strings) {
-            [self fwDebugRetainCycles];
+        Class objectClass = [self.object class];
+        RTBClass *classStub = [RTBClass classStubWithClass:objectClass];
+        NSArray *classProtocols = [classStub sortedProtocolsNames];
+        
+        make.button([NSString stringWithFormat:@"%@.h", [objectClass description]]).handler(^(NSArray<NSString *> *strings) {
+            UIViewController *viewController = [[FWDebugRuntimeBrowser alloc] initWithClassName:[objectClass description]];
+            [self.navigationController pushViewController:viewController animated:YES];
         });
+        for (NSString *protocolName in classProtocols) {
+            make.button([NSString stringWithFormat:@"%@.h", protocolName]).handler(^(NSArray<NSString *> *strings) {
+                UIViewController *viewController = [[FWDebugRuntimeBrowser alloc] initWithProtocolName:protocolName];
+                [self.navigationController pushViewController:viewController animated:YES];
+            });
+        }
         make.button(@"Cancel").cancelStyle();
-    } showFrom:self source:sender];
+    } showFrom:self source:nil];
 }
 
 - (void)fwDebugRetainCycles
