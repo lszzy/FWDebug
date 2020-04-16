@@ -7,6 +7,7 @@
 //
 
 #import "FWDebugAppConfig.h"
+#import "FLEXColor.h"
 #import "FWDebugManager+FWDebug.h"
 #import <CommonCrypto/CommonDigest.h>
 
@@ -49,7 +50,7 @@ static BOOL isAppLocked = NO;
     dispatch_once(&onceToken, ^{
         keyWindow = [UIApplication sharedApplication].keyWindow;
         secretWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-        secretWindow.backgroundColor = [UIColor whiteColor];
+        secretWindow.backgroundColor = FLEXColor.primaryBackgroundColor;
         secretWindow.rootViewController = [[UIViewController alloc] init];
         
         [keyWindow resignKeyWindow];
@@ -175,7 +176,7 @@ static BOOL isAppLocked = NO;
     } else {
         UILabel *accessoryView = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 30)];
         accessoryView.font = [UIFont systemFontOfSize:14];
-        accessoryView.textColor = [UIColor blackColor];
+        accessoryView.textColor = FLEXColor.primaryTextColor;
         accessoryView.textAlignment = NSTextAlignmentRight;
         cell.accessoryView = accessoryView;
         

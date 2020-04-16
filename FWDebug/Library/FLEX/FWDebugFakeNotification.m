@@ -8,6 +8,7 @@
 
 #import "FWDebugFakeNotification.h"
 #import "FWDebugManager+FWDebug.h"
+#import "FLEXColor.h"
 #import <UserNotifications/UserNotifications.h>
 #import <arpa/inet.h>
 #import <netinet/in.h>
@@ -410,7 +411,7 @@ static const NSInteger FWDebugBufferLength = 512;
     } else if (type == 1) {
         UILabel *accessoryView = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width / 2, 30)];
         accessoryView.font = [UIFont systemFontOfSize:14];
-        accessoryView.textColor = [UIColor blackColor];
+        accessoryView.textColor = FLEXColor.primaryTextColor;
         accessoryView.textAlignment = NSTextAlignmentRight;
         cell.accessoryView = accessoryView;
         
@@ -424,7 +425,7 @@ static const NSInteger FWDebugBufferLength = 512;
         accessoryView.frame = CGRectMake(0, 0, 50, 30);
         accessoryView.titleLabel.font = [UIFont systemFontOfSize:14];
         [accessoryView addTarget:self action:@selector(actionButton:) forControlEvents:UIControlEventTouchUpInside];
-        [accessoryView setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [accessoryView setTitleColor:FLEXColor.primaryTextColor forState:UIControlStateNormal];
         cell.accessoryView = accessoryView;
         
         [self configButton:cell indexPath:indexPath];

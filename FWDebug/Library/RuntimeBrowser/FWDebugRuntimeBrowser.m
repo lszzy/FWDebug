@@ -9,6 +9,7 @@
 #import "FWDebugRuntimeBrowser.h"
 #import "RTBRuntimeHeader.h"
 #import "RTBProtocol.h"
+#import "FLEXColor.h"
 
 @interface FWDebugRuntimeBrowser ()
 
@@ -69,7 +70,7 @@
     paragraphStyle.alignment = NSTextAlignmentLeft;
     NSDictionary *attributes = @{
                                  NSFontAttributeName: [UIFont systemFontOfSize:14],
-                                 NSForegroundColorAttributeName: [UIColor blackColor],
+                                 NSForegroundColorAttributeName: FLEXColor.primaryTextColor,
                                  NSParagraphStyleAttributeName: paragraphStyle
                                  };
     _textView.attributedText = [[NSAttributedString alloc] initWithString:headerText attributes:attributes];

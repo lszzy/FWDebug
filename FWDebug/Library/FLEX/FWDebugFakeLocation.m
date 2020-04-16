@@ -8,6 +8,7 @@
 
 #import "FWDebugFakeLocation.h"
 #import "FWDebugManager+FWDebug.h"
+#import "FLEXColor.h"
 #import <objc/runtime.h>
 #import <CoreLocation/CoreLocation.h>
 #import <MapKit/MapKit.h>
@@ -302,7 +303,7 @@
     } else if (indexPath.section == 1) {
         UILabel *accessoryView = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 30)];
         accessoryView.font = [UIFont systemFontOfSize:14];
-        accessoryView.textColor = [UIColor blackColor];
+        accessoryView.textColor = FLEXColor.primaryTextColor;
         accessoryView.textAlignment = NSTextAlignmentRight;
         cell.accessoryView = accessoryView;
         
@@ -358,12 +359,12 @@
         cell.textLabel.text = FWDebugCurrentSubtitle;
         NSString *locationString = [FWDebugFakeLocation currentLocationString];
         cellLabel.text = locationString.length > 0 ? locationString : @"click the map to copy";
-        cellLabel.textColor = locationString.length > 0 ? [UIColor blackColor] : [UIColor grayColor];
+        cellLabel.textColor = locationString.length > 0 ? FLEXColor.primaryTextColor : FLEXColor.deemphasizedTextColor;
     } else if (indexPath.row == 1) {
         cell.textLabel.text = FWDebugDestinationSubtitle;
         NSString *locationString = [FWDebugFakeLocation destinationLocationString];
         cellLabel.text = locationString.length > 0 ? locationString : @"click the map to copy";
-        cellLabel.textColor = locationString.length > 0 ? [UIColor blackColor] : [UIColor grayColor];
+        cellLabel.textColor = locationString.length > 0 ? FLEXColor.primaryTextColor : FLEXColor.deemphasizedTextColor;
     } else {
         cell.textLabel.text = @"Traveling Time";
         NSInteger travelingTime = [FWDebugFakeLocation travelingTime];

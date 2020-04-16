@@ -7,6 +7,7 @@
 //
 
 #import "FLEXExplorerToolbar+FWDebug.h"
+#import "FLEXColor.h"
 #import "FWDebugFpsInfo.h"
 #import "FWDebugManager+FWDebug.h"
 #import <objc/runtime.h>
@@ -71,7 +72,7 @@
 - (UIColor *)colorForFpsState:(NSInteger)fpsState
 {
     if (fpsState > 0) {
-        return [UIColor blackColor];
+        return FLEXColor.primaryTextColor;
     } else if (fpsState == 0) {
         return [UIColor orangeColor];
     } else {
@@ -112,7 +113,7 @@
                                                            endAngle:((M_PI * 270) / 180.f)
                                                           clockwise:YES];
     CGContextSetLineWidth(context, lineWidth);
-    [[UIColor colorWithWhite:121.0/255.0 alpha:0.75] setStroke];
+    [[UIColor colorWithWhite:121.0/255.0 alpha:0.5] setStroke];
     CGContextAddPath(context, totalPath.CGPath);
     CGContextDrawPath(context, kCGPathStroke);
     
