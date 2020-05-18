@@ -43,10 +43,16 @@
     fakeLocationButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100, 70, 200, 30);
     [self.view addSubview:fakeLocationButton];
     
+    UIButton *memoryDirtyButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [memoryDirtyButton setTitle:@"Add Memory Dirty" forState:UIControlStateNormal];
+    [memoryDirtyButton addTarget:self action:@selector(onMemoryDirty) forControlEvents:UIControlEventTouchUpInside];
+    memoryDirtyButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100, 120, 200, 30);
+    [self.view addSubview:memoryDirtyButton];
+    
     UIButton *crashButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [crashButton setTitle:@"Crash" forState:UIControlStateNormal];
     [crashButton addTarget:self action:@selector(onCrash) forControlEvents:UIControlEventTouchUpInside];
-    crashButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100, 120, 200, 30);
+    crashButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100, 170, 200, 30);
     [self.view addSubview:crashButton];
 }
 
@@ -95,6 +101,13 @@
         self.locationManager.delegate = nil;
         self.locationManager = nil;
         [self.locationButton setTitle:@"Fake Location" forState:UIControlStateNormal];
+    }
+}
+
+- (void)onMemoryDirty {
+    char *buf = malloc(10 * 1024 * 1024 * sizeof(char));
+    for (int i = 0; i < 10 * 1024 * 1024; ++i) {
+        buf[i] = (char)rand();
     }
 }
 

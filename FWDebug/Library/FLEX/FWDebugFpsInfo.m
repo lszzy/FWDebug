@@ -198,12 +198,12 @@
 
 - (NSInteger)fpsStateForData:(float)fps
 {
-    return (fps > 55.0) ? 1 : (fps > 40.0 ? 0 : -1);
+    return (fps > 50.0) ? 1 : (fps > 40.0 ? 0 : -1);
 }
 
 - (NSInteger)memoryStateForData:(float)memory
 {
-    return (memory < 200.0) ? 1 : (memory < 300.0 ? 0 : -1);
+    return (memory < 100.0) ? 1 : (memory < 200.0 ? 0 : -1);
 }
 
 - (NSInteger)cpuStateForData:(float)cpu
@@ -213,74 +213,54 @@
 
 - (float)memoryUsage
 {
-    task_basic_info_data_t taskInfo;
-    mach_msg_type_number_t infoCount = TASK_BASIC_INFO_COUNT;
-    kern_return_t kernReturn = task_info(mach_task_self(), TASK_BASIC_INFO, (task_info_t)&taskInfo, &infoCount);
-    vm_size_t memory = (kernReturn == KERN_SUCCESS) ? taskInfo.resident_size : 0; // size in bytes
+    // The real physical memory used by app，参考自MTHawkeye
+    task_vm_info_data_t vmInfo;
+    vmInfo.phys_footprint = 0;
+    mach_msg_type_number_t count = TASK_VM_INFO_COUNT;
+    kern_return_t result = task_info(mach_task_self(), TASK_VM_INFO, (task_info_t)&vmInfo, &count);
+    int64_t memory = (result == KERN_SUCCESS) ? vmInfo.phys_footprint : 0;
+    
+    // Used memory by app in byte
+    if (memory == 0) {
+        struct task_basic_info info;
+        mach_msg_type_number_t size = (sizeof(task_basic_info_data_t) / sizeof(natural_t));
+        kern_return_t kerr = task_info(mach_task_self(), TASK_BASIC_INFO, (task_info_t)&info, &size);
+        memory = (kerr == KERN_SUCCESS) ? info.resident_size : 0;
+    }
+    
     // 同NSByteCountFormatter，取1000
     return memory / 1000.0 / 1000.0;
 }
 
 - (float)cpuUsage
 {
-    kern_return_t kr;
-    task_info_data_t tinfo;
-    mach_msg_type_number_t task_info_count;
-    
-    task_info_count = TASK_INFO_MAX;
-    kr = task_info(mach_task_self(), TASK_BASIC_INFO, (task_info_t)tinfo, &task_info_count);
-    if (kr != KERN_SUCCESS) {
-        return -1;
-    }
-    
-    task_basic_info_t      basic_info;
-    thread_array_t         thread_list;
-    mach_msg_type_number_t thread_count;
-    
-    thread_info_data_t     thinfo;
-    mach_msg_type_number_t thread_info_count;
-    
-    thread_basic_info_t basic_info_th;
-    uint32_t stat_thread = 0; // Mach threads
-    
-    basic_info = (task_basic_info_t)tinfo;
-    
-    // get threads in the task
-    kr = task_threads(mach_task_self(), &thread_list, &thread_count);
-    if (kr != KERN_SUCCESS) {
-        return -1;
-    }
-    if (thread_count > 0)
-        stat_thread += thread_count;
-    
-    long tot_sec = 0;
-    long tot_usec = 0;
-    float tot_cpu = 0;
-    int j;
-    
-    for (j = 0; j < thread_count; j++)
-    {
-        thread_info_count = THREAD_INFO_MAX;
-        kr = thread_info(thread_list[j], THREAD_BASIC_INFO,
-                         (thread_info_t)thinfo, &thread_info_count);
-        if (kr != KERN_SUCCESS) {
-            return -1;
+    double totalUsageRatio = 0;
+    double maxRatio = 0;
+
+    thread_info_data_t thinfo;
+    thread_act_array_t threads;
+    thread_basic_info_t basic_info_t;
+    mach_msg_type_number_t count = 0;
+    mach_msg_type_number_t thread_info_count = THREAD_INFO_MAX;
+
+    if (task_threads(mach_task_self(), &threads, &count) == KERN_SUCCESS) {
+        for (int idx = 0; idx < count; idx++) {
+            if (thread_info(threads[idx], THREAD_BASIC_INFO, (thread_info_t)thinfo, &thread_info_count) == KERN_SUCCESS) {
+                basic_info_t = (thread_basic_info_t)thinfo;
+
+                if (!(basic_info_t->flags & TH_FLAGS_IDLE)) {
+                    double cpuUsage = basic_info_t->cpu_usage / (double)TH_USAGE_SCALE;
+                    if (cpuUsage > maxRatio) {
+                        maxRatio = cpuUsage;
+                    }
+                    totalUsageRatio += cpuUsage;
+                }
+            }
         }
-        
-        basic_info_th = (thread_basic_info_t)thinfo;
-        
-        if (!(basic_info_th->flags & TH_FLAGS_IDLE)) {
-            tot_sec = tot_sec + basic_info_th->user_time.seconds + basic_info_th->system_time.seconds;
-            tot_usec = tot_usec + basic_info_th->user_time.microseconds + basic_info_th->system_time.microseconds;
-            tot_cpu = tot_cpu + basic_info_th->cpu_usage / (float)TH_USAGE_SCALE * 100.0;
-        }
-        
-    } // for each thread
-    
-    kr = vm_deallocate(mach_task_self(), (vm_offset_t)thread_list, thread_count * sizeof(thread_t));
-    assert(kr == KERN_SUCCESS);
-    
-    return tot_cpu;
+
+        assert(vm_deallocate(mach_task_self(), (vm_address_t)threads, count * sizeof(thread_t)) == KERN_SUCCESS);
+    }
+    return totalUsageRatio * 100.f;
 }
 
 @end
