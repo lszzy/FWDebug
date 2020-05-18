@@ -155,9 +155,9 @@
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(startUpdatingLocation) with:@selector(fwDebugStartUpdatingLocation)];
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(stopUpdatingLocation) with:@selector(fwDebugStopUpdatingLocation)];
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(location) with:@selector(fwDebugLocation)];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(startUpdatingLocation) in:self with:@selector(fwDebugStartUpdatingLocation) in:self];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(stopUpdatingLocation) in:self with:@selector(fwDebugStopUpdatingLocation) in:self];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(location) in:self with:@selector(fwDebugLocation) in:self];
     });
 }
 

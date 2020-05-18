@@ -11,25 +11,29 @@
 
 @implementation FWDebugManager (FWDebug)
 
-+ (BOOL)fwDebugSwizzleInstance:(Class)clazz method:(SEL)originalSelector with:(SEL)swizzleSelector
++ (BOOL)fwDebugSwizzleMethod:(SEL)originalSelector in:(Class)originalClass with:(SEL)swizzleSelector in:(Class)swizzleClass
 {
-    Method originalMethod = class_getInstanceMethod(clazz, originalSelector);
-    Method swizzleMethod = class_getInstanceMethod(clazz, swizzleSelector);
-    if (!originalMethod || !swizzleMethod) {
+    if (!originalClass || !swizzleClass) {
         return NO;
     }
     
-    // 添加当前类方法实现，防止影响到父类方法
-    class_addMethod(clazz, originalSelector, class_getMethodImplementation(clazz, originalSelector), method_getTypeEncoding(originalMethod));
-    class_addMethod(clazz, swizzleSelector, class_getMethodImplementation(clazz, swizzleSelector), method_getTypeEncoding(swizzleMethod));
+    Method originalMethod = class_getInstanceMethod(originalClass, originalSelector);
+    Method swizzleMethod = class_getInstanceMethod(swizzleClass, swizzleSelector);
+    if (!swizzleMethod) {
+        return NO;
+    }
     
-    method_exchangeImplementations(class_getInstanceMethod(clazz, originalSelector), class_getInstanceMethod(clazz, swizzleSelector));
+    BOOL addMethod = class_addMethod(originalClass, originalSelector, method_getImplementation(swizzleMethod), method_getTypeEncoding(swizzleMethod));
+    if (addMethod) {
+        if (originalMethod) {
+            class_replaceMethod(swizzleClass, swizzleSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
+        } else {
+            class_replaceMethod(swizzleClass, swizzleSelector, imp_implementationWithBlock(^(id selfObject){}), "v@:");
+        }
+    } else {
+        method_exchangeImplementations(originalMethod, swizzleMethod);
+    }
     return YES;
-}
-
-+ (BOOL)fwDebugSwizzleClass:(Class)clazz method:(SEL)originalSelector with:(SEL)swizzleSelector
-{
-    return [self fwDebugSwizzleInstance:object_getClass((id)clazz) method:originalSelector with:swizzleSelector];
 }
 
 + (void)fwDebugShowPrompt:(UIViewController *)viewController security:(BOOL)security title:(NSString *)title message:(NSString *)message text:(NSString *)text block:(void (^)(BOOL confirm, NSString *text))block

@@ -28,7 +28,7 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(sendEvent:) with:@selector(fwDebugSendEvent:)];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(sendEvent:) in:self with:@selector(fwDebugSendEvent:) in:self];
     });
 }
 

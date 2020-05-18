@@ -31,8 +31,8 @@
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(showExplorer) with:@selector(fwDebugShowExplorer)];
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(hideExplorer) with:@selector(fwDebugHideExplorer)];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(showExplorer) in:self with:@selector(fwDebugShowExplorer) in:self];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(hideExplorer) in:self with:@selector(fwDebugHideExplorer) in:self];
     });
 }
 

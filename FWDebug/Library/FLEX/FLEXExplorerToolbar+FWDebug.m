@@ -18,7 +18,7 @@
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(toolbarItems) with:@selector(fwDebugToolbarItems)];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(toolbarItems) in:self with:@selector(fwDebugToolbarItems) in:self];
     });
 }
 

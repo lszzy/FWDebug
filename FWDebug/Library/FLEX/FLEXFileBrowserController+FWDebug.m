@@ -28,11 +28,11 @@ static NSString *fwDebugCopyPath = nil;
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(tableView:shouldShowMenuForRowAtIndexPath:) with:@selector(fwDebugTableView:shouldShowMenuForRowAtIndexPath:)];
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(tableView:canPerformAction:forRowAtIndexPath:withSender:) with:@selector(fwDebugTableView:canPerformAction:forRowAtIndexPath:withSender:)];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(tableView:shouldShowMenuForRowAtIndexPath:) in:self with:@selector(fwDebugTableView:shouldShowMenuForRowAtIndexPath:) in:self];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(tableView:canPerformAction:forRowAtIndexPath:withSender:) in:self with:@selector(fwDebugTableView:canPerformAction:forRowAtIndexPath:withSender:) in:self];
 #if FLEX_AT_LEAST_IOS13_SDK
         if (@available(iOS 13.0, *)) {
-            [FWDebugManager fwDebugSwizzleInstance:self method:@selector(tableView:contextMenuConfigurationForRowAtIndexPath:point:) with:@selector(fwDebugTableView:contextMenuConfigurationForRowAtIndexPath:point:)];
+            [FWDebugManager fwDebugSwizzleMethod:@selector(tableView:contextMenuConfigurationForRowAtIndexPath:point:) in:self with:@selector(fwDebugTableView:contextMenuConfigurationForRowAtIndexPath:point:) in:self];
         }
 #endif
     });
