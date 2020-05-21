@@ -88,6 +88,12 @@ static BOOL isAppLocked = NO;
     return filter ? [filter boolValue] : NO;
 }
 
++ (BOOL)traceVCLife
+{
+    NSNumber *trace = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugTraceVCLife"];
+    return trace ? [trace boolValue] : YES;
+}
+
 + (NSInteger)retainCycleDepth
 {
     NSNumber *depth = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugRetainCycleDepth"];
@@ -144,7 +150,7 @@ static BOOL isAppLocked = NO;
     } else if (section == 1) {
         return 1;
     } else {
-        return 2;
+        return 3;
     }
 }
 
@@ -167,7 +173,8 @@ static BOOL isAppLocked = NO;
     }
     
     if (indexPath.section == 0 || indexPath.section == 1 ||
-        (indexPath.section == 2 && indexPath.row == 0)) {
+        (indexPath.section == 2 && indexPath.row == 0) ||
+        (indexPath.section == 2 && indexPath.row == 1)) {
         UISwitch *accessoryView = [[UISwitch alloc] initWithFrame:CGRectZero];
         accessoryView.userInteractionEnabled = NO;
         cell.accessoryView = accessoryView;
@@ -189,7 +196,8 @@ static BOOL isAppLocked = NO;
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     if (indexPath.section == 0 || indexPath.section == 1 ||
-        (indexPath.section == 2 && indexPath.row == 0)) {
+        (indexPath.section == 2 && indexPath.row == 0) ||
+        (indexPath.section == 2 && indexPath.row == 1)) {
         [self actionSwitch:indexPath];
     } else {
         [self actionLabel:indexPath];
@@ -218,13 +226,23 @@ static BOOL isAppLocked = NO;
             cell.detailTextLabel.text = nil;
             cellSwitch.on = NO;
         }
-    } else if (indexPath.section == 2) {
+    } else if (indexPath.section == 2 && indexPath.row == 0) {
         if ([self.class filterSystemLog]) {
             cell.textLabel.text = @"Filter System Log";
             cell.detailTextLabel.text = nil;
             cellSwitch.on = YES;
         } else {
             cell.textLabel.text = @"Filter System Log";
+            cell.detailTextLabel.text = nil;
+            cellSwitch.on = NO;
+        }
+    } else if (indexPath.section == 2 && indexPath.row == 1) {
+        if ([self.class traceVCLife]) {
+            cell.textLabel.text = @"Trace ViewController Life";
+            cell.detailTextLabel.text = nil;
+            cellSwitch.on = YES;
+        } else {
+            cell.textLabel.text = @"Trace ViewController Life";
             cell.detailTextLabel.text = nil;
             cellSwitch.on = NO;
         }
@@ -235,10 +253,8 @@ static BOOL isAppLocked = NO;
     UILabel *cellLabel = (UILabel *)cell.accessoryView;
     if (indexPath.section == 2) {
         cell.detailTextLabel.text = nil;
-        if (indexPath.row == 1) {
-            cell.textLabel.text = @"Retain Cycle Depth";
-            cellLabel.text = [NSString stringWithFormat:@"%@", @([self.class retainCycleDepth])];
-        }
+        cell.textLabel.text = @"Retain Cycle Depth";
+        cellLabel.text = [NSString stringWithFormat:@"%@", @([self.class retainCycleDepth])];
     }
 }
 
@@ -289,13 +305,23 @@ static BOOL isAppLocked = NO;
             [self configSwitch:cell indexPath:indexPath];
         }
 #endif
-    } else if (indexPath.section == 2) {
+    } else if (indexPath.section == 2 && indexPath.row == 0) {
         if (!cellSwitch.on) {
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugFilterSystemLog"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
         } else {
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFilterSystemLog"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self configSwitch:cell indexPath:indexPath];
+        }
+    } else if (indexPath.section == 2 && indexPath.row == 1) {
+        if (!cellSwitch.on) {
+            [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugTraceVCLife"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self configSwitch:cell indexPath:indexPath];
+        } else {
+            [[NSUserDefaults standardUserDefaults] setObject:@(NO) forKey:@"FWDebugTraceVCLife"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
         }
@@ -309,12 +335,10 @@ static BOOL isAppLocked = NO;
         [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:nil block:^(BOOL confirm, NSString *text) {
             if (confirm && text.length > 0) {
                 NSInteger value = [text integerValue];
-                if (indexPath.row == 1) {
-                    if (value > 0 && value <= 10) {
-                        [[NSUserDefaults standardUserDefaults] setObject:@(value) forKey:@"FWDebugRetainCycleDepth"];
-                    } else {
-                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugRetainCycleDepth"];
-                    }
+                if (value > 0 && value <= 10) {
+                    [[NSUserDefaults standardUserDefaults] setObject:@(value) forKey:@"FWDebugRetainCycleDepth"];
+                } else {
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugRetainCycleDepth"];
                 }
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }

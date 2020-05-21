@@ -16,6 +16,8 @@
 
 + (BOOL)filterSystemLog;
 
++ (BOOL)traceVCLife;
+
 + (NSInteger)retainCycleDepth;
 
 @end

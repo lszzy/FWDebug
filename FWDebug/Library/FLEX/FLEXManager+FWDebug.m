@@ -19,6 +19,7 @@
 #import "FLEXExplorerToolbar+FWDebug.h"
 #import "FLEXObjectListViewController+FWDebug.h"
 #import "FWDebugSystemInfo.h"
+#import "FWDebugTimeProfiler.h"
 #import "FWDebugWebServer.h"
 #import "FWDebugAppConfig.h"
 #import "FWDebugFakeLocation.h"
@@ -42,6 +43,10 @@
     
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"💟  Device Info" viewControllerFutureBlock:^UIViewController *{
         return [[FWDebugSystemInfo alloc] init];
+    }];
+    
+    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"⏱️  Time Profiler" viewControllerFutureBlock:^UIViewController *{
+        return [[FWDebugTimeProfiler alloc] init];
     }];
     
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📳  Web Server" viewControllerFutureBlock:^UIViewController *{
@@ -83,9 +88,7 @@
         
         [self.explorerViewController.explorerToolbar.fwDebugFpsItem addTarget:self action:@selector(fwDebugFpsItemClicked:) forControlEvents:UIControlEventTouchUpInside];
         [self.explorerViewController.explorerToolbar.fwDebugFpsItem setFpsData:fpsInfo.fpsData];
-        
-        UILongPressGestureRecognizer *gestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(fwDebugFpsItemLongPressed:)];
-        [self.explorerViewController.explorerToolbar.fwDebugFpsItem addGestureRecognizer:gestureRecognizer];
+        [self.explorerViewController.explorerToolbar.fwDebugFpsItem addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(fwDebugFpsItemLongPressed:)]];
     }
     return fpsInfo;
 }
@@ -125,8 +128,12 @@
 
 - (void)fwDebugFpsItemLongPressed:(UIGestureRecognizer *)gestureRecognizer
 {
-    [FWDebugManager fwDebugShowPrompt:self.explorerViewController security:NO title:@"Input Value" message:nil text:nil block:^(BOOL confirm, NSString *text) {
-        if (text.length < 1) return;
+    NSString *previousText = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugOpenUrl"];
+    [FWDebugManager fwDebugShowPrompt:self.explorerViewController security:NO title:@"Input Value" message:nil text:previousText block:^(BOOL confirm, NSString *text) {
+        if (!confirm || text.length < 1) return;
+        
+        [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugOpenUrl"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
         if ([FWDebugManager sharedInstance].openUrl && [FWDebugManager sharedInstance].openUrl(text)) return;
         
         NSURL *url = [[NSURL alloc] initWithString:text];
