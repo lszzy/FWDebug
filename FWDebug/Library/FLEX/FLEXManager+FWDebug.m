@@ -83,6 +83,9 @@
         
         [self.explorerViewController.explorerToolbar.fwDebugFpsItem addTarget:self action:@selector(fwDebugFpsItemClicked:) forControlEvents:UIControlEventTouchUpInside];
         [self.explorerViewController.explorerToolbar.fwDebugFpsItem setFpsData:fpsInfo.fpsData];
+        
+        UILongPressGestureRecognizer *gestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(fwDebugFpsItemLongPressed:)];
+        [self.explorerViewController.explorerToolbar.fwDebugFpsItem addGestureRecognizer:gestureRecognizer];
     }
     return fpsInfo;
 }
@@ -120,9 +123,37 @@
     [self.explorerViewController presentViewController:[FLEXNavigationController withRootViewController:viewController] animated:YES completion:nil];
 }
 
+- (void)fwDebugFpsItemLongPressed:(UIGestureRecognizer *)gestureRecognizer
+{
+    [FWDebugManager fwDebugShowPrompt:self.explorerViewController security:NO title:@"Input Value" message:nil text:nil block:^(BOOL confirm, NSString *text) {
+        if (text.length < 1) return;
+        if ([FWDebugManager sharedInstance].openUrl && [FWDebugManager sharedInstance].openUrl(text)) return;
+        
+        NSURL *url = [[NSURL alloc] initWithString:text];
+        if (url != nil && url.scheme != nil) {
+            if (@available(iOS 10.0, *)) {
+                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+            } else {
+                [[UIApplication sharedApplication] openURL:url];
+            }
+            return;
+        }
+        
+        Class clazz = NSClassFromString(text);
+        if (clazz != NULL) {
+            FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:clazz];
+            [self.explorerViewController presentViewController:[FLEXNavigationController withRootViewController:viewController] animated:YES completion:nil];
+        }
+    }];
+}
+
 - (UIViewController *)fwDebugViewController
 {
-    UIViewController *currentViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+    if ([keyWindow isKindOfClass:[FLEXWindow class]]) {
+        keyWindow = ((FLEXWindow *)keyWindow).previousKeyWindow;
+    }
+    UIViewController *currentViewController = keyWindow.rootViewController;
     while ([currentViewController presentedViewController]) {
         currentViewController = [currentViewController presentedViewController];
     }

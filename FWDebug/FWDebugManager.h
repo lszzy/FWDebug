@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * 调试管理器
  */
@@ -19,6 +21,9 @@
 // 调试器是否隐藏
 @property (nonatomic, readonly) BOOL isHidden;
 
+// 自定义打开URL调试钩子方法（长按帧率按钮触发）
+@property (nonatomic, copy, nullable) BOOL (^openUrl)(NSString *url);
+
 // 单例方法
 + (instancetype)sharedInstance;
 
@@ -29,3 +34,5 @@
 - (void)hide;
 
 @end
+
+NS_ASSUME_NONNULL_END

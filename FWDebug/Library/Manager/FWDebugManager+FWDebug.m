@@ -47,14 +47,14 @@
     
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
         if (block) {
-            block(NO, [alertController.textFields objectAtIndex:0].text);
+            block(NO, [[alertController.textFields objectAtIndex:0].text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]);
         }
     }];
     [alertController addAction:cancelAction];
     
     UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         if (block) {
-            block(YES, [alertController.textFields objectAtIndex:0].text);
+            block(YES, [[alertController.textFields objectAtIndex:0].text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]);
         }
     }];
     [alertController addAction:alertAction];
