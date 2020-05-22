@@ -19,17 +19,19 @@
 
 @property (nonatomic, copy, readonly) NSString *event;
 @property (nonatomic, assign, readonly) NSTimeInterval time;
+@property (nonatomic, weak, readonly) id userInfo;
 
 @end
 
 @implementation FWDebugTimeInfo
 
-- (instancetype)initWithEvent:(NSString *)event time:(NSTimeInterval)time
+- (instancetype)initWithEvent:(NSString *)event time:(NSTimeInterval)time userInfo:(id)userInfo
 {
     self = [super init];
     if (self) {
         _event = event;
         _time = time;
+        _userInfo = userInfo;
     }
     return self;
 }
@@ -50,7 +52,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sharedInstance = [[FWDebugTimeRecord alloc] init];
-        [sharedInstance.timeInfos addObject:[[FWDebugTimeInfo alloc] initWithEvent:@"↧ App.startLaunch" time:[FWDebugTimeProfiler appLaunchedTime]]];
+        [sharedInstance.timeInfos addObject:[[FWDebugTimeInfo alloc] initWithEvent:@"↧ App.startLaunch" time:[FWDebugTimeProfiler appLaunchedTime] userInfo:nil]];
     });
     return sharedInstance;
 }
@@ -64,37 +66,39 @@
     return self;
 }
 
-- (void)recordEvent:(NSString *)event
+- (void)recordEvent:(NSString *)event userInfo:(id)userInfo
 {
-    [self.timeInfos addObject:[[FWDebugTimeInfo alloc] initWithEvent:event time:[FWDebugTimeProfiler currentTime]]];
+    [self.timeInfos addObject:[[FWDebugTimeInfo alloc] initWithEvent:event time:[FWDebugTimeProfiler currentTime] userInfo:userInfo]];
 }
+
+@end
+
+#pragma mark - FWDebugTimeProfiler
+
+@interface FWDebugTimeProfiler ()
+
+@property (nonatomic, strong) FWDebugTimeRecord *timeRecord;
+@property (nonatomic, strong) NSDateFormatter *dateFormatter;
+@property (nonatomic, assign) NSUInteger selectedRow;
+@property (nonatomic, copy) NSString *costText;
+
++ (FWDebugTimeRecord *)timeRecordForObject:(id)object;
 
 @end
 
 #pragma mark - NSObject+FWDebugTimeProfiler
 
+@interface NSObject (FWDebugTimeProfiler)
+
+@end
+
 @implementation NSObject (FWDebugTimeProfiler)
-
-- (FWDebugTimeRecord *)fwDebugTimeRecord
-{
-    FWDebugTimeRecord *record = objc_getAssociatedObject(self, _cmd);
-    if (!record) {
-        record = [[FWDebugTimeRecord alloc] init];
-        objc_setAssociatedObject(self, _cmd, record, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    }
-    return record;
-}
-
-- (void)fwDebugRecordEvent:(NSString *)event
-{
-    [[self fwDebugTimeRecord] recordEvent:event];
-}
 
 - (BOOL)fwDebugApplication:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.finishLaunch"];
+    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.finishLaunch" userInfo:nil];
     BOOL result = [self fwDebugApplication:application didFinishLaunchingWithOptions:launchOptions];
-    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↥ App.finishLaunch"];
+    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↥ App.finishLaunch" userInfo:nil];
     return result;
 }
 
@@ -110,7 +114,7 @@
 
 - (id)fwDebugInit
 {
-    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.initApplication"];
+    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.initApplication" userInfo:nil];
     return [self fwDebugInit];
 }
 
@@ -133,50 +137,53 @@
 - (id)fwDebugInitWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     id object = [self fwDebugInitWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    [self fwDebugRecordEvent:@"↥ VC.init"];
+    [FWDebugTimeProfiler recordEvent:@"↥ VC.init" object:object userInfo:nil];
     return object;
 }
 
 - (id)fwDebugInitWithCoder:(NSCoder *)coder
 {
     id object = [self fwDebugInitWithCoder:coder];
-    [self fwDebugRecordEvent:@"↥ VC.init"];
+    [FWDebugTimeProfiler recordEvent:@"↥ VC.init" object:object userInfo:nil];
     return object;
 }
 
 - (void)fwDebugLoadView
 {
-    [self fwDebugRecordEvent:@"↧ loadView"];
+    [FWDebugTimeProfiler recordEvent:@"↧ loadView" object:self userInfo:nil];
     [self fwDebugLoadView];
-    [self fwDebugRecordEvent:@"↥ loadView"];
+    [FWDebugTimeProfiler recordEvent:@"↥ loadView" object:self userInfo:nil];
 }
 
 - (void)fwDebugViewDidLoad
 {
-    [self fwDebugRecordEvent:@"↧ viewDidLoad"];
+    [FWDebugTimeProfiler recordEvent:@"↧ viewDidLoad" object:self userInfo:nil];
     [self fwDebugViewDidLoad];
-    [self fwDebugRecordEvent:@"↥ viewDidLoad"];
+    [FWDebugTimeProfiler recordEvent:@"↥ viewDidLoad" object:self userInfo:nil];
 }
 
 - (void)fwDebugViewWillAppear:(BOOL)animated
 {
-    [self fwDebugRecordEvent:@"↧ viewWillAppear:"];
+    [FWDebugTimeProfiler recordEvent:@"↧ viewWillAppear:" object:self userInfo:nil];
     [self fwDebugViewWillAppear:animated];
-    [self fwDebugRecordEvent:@"↥ viewWillAppear:"];
+    [FWDebugTimeProfiler recordEvent:@"↥ viewWillAppear:" object:self userInfo:nil];
 }
 
 - (void)fwDebugViewDidAppear:(BOOL)animated
 {
-    [self fwDebugRecordEvent:@"↧ viewDidAppear:"];
+    [FWDebugTimeProfiler recordEvent:@"↧ viewDidAppear:" object:self userInfo:nil];
     [self fwDebugViewDidAppear:animated];
-    [self fwDebugRecordEvent:@"↥ viewDidAppear:"];
+    [FWDebugTimeProfiler recordEvent:@"↥ viewDidAppear:" object:self userInfo:nil];
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugTimeRecord.sharedInstance.timeInfos addObjectsFromArray:self.fwDebugTimeRecord.timeInfos];
-        [FWDebugTimeRecord.sharedInstance.timeInfos sortUsingComparator:^NSComparisonResult(FWDebugTimeInfo *obj1, FWDebugTimeInfo *obj2) {
-            return obj1.time > obj2.time;
-        }];
+        FWDebugTimeRecord *timeRecord = [FWDebugTimeProfiler timeRecordForObject:self];
+        if (timeRecord) {
+            [FWDebugTimeRecord.sharedInstance.timeInfos addObjectsFromArray:timeRecord.timeInfos];
+            [FWDebugTimeRecord.sharedInstance.timeInfos sortUsingComparator:^NSComparisonResult(FWDebugTimeInfo *obj1, FWDebugTimeInfo *obj2) {
+                return obj1.time > obj2.time;
+            }];
+        }
     });
 }
 
@@ -184,22 +191,13 @@
 
 #pragma mark - FWDebugTimeProfiler
 
-@interface FWDebugTimeProfiler ()
-
-@property (nonatomic, strong) FWDebugTimeRecord *timeRecord;
-@property (nonatomic, strong) NSDateFormatter *dateFormatter;
-@property (nonatomic, assign) NSUInteger selectedRow;
-@property (nonatomic, copy) NSString *costText;
-
-@end
-
 @implementation FWDebugTimeProfiler
 
 + (void)load
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.objcLoad"];
+        [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.objcLoad" userInfo:nil];
         
         [FWDebugManager fwDebugSwizzleMethod:@selector(init) in:[UIApplication class] with:@selector(fwDebugInit) in:[UIApplication class]];
         [FWDebugManager fwDebugSwizzleMethod:@selector(setDelegate:) in:[UIApplication class] with:@selector(fwDebugSetDelegate:) in:[UIApplication class]];
@@ -241,11 +239,30 @@
     return appLaunchedTime;
 }
 
-- (instancetype)initWithObject:(NSObject *)object
++ (void)recordEvent:(NSString *)event object:(id)object userInfo:(id)userInfo
+{
+    FWDebugTimeRecord *timeRecord = [self timeRecordForObject:object];
+    if (timeRecord) {
+        [timeRecord recordEvent:event userInfo:userInfo];
+    }
+}
+
++ (FWDebugTimeRecord *)timeRecordForObject:(id)object
+{
+    if (!object) return nil;
+    FWDebugTimeRecord *record = objc_getAssociatedObject(object, _cmd);
+    if (!record) {
+        record = [[FWDebugTimeRecord alloc] init];
+        objc_setAssociatedObject(object, _cmd, record, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return record;
+}
+
+- (instancetype)initWithObject:(id)object
 {
     self = [super init];
     if (self) {
-        _timeRecord = [object fwDebugTimeRecord];
+        _timeRecord = [FWDebugTimeProfiler timeRecordForObject:object];
         self.title = NSStringFromClass([object class]);
     }
     return self;

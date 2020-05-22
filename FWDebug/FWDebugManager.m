@@ -73,11 +73,6 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
     self = [super init];
     if (self) {
         _shakeEnabled = YES;
-        _recordEvent = ^(id object, NSString *event){
-            if ([object respondsToSelector:@selector(fwDebugRecordEvent:)]) {
-                [object fwDebugRecordEvent:event];
-            }
-        };
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShake:) name:FWDebugShakeNotification object:nil];
@@ -113,6 +108,11 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
 }
 
 #pragma mark - Public
+
+- (void)recordEvent:(NSString *)event object:(id)object userInfo:(id)userInfo
+{
+    [FWDebugTimeProfiler recordEvent:event object:object userInfo:userInfo];
+}
 
 - (BOOL)isHidden
 {

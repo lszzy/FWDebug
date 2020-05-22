@@ -12,17 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FWDebugTimeProfiler : FLEXTableViewController
 
-- (instancetype)initWithObject:(NSObject *)object;
+- (instancetype)initWithObject:(id)object;
 
 + (double)currentTime;
 
 + (NSTimeInterval)appLaunchedTime;
 
-@end
-
-@interface NSObject (FWDebugTimeProfiler)
-
-- (void)fwDebugRecordEvent:(NSString *)event;
++ (void)recordEvent:(NSString *)event object:(id)object userInfo:(nullable id)userInfo;
 
 @end
 
