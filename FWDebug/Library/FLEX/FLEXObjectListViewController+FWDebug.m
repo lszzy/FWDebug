@@ -24,15 +24,15 @@
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleMethod:@selector(viewDidLoad) in:self with:@selector(fwDebugViewDidLoad) in:self];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(viewDidLoad) in:self with:@selector(fwDebugObjectListViewDidLoad) in:self];
     });
 }
 
 #pragma mark - FWDebug
 
-- (void)fwDebugViewDidLoad
+- (void)fwDebugObjectListViewDidLoad
 {
-    [self fwDebugViewDidLoad];
+    [self fwDebugObjectListViewDidLoad];
     
     UIBarButtonItem *retainItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(fwDebugRetainCycles)];
     if (self.navigationItem.rightBarButtonItems.count > 0) {

@@ -147,6 +147,12 @@
         }
         
         Class clazz = NSClassFromString(text);
+        if (clazz == NULL) {
+            NSString *module = [[NSBundle mainBundle] infoDictionary][(__bridge NSString *)kCFBundleExecutableKey];
+            if (module != nil) {
+                clazz = NSClassFromString([NSString stringWithFormat:@"%@.%@", module, text]);
+            }
+        }
         if (clazz != NULL) {
             FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:clazz];
             [self.explorerViewController presentViewController:[FLEXNavigationController withRootViewController:viewController] animated:YES completion:nil];

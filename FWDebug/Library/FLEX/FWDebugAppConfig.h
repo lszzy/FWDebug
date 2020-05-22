@@ -6,9 +6,9 @@
 //  Copyright © 2017年 wuyong.site. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "FLEXTableViewController.h"
 
-@interface FWDebugAppConfig : UITableViewController
+@interface FWDebugAppConfig : FLEXTableViewController
 
 + (void)fwDebugLaunch;
 

@@ -6,9 +6,9 @@
 //  Copyright © 2017年 wuyong.site. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "FLEXTableViewController.h"
 
-@interface FWDebugRetainCycle : UITableViewController
+@interface FWDebugRetainCycle : FLEXTableViewController
 
 @property (nonatomic, strong) NSArray *retainCycles;
 

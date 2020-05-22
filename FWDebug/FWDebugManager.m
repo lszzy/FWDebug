@@ -12,6 +12,7 @@
 #import "FLEXManager+FWDebug.h"
 #import "KSCrash+FWDebug.h"
 #import "FBRetainCycleDetector+FWDebug.h"
+#import "FWDebugTimeProfiler.h"
 
 #pragma mark - UIApplication+FWDebug
 
@@ -94,6 +95,7 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
 - (void)onLoad
 {
     [FLEXManager fwDebugLoad];
+    [FWDebugTimeProfiler fwDebugLoad];
 }
 
 - (void)onLaunch:(NSNotification *)notification

@@ -6,11 +6,19 @@
 //  Copyright © 2020 wuyong.site. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "FLEXTableViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FWDebugTimeProfiler : UITableViewController
+@interface FWDebugTimeProfiler : FLEXTableViewController
+
+- (instancetype)initWithViewController:(UIViewController *)viewController;
+
++ (void)fwDebugLoad;
+
++ (double)currentTime;
+
++ (NSTimeInterval)appLaunchedTime;
 
 @end
 
