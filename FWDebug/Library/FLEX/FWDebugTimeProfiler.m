@@ -73,11 +73,22 @@
 
 #pragma mark - NSObject+FWDebugTimeProfiler
 
-@interface NSObject (FWDebugTimeProfiler)
-
-@end
-
 @implementation NSObject (FWDebugTimeProfiler)
+
+- (FWDebugTimeRecord *)fwDebugTimeRecord
+{
+    FWDebugTimeRecord *record = objc_getAssociatedObject(self, _cmd);
+    if (!record) {
+        record = [[FWDebugTimeRecord alloc] init];
+        objc_setAssociatedObject(self, _cmd, record, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return record;
+}
+
+- (void)fwDebugRecordEvent:(NSString *)event
+{
+    [[self fwDebugTimeRecord] recordEvent:event];
+}
 
 - (BOOL)fwDebugApplication:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -119,56 +130,46 @@
 
 @implementation UIViewController (FWDebugTimeProfiler)
 
-- (FWDebugTimeRecord *)fwDebugTimeRecord
-{
-    FWDebugTimeRecord *record = objc_getAssociatedObject(self, _cmd);
-    if (!record) {
-        record = [[FWDebugTimeRecord alloc] init];
-        objc_setAssociatedObject(self, _cmd, record, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    }
-    return record;
-}
-
 - (id)fwDebugInitWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     id object = [self fwDebugInitWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    [self.fwDebugTimeRecord recordEvent:@"↥ VC.init"];
+    [self fwDebugRecordEvent:@"↥ VC.init"];
     return object;
 }
 
 - (id)fwDebugInitWithCoder:(NSCoder *)coder
 {
     id object = [self fwDebugInitWithCoder:coder];
-    [self.fwDebugTimeRecord recordEvent:@"↥ VC.init"];
+    [self fwDebugRecordEvent:@"↥ VC.init"];
     return object;
 }
 
 - (void)fwDebugLoadView
 {
-    [self.fwDebugTimeRecord recordEvent:@"↧ loadView"];
+    [self fwDebugRecordEvent:@"↧ loadView"];
     [self fwDebugLoadView];
-    [self.fwDebugTimeRecord recordEvent:@"↥ loadView"];
+    [self fwDebugRecordEvent:@"↥ loadView"];
 }
 
 - (void)fwDebugViewDidLoad
 {
-    [self.fwDebugTimeRecord recordEvent:@"↧ viewDidLoad"];
+    [self fwDebugRecordEvent:@"↧ viewDidLoad"];
     [self fwDebugViewDidLoad];
-    [self.fwDebugTimeRecord recordEvent:@"↥ viewDidLoad"];
+    [self fwDebugRecordEvent:@"↥ viewDidLoad"];
 }
 
 - (void)fwDebugViewWillAppear:(BOOL)animated
 {
-    [self.fwDebugTimeRecord recordEvent:@"↧ viewWillAppear:"];
+    [self fwDebugRecordEvent:@"↧ viewWillAppear:"];
     [self fwDebugViewWillAppear:animated];
-    [self.fwDebugTimeRecord recordEvent:@"↥ viewWillAppear:"];
+    [self fwDebugRecordEvent:@"↥ viewWillAppear:"];
 }
 
 - (void)fwDebugViewDidAppear:(BOOL)animated
 {
-    [self.fwDebugTimeRecord recordEvent:@"↧ viewDidAppear:"];
+    [self fwDebugRecordEvent:@"↧ viewDidAppear:"];
     [self fwDebugViewDidAppear:animated];
-    [self.fwDebugTimeRecord recordEvent:@"↥ viewDidAppear:"];
+    [self fwDebugRecordEvent:@"↥ viewDidAppear:"];
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -240,12 +241,12 @@
     return appLaunchedTime;
 }
 
-- (instancetype)initWithViewController:(UIViewController *)viewController
+- (instancetype)initWithObject:(NSObject *)object
 {
     self = [super init];
     if (self) {
-        _timeRecord = [viewController fwDebugTimeRecord];
-        self.title = NSStringFromClass([viewController class]);
+        _timeRecord = [object fwDebugTimeRecord];
+        self.title = NSStringFromClass([object class]);
     }
     return self;
 }
@@ -282,7 +283,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.timeRecord.timeInfos.count + 1;
+    return self.timeRecord.timeInfos.count > 0 ? self.timeRecord.timeInfos.count + 1 : 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

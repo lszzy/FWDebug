@@ -21,8 +21,11 @@ NS_ASSUME_NONNULL_BEGIN
 // 调试器是否隐藏
 @property (nonatomic, readonly) BOOL isHidden;
 
-// 自定义打开URL调试钩子方法（长按帧率按钮触发）
+// 打开URL调试钩子方法（长按帧率按钮触发）
 @property (nonatomic, copy, nullable) BOOL (^openUrl)(NSString *url);
+
+// 事件记录方法，记录自定义事件
+@property (nonatomic, copy) void (^recordEvent)(id object, NSString *event);
 
 // 单例方法
 + (instancetype)sharedInstance;

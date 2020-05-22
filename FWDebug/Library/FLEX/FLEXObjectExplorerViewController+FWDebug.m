@@ -50,7 +50,7 @@
         make.button(@"Retain Cycles").handler(^(NSArray<NSString *> *strings) {
             [self fwDebugRetainCycles];
         });
-        if (self.explorer.objectIsInstance && [self.object isKindOfClass:[UIViewController class]]) {
+        if (self.explorer.objectIsInstance && [self.object isKindOfClass:[NSObject class]]) {
             make.button(@"Time Profiler").handler(^(NSArray<NSString *> *strings) {
                 [self fwDebugTimeProfiler];
             });
@@ -92,7 +92,7 @@
 
 - (void)fwDebugTimeProfiler
 {
-    FWDebugTimeProfiler *viewController = [[FWDebugTimeProfiler alloc] initWithViewController:self.object];
+    FWDebugTimeProfiler *viewController = [[FWDebugTimeProfiler alloc] initWithObject:self.object];
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
