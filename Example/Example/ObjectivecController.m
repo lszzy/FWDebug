@@ -14,6 +14,7 @@
 
 @property (nonatomic, strong) UIButton *locationButton;
 @property (nonatomic, strong) CLLocationManager *locationManager;
+@property (nonatomic, strong) UILabel *weatherLabel;
 
 @property (nonatomic, strong) id object;
 
@@ -22,6 +23,7 @@
 @implementation ObjectivecController
 
 #pragma mark - Lifecycle
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -54,23 +56,45 @@
     [crashButton addTarget:self action:@selector(onCrash) forControlEvents:UIControlEventTouchUpInside];
     crashButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100, 170, 200, 30);
     [self.view addSubview:crashButton];
+    
+    UILabel *weatherLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 - 100, 220, 200, 30)];
+    self.weatherLabel = weatherLabel;
+    weatherLabel.text = @"Loading...";
+    weatherLabel.textAlignment = NSTextAlignmentCenter;
+    [self.view addSubview:weatherLabel];
+    
+    [self onRequest];
 }
 
 #pragma mark - CLLocationManagerDelegate
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations
-{
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations {
     CLLocation *location = locations.lastObject;
     //CLLocation *location = manager.location;
     [self.locationButton setTitle:[NSString stringWithFormat:@"%f,%f", location.coordinate.latitude, location.coordinate.longitude] forState:UIControlStateNormal];
 }
 
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
-{
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     [self.locationButton setTitle:@"Failed" forState:UIControlStateNormal];
 }
 
 #pragma mark - Action
+
+- (void)onRequest {
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+    NSURLSessionDataTask *task = [session dataTaskWithURL:[NSURL URLWithString:@"http://www.weather.com.cn/data/sk/101040100.html"] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            id object = data ? [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL] : nil;
+            if (object) {
+                self.weatherLabel.text = [NSString stringWithFormat:@"%@: %@℃", object[@"weatherinfo"][@"city"], object[@"weatherinfo"][@"temp"]];
+            } else {
+                self.weatherLabel.text = @"Failed";
+            }
+        });
+    }];
+    [task resume];
+}
+
 - (void)onDebug {
     if ([FWDebugManager sharedInstance].isHidden) {
         [[FWDebugManager sharedInstance] show];
@@ -117,4 +141,3 @@
 }
 
 @end
-
