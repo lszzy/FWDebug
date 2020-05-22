@@ -15,9 +15,30 @@
 
 #pragma mark - FWDebugTimeRecord
 
+@interface FWDebugTimeInfo : NSObject
+
+@property (nonatomic, copy, readonly) NSString *event;
+@property (nonatomic, assign, readonly) NSTimeInterval time;
+
+@end
+
+@implementation FWDebugTimeInfo
+
+- (instancetype)initWithEvent:(NSString *)event time:(NSTimeInterval)time
+{
+    self = [super init];
+    if (self) {
+        _event = event;
+        _time = time;
+    }
+    return self;
+}
+
+@end
+
 @interface FWDebugTimeRecord : NSObject
 
-@property (nonatomic, strong) NSMutableArray *recordTimes;
+@property (nonatomic, strong) NSMutableArray<FWDebugTimeInfo *> *timeInfos;
 
 @end
 
@@ -29,7 +50,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sharedInstance = [[FWDebugTimeRecord alloc] init];
-        [sharedInstance.recordTimes addObject:[NSArray arrayWithObjects:@"↧ AppLaunched", @([FWDebugTimeProfiler appLaunchedTime]), nil]];
+        [sharedInstance.timeInfos addObject:[[FWDebugTimeInfo alloc] initWithEvent:@"↧ AppLaunched" time:[FWDebugTimeProfiler appLaunchedTime]]];
     });
     return sharedInstance;
 }
@@ -38,14 +59,54 @@
 {
     self = [super init];
     if (self) {
-        _recordTimes = [NSMutableArray new];
+        _timeInfos = [NSMutableArray new];
     }
     return self;
 }
 
 - (void)recordEvent:(NSString *)event
 {
-    [self.recordTimes addObject:[NSArray arrayWithObjects:event, @([FWDebugTimeProfiler currentTime]), nil]];
+    [self.timeInfos addObject:[[FWDebugTimeInfo alloc] initWithEvent:event time:[FWDebugTimeProfiler currentTime]]];
+}
+
+@end
+
+#pragma mark - NSObject+FWDebugTimeProfiler
+
+@interface NSObject (FWDebugTimeProfiler)
+
+@end
+
+@implementation NSObject (FWDebugTimeProfiler)
+
+- (BOOL)fwDebugApplication:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ FinishLaunch"];
+    BOOL result = [self fwDebugApplication:application didFinishLaunchingWithOptions:launchOptions];
+    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↥ FinishLaunch"];
+    return result;
+}
+
+@end
+
+#pragma mark - UIApplication+FWDebugTimeProfiler
+
+@interface UIApplication (FWDebugTimeProfiler)
+
+@end
+
+@implementation UIApplication (FWDebugTimeProfiler)
+
+- (id)fwDebugInit
+{
+    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ ApplicationInit"];
+    return [self fwDebugInit];
+}
+
+- (void)fwDebugSetDelegate:(id<UIApplicationDelegate>)delegate
+{
+    [FWDebugManager fwDebugSwizzleMethod:@selector(application:didFinishLaunchingWithOptions:) in:[delegate class] with:@selector(fwDebugApplication:didFinishLaunchingWithOptions:) in:[NSObject class]];
+    [self fwDebugSetDelegate:delegate];
 }
 
 @end
@@ -108,6 +169,14 @@
     [self.fwDebugTimeRecord recordEvent:@"↧ viewDidAppear:"];
     [self fwDebugViewDidAppear:animated];
     [self.fwDebugTimeRecord recordEvent:@"↥ viewDidAppear:"];
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [FWDebugTimeRecord.sharedInstance.timeInfos addObjectsFromArray:self.fwDebugTimeRecord.timeInfos];
+        [FWDebugTimeRecord.sharedInstance.timeInfos sortUsingComparator:^NSComparisonResult(FWDebugTimeInfo *obj1, FWDebugTimeInfo *obj2) {
+            return obj1.time > obj2.time;
+        }];
+    });
 }
 
 @end
@@ -130,6 +199,9 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ ObjcLoad"];
+        
+        [FWDebugManager fwDebugSwizzleMethod:@selector(init) in:[UIApplication class] with:@selector(fwDebugInit) in:[UIApplication class]];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(setDelegate:) in:[UIApplication class] with:@selector(fwDebugSetDelegate:) in:[UIApplication class]];
         
         if ([FWDebugAppConfig traceVCLife]) {
             [FWDebugManager fwDebugSwizzleMethod:@selector(initWithNibName:bundle:) in:[UIViewController class] with:@selector(fwDebugInitWithNibName:bundle:) in:[UIViewController class]];
@@ -205,12 +277,12 @@
 
 - (BOOL)isLastIndexPath:(NSIndexPath *)indexPath
 {
-    return indexPath.row == self.timeRecord.recordTimes.count;
+    return indexPath.row == self.timeRecord.timeInfos.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.timeRecord.recordTimes.count + 1;
+    return self.timeRecord.timeInfos.count + 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -219,7 +291,7 @@
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell2"];
         if (!cell) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell2"];
-            cell.textLabel.font = [UIFont systemFontOfSize:14];
+            cell.textLabel.font = [UIFont systemFontOfSize:12];
             cell.textLabel.textAlignment = NSTextAlignmentCenter;
         }
         cell.textLabel.text = self.costText;
@@ -229,15 +301,14 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell"];
-        cell.textLabel.font = [UIFont systemFontOfSize:14];
-        cell.detailTextLabel.font = [UIFont systemFontOfSize:14];
+        cell.textLabel.font = [UIFont systemFontOfSize:12];
+        cell.detailTextLabel.font = [UIFont systemFontOfSize:12];
     }
-    NSArray *firstTime = self.timeRecord.recordTimes.firstObject;
-    NSArray *recordTime = self.timeRecord.recordTimes[indexPath.row];
-    NSString *timeText = [self.dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:[recordTime.lastObject doubleValue]]];
-    NSTimeInterval timeInterval = [recordTime.lastObject doubleValue] - [firstTime.lastObject doubleValue];
-    cell.textLabel.text = [recordTime.firstObject description];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ (%.3lfms)", timeText, timeInterval * 1000];
+    FWDebugTimeInfo *firstTime = self.timeRecord.timeInfos.firstObject;
+    FWDebugTimeInfo *recordTime = self.timeRecord.timeInfos[indexPath.row];
+    NSString *timeText = [self.dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:recordTime.time]];
+    cell.textLabel.text = recordTime.event;
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ (%.3lfms)", timeText, (recordTime.time - firstTime.time) * 1000];
     return cell;
 }
 
@@ -265,13 +336,12 @@
             NSIndexPath *indexPathToSelect = [NSIndexPath indexPathForRow:aRow inSection:0];
             [tableView selectRowAtIndexPath:indexPathToSelect animated:YES scrollPosition:UITableViewScrollPositionNone];
         }
-        NSArray *startRecord = self.timeRecord.recordTimes[minRow];
-        NSArray *endRecord = self.timeRecord.recordTimes[maxRow];
-        NSTimeInterval timeInterval = [endRecord.lastObject doubleValue] - [startRecord.lastObject doubleValue];
-        self.costText = [NSString stringWithFormat:@"Cost：%.3lfms", timeInterval * 1000];
+        FWDebugTimeInfo *startTime = self.timeRecord.timeInfos[minRow];
+        FWDebugTimeInfo *endTime = self.timeRecord.timeInfos[maxRow];
+        self.costText = [NSString stringWithFormat:@"Cost：%.3lfms", (endTime.time - startTime.time) * 1000];
         self.selectedRow = NSNotFound;
     }
-    [tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.timeRecord.recordTimes.count inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+    [tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.timeRecord.timeInfos.count inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -290,7 +360,7 @@
         self.costText = @"Please select a time range";
         self.selectedRow = NSNotFound;
     }
-    [tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.timeRecord.recordTimes.count inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+    [tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.timeRecord.timeInfos.count inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
 }
 
 @end
