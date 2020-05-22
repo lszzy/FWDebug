@@ -30,6 +30,8 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [FWDebugManager fwDebugSwizzleMethod:@selector(sendEvent:) in:self with:@selector(fwDebugSendEvent:) in:self];
+        
+        [FWDebugManager sharedInstance];
     });
 }
 
@@ -56,11 +58,6 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
 
 #pragma mark - Lifecycle
 
-+ (void)load
-{
-    [FWDebugManager sharedInstance];
-}
-
 + (instancetype)sharedInstance
 {
     static FWDebugManager *sharedInstance = nil;
@@ -77,8 +74,6 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
     if (self) {
         self.shakeEnabled = YES;
         
-        [self onLoad];
-        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShake:) name:FWDebugShakeNotification object:nil];
     }
@@ -91,12 +86,6 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
 }
 
 #pragma mark - Private
-
-- (void)onLoad
-{
-    [FLEXManager fwDebugLoad];
-    [FWDebugTimeProfiler fwDebugLoad];
-}
 
 - (void)onLaunch:(NSNotification *)notification
 {

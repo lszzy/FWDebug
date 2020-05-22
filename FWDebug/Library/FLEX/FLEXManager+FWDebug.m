@@ -34,6 +34,8 @@
     dispatch_once(&onceToken, ^{
         [FWDebugManager fwDebugSwizzleMethod:@selector(showExplorer) in:self with:@selector(fwDebugShowExplorer) in:self];
         [FWDebugManager fwDebugSwizzleMethod:@selector(hideExplorer) in:self with:@selector(fwDebugHideExplorer) in:self];
+        
+        [self fwDebugLoad];
     });
 }
 

@@ -23,6 +23,17 @@
 
 @implementation FWDebugTimeRecord
 
++ (instancetype)sharedInstance
+{
+    static FWDebugTimeRecord *sharedInstance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[FWDebugTimeRecord alloc] init];
+        [sharedInstance.recordTimes addObject:[NSArray arrayWithObjects:@"↧ AppLaunched", @([FWDebugTimeProfiler appLaunchedTime]), nil]];
+    });
+    return sharedInstance;
+}
+
 - (instancetype)init
 {
     self = [super init];
@@ -114,18 +125,20 @@
 
 @implementation FWDebugTimeProfiler
 
-+ (void)fwDebugLoad
++ (void)load
 {
-    if (![FWDebugAppConfig traceVCLife]) return;
-    
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleMethod:@selector(initWithNibName:bundle:) in:[UIViewController class] with:@selector(fwDebugInitWithNibName:bundle:) in:[UIViewController class]];
-        [FWDebugManager fwDebugSwizzleMethod:@selector(initWithCoder:) in:[UIViewController class] with:@selector(fwDebugInitWithCoder:) in:[UIViewController class]];
-        [FWDebugManager fwDebugSwizzleMethod:@selector(loadView) in:[UIViewController class] with:@selector(fwDebugLoadView) in:[UIViewController class]];
-        [FWDebugManager fwDebugSwizzleMethod:@selector(viewDidLoad) in:[UIViewController class] with:@selector(fwDebugViewDidLoad) in:[UIViewController class]];
-        [FWDebugManager fwDebugSwizzleMethod:@selector(viewWillAppear:) in:[UIViewController class] with:@selector(fwDebugViewWillAppear:) in:[UIViewController class]];
-        [FWDebugManager fwDebugSwizzleMethod:@selector(viewDidAppear:) in:[UIViewController class] with:@selector(fwDebugViewDidAppear:) in:[UIViewController class]];
+        [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ ObjcLoad"];
+        
+        if ([FWDebugAppConfig traceVCLife]) {
+            [FWDebugManager fwDebugSwizzleMethod:@selector(initWithNibName:bundle:) in:[UIViewController class] with:@selector(fwDebugInitWithNibName:bundle:) in:[UIViewController class]];
+            [FWDebugManager fwDebugSwizzleMethod:@selector(initWithCoder:) in:[UIViewController class] with:@selector(fwDebugInitWithCoder:) in:[UIViewController class]];
+            [FWDebugManager fwDebugSwizzleMethod:@selector(loadView) in:[UIViewController class] with:@selector(fwDebugLoadView) in:[UIViewController class]];
+            [FWDebugManager fwDebugSwizzleMethod:@selector(viewDidLoad) in:[UIViewController class] with:@selector(fwDebugViewDidLoad) in:[UIViewController class]];
+            [FWDebugManager fwDebugSwizzleMethod:@selector(viewWillAppear:) in:[UIViewController class] with:@selector(fwDebugViewWillAppear:) in:[UIViewController class]];
+            [FWDebugManager fwDebugSwizzleMethod:@selector(viewDidAppear:) in:[UIViewController class] with:@selector(fwDebugViewDidAppear:) in:[UIViewController class]];
+        }
     });
 }
 
@@ -165,11 +178,11 @@
     return self;
 }
 
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (instancetype)init
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    self = [super init];
     if (self) {
-        _timeRecord = [[FWDebugTimeRecord alloc] init];
+        _timeRecord = [FWDebugTimeRecord sharedInstance];
         self.title = @"Time Profiler";
     }
     return self;
