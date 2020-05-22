@@ -106,6 +106,9 @@
 @interface FWDebugTimeProfiler ()
 
 @property (nonatomic, strong) FWDebugTimeRecord *timeRecord;
+@property (nonatomic, strong) NSDateFormatter *dateFormatter;
+@property (nonatomic, assign) NSUInteger selectedRow;
+@property (nonatomic, copy) NSString *costText;
 
 @end
 
@@ -172,33 +175,109 @@
     return self;
 }
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    self.dateFormatter = [[NSDateFormatter alloc] init];
+    self.dateFormatter.dateFormat = @"mm:ss.SSS";
+    self.dateFormatter.timeZone = [NSTimeZone localTimeZone];
+    
+    self.tableView.allowsMultipleSelection = YES;
+    self.selectedRow = NSNotFound;
+    self.costText = @"Please select a time range";
+}
+
 #pragma mark - UITableView
+
+- (BOOL)isLastIndexPath:(NSIndexPath *)indexPath
+{
+    return indexPath.row == self.timeRecord.recordTimes.count;
+}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.timeRecord.recordTimes.count;
+    return self.timeRecord.recordTimes.count + 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSDateFormatter *dateFormatter = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        dateFormatter = [[NSDateFormatter alloc] init];
-        dateFormatter.dateFormat = @"mm:ss.SSS";
-        dateFormatter.timeZone = [NSTimeZone localTimeZone];
-    });
+    if ([self isLastIndexPath:indexPath]) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell2"];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell2"];
+            cell.textLabel.font = [UIFont systemFontOfSize:14];
+            cell.textLabel.textAlignment = NSTextAlignmentCenter;
+        }
+        cell.textLabel.text = self.costText;
+        return cell;
+    }
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell"];
+        cell.textLabel.font = [UIFont systemFontOfSize:14];
+        cell.detailTextLabel.font = [UIFont systemFontOfSize:14];
+    }
+    NSArray *firstTime = self.timeRecord.recordTimes.firstObject;
+    NSArray *recordTime = self.timeRecord.recordTimes[indexPath.row];
+    NSString *timeText = [self.dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:[recordTime.lastObject doubleValue]]];
+    NSTimeInterval timeInterval = [recordTime.lastObject doubleValue] - [firstTime.lastObject doubleValue];
+    cell.textLabel.text = [recordTime.firstObject description];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ (%.3lfms)", timeText, timeInterval * 1000];
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([self isLastIndexPath:indexPath]) {
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        return;
     }
     
-    NSArray *recordTime = self.timeRecord.recordTimes[indexPath.row];
-    NSTimeInterval timestamp = [recordTime.lastObject doubleValue];
-    cell.textLabel.text = [recordTime.firstObject description];
-    cell.detailTextLabel.text = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:timestamp]];
-    return cell;
+    NSUInteger selectedRow = indexPath.row;
+    if (self.selectedRow == NSNotFound) {
+        for (NSIndexPath *aIndexPath in [tableView indexPathsForSelectedRows]) {
+            if ([aIndexPath compare:indexPath] == NSOrderedSame) {
+                continue;
+            }
+            [tableView deselectRowAtIndexPath:aIndexPath animated:YES];
+        }
+        self.costText = @"Select another time";
+        self.selectedRow = selectedRow;
+    } else {
+        NSUInteger minRow = MIN(self.selectedRow, selectedRow);
+        NSUInteger maxRow = MAX(self.selectedRow, selectedRow);
+        for (NSUInteger aRow = minRow; aRow <= maxRow; aRow++) {
+            NSIndexPath *indexPathToSelect = [NSIndexPath indexPathForRow:aRow inSection:0];
+            [tableView selectRowAtIndexPath:indexPathToSelect animated:YES scrollPosition:UITableViewScrollPositionNone];
+        }
+        NSArray *startRecord = self.timeRecord.recordTimes[minRow];
+        NSArray *endRecord = self.timeRecord.recordTimes[maxRow];
+        NSTimeInterval timeInterval = [endRecord.lastObject doubleValue] - [startRecord.lastObject doubleValue];
+        self.costText = [NSString stringWithFormat:@"Cost：%.3lfms", timeInterval * 1000];
+        self.selectedRow = NSNotFound;
+    }
+    [tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.timeRecord.recordTimes.count inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([self isLastIndexPath:indexPath]) return;
+    
+    NSUInteger selectedRow = indexPath.row;
+    if (self.selectedRow == NSNotFound) {
+        for (NSIndexPath *aIndexPath in [tableView indexPathsForSelectedRows]) {
+            [tableView deselectRowAtIndexPath:aIndexPath animated:YES];
+        }
+        [tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+        self.costText = @"Select another time";
+        self.selectedRow = selectedRow;
+    } else {
+        self.costText = @"Please select a time range";
+        self.selectedRow = NSNotFound;
+    }
+    [tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.timeRecord.recordTimes.count inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
 }
 
 @end

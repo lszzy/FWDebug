@@ -55,9 +55,11 @@
                 [self fwDebugTimeProfiler];
             });
         }
-        make.button(@"Runtime Headers").handler(^(NSArray<NSString *> *strings) {
-            [self fwDebugRuntimeHeaders];
-        });
+        if (!self.explorer.objectIsInstance) {
+            make.button(@"Runtime Headers").handler(^(NSArray<NSString *> *strings) {
+                [self fwDebugRuntimeHeaders];
+            });
+        }
         make.button(@"Cancel").cancelStyle();
     } showFrom:self source:sender];
 }
