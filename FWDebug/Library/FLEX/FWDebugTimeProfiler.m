@@ -50,7 +50,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sharedInstance = [[FWDebugTimeRecord alloc] init];
-        [sharedInstance.timeInfos addObject:[[FWDebugTimeInfo alloc] initWithEvent:@"↧ AppLaunched" time:[FWDebugTimeProfiler appLaunchedTime]]];
+        [sharedInstance.timeInfos addObject:[[FWDebugTimeInfo alloc] initWithEvent:@"↧ App.startLaunch" time:[FWDebugTimeProfiler appLaunchedTime]]];
     });
     return sharedInstance;
 }
@@ -81,9 +81,9 @@
 
 - (BOOL)fwDebugApplication:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ FinishLaunch"];
+    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.finishLaunch"];
     BOOL result = [self fwDebugApplication:application didFinishLaunchingWithOptions:launchOptions];
-    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↥ FinishLaunch"];
+    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↥ App.finishLaunch"];
     return result;
 }
 
@@ -99,7 +99,7 @@
 
 - (id)fwDebugInit
 {
-    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ ApplicationInit"];
+    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.initApplication"];
     return [self fwDebugInit];
 }
 
@@ -132,14 +132,14 @@
 - (id)fwDebugInitWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     id object = [self fwDebugInitWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    [self.fwDebugTimeRecord recordEvent:@"↥ init"];
+    [self.fwDebugTimeRecord recordEvent:@"↥ VC.init"];
     return object;
 }
 
 - (id)fwDebugInitWithCoder:(NSCoder *)coder
 {
     id object = [self fwDebugInitWithCoder:coder];
-    [self.fwDebugTimeRecord recordEvent:@"↥ init"];
+    [self.fwDebugTimeRecord recordEvent:@"↥ VC.init"];
     return object;
 }
 
@@ -198,7 +198,7 @@
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ ObjcLoad"];
+        [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.objcLoad"];
         
         [FWDebugManager fwDebugSwizzleMethod:@selector(init) in:[UIApplication class] with:@selector(fwDebugInit) in:[UIApplication class]];
         [FWDebugManager fwDebugSwizzleMethod:@selector(setDelegate:) in:[UIApplication class] with:@selector(fwDebugSetDelegate:) in:[UIApplication class]];
