@@ -7,6 +7,7 @@
 //
 
 #import "FWDebugManager+FWDebug.h"
+#import "FLEXWindow.h"
 #import <objc/runtime.h>
 
 @implementation FWDebugManager (FWDebug)
@@ -61,5 +62,27 @@
     
     [viewController presentViewController:alertController animated:YES completion:nil];
 }
+
++ (UIViewController *)fwDebugViewController
+{
+    UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+    if ([keyWindow isKindOfClass:[FLEXWindow class]]) {
+        keyWindow = ((FLEXWindow *)keyWindow).previousKeyWindow;
+    }
+    UIViewController *currentViewController = keyWindow.rootViewController;
+    while ([currentViewController presentedViewController]) {
+        currentViewController = [currentViewController presentedViewController];
+    }
+    while ([currentViewController isKindOfClass:[UITabBarController class]] &&
+           [(UITabBarController *)currentViewController selectedViewController]) {
+        currentViewController = [(UITabBarController *)currentViewController selectedViewController];
+    }
+    while ([currentViewController isKindOfClass:[UINavigationController class]] &&
+           [(UINavigationController *)currentViewController topViewController]) {
+        currentViewController = [(UINavigationController*)currentViewController topViewController];
+    }
+    return currentViewController;
+}
+
 
 @end

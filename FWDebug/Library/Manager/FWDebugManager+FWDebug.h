@@ -25,4 +25,6 @@
 
 + (void)fwDebugShowPrompt:(UIViewController *)viewController security:(BOOL)security title:(NSString *)title message:(NSString *)message text:(NSString *)text block:(void (^)(BOOL confirm, NSString *text))block;
 
++ (UIViewController *)fwDebugViewController;
+
 @end

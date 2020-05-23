@@ -329,14 +329,16 @@
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell"];
         cell.textLabel.font = [UIFont systemFontOfSize:12];
+        cell.textLabel.numberOfLines = 0;
         cell.detailTextLabel.font = [UIFont systemFontOfSize:12];
+        cell.detailTextLabel.numberOfLines = 0;
     }
     FWDebugTimeInfo *firstTime = self.timeRecord.timeInfos.firstObject;
     FWDebugTimeInfo *recordTime = self.timeRecord.timeInfos[indexPath.row];
     NSString *timeText = [self.dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:recordTime.time]];
     cell.accessoryType = recordTime.userInfo ? UITableViewCellAccessoryDetailButton : UITableViewCellAccessoryNone;
     cell.textLabel.text = recordTime.event;
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ (%.3lfms)", timeText, (recordTime.time - firstTime.time) * 1000];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@\n+%.3lfms", timeText, (recordTime.time - firstTime.time) * 1000];
     return cell;
 }
 

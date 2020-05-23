@@ -124,7 +124,7 @@
 
 - (void)fwDebugFpsItemClicked:(FLEXExplorerToolbarItem *)sender
 {
-    FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:[self fwDebugViewController]];
+    FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:[FWDebugManager fwDebugViewController]];
     [self.explorerViewController presentViewController:[FLEXNavigationController withRootViewController:viewController] animated:YES completion:nil];
 }
 
@@ -161,27 +161,6 @@
             [self.explorerViewController presentViewController:[FLEXNavigationController withRootViewController:viewController] animated:YES completion:nil];
         }
     }];
-}
-
-- (UIViewController *)fwDebugViewController
-{
-    UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
-    if ([keyWindow isKindOfClass:[FLEXWindow class]]) {
-        keyWindow = ((FLEXWindow *)keyWindow).previousKeyWindow;
-    }
-    UIViewController *currentViewController = keyWindow.rootViewController;
-    while ([currentViewController presentedViewController]) {
-        currentViewController = [currentViewController presentedViewController];
-    }
-    while ([currentViewController isKindOfClass:[UITabBarController class]] &&
-           [(UITabBarController *)currentViewController selectedViewController]) {
-        currentViewController = [(UITabBarController *)currentViewController selectedViewController];
-    }
-    while ([currentViewController isKindOfClass:[UINavigationController class]] &&
-           [(UINavigationController *)currentViewController topViewController]) {
-        currentViewController = [(UINavigationController*)currentViewController topViewController];
-    }
-    return currentViewController;
 }
 
 @end
