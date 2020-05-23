@@ -10,6 +10,7 @@
 #import "FWDebugAppConfig.h"
 #import "FWDebugManager+FWDebug.h"
 #import "FLEXObjectExplorerFactory.h"
+#import "FLEXNetworkRecorder.h"
 #import <sys/sysctl.h>
 #import <sys/time.h>
 #import <objc/runtime.h>
@@ -53,7 +54,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sharedInstance = [[FWDebugTimeRecord alloc] init];
-        [sharedInstance.timeInfos addObject:[[FWDebugTimeInfo alloc] initWithEvent:@"↧ App.startLaunch" time:[FWDebugTimeProfiler appLaunchedTime] userInfo:nil]];
+        [sharedInstance recordEvent:@"↧ App.startLaunch" time:[FWDebugTimeProfiler appLaunchedTime] userInfo:nil];
     });
     return sharedInstance;
 }
@@ -72,13 +73,18 @@
     [self.timeInfos addObject:[[FWDebugTimeInfo alloc] initWithEvent:event time:[FWDebugTimeProfiler currentTime] userInfo:userInfo]];
 }
 
+- (void)recordEvent:(NSString *)event time:(NSTimeInterval)time userInfo:(id)userInfo
+{
+    [self.timeInfos addObject:[[FWDebugTimeInfo alloc] initWithEvent:event time:time userInfo:userInfo]];
+}
+
 @end
 
 #pragma mark - FWDebugTimeProfiler
 
 @interface FWDebugTimeProfiler ()
 
-@property (nonatomic, strong) FWDebugTimeRecord *timeRecord;
+@property (nonatomic, strong) NSArray<FWDebugTimeInfo *> *timeInfos;
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
 @property (nonatomic, assign) NSUInteger selectedRow;
 @property (nonatomic, copy) NSString *costTitle;
@@ -183,17 +189,48 @@
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             FWDebugTimeRecord *timeRecord = [FWDebugTimeProfiler timeRecordForObject:self];
-            if (timeRecord) {
-                NSArray *timeInfos = [timeRecord.timeInfos copy];
-                for (FWDebugTimeInfo *timeInfo in timeInfos) {
-                    [FWDebugTimeRecord.sharedInstance.timeInfos addObject:[[FWDebugTimeInfo alloc] initWithEvent:timeInfo.event time:timeInfo.time userInfo:self]];
-                }
-                [FWDebugTimeRecord.sharedInstance.timeInfos sortUsingComparator:^NSComparisonResult(FWDebugTimeInfo *obj1, FWDebugTimeInfo *obj2) {
-                    return obj1.time > obj2.time;
-                }];
-            }
+            if (timeRecord) [FWDebugTimeRecord.sharedInstance.timeInfos addObjectsFromArray:[timeRecord.timeInfos copy]];
         });
     }
+}
+
+@end
+
+#pragma mark - FLEXNetworkRecorder+FWDebugTimeProfiler
+
+@interface FLEXNetworkRecorder (FWDebugTimeProfiler)
+
+@end
+
+@implementation FLEXNetworkRecorder (FWDebugTimeProfiler)
+
+- (void)fwDebugRecordRequest:(NSString *)event requestID:(NSString *)requestID
+{
+    // TODO: 判断过滤URL
+    NSTimeInterval time = [FWDebugTimeProfiler currentTime];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIViewController *viewController = [FWDebugManager fwDebugViewController];
+        FWDebugTimeRecord *timeRecord = viewController ? [FWDebugTimeProfiler timeRecordForObject:viewController] : [FWDebugTimeRecord sharedInstance];
+        [timeRecord recordEvent:event time:time userInfo:requestID];
+    });
+}
+
+- (void)fwDebugRecordRequestWillBeSentWithRequestID:(NSString *)requestID request:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse
+{
+    [self fwDebugRecordRequest:@"↧ startRequest" requestID:requestID];
+    [self fwDebugRecordRequestWillBeSentWithRequestID:requestID request:request redirectResponse:redirectResponse];
+}
+
+- (void)fwDebugRecordLoadingFinishedWithRequestID:(NSString *)requestID responseBody:(NSData *)responseBody
+{
+    [self fwDebugRecordRequest:@"↥ finishRequest" requestID:requestID];
+    [self fwDebugRecordLoadingFinishedWithRequestID:requestID responseBody:responseBody];
+}
+
+- (void)fwDebugRecordLoadingFailedWithRequestID:(NSString *)requestID error:(NSError *)error
+{
+    [self fwDebugRecordRequest:@"↥ failRequest" requestID:requestID];
+    [self fwDebugRecordLoadingFailedWithRequestID:requestID error:error];
 }
 
 @end
@@ -218,6 +255,12 @@
             [FWDebugManager fwDebugSwizzleMethod:@selector(viewDidLoad) in:[UIViewController class] with:@selector(fwDebugViewDidLoad) in:[UIViewController class]];
             [FWDebugManager fwDebugSwizzleMethod:@selector(viewWillAppear:) in:[UIViewController class] with:@selector(fwDebugViewWillAppear:) in:[UIViewController class]];
             [FWDebugManager fwDebugSwizzleMethod:@selector(viewDidAppear:) in:[UIViewController class] with:@selector(fwDebugViewDidAppear:) in:[UIViewController class]];
+        }
+        
+        if ([FWDebugAppConfig traceVCRequest]) {
+            [FWDebugManager fwDebugSwizzleMethod:@selector(recordRequestWillBeSentWithRequestID:request:redirectResponse:) in:[FLEXNetworkRecorder class] with:@selector(fwDebugRecordRequestWillBeSentWithRequestID:request:redirectResponse:) in:[FLEXNetworkRecorder class]];
+            [FWDebugManager fwDebugSwizzleMethod:@selector(recordLoadingFinishedWithRequestID:responseBody:) in:[FLEXNetworkRecorder class] with:@selector(fwDebugRecordLoadingFinishedWithRequestID:responseBody:) in:[FLEXNetworkRecorder class]];
+            [FWDebugManager fwDebugSwizzleMethod:@selector(recordLoadingFailedWithRequestID:error:) in:[FLEXNetworkRecorder class] with:@selector(fwDebugRecordLoadingFailedWithRequestID:error:) in:[FLEXNetworkRecorder class]];
         }
     });
 }
@@ -251,9 +294,7 @@
 + (void)recordEvent:(NSString *)event object:(id)object userInfo:(id)userInfo
 {
     FWDebugTimeRecord *timeRecord = [self timeRecordForObject:object];
-    if (timeRecord) {
-        [timeRecord recordEvent:event userInfo:userInfo];
-    }
+    if (timeRecord) [timeRecord recordEvent:event userInfo:userInfo];
 }
 
 + (FWDebugTimeRecord *)timeRecordForObject:(id)object
@@ -271,7 +312,9 @@
 {
     self = [super init];
     if (self) {
-        _timeRecord = [FWDebugTimeProfiler timeRecordForObject:object];
+        _timeInfos = [[FWDebugTimeProfiler timeRecordForObject:object].timeInfos sortedArrayUsingComparator:^NSComparisonResult(FWDebugTimeInfo *obj1, FWDebugTimeInfo *obj2) {
+            return obj1.time > obj2.time;
+        }];
         self.title = NSStringFromClass([object class]);
     }
     return self;
@@ -281,7 +324,9 @@
 {
     self = [super init];
     if (self) {
-        _timeRecord = [FWDebugTimeRecord sharedInstance];
+        _timeInfos = [FWDebugTimeRecord.sharedInstance.timeInfos sortedArrayUsingComparator:^NSComparisonResult(FWDebugTimeInfo *obj1, FWDebugTimeInfo *obj2) {
+            return obj1.time > obj2.time;
+        }];
         self.title = @"Time Profiler";
     }
     return self;
@@ -305,12 +350,12 @@
 
 - (BOOL)isLastIndexPath:(NSIndexPath *)indexPath
 {
-    return indexPath.row == self.timeRecord.timeInfos.count;
+    return indexPath.row == self.timeInfos.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.timeRecord.timeInfos.count > 0 ? self.timeRecord.timeInfos.count + 1 : 0;
+    return self.timeInfos.count > 0 ? self.timeInfos.count + 1 : 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -327,8 +372,8 @@
         if (self.costText.length > 0) {
             cell.detailTextLabel.text = self.costText;
         } else {
-            FWDebugTimeInfo *firstTime = self.timeRecord.timeInfos.firstObject;
-            FWDebugTimeInfo *lastTime = self.timeRecord.timeInfos.lastObject;
+            FWDebugTimeInfo *firstTime = self.timeInfos.firstObject;
+            FWDebugTimeInfo *lastTime = self.timeInfos.lastObject;
             cell.detailTextLabel.text = [NSString stringWithFormat:@"%.3lfms", (lastTime.time - firstTime.time) * 1000];
         }
         return cell;
@@ -342,8 +387,8 @@
         cell.detailTextLabel.font = [UIFont systemFontOfSize:12];
         cell.detailTextLabel.numberOfLines = 0;
     }
-    FWDebugTimeInfo *prevTime = self.timeRecord.timeInfos[indexPath.row > 0 ? indexPath.row - 1 : 0];
-    FWDebugTimeInfo *recordTime = self.timeRecord.timeInfos[indexPath.row];
+    FWDebugTimeInfo *prevTime = self.timeInfos[indexPath.row > 0 ? indexPath.row - 1 : 0];
+    FWDebugTimeInfo *recordTime = self.timeInfos[indexPath.row];
     NSString *timeText = [self.dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:recordTime.time]];
     cell.accessoryType = recordTime.userInfo ? UITableViewCellAccessoryDetailButton : UITableViewCellAccessoryNone;
     cell.textLabel.text = recordTime.event;
@@ -353,9 +398,10 @@
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
-    id object = self.timeRecord.timeInfos[indexPath.row].userInfo;
+    id object = self.timeInfos[indexPath.row].userInfo;
     if (!object) return;
     
+    // TODO: 跳转请求详情
     FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:object];
     [self.navigationController pushViewController:viewController animated:YES];
 }
@@ -385,13 +431,13 @@
             NSIndexPath *indexPathToSelect = [NSIndexPath indexPathForRow:aRow inSection:0];
             [tableView selectRowAtIndexPath:indexPathToSelect animated:YES scrollPosition:UITableViewScrollPositionNone];
         }
-        FWDebugTimeInfo *startTime = self.timeRecord.timeInfos[minRow];
-        FWDebugTimeInfo *endTime = self.timeRecord.timeInfos[maxRow];
+        FWDebugTimeInfo *startTime = self.timeInfos[minRow];
+        FWDebugTimeInfo *endTime = self.timeInfos[maxRow];
         self.costTitle = @"Cost";
         self.costText = [NSString stringWithFormat:@"%.3lfms", (endTime.time - startTime.time) * 1000];
         self.selectedRow = NSNotFound;
     }
-    [tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.timeRecord.timeInfos.count inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+    [tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.timeInfos.count inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -412,7 +458,7 @@
         self.costText = @"";
         self.selectedRow = NSNotFound;
     }
-    [tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.timeRecord.timeInfos.count inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+    [tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.timeInfos.count inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
 }
 
 @end
