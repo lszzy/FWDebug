@@ -12,36 +12,6 @@
 #import "FWDebugManager+FWDebug.h"
 #import <objc/runtime.h>
 
-@implementation FLEXExplorerToolbar (FWDebug)
-
-+ (void)load
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleMethod:@selector(toolbarItems) in:self with:@selector(fwDebugToolbarItems) in:self];
-    });
-}
-
-- (FLEXExplorerToolbarItem *)fwDebugFpsItem
-{
-    FLEXExplorerToolbarItem *item = objc_getAssociatedObject(self, _cmd);
-    if (!item) {
-        item = [FLEXExplorerToolbarItem itemWithTitle:@"" image:[UIImage new]];
-        [self addSubview:item];
-        objc_setAssociatedObject(self, _cmd, item, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    }
-    return item;
-}
-
-- (NSArray *)fwDebugToolbarItems
-{
-    NSMutableArray *debugItems = [[self fwDebugToolbarItems] mutableCopy];
-    [debugItems insertObject:self.fwDebugFpsItem atIndex:debugItems.count > 2 ? 2 : 0];
-    return [debugItems copy];
-}
-
-@end
-
 @interface FLEXExplorerToolbarItem ()
 
 @property (nonatomic, copy) NSString *title;
@@ -131,6 +101,45 @@
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return image;
+}
+
+@end
+
+@implementation FLEXExplorerToolbar (FWDebug)
+
++ (void)load
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [FWDebugManager fwDebugSwizzleMethod:@selector(toolbarItems) in:self with:@selector(fwDebugToolbarItems) in:self];
+    });
+}
+
+- (FLEXExplorerToolbarItem *)fwDebugFpsItem
+{
+    FLEXExplorerToolbarItem *item = objc_getAssociatedObject(self, _cmd);
+    if (!item) {
+        item = [FLEXExplorerToolbarItem buttonWithType:UIButtonTypeCustom];
+        item.title = @"";
+        item.image = [UIImage new];
+        item.tintColor = FLEXColor.iconColor;
+        item.backgroundColor = UIColor.clearColor;
+        item.titleLabel.font = [UIFont systemFontOfSize:12.0];
+        [item setTitle:item.title forState:UIControlStateNormal];
+        [item setImage:item.image forState:UIControlStateNormal];
+        [item setTitleColor:FLEXColor.primaryTextColor forState:UIControlStateNormal];
+        [item setTitleColor:FLEXColor.deemphasizedTextColor forState:UIControlStateDisabled];
+        [self addSubview:item];
+        objc_setAssociatedObject(self, _cmd, item, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return item;
+}
+
+- (NSArray *)fwDebugToolbarItems
+{
+    NSMutableArray *debugItems = [[self fwDebugToolbarItems] mutableCopy];
+    [debugItems insertObject:self.fwDebugFpsItem atIndex:debugItems.count > 2 ? 2 : 0];
+    return [debugItems copy];
 }
 
 @end
