@@ -18,6 +18,10 @@
 
 + (BOOL)traceVCLife;
 
++ (BOOL)traceVCRequest;
+
++ (NSString *)traceVCUrls;
+
 + (NSInteger)retainCycleDepth;
 
 @end
