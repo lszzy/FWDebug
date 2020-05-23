@@ -9,6 +9,7 @@
 #import "FWDebugTimeProfiler.h"
 #import "FWDebugAppConfig.h"
 #import "FWDebugManager+FWDebug.h"
+#import "FLEXObjectExplorerFactory.h"
 #import <sys/sysctl.h>
 #import <sys/time.h>
 #import <objc/runtime.h>
@@ -175,16 +176,21 @@
     [self fwDebugViewDidAppear:animated];
     [FWDebugTimeProfiler recordEvent:@"↥ viewDidAppear:" object:self userInfo:nil];
     
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        FWDebugTimeRecord *timeRecord = [FWDebugTimeProfiler timeRecordForObject:self];
-        if (timeRecord) {
-            [FWDebugTimeRecord.sharedInstance.timeInfos addObjectsFromArray:timeRecord.timeInfos];
-            [FWDebugTimeRecord.sharedInstance.timeInfos sortUsingComparator:^NSComparisonResult(FWDebugTimeInfo *obj1, FWDebugTimeInfo *obj2) {
-                return obj1.time > obj2.time;
-            }];
-        }
-    });
+    if (![self isKindOfClass:[UINavigationController class]] && ![self isKindOfClass:[UITabBarController class]]) {
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            FWDebugTimeRecord *timeRecord = [FWDebugTimeProfiler timeRecordForObject:self];
+            if (timeRecord) {
+                NSArray *timeInfos = [timeRecord.timeInfos copy];
+                for (FWDebugTimeInfo *timeInfo in timeInfos) {
+                    [FWDebugTimeRecord.sharedInstance.timeInfos addObject:[[FWDebugTimeInfo alloc] initWithEvent:timeInfo.event time:timeInfo.time userInfo:self]];
+                }
+                [FWDebugTimeRecord.sharedInstance.timeInfos sortUsingComparator:^NSComparisonResult(FWDebugTimeInfo *obj1, FWDebugTimeInfo *obj2) {
+                    return obj1.time > obj2.time;
+                }];
+            }
+        });
+    }
 }
 
 @end
@@ -311,6 +317,7 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell2"];
             cell.textLabel.font = [UIFont systemFontOfSize:12];
             cell.textLabel.textAlignment = NSTextAlignmentCenter;
+            cell.accessoryType = UITableViewCellAccessoryNone;
         }
         cell.textLabel.text = self.costText;
         return cell;
@@ -325,9 +332,19 @@
     FWDebugTimeInfo *firstTime = self.timeRecord.timeInfos.firstObject;
     FWDebugTimeInfo *recordTime = self.timeRecord.timeInfos[indexPath.row];
     NSString *timeText = [self.dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:recordTime.time]];
+    cell.accessoryType = recordTime.userInfo ? UITableViewCellAccessoryDetailButton : UITableViewCellAccessoryNone;
     cell.textLabel.text = recordTime.event;
     cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ (%.3lfms)", timeText, (recordTime.time - firstTime.time) * 1000];
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
+{
+    FWDebugTimeInfo *recordTime = self.timeRecord.timeInfos[indexPath.row];
+    if (recordTime.userInfo) {
+        FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:recordTime.userInfo];
+        [self.navigationController pushViewController:viewController animated:YES];
+    }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

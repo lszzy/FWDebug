@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 // 单例模式
 + (instancetype)sharedInstance;
 
-// 记录自定义事件
+// 记录自定义事件，object为事件对象，userInfo为weak引用附加信息
 - (void)recordEvent:(NSString *)event object:(id)object userInfo:(nullable id)userInfo;
 
 // 显示调试器
