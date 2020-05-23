@@ -130,6 +130,7 @@
 
 - (void)fwDebugFpsItemLongPressed:(UIGestureRecognizer *)gestureRecognizer
 {
+    if (gestureRecognizer.state != UIGestureRecognizerStateBegan) return;
     NSString *previousText = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugOpenUrl"];
     [FWDebugManager fwDebugShowPrompt:self.explorerViewController security:NO title:@"Input Value" message:nil text:previousText block:^(BOOL confirm, NSString *text) {
         if (!confirm || text.length < 1) return;
