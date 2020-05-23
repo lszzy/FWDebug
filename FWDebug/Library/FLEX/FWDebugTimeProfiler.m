@@ -81,6 +81,7 @@
 @property (nonatomic, strong) FWDebugTimeRecord *timeRecord;
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
 @property (nonatomic, assign) NSUInteger selectedRow;
+@property (nonatomic, copy) NSString *costTitle;
 @property (nonatomic, copy) NSString *costText;
 
 + (FWDebugTimeRecord *)timeRecordForObject:(id)object;
@@ -296,7 +297,8 @@
     
     self.tableView.allowsMultipleSelection = YES;
     self.selectedRow = NSNotFound;
-    self.costText = @"Please select a time range";
+    self.costTitle = @"Total";
+    self.costText = @"";
 }
 
 #pragma mark - UITableView
@@ -316,12 +318,19 @@
     if ([self isLastIndexPath:indexPath]) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell2"];
         if (!cell) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell2"];
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell2"];
             cell.textLabel.font = [UIFont systemFontOfSize:12];
-            cell.textLabel.textAlignment = NSTextAlignmentCenter;
+            cell.detailTextLabel.font = [UIFont systemFontOfSize:12];
             cell.accessoryType = UITableViewCellAccessoryNone;
         }
-        cell.textLabel.text = self.costText;
+        cell.textLabel.text = self.costTitle;
+        if (self.costText.length > 0) {
+            cell.detailTextLabel.text = self.costText;
+        } else {
+            FWDebugTimeInfo *firstTime = self.timeRecord.timeInfos.firstObject;
+            FWDebugTimeInfo *lastTime = self.timeRecord.timeInfos.lastObject;
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"%.3lfms", (lastTime.time - firstTime.time) * 1000];
+        }
         return cell;
     }
     
@@ -333,12 +342,12 @@
         cell.detailTextLabel.font = [UIFont systemFontOfSize:12];
         cell.detailTextLabel.numberOfLines = 0;
     }
-    FWDebugTimeInfo *firstTime = self.timeRecord.timeInfos.firstObject;
+    FWDebugTimeInfo *prevTime = self.timeRecord.timeInfos[indexPath.row > 0 ? indexPath.row - 1 : 0];
     FWDebugTimeInfo *recordTime = self.timeRecord.timeInfos[indexPath.row];
     NSString *timeText = [self.dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:recordTime.time]];
     cell.accessoryType = recordTime.userInfo ? UITableViewCellAccessoryDetailButton : UITableViewCellAccessoryNone;
     cell.textLabel.text = recordTime.event;
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@\n+%.3lfms", timeText, (recordTime.time - firstTime.time) * 1000];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@\n+%.3lfms", timeText, (recordTime.time - prevTime.time) * 1000];
     return cell;
 }
 
@@ -366,7 +375,8 @@
             }
             [tableView deselectRowAtIndexPath:aIndexPath animated:YES];
         }
-        self.costText = @"Select another time";
+        self.costTitle = @"Select another time";
+        self.costText = @"-";
         self.selectedRow = selectedRow;
     } else {
         NSUInteger minRow = MIN(self.selectedRow, selectedRow);
@@ -377,7 +387,8 @@
         }
         FWDebugTimeInfo *startTime = self.timeRecord.timeInfos[minRow];
         FWDebugTimeInfo *endTime = self.timeRecord.timeInfos[maxRow];
-        self.costText = [NSString stringWithFormat:@"Cost：%.3lfms", (endTime.time - startTime.time) * 1000];
+        self.costTitle = @"Cost";
+        self.costText = [NSString stringWithFormat:@"%.3lfms", (endTime.time - startTime.time) * 1000];
         self.selectedRow = NSNotFound;
     }
     [tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.timeRecord.timeInfos.count inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
@@ -393,10 +404,12 @@
             [tableView deselectRowAtIndexPath:aIndexPath animated:YES];
         }
         [tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
-        self.costText = @"Select another time";
+        self.costTitle = @"Select another time";
+        self.costText = @"-";
         self.selectedRow = selectedRow;
     } else {
-        self.costText = @"Please select a time range";
+        self.costTitle = @"Total";
+        self.costText = @"";
         self.selectedRow = NSNotFound;
     }
     [tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.timeRecord.timeInfos.count inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
