@@ -84,7 +84,6 @@
     NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.weather.com.cn/data/sk/101040100.html"]];
     NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        [[FWDebugManager sharedInstance] recordEvent:@"↥ finishRequest" object:self userInfo:response];
         dispatch_async(dispatch_get_main_queue(), ^{
             id object = data ? [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL] : nil;
             if (object) {
@@ -94,7 +93,6 @@
             }
         });
     }];
-    [[FWDebugManager sharedInstance] recordEvent:@"↧ startRequest" object:self userInfo:request];
     [task resume];
 }
 

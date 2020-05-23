@@ -121,7 +121,9 @@
 
 - (void)fwDebugSetDelegate:(id<UIApplicationDelegate>)delegate
 {
-    [FWDebugManager fwDebugSwizzleMethod:@selector(application:didFinishLaunchingWithOptions:) in:[delegate class] with:@selector(fwDebugApplication:didFinishLaunchingWithOptions:) in:[NSObject class]];
+    if ([delegate isKindOfClass:[NSObject class]]) {
+        [FWDebugManager fwDebugSwizzleMethod:@selector(application:didFinishLaunchingWithOptions:) in:[delegate class] with:@selector(fwDebugApplication:didFinishLaunchingWithOptions:) in:[NSObject class]];
+    }
     [self fwDebugSetDelegate:delegate];
 }
 
@@ -340,11 +342,11 @@
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
-    FWDebugTimeInfo *recordTime = self.timeRecord.timeInfos[indexPath.row];
-    if (recordTime.userInfo) {
-        FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:recordTime.userInfo];
-        [self.navigationController pushViewController:viewController animated:YES];
-    }
+    id object = self.timeRecord.timeInfos[indexPath.row].userInfo;
+    if (!object) return;
+    
+    FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:object];
+    [self.navigationController pushViewController:viewController animated:YES];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

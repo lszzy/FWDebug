@@ -50,7 +50,7 @@
         make.button(@"Retain Cycles").handler(^(NSArray<NSString *> *strings) {
             [self fwDebugRetainCycles];
         });
-        if (self.explorer.objectIsInstance && [self.object isKindOfClass:[NSObject class]]) {
+        if (self.explorer.objectIsInstance) {
             make.button(@"Time Profiler").handler(^(NSArray<NSString *> *strings) {
                 [self fwDebugTimeProfiler];
             });
