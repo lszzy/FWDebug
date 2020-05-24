@@ -7,6 +7,10 @@
 //
 
 #import "FLEXObjectExplorerViewController+FWDebug.h"
+#import "FLEXObjectExplorerFactory.h"
+#import "FLEXSingleRowSection.h"
+#import "FLEXTableViewCell.h"
+#import "FLEXUtility.h"
 #import "FLEXHeapEnumerator.h"
 #import "FLEXObjectRef.h"
 #import "FLEXAlert.h"
@@ -18,23 +22,27 @@
 #import "FBRetainCycleDetector+FWDebug.h"
 #import <malloc/malloc.h>
 
+@interface FLEXObjectExplorerViewController ()
+
+@property (nonatomic, readonly) FLEXSingleRowSection *descriptionSection;
+
+@end
+
 @implementation FLEXObjectExplorerViewController (FWDebug)
 
 + (void)load
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleMethod:@selector(viewDidLoad) in:self with:@selector(fwDebugObjectExplorerViewDidLoad) in:self];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(makeSections) in:self with:@selector(fwDebugMakeSections) in:self];
     });
 }
 
 #pragma mark - FWDebug
 
-- (void)fwDebugObjectExplorerViewDidLoad
+- (NSArray<FLEXTableViewSection *> *)fwDebugMakeSections
 {
-    [self fwDebugObjectExplorerViewDidLoad];
-    
-    UIBarButtonItem *searchItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(fwDebugSearchPressed:)];
+    UIBarButtonItem *searchItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(fwDebugRetainCycles)];
     if (self.navigationItem.rightBarButtonItems.count > 0) {
         NSMutableArray *rightItems = [NSMutableArray arrayWithArray:self.navigationItem.rightBarButtonItems];
         [rightItems addObject:searchItem];
@@ -42,26 +50,61 @@
     } else {
         self.navigationItem.rightBarButtonItem = searchItem;
     }
-}
-
-- (void)fwDebugSearchPressed:(UIBarButtonItem *)sender
-{
-    [FLEXAlert makeSheet:^(FLEXAlert *make) {
-        make.button(@"Retain Cycles").handler(^(NSArray<NSString *> *strings) {
-            [self fwDebugRetainCycles];
-        });
-        if (self.explorer.objectIsInstance) {
-            make.button(@"Time Profiler").handler(^(NSArray<NSString *> *strings) {
-                [self fwDebugTimeProfiler];
-            });
+    
+    NSMutableArray *sections = [NSMutableArray arrayWithArray:[self fwDebugMakeSections]];
+    FLEXObjectExplorer *explorer = self.explorer;
+    if (explorer.objectIsInstance) {
+        if (self.descriptionSection) {
+            self.descriptionSection.selectionAction = ^(UIViewController *host) {
+                FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:[explorer.object class]];
+                [host.navigationController pushViewController:viewController animated:YES];
+            };
         }
-        if (!self.explorer.objectIsInstance) {
-            make.button(@"Runtime Headers").handler(^(NSArray<NSString *> *strings) {
-                [self fwDebugRuntimeHeaders];
-            });
-        }
-        make.button(@"Cancel").cancelStyle();
-    } showFrom:self source:sender];
+        
+        FLEXSingleRowSection *customSection = [FLEXSingleRowSection title:@"Custom" reuse:kFLEXDefaultCell cell:^(FLEXTableViewCell *cell) {
+            cell.titleLabel.font = UIFont.flex_defaultTableCellFont;
+            cell.titleLabel.text = @"Time Profiler";
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }];
+        customSection.filterMatcher = ^BOOL(NSString *filterText) {
+            return [@"Time Profiler" localizedCaseInsensitiveContainsString:filterText];
+        };
+        customSection.selectionAction = ^(UIViewController *host) {
+            FWDebugTimeProfiler *viewController = [[FWDebugTimeProfiler alloc] initWithObject:explorer.object];
+            [host.navigationController pushViewController:viewController animated:YES];
+        };
+        [sections insertObject:customSection atIndex:0];
+    } else {
+        FLEXSingleRowSection *customSection = [FLEXSingleRowSection title:@"Custom" reuse:kFLEXDefaultCell cell:^(FLEXTableViewCell *cell) {
+            cell.titleLabel.font = UIFont.flex_defaultTableCellFont;
+            cell.titleLabel.text = @"Runtime Headers";
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }];
+        customSection.filterMatcher = ^BOOL(NSString *filterText) {
+            return [@"Runtime Headers" localizedCaseInsensitiveContainsString:filterText];
+        };
+        customSection.selectionAction = ^(UIViewController *host) {
+            [FLEXAlert makeSheet:^(FLEXAlert *make) {
+                Class objectClass = [explorer.object class];
+                RTBClass *classStub = [RTBClass classStubWithClass:objectClass];
+                NSArray *classProtocols = [classStub sortedProtocolsNames];
+                
+                make.button([NSString stringWithFormat:@"%@.h", [objectClass description]]).handler(^(NSArray<NSString *> *strings) {
+                    UIViewController *viewController = [[FWDebugRuntimeBrowser alloc] initWithClassName:[objectClass description]];
+                    [host.navigationController pushViewController:viewController animated:YES];
+                });
+                for (NSString *protocolName in classProtocols) {
+                    make.button([NSString stringWithFormat:@"%@.h", protocolName]).handler(^(NSArray<NSString *> *strings) {
+                        UIViewController *viewController = [[FWDebugRuntimeBrowser alloc] initWithProtocolName:protocolName];
+                        [host.navigationController pushViewController:viewController animated:YES];
+                    });
+                }
+                make.button(@"Cancel").cancelStyle();
+            } showFrom:host source:nil];
+        };
+        [sections insertObject:customSection atIndex:0];
+    }
+    return sections.copy;
 }
 
 - (void)fwDebugRetainCycles
@@ -88,33 +131,6 @@
     FWDebugRetainCycle *viewController = [[FWDebugRetainCycle alloc] init];
     viewController.retainCycles = [retainCycles allObjects];
     [self.navigationController pushViewController:viewController animated:YES];
-}
-
-- (void)fwDebugTimeProfiler
-{
-    FWDebugTimeProfiler *viewController = [[FWDebugTimeProfiler alloc] initWithObject:self.object];
-    [self.navigationController pushViewController:viewController animated:YES];
-}
-
-- (void)fwDebugRuntimeHeaders
-{
-    [FLEXAlert makeSheet:^(FLEXAlert *make) {
-        Class objectClass = [self.object class];
-        RTBClass *classStub = [RTBClass classStubWithClass:objectClass];
-        NSArray *classProtocols = [classStub sortedProtocolsNames];
-        
-        make.button([NSString stringWithFormat:@"%@.h", [objectClass description]]).handler(^(NSArray<NSString *> *strings) {
-            UIViewController *viewController = [[FWDebugRuntimeBrowser alloc] initWithClassName:[objectClass description]];
-            [self.navigationController pushViewController:viewController animated:YES];
-        });
-        for (NSString *protocolName in classProtocols) {
-            make.button([NSString stringWithFormat:@"%@.h", protocolName]).handler(^(NSArray<NSString *> *strings) {
-                UIViewController *viewController = [[FWDebugRuntimeBrowser alloc] initWithProtocolName:protocolName];
-                [self.navigationController pushViewController:viewController animated:YES];
-            });
-        }
-        make.button(@"Cancel").cancelStyle();
-    } showFrom:self source:nil];
 }
 
 @end

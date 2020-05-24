@@ -24,16 +24,14 @@
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleMethod:@selector(viewDidLoad) in:self with:@selector(fwDebugObjectListViewDidLoad) in:self];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(makeSections) in:self with:@selector(fwDebugMakeSections) in:self];
     });
 }
 
 #pragma mark - FWDebug
 
-- (void)fwDebugObjectListViewDidLoad
+- (NSArray<FLEXTableViewSection *> *)fwDebugMakeSections
 {
-    [self fwDebugObjectListViewDidLoad];
-    
     UIBarButtonItem *retainItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(fwDebugRetainCycles)];
     if (self.navigationItem.rightBarButtonItems.count > 0) {
         NSMutableArray *rightItems = [NSMutableArray arrayWithArray:self.navigationItem.rightBarButtonItems];
@@ -42,6 +40,8 @@
     } else {
         self.navigationItem.rightBarButtonItem = retainItem;
     }
+    
+    return [self fwDebugMakeSections];
 }
 
 - (void)fwDebugRetainCycles
