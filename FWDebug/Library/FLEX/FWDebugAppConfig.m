@@ -9,6 +9,7 @@
 #import "FWDebugAppConfig.h"
 #import "FLEXColor.h"
 #import "FWDebugManager+FWDebug.h"
+#import "FWDebugTimeProfiler.h"
 #import <CommonCrypto/CommonDigest.h>
 
 static BOOL isAppLocked = NO;
@@ -351,6 +352,7 @@ static BOOL isAppLocked = NO;
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugTraceVCLife"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
+            [FWDebugTimeProfiler enableTraceVCLife];
         } else {
             [[NSUserDefaults standardUserDefaults] setObject:@(NO) forKey:@"FWDebugTraceVCLife"];
             [[NSUserDefaults standardUserDefaults] synchronize];
@@ -361,6 +363,7 @@ static BOOL isAppLocked = NO;
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugTraceVCRequest"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
+            [FWDebugTimeProfiler enableTraceVCRequest];
         } else {
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugTraceVCRequest"];
             [[NSUserDefaults standardUserDefaults] synchronize];

@@ -14,6 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithObject:(id)object;
 
++ (void)enableTraceVCLife;
+
++ (void)enableTraceVCRequest;
+
 + (double)currentTime;
 
 + (NSTimeInterval)appLaunchedTime;

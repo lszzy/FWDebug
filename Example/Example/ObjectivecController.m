@@ -63,6 +63,7 @@
     weatherLabel.textAlignment = NSTextAlignmentCenter;
     [self.view addSubview:weatherLabel];
     
+    [self onTimeTest];
     [self onRequest];
 }
 
@@ -79,6 +80,13 @@
 }
 
 #pragma mark - Action
+
+- (void)onTimeTest {
+    NSInteger total = 0;
+    for (NSInteger i = 0; i < 1000000; i++) {
+        total += i;
+    }
+}
 
 - (void)onRequest {
     NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];

@@ -11,6 +11,8 @@
 #import "FWDebugManager+FWDebug.h"
 #import "FLEXObjectExplorerFactory.h"
 #import "FLEXNetworkRecorder.h"
+#import "FLEXNetworkTransaction.h"
+#import "FLEXNetworkTransactionDetailController.h"
 #import <sys/sysctl.h>
 #import <sys/time.h>
 #import <objc/runtime.h>
@@ -22,6 +24,7 @@
 @property (nonatomic, copy, readonly) NSString *event;
 @property (nonatomic, assign, readonly) NSTimeInterval time;
 @property (nonatomic, weak, readonly) id userInfo;
+@property (nonatomic, copy) NSString *requestID;
 
 @end
 
@@ -78,6 +81,55 @@
     [self.timeInfos addObject:[[FWDebugTimeInfo alloc] initWithEvent:event time:time userInfo:userInfo]];
 }
 
+- (void)recordRequest:(NSString *)event time:(NSTimeInterval)time requestID:(NSString *)requestID
+{
+    FWDebugTimeInfo *timeInfo = [[FWDebugTimeInfo alloc] initWithEvent:event time:time userInfo:nil];
+    timeInfo.requestID = requestID;
+    [self.timeInfos addObject:timeInfo];
+}
+
+- (NSArray<FWDebugTimeInfo *> *)formatedTimeInfos
+{
+    NSMutableArray *formatedTimeInfos = [NSMutableArray array];
+    NSArray *timeInfos = [self.timeInfos copy];
+    NSArray *transactions = FLEXNetworkRecorder.defaultRecorder.networkTransactions;
+    NSString *traceUrlsString = [FWDebugAppConfig traceVCUrls];
+    NSArray *traceUrls = traceUrlsString.length > 0 ? [traceUrlsString componentsSeparatedByString:@";"] : nil;
+    [timeInfos enumerateObjectsUsingBlock:^(FWDebugTimeInfo *obj, NSUInteger idx, BOOL *stop) {
+        if (obj.requestID) {
+            [transactions enumerateObjectsUsingBlock:^(FLEXNetworkTransaction *transaction, NSUInteger idx, BOOL *stop) {
+                if ([transaction.requestID isEqualToString:obj.requestID]) {
+                    BOOL isAllow = YES;
+                    if (traceUrls.count > 0) {
+                        isAllow = NO;
+                        NSString *requestUrl = transaction.request.URL.absoluteString;
+                        for (NSString *traceUrl in traceUrls) {
+                            if ([requestUrl containsString:traceUrl]) {
+                                isAllow = YES;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (isAllow) {
+                        FWDebugTimeInfo *timeInfo = [[FWDebugTimeInfo alloc] initWithEvent:[obj.event stringByAppendingFormat:@"\n%@", transaction.request.URL.path] time:obj.time userInfo:transaction];
+                        [formatedTimeInfos addObject:timeInfo];
+                    }
+                    
+                    *stop = YES;
+                }
+            }];
+        } else {
+            [formatedTimeInfos addObject:obj];
+        }
+    }];
+    
+    [formatedTimeInfos sortUsingComparator:^NSComparisonResult(FWDebugTimeInfo *obj1, FWDebugTimeInfo *obj2) {
+        return obj1.time > obj2.time;
+    }];
+    return formatedTimeInfos.copy;
+}
+
 @end
 
 #pragma mark - FWDebugTimeProfiler
@@ -91,6 +143,8 @@
 @property (nonatomic, copy) NSString *costText;
 
 + (FWDebugTimeRecord *)timeRecordForObject:(id)object;
++ (void)recordVCRequest:(NSString *)event requestID:(NSString *)requestID;
++ (void)recordVCLife:(NSString *)event viewController:(id)viewController;
 
 @end
 
@@ -147,43 +201,43 @@
 - (id)fwDebugInitWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     id object = [self fwDebugInitWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    [FWDebugTimeProfiler recordEvent:@"↥ VC.init" object:object userInfo:nil];
+    [FWDebugTimeProfiler recordVCLife:@"↥ VC.init" viewController:object];
     return object;
 }
 
 - (id)fwDebugInitWithCoder:(NSCoder *)coder
 {
     id object = [self fwDebugInitWithCoder:coder];
-    [FWDebugTimeProfiler recordEvent:@"↥ VC.init" object:object userInfo:nil];
+    [FWDebugTimeProfiler recordVCLife:@"↥ VC.init" viewController:object];
     return object;
 }
 
 - (void)fwDebugLoadView
 {
-    [FWDebugTimeProfiler recordEvent:@"↧ loadView" object:self userInfo:nil];
+    [FWDebugTimeProfiler recordVCLife:@"↧ loadView" viewController:self];
     [self fwDebugLoadView];
-    [FWDebugTimeProfiler recordEvent:@"↥ loadView" object:self userInfo:nil];
+    [FWDebugTimeProfiler recordVCLife:@"↥ loadView" viewController:self];
 }
 
 - (void)fwDebugViewDidLoad
 {
-    [FWDebugTimeProfiler recordEvent:@"↧ viewDidLoad" object:self userInfo:nil];
+    [FWDebugTimeProfiler recordVCLife:@"↧ viewDidLoad" viewController:self];
     [self fwDebugViewDidLoad];
-    [FWDebugTimeProfiler recordEvent:@"↥ viewDidLoad" object:self userInfo:nil];
+    [FWDebugTimeProfiler recordVCLife:@"↥ viewDidLoad" viewController:self];
 }
 
 - (void)fwDebugViewWillAppear:(BOOL)animated
 {
-    [FWDebugTimeProfiler recordEvent:@"↧ viewWillAppear:" object:self userInfo:nil];
+    [FWDebugTimeProfiler recordVCLife:@"↧ viewWillAppear:" viewController:self];
     [self fwDebugViewWillAppear:animated];
-    [FWDebugTimeProfiler recordEvent:@"↥ viewWillAppear:" object:self userInfo:nil];
+    [FWDebugTimeProfiler recordVCLife:@"↥ viewWillAppear:" viewController:self];
 }
 
 - (void)fwDebugViewDidAppear:(BOOL)animated
 {
-    [FWDebugTimeProfiler recordEvent:@"↧ viewDidAppear:" object:self userInfo:nil];
+    [FWDebugTimeProfiler recordVCLife:@"↧ viewDidAppear:" viewController:self];
     [self fwDebugViewDidAppear:animated];
-    [FWDebugTimeProfiler recordEvent:@"↥ viewDidAppear:" object:self userInfo:nil];
+    [FWDebugTimeProfiler recordVCLife:@"↥ viewDidAppear:" viewController:self];
     
     if (![self isKindOfClass:[UINavigationController class]] && ![self isKindOfClass:[UITabBarController class]]) {
         static dispatch_once_t onceToken;
@@ -204,32 +258,21 @@
 
 @implementation FLEXNetworkRecorder (FWDebugTimeProfiler)
 
-- (void)fwDebugRecordRequest:(NSString *)event requestID:(NSString *)requestID
-{
-    // TODO: 判断过滤URL
-    NSTimeInterval time = [FWDebugTimeProfiler currentTime];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        UIViewController *viewController = [FWDebugManager fwDebugViewController];
-        FWDebugTimeRecord *timeRecord = viewController ? [FWDebugTimeProfiler timeRecordForObject:viewController] : [FWDebugTimeRecord sharedInstance];
-        [timeRecord recordEvent:event time:time userInfo:requestID];
-    });
-}
-
 - (void)fwDebugRecordRequestWillBeSentWithRequestID:(NSString *)requestID request:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse
 {
-    [self fwDebugRecordRequest:@"↧ startRequest" requestID:requestID];
+    [FWDebugTimeProfiler recordVCRequest:@"↧ startRequest" requestID:requestID];
     [self fwDebugRecordRequestWillBeSentWithRequestID:requestID request:request redirectResponse:redirectResponse];
 }
 
 - (void)fwDebugRecordLoadingFinishedWithRequestID:(NSString *)requestID responseBody:(NSData *)responseBody
 {
-    [self fwDebugRecordRequest:@"↥ finishRequest" requestID:requestID];
+    [FWDebugTimeProfiler recordVCRequest:@"↥ finishRequest" requestID:requestID];
     [self fwDebugRecordLoadingFinishedWithRequestID:requestID responseBody:responseBody];
 }
 
 - (void)fwDebugRecordLoadingFailedWithRequestID:(NSString *)requestID error:(NSError *)error
 {
-    [self fwDebugRecordRequest:@"↥ failRequest" requestID:requestID];
+    [FWDebugTimeProfiler recordVCRequest:@"↥ failRequest" requestID:requestID];
     [self fwDebugRecordLoadingFailedWithRequestID:requestID error:error];
 }
 
@@ -249,19 +292,35 @@
         [FWDebugManager fwDebugSwizzleMethod:@selector(setDelegate:) in:[UIApplication class] with:@selector(fwDebugSetDelegate:) in:[UIApplication class]];
         
         if ([FWDebugAppConfig traceVCLife]) {
-            [FWDebugManager fwDebugSwizzleMethod:@selector(initWithNibName:bundle:) in:[UIViewController class] with:@selector(fwDebugInitWithNibName:bundle:) in:[UIViewController class]];
-            [FWDebugManager fwDebugSwizzleMethod:@selector(initWithCoder:) in:[UIViewController class] with:@selector(fwDebugInitWithCoder:) in:[UIViewController class]];
-            [FWDebugManager fwDebugSwizzleMethod:@selector(loadView) in:[UIViewController class] with:@selector(fwDebugLoadView) in:[UIViewController class]];
-            [FWDebugManager fwDebugSwizzleMethod:@selector(viewDidLoad) in:[UIViewController class] with:@selector(fwDebugViewDidLoad) in:[UIViewController class]];
-            [FWDebugManager fwDebugSwizzleMethod:@selector(viewWillAppear:) in:[UIViewController class] with:@selector(fwDebugViewWillAppear:) in:[UIViewController class]];
-            [FWDebugManager fwDebugSwizzleMethod:@selector(viewDidAppear:) in:[UIViewController class] with:@selector(fwDebugViewDidAppear:) in:[UIViewController class]];
+            [self enableTraceVCLife];
         }
         
         if ([FWDebugAppConfig traceVCRequest]) {
-            [FWDebugManager fwDebugSwizzleMethod:@selector(recordRequestWillBeSentWithRequestID:request:redirectResponse:) in:[FLEXNetworkRecorder class] with:@selector(fwDebugRecordRequestWillBeSentWithRequestID:request:redirectResponse:) in:[FLEXNetworkRecorder class]];
-            [FWDebugManager fwDebugSwizzleMethod:@selector(recordLoadingFinishedWithRequestID:responseBody:) in:[FLEXNetworkRecorder class] with:@selector(fwDebugRecordLoadingFinishedWithRequestID:responseBody:) in:[FLEXNetworkRecorder class]];
-            [FWDebugManager fwDebugSwizzleMethod:@selector(recordLoadingFailedWithRequestID:error:) in:[FLEXNetworkRecorder class] with:@selector(fwDebugRecordLoadingFailedWithRequestID:error:) in:[FLEXNetworkRecorder class]];
+            [self enableTraceVCRequest];
         }
+    });
+}
+
++ (void)enableTraceVCLife
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [FWDebugManager fwDebugSwizzleMethod:@selector(initWithNibName:bundle:) in:[UIViewController class] with:@selector(fwDebugInitWithNibName:bundle:) in:[UIViewController class]];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(initWithCoder:) in:[UIViewController class] with:@selector(fwDebugInitWithCoder:) in:[UIViewController class]];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(loadView) in:[UIViewController class] with:@selector(fwDebugLoadView) in:[UIViewController class]];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(viewDidLoad) in:[UIViewController class] with:@selector(fwDebugViewDidLoad) in:[UIViewController class]];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(viewWillAppear:) in:[UIViewController class] with:@selector(fwDebugViewWillAppear:) in:[UIViewController class]];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(viewDidAppear:) in:[UIViewController class] with:@selector(fwDebugViewDidAppear:) in:[UIViewController class]];
+    });
+}
+
++ (void)enableTraceVCRequest
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [FWDebugManager fwDebugSwizzleMethod:@selector(recordRequestWillBeSentWithRequestID:request:redirectResponse:) in:[FLEXNetworkRecorder class] with:@selector(fwDebugRecordRequestWillBeSentWithRequestID:request:redirectResponse:) in:[FLEXNetworkRecorder class]];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(recordLoadingFinishedWithRequestID:responseBody:) in:[FLEXNetworkRecorder class] with:@selector(fwDebugRecordLoadingFinishedWithRequestID:responseBody:) in:[FLEXNetworkRecorder class]];
+        [FWDebugManager fwDebugSwizzleMethod:@selector(recordLoadingFailedWithRequestID:error:) in:[FLEXNetworkRecorder class] with:@selector(fwDebugRecordLoadingFailedWithRequestID:error:) in:[FLEXNetworkRecorder class]];
     });
 }
 
@@ -297,6 +356,23 @@
     if (timeRecord) [timeRecord recordEvent:event userInfo:userInfo];
 }
 
++ (void)recordVCLife:(NSString *)event viewController:(id)viewController
+{
+    if (![FWDebugAppConfig traceVCLife]) return;
+    [self recordEvent:event object:viewController userInfo:nil];
+}
+
++ (void)recordVCRequest:(NSString *)event requestID:(NSString *)requestID
+{
+    if (![FWDebugAppConfig traceVCRequest]) return;
+    NSTimeInterval time = [FWDebugTimeProfiler currentTime];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIViewController *viewController = [FWDebugManager fwDebugViewController];
+        FWDebugTimeRecord *timeRecord = viewController ? [FWDebugTimeProfiler timeRecordForObject:viewController] : [FWDebugTimeRecord sharedInstance];
+        [timeRecord recordRequest:event time:time requestID:requestID];
+    });
+}
+
 + (FWDebugTimeRecord *)timeRecordForObject:(id)object
 {
     if (!object) return nil;
@@ -312,9 +388,7 @@
 {
     self = [super init];
     if (self) {
-        _timeInfos = [[FWDebugTimeProfiler timeRecordForObject:object].timeInfos sortedArrayUsingComparator:^NSComparisonResult(FWDebugTimeInfo *obj1, FWDebugTimeInfo *obj2) {
-            return obj1.time > obj2.time;
-        }];
+        _timeInfos = [[FWDebugTimeProfiler timeRecordForObject:object] formatedTimeInfos];
         self.title = NSStringFromClass([object class]);
     }
     return self;
@@ -324,9 +398,7 @@
 {
     self = [super init];
     if (self) {
-        _timeInfos = [FWDebugTimeRecord.sharedInstance.timeInfos sortedArrayUsingComparator:^NSComparisonResult(FWDebugTimeInfo *obj1, FWDebugTimeInfo *obj2) {
-            return obj1.time > obj2.time;
-        }];
+        _timeInfos = [[FWDebugTimeRecord sharedInstance] formatedTimeInfos];
         self.title = @"Time Profiler";
     }
     return self;
@@ -401,7 +473,13 @@
     id object = self.timeInfos[indexPath.row].userInfo;
     if (!object) return;
     
-    // TODO: 跳转请求详情
+    if ([object isKindOfClass:[FLEXNetworkTransaction class]]) {
+        FLEXNetworkTransactionDetailController *viewController = [FLEXNetworkTransactionDetailController new];
+        viewController.transaction = object;
+        [self.navigationController pushViewController:viewController animated:YES];
+        return;
+    }
+    
     FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:object];
     [self.navigationController pushViewController:viewController animated:YES];
 }
