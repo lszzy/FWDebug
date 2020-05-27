@@ -155,39 +155,39 @@
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(startUpdatingLocation) with:@selector(fwDebugStartUpdatingLocation)];
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(stopUpdatingLocation) with:@selector(fwDebugStopUpdatingLocation)];
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(location) with:@selector(fwDebugLocation)];
+        [FWDebugManager swizzleMethod:@selector(startUpdatingLocation) in:[CLLocationManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(CLLocationManager *selfObject) {
+                if ([CLLocationManager fwDebugFakeEnabled]) {
+                    [selfObject.fwDebugFakeTarget startUpdateLocation];
+                    return;
+                }
+                
+                ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+            };
+        }];
+        [FWDebugManager swizzleMethod:@selector(stopUpdatingLocation) in:[CLLocationManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(CLLocationManager *selfObject) {
+                if ([CLLocationManager fwDebugFakeEnabled]) {
+                    [selfObject.fwDebugFakeTarget stopUpdateLocation];
+                    return;
+                }
+                
+                ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+            };
+        }];
+        [FWDebugManager swizzleMethod:@selector(location) in:[CLLocationManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^CLLocation *(CLLocationManager *selfObject) {
+                if ([CLLocationManager fwDebugFakeEnabled]) {
+                    return selfObject.fwDebugFakeTarget.location;
+                }
+                
+                return ((CLLocation *(*)(id, SEL))originalIMP())(selfObject, originalCMD);
+            };
+        }];
     });
 }
 
 #pragma mark - Swizzle
-
-- (void)fwDebugStartUpdatingLocation
-{
-    if (![CLLocationManager fwDebugFakeEnabled]) {
-        [self fwDebugStartUpdatingLocation];
-        return;
-    }
-    [self.fwDebugFakeTarget startUpdateLocation];
-}
-
-- (void)fwDebugStopUpdatingLocation
-{
-    if (![CLLocationManager fwDebugFakeEnabled]) {
-        [self fwDebugStopUpdatingLocation];
-        return;
-    }
-    [self.fwDebugFakeTarget stopUpdateLocation];
-}
-
-- (CLLocation *)fwDebugLocation
-{
-    if (![CLLocationManager fwDebugFakeEnabled]) {
-        return [self fwDebugLocation];
-    }
-    return self.fwDebugFakeTarget.location;
-}
 
 - (FWDebugFakeTarget *)fwDebugFakeTarget
 {
@@ -454,7 +454,7 @@
     
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     typeof(self) __weak weakSelf = self;
-    [FWDebugManager fwDebugShowPrompt:self security:NO title:(indexPath.row > 1 ? @"Input Value" : @"Input Location") message:nil text:text block:^(BOOL confirm, NSString *text) {
+    [FWDebugManager showPrompt:self security:NO title:(indexPath.row > 1 ? @"Input Value" : @"Input Location") message:nil text:text block:^(BOOL confirm, NSString *text) {
         if (confirm) {
             if (indexPath.row == 0) {
                 [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugFakeLocationCurrent"];

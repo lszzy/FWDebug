@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F1F9988247280E40025DA26 /* FWDebugTimeProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F1F9986247280E40025DA26 /* FWDebugTimeProfiler.h */; };
+		2F1F9989247280E40025DA26 /* FWDebugTimeProfiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F1F9987247280E40025DA26 /* FWDebugTimeProfiler.m */; };
 		2F22E61D2264EF940081B7AC /* NWSecTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F22E60F2264EF940081B7AC /* NWSecTools.m */; };
 		2F22E61E2264EF940081B7AC /* NWNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F22E6102264EF940081B7AC /* NWNotification.h */; };
 		2F22E61F2264EF940081B7AC /* NWHub.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F22E6112264EF940081B7AC /* NWHub.m */; };
@@ -663,6 +665,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2F1F9986247280E40025DA26 /* FWDebugTimeProfiler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FWDebugTimeProfiler.h; sourceTree = "<group>"; };
+		2F1F9987247280E40025DA26 /* FWDebugTimeProfiler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWDebugTimeProfiler.m; sourceTree = "<group>"; };
 		2F22E60F2264EF940081B7AC /* NWSecTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWSecTools.m; sourceTree = "<group>"; };
 		2F22E6102264EF940081B7AC /* NWNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWNotification.h; sourceTree = "<group>"; };
 		2F22E6112264EF940081B7AC /* NWHub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NWHub.m; sourceTree = "<group>"; };
@@ -1658,6 +1662,8 @@
 				2F2BB4CF2261B98500D022D0 /* FWDebugFakeNotification.m */,
 				2F57D0251E65665D0062B632 /* FWDebugFpsInfo.h */,
 				2F57D0261E65665D0062B632 /* FWDebugFpsInfo.m */,
+				2F1F9986247280E40025DA26 /* FWDebugTimeProfiler.h */,
+				2F1F9987247280E40025DA26 /* FWDebugTimeProfiler.m */,
 			);
 			path = FLEX;
 			sourceTree = "<group>";
@@ -2768,6 +2774,7 @@
 				2FF179772445BC3900B852AE /* FLEXRuntime+UIKitHelpers.h in Headers */,
 				2F47B23022FDC279005EEDAE /* FBObjectInStructReference.h in Headers */,
 				2F41721A1E63303B00DC5AD4 /* GCDWebUploader.h in Headers */,
+				2F1F9988247280E40025DA26 /* FWDebugTimeProfiler.h in Headers */,
 				2FD0E96B22FDC8F90060A72D /* KSCrashReportFilterJSON.h in Headers */,
 				2FF1788C2445BC3900B852AE /* FLEXManager.h in Headers */,
 				2F32AD581F0B6A0C004072E5 /* FWDebugAppConfig.h in Headers */,
@@ -3400,6 +3407,7 @@
 				2FF178A72445BC3900B852AE /* FLEXArgumentInputObjectView.m in Sources */,
 				2FF1797B2445BC3900B852AE /* CALayer+FLEX.m in Sources */,
 				2FD0E97522FDC8F90060A72D /* KSReachabilityKSCrash.m in Sources */,
+				2F1F9989247280E40025DA26 /* FWDebugTimeProfiler.m in Sources */,
 				2F2BB4D12261B98500D022D0 /* FWDebugFakeNotification.m in Sources */,
 				2FF178FE2445BC3900B852AE /* FLEXDBQueryRowCell.m in Sources */,
 				2F47B22E22FDC279005EEDAE /* FBObjectInStructReference.m in Sources */,

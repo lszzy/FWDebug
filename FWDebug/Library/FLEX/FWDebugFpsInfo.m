@@ -198,12 +198,14 @@
 
 - (NSInteger)fpsStateForData:(float)fps
 {
-    return (fps > 55.0) ? 1 : (fps > 40.0 ? 0 : -1);
+    return (fps > 50.0) ? 1 : (fps > 40.0 ? 0 : -1);
 }
 
 - (NSInteger)memoryStateForData:(float)memory
 {
-    return (memory < 200.0) ? 1 : (memory < 300.0 ? 0 : -1);
+    CGFloat memoryTotal = [self memoryTotal];
+    if (memoryTotal <= 0) return 1;
+    return (memory < memoryTotal * 0.2) ? 1 : (memory < memoryTotal * 0.3 ? 0 : -1);
 }
 
 - (NSInteger)cpuStateForData:(float)cpu
@@ -213,12 +215,34 @@
 
 - (float)memoryUsage
 {
-    task_basic_info_data_t taskInfo;
-    mach_msg_type_number_t infoCount = TASK_BASIC_INFO_COUNT;
-    kern_return_t kernReturn = task_info(mach_task_self(), TASK_BASIC_INFO, (task_info_t)&taskInfo, &infoCount);
-    vm_size_t memory = (kernReturn == KERN_SUCCESS) ? taskInfo.resident_size : 0; // size in bytes
-    // 同NSByteCountFormatter，取1000
-    return memory / 1000.0 / 1000.0;
+    // The real physical memory used by app，参考自MTHawkeye
+    task_vm_info_data_t vmInfo;
+    vmInfo.phys_footprint = 0;
+    mach_msg_type_number_t count = TASK_VM_INFO_COUNT;
+    kern_return_t result = task_info(mach_task_self(), TASK_VM_INFO, (task_info_t)&vmInfo, &count);
+    int64_t memory = (result == KERN_SUCCESS) ? vmInfo.phys_footprint : 0;
+    
+    // Used memory by app in byte
+    if (memory == 0) {
+        struct task_basic_info info;
+        mach_msg_type_number_t size = (sizeof(task_basic_info_data_t) / sizeof(natural_t));
+        kern_return_t kerr = task_info(mach_task_self(), TASK_BASIC_INFO, (task_info_t)&info, &size);
+        memory = (kerr == KERN_SUCCESS) ? info.resident_size : 0;
+    }
+    
+    return memory / 1024.0 / 1024.0;
+}
+
+- (float)memoryTotal
+{
+    static float memoryTotal = -1;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        int64_t memorySize = [[NSProcessInfo processInfo] physicalMemory];
+        if (memorySize < -1) memorySize = -1;
+        memoryTotal = memorySize / 1024.0 / 1024.0;
+    });
+    return memoryTotal;
 }
 
 - (float)cpuUsage

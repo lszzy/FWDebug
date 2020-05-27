@@ -24,16 +24,20 @@
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(viewDidLoad) with:@selector(fwDebugViewDidLoad)];
+        [FWDebugManager swizzleMethod:@selector(viewDidLoad) in:[FLEXObjectListViewController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(FLEXObjectListViewController *selfObject) {
+                ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+                
+                [selfObject fwDebugSearchItem];
+            };
+        }];
     });
 }
 
 #pragma mark - FWDebug
 
-- (void)fwDebugViewDidLoad
+- (void)fwDebugSearchItem
 {
-    [self fwDebugViewDidLoad];
-    
     UIBarButtonItem *retainItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(fwDebugRetainCycles)];
     if (self.navigationItem.rightBarButtonItems.count > 0) {
         NSMutableArray *rightItems = [NSMutableArray arrayWithArray:self.navigationItem.rightBarButtonItems];

@@ -9,6 +9,7 @@
 #import "FWDebugAppConfig.h"
 #import "FLEXColor.h"
 #import "FWDebugManager+FWDebug.h"
+#import "FWDebugTimeProfiler.h"
 #import <CommonCrypto/CommonDigest.h>
 
 static BOOL isAppLocked = NO;
@@ -59,7 +60,7 @@ static BOOL isAppLocked = NO;
         isAppLocked = YES;
     });
     
-    [FWDebugManager fwDebugShowPrompt:secretWindow.rootViewController security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
+    [FWDebugManager showPrompt:secretWindow.rootViewController security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
         NSString *secret = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugAppSecret"];
         if (confirm && [secret isEqualToString:[FWDebugAppConfig secretMd5:text]]) {
             [secretWindow resignKeyWindow];
@@ -86,6 +87,23 @@ static BOOL isAppLocked = NO;
 {
     NSNumber *filter = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFilterSystemLog"];
     return filter ? [filter boolValue] : NO;
+}
+
++ (BOOL)traceVCLife
+{
+    NSNumber *trace = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugTraceVCLife"];
+    return trace ? [trace boolValue] : YES;
+}
+
++ (BOOL)traceVCRequest
+{
+    NSNumber *trace = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugTraceVCRequest"];
+    return trace ? [trace boolValue] : NO;
+}
+
++ (NSString *)traceVCUrls
+{
+    return [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugTraceVCUrls"];
 }
 
 + (NSInteger)retainCycleDepth
@@ -135,7 +153,7 @@ static BOOL isAppLocked = NO;
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 3;
+    return 4;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -143,6 +161,8 @@ static BOOL isAppLocked = NO;
         return 1;
     } else if (section == 1) {
         return 1;
+    } else if (section == 2) {
+        return 3;
     } else {
         return 2;
     }
@@ -153,43 +173,62 @@ static BOOL isAppLocked = NO;
         return @"App Secret";
     } else if (section == 1) {
         return @"InjectionIII Config";
+    } else if (section == 2) {
+        return @"Time Option";
     } else {
         return @"App Option";
     }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AppConfigCell"];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"AppConfigCell"];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        cell.textLabel.font = [UIFont systemFontOfSize:14];
-    }
-    
     if (indexPath.section == 0 || indexPath.section == 1 ||
-        (indexPath.section == 2 && indexPath.row == 0)) {
-        UISwitch *accessoryView = [[UISwitch alloc] initWithFrame:CGRectZero];
-        accessoryView.userInteractionEnabled = NO;
-        cell.accessoryView = accessoryView;
-        
+        (indexPath.section == 2 && indexPath.row == 0) ||
+        (indexPath.section == 2 && indexPath.row == 1) ||
+        (indexPath.section == 3 && indexPath.row == 0)) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell1"];
+        if (cell == nil) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell1"];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.textLabel.font = [UIFont systemFontOfSize:14];
+            UISwitch *accessoryView = [[UISwitch alloc] initWithFrame:CGRectZero];
+            accessoryView.userInteractionEnabled = NO;
+            cell.accessoryView = accessoryView;
+        }
         [self configSwitch:cell indexPath:indexPath];
-    } else {
-        UILabel *accessoryView = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 30)];
-        accessoryView.font = [UIFont systemFontOfSize:14];
-        accessoryView.textColor = FLEXColor.primaryTextColor;
-        accessoryView.textAlignment = NSTextAlignmentRight;
-        cell.accessoryView = accessoryView;
-        
+        return cell;
+    } else if (indexPath.section == 2) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell2"];
+        if (cell == nil) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell2"];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.textLabel.font = [UIFont systemFontOfSize:14];
+            cell.detailTextLabel.font = [UIFont systemFontOfSize:12];
+            cell.detailTextLabel.textColor = FLEXColor.deemphasizedTextColor;
+            cell.detailTextLabel.numberOfLines = 0;
+        }
         [self configLabel:cell indexPath:indexPath];
+        return cell;
+    } else {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell3"];
+        if (cell == nil) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell3"];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.textLabel.font = [UIFont systemFontOfSize:14];
+            cell.detailTextLabel.font = [UIFont systemFontOfSize:12];
+            cell.detailTextLabel.textColor = FLEXColor.primaryTextColor;
+        }
+        [self configLabel:cell indexPath:indexPath];
+        return cell;
     }
-    return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     if (indexPath.section == 0 || indexPath.section == 1 ||
-        (indexPath.section == 2 && indexPath.row == 0)) {
+        (indexPath.section == 2 && indexPath.row == 0) ||
+        (indexPath.section == 2 && indexPath.row == 1) ||
+        (indexPath.section == 3 && indexPath.row == 0)) {
         [self actionSwitch:indexPath];
     } else {
         [self actionLabel:indexPath];
@@ -218,7 +257,27 @@ static BOOL isAppLocked = NO;
             cell.detailTextLabel.text = nil;
             cellSwitch.on = NO;
         }
-    } else if (indexPath.section == 2) {
+    } else if (indexPath.section == 2 && indexPath.row == 0) {
+        if ([self.class traceVCLife]) {
+            cell.textLabel.text = @"Trace VC Life";
+            cell.detailTextLabel.text = nil;
+            cellSwitch.on = YES;
+        } else {
+            cell.textLabel.text = @"Trace VC Life";
+            cell.detailTextLabel.text = nil;
+            cellSwitch.on = NO;
+        }
+    } else if (indexPath.section == 2 && indexPath.row == 1) {
+        if ([self.class traceVCRequest]) {
+            cell.textLabel.text = @"Trace VC Request";
+            cell.detailTextLabel.text = nil;
+            cellSwitch.on = YES;
+        } else {
+            cell.textLabel.text = @"Trace VC Request";
+            cell.detailTextLabel.text = nil;
+            cellSwitch.on = NO;
+        }
+    } else if (indexPath.section == 3 && indexPath.row == 0) {
         if ([self.class filterSystemLog]) {
             cell.textLabel.text = @"Filter System Log";
             cell.detailTextLabel.text = nil;
@@ -232,13 +291,12 @@ static BOOL isAppLocked = NO;
 }
 
 - (void)configLabel:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
-    UILabel *cellLabel = (UILabel *)cell.accessoryView;
     if (indexPath.section == 2) {
-        cell.detailTextLabel.text = nil;
-        if (indexPath.row == 1) {
-            cell.textLabel.text = @"Retain Cycle Depth";
-            cellLabel.text = [NSString stringWithFormat:@"%@", @([self.class retainCycleDepth])];
-        }
+        cell.textLabel.text = @"Trace VC Url";
+        cell.detailTextLabel.text = [[self.class traceVCUrls] stringByReplacingOccurrencesOfString:@";" withString:@";\n"];
+    } else if (indexPath.section == 3) {
+        cell.textLabel.text = @"Retain Cycle Depth";
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", @([self.class retainCycleDepth])];
     }
 }
 
@@ -251,7 +309,7 @@ static BOOL isAppLocked = NO;
     if (indexPath.section == 0) {
         if (!cellSwitch.on) {
             typeof(self) __weak weakSelf = self;
-            [FWDebugManager fwDebugShowPrompt:self security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
+            [FWDebugManager showPrompt:self security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
                 if (confirm && text.length > 0) {
                     [[NSUserDefaults standardUserDefaults] setObject:[FWDebugAppConfig secretMd5:text] forKey:@"FWDebugAppSecret"];
                     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -261,7 +319,7 @@ static BOOL isAppLocked = NO;
         } else {
             if ([self.class isSecretEnabled]) {
                 typeof(self) __weak weakSelf = self;
-                [FWDebugManager fwDebugShowPrompt:self security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
+                [FWDebugManager showPrompt:self security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
                     NSString *secret = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugAppSecret"];
                     if (confirm && [secret isEqualToString:[FWDebugAppConfig secretMd5:text]]) {
                         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugAppSecret"];
@@ -289,7 +347,29 @@ static BOOL isAppLocked = NO;
             [self configSwitch:cell indexPath:indexPath];
         }
 #endif
-    } else if (indexPath.section == 2) {
+    } else if (indexPath.section == 2 && indexPath.row == 0) {
+        if (!cellSwitch.on) {
+            [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugTraceVCLife"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self configSwitch:cell indexPath:indexPath];
+            [FWDebugTimeProfiler enableTraceVCLife];
+        } else {
+            [[NSUserDefaults standardUserDefaults] setObject:@(NO) forKey:@"FWDebugTraceVCLife"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self configSwitch:cell indexPath:indexPath];
+        }
+    } else if (indexPath.section == 2 && indexPath.row == 1) {
+        if (!cellSwitch.on) {
+            [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugTraceVCRequest"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self configSwitch:cell indexPath:indexPath];
+            [FWDebugTimeProfiler enableTraceVCRequest];
+        } else {
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugTraceVCRequest"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self configSwitch:cell indexPath:indexPath];
+        }
+    } else if (indexPath.section == 3 && indexPath.row == 0) {
         if (!cellSwitch.on) {
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugFilterSystemLog"];
             [[NSUserDefaults standardUserDefaults] synchronize];
@@ -306,15 +386,27 @@ static BOOL isAppLocked = NO;
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     if (indexPath.section == 2) {
         typeof(self) __weak weakSelf = self;
-        [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:nil block:^(BOOL confirm, NSString *text) {
+        [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[self.class traceVCUrls] block:^(BOOL confirm, NSString *text) {
+            if (confirm) {
+                if (text.length > 0) {
+                    [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugTraceVCUrls"];
+                } else {
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugTraceVCUrls"];
+                }
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
+            
+            [weakSelf configLabel:cell indexPath:indexPath];
+        }];
+    } else if (indexPath.section == 3) {
+        typeof(self) __weak weakSelf = self;
+        [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:nil block:^(BOOL confirm, NSString *text) {
             if (confirm && text.length > 0) {
                 NSInteger value = [text integerValue];
-                if (indexPath.row == 1) {
-                    if (value > 0 && value <= 10) {
-                        [[NSUserDefaults standardUserDefaults] setObject:@(value) forKey:@"FWDebugRetainCycleDepth"];
-                    } else {
-                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugRetainCycleDepth"];
-                    }
+                if (value > 0 && value <= 10) {
+                    [[NSUserDefaults standardUserDefaults] setObject:@(value) forKey:@"FWDebugRetainCycleDepth"];
+                } else {
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugRetainCycleDepth"];
                 }
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }

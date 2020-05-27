@@ -11,8 +11,6 @@
 
 @interface FLEXManager (FWDebug) <FWDebugFpsInfoDelegate>
 
-+ (void)fwDebugLoad;
-
 + (void)fwDebugLaunch;
 
 @end

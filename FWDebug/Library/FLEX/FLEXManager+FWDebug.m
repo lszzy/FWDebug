@@ -19,6 +19,7 @@
 #import "FLEXExplorerToolbar+FWDebug.h"
 #import "FLEXObjectListViewController+FWDebug.h"
 #import "FWDebugSystemInfo.h"
+#import "FWDebugTimeProfiler.h"
 #import "FWDebugWebServer.h"
 #import "FWDebugAppConfig.h"
 #import "FWDebugFakeLocation.h"
@@ -31,8 +32,26 @@
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(showExplorer) with:@selector(fwDebugShowExplorer)];
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(hideExplorer) with:@selector(fwDebugHideExplorer)];
+        [FWDebugManager swizzleMethod:@selector(showExplorer) in:[FLEXManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(FLEXManager *selfObject) {
+                if ([FWDebugAppConfig isAppLocked]) return;
+                
+                ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+                
+                [selfObject.fwDebugFpsInfo start];
+            };
+        }];
+        [FWDebugManager swizzleMethod:@selector(hideExplorer) in:[FLEXManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(FLEXManager *selfObject) {
+                if ([FWDebugAppConfig isAppLocked]) return;
+                
+                ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+                
+                [selfObject.fwDebugFpsInfo stop];
+            };
+        }];
+        
+        [self fwDebugLoad];
     });
 }
 
@@ -42,6 +61,10 @@
     
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"💟  Device Info" viewControllerFutureBlock:^UIViewController *{
         return [[FWDebugSystemInfo alloc] init];
+    }];
+    
+    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"⏱️  Time Profiler" viewControllerFutureBlock:^UIViewController *{
+        return [[FWDebugTimeProfiler alloc] init];
     }];
     
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📳  Web Server" viewControllerFutureBlock:^UIViewController *{
@@ -83,30 +106,9 @@
         
         [self.explorerViewController.explorerToolbar.fwDebugFpsItem addTarget:self action:@selector(fwDebugFpsItemClicked:) forControlEvents:UIControlEventTouchUpInside];
         [self.explorerViewController.explorerToolbar.fwDebugFpsItem setFpsData:fpsInfo.fpsData];
+        [self.explorerViewController.explorerToolbar.fwDebugFpsItem addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(fwDebugFpsItemLongPressed:)]];
     }
     return fpsInfo;
-}
-
-- (void)fwDebugShowExplorer
-{
-    if ([FWDebugAppConfig isAppLocked]) {
-        return;
-    }
-    
-    [self fwDebugShowExplorer];
-    
-    [self.fwDebugFpsInfo start];
-}
-
-- (void)fwDebugHideExplorer
-{
-    if ([FWDebugAppConfig isAppLocked]) {
-        return;
-    }
-    
-    [self fwDebugHideExplorer];
-    
-    [self.fwDebugFpsInfo stop];
 }
 
 - (void)fwDebugFpsInfoChanged:(FWDebugFpsData *)fpsData
@@ -116,25 +118,43 @@
 
 - (void)fwDebugFpsItemClicked:(FLEXExplorerToolbarItem *)sender
 {
-    FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:[self fwDebugViewController]];
+    FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:[FWDebugManager topViewController]];
     [self.explorerViewController presentViewController:[FLEXNavigationController withRootViewController:viewController] animated:YES completion:nil];
 }
 
-- (UIViewController *)fwDebugViewController
+- (void)fwDebugFpsItemLongPressed:(UIGestureRecognizer *)gestureRecognizer
 {
-    UIViewController *currentViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
-    while ([currentViewController presentedViewController]) {
-        currentViewController = [currentViewController presentedViewController];
-    }
-    while ([currentViewController isKindOfClass:[UITabBarController class]] &&
-           [(UITabBarController *)currentViewController selectedViewController]) {
-        currentViewController = [(UITabBarController *)currentViewController selectedViewController];
-    }
-    while ([currentViewController isKindOfClass:[UINavigationController class]] &&
-           [(UINavigationController *)currentViewController topViewController]) {
-        currentViewController = [(UINavigationController*)currentViewController topViewController];
-    }
-    return currentViewController;
+    if (gestureRecognizer.state != UIGestureRecognizerStateBegan) return;
+    NSString *previousText = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugOpenUrl"];
+    [FWDebugManager showPrompt:self.explorerViewController security:NO title:@"Input Value" message:nil text:previousText block:^(BOOL confirm, NSString *text) {
+        if (!confirm || text.length < 1) return;
+        
+        [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugOpenUrl"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        if ([FWDebugManager sharedInstance].openUrl && [FWDebugManager sharedInstance].openUrl(text)) return;
+        
+        NSURL *url = [[NSURL alloc] initWithString:text];
+        if (url != nil && url.scheme != nil) {
+            if (@available(iOS 10.0, *)) {
+                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+            } else {
+                [[UIApplication sharedApplication] openURL:url];
+            }
+            return;
+        }
+        
+        Class clazz = NSClassFromString(text);
+        if (clazz == NULL) {
+            NSString *module = [[NSBundle mainBundle] infoDictionary][(__bridge NSString *)kCFBundleExecutableKey];
+            if (module != nil) {
+                clazz = NSClassFromString([NSString stringWithFormat:@"%@.%@", module, text]);
+            }
+        }
+        if (clazz != NULL) {
+            FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:clazz];
+            [self.explorerViewController presentViewController:[FLEXNavigationController withRootViewController:viewController] animated:YES completion:nil];
+        }
+    }];
 }
 
 @end

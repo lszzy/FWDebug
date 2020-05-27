@@ -12,38 +12,9 @@
 #import "FLEXManager+FWDebug.h"
 #import "KSCrash+FWDebug.h"
 #import "FBRetainCycleDetector+FWDebug.h"
-
-#pragma mark - UIApplication+FWDebug
+#import "FWDebugTimeProfiler.h"
 
 NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
-
-// UIApplication分类，发送摇一摇通知
-@interface UIApplication (FWDebug)
-
-@end
-
-@implementation UIApplication (FWDebug)
-
-+ (void)load
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleInstance:self method:@selector(sendEvent:) with:@selector(fwDebugSendEvent:)];
-    });
-}
-
-- (void)fwDebugSendEvent:(UIEvent *)event
-{
-    if (event.type == UIEventTypeMotion && event.subtype == UIEventSubtypeMotionShake) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:FWDebugShakeNotification object:event];
-    }
-    
-    [self fwDebugSendEvent:event];
-}
-
-@end
-
-#pragma mark - FWDebugManager
 
 @interface FWDebugManager ()
 
@@ -57,7 +28,20 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
 
 + (void)load
 {
-    [FWDebugManager sharedInstance];
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [FWDebugManager swizzleMethod:@selector(sendEvent:) in:[UIApplication class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(UIApplication *selfObject, UIEvent *event) {
+                ((void (*)(id, SEL, UIEvent *))originalIMP())(selfObject, originalCMD, event);
+                
+                if (event.type == UIEventTypeMotion && event.subtype == UIEventSubtypeMotionShake) {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:FWDebugShakeNotification object:event];
+                }
+            };
+        }];
+        
+        [FWDebugManager sharedInstance];
+    });
 }
 
 + (instancetype)sharedInstance
@@ -74,9 +58,7 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
 {
     self = [super init];
     if (self) {
-        self.shakeEnabled = YES;
-        
-        [self onLoad];
+        _shakeEnabled = YES;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShake:) name:FWDebugShakeNotification object:nil];
@@ -90,11 +72,6 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
 }
 
 #pragma mark - Private
-
-- (void)onLoad
-{
-    [FLEXManager fwDebugLoad];
-}
 
 - (void)onLaunch:(NSNotification *)notification
 {
@@ -117,6 +94,11 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
 }
 
 #pragma mark - Public
+
+- (void)recordEvent:(NSString *)event object:(id)object userInfo:(id)userInfo
+{
+    [FWDebugTimeProfiler recordEvent:event object:object userInfo:userInfo];
+}
 
 - (BOOL)isHidden
 {

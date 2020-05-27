@@ -29,6 +29,7 @@ Real machine or simulator shaking within 5 seconds twice to appear debug menu. F
 * CLLocationManager virtual positioning
 * simulator virtual remote push send and receive
 * APNs remote push sending
+* Launch time, controller loading and network request time view
 
 ## Review
 For everyone concerned about the issue of shelf audit, in particular, explain:
@@ -58,6 +59,12 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+Version 1.8.0:
+
+	* Increase the launch time, controller loading and network request time viewing function
+	* Add long press debug button to jump URL function
+	* Optimized memory determination method
+
 Version 1.7.4:
 
 	* Updated FLEX to version 4.1.1
