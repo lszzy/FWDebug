@@ -60,7 +60,7 @@ static BOOL isAppLocked = NO;
         isAppLocked = YES;
     });
     
-    [FWDebugManager fwDebugShowPrompt:secretWindow.rootViewController security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
+    [FWDebugManager showPrompt:secretWindow.rootViewController security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
         NSString *secret = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugAppSecret"];
         if (confirm && [secret isEqualToString:[FWDebugAppConfig secretMd5:text]]) {
             [secretWindow resignKeyWindow];
@@ -309,7 +309,7 @@ static BOOL isAppLocked = NO;
     if (indexPath.section == 0) {
         if (!cellSwitch.on) {
             typeof(self) __weak weakSelf = self;
-            [FWDebugManager fwDebugShowPrompt:self security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
+            [FWDebugManager showPrompt:self security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
                 if (confirm && text.length > 0) {
                     [[NSUserDefaults standardUserDefaults] setObject:[FWDebugAppConfig secretMd5:text] forKey:@"FWDebugAppSecret"];
                     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -319,7 +319,7 @@ static BOOL isAppLocked = NO;
         } else {
             if ([self.class isSecretEnabled]) {
                 typeof(self) __weak weakSelf = self;
-                [FWDebugManager fwDebugShowPrompt:self security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
+                [FWDebugManager showPrompt:self security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
                     NSString *secret = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugAppSecret"];
                     if (confirm && [secret isEqualToString:[FWDebugAppConfig secretMd5:text]]) {
                         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugAppSecret"];
@@ -386,7 +386,7 @@ static BOOL isAppLocked = NO;
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     if (indexPath.section == 2) {
         typeof(self) __weak weakSelf = self;
-        [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class traceVCUrls] block:^(BOOL confirm, NSString *text) {
+        [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[self.class traceVCUrls] block:^(BOOL confirm, NSString *text) {
             if (confirm) {
                 if (text.length > 0) {
                     [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugTraceVCUrls"];
@@ -400,7 +400,7 @@ static BOOL isAppLocked = NO;
         }];
     } else if (indexPath.section == 3) {
         typeof(self) __weak weakSelf = self;
-        [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:nil block:^(BOOL confirm, NSString *text) {
+        [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:nil block:^(BOOL confirm, NSString *text) {
             if (confirm && text.length > 0) {
                 NSInteger value = [text integerValue];
                 if (value > 0 && value <= 10) {

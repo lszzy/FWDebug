@@ -28,11 +28,31 @@ static NSString *fwDebugCopyPath = nil;
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleMethod:@selector(tableView:shouldShowMenuForRowAtIndexPath:) in:self with:@selector(fwDebugTableView:shouldShowMenuForRowAtIndexPath:) in:self];
-        [FWDebugManager fwDebugSwizzleMethod:@selector(tableView:canPerformAction:forRowAtIndexPath:withSender:) in:self with:@selector(fwDebugTableView:canPerformAction:forRowAtIndexPath:withSender:) in:self];
+        [FWDebugManager swizzleMethod:@selector(tableView:shouldShowMenuForRowAtIndexPath:) in:[FLEXFileBrowserController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^BOOL(FLEXFileBrowserController *selfObject, UITableView *tableView, NSIndexPath *indexPath) {
+                BOOL shouldShow = ((BOOL (*)(id, SEL, UITableView *, NSIndexPath *))originalIMP())(selfObject, originalCMD, tableView, indexPath);
+                
+                NSMutableArray<UIMenuItem *> *menuItems = [NSMutableArray arrayWithArray:[UIMenuController sharedMenuController].menuItems];
+                selfObject.fwDebugCopyItem.title = fwDebugCopyPath ? @"Paste" : @"Copy";
+                [menuItems addObject:selfObject.fwDebugCopyItem];
+                [UIMenuController sharedMenuController].menuItems = menuItems;
+                return shouldShow;
+            };
+        }];
+        [FWDebugManager swizzleMethod:@selector(tableView:canPerformAction:forRowAtIndexPath:withSender:) in:[FLEXFileBrowserController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^BOOL(FLEXFileBrowserController *selfObject, UITableView *tableView, SEL action, NSIndexPath *indexPath, id sender) {
+                BOOL canPerform = ((BOOL (*)(id, SEL, UITableView *, SEL, NSIndexPath *, id))originalIMP())(selfObject, originalCMD, tableView, action, indexPath, sender);
+                
+                return canPerform || action == @selector(fwDebugFileBrowserCopy:);
+            };
+        }];
 #if FLEX_AT_LEAST_IOS13_SDK
         if (@available(iOS 13.0, *)) {
-            [FWDebugManager fwDebugSwizzleMethod:@selector(tableView:contextMenuConfigurationForRowAtIndexPath:point:) in:self with:@selector(fwDebugTableView:contextMenuConfigurationForRowAtIndexPath:point:) in:self];
+            [FWDebugManager swizzleMethod:@selector(tableView:contextMenuConfigurationForRowAtIndexPath:point:) in:[FLEXFileBrowserController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+                return ^UIContextMenuConfiguration *(FLEXFileBrowserController *selfObject, UITableView *tableView, NSIndexPath *indexPath, CGPoint point) {
+                    return [selfObject fwDebugTableView:tableView contextMenuConfigurationForRowAtIndexPath:indexPath point:point];
+                };
+            }];
         }
 #endif
     });
@@ -48,22 +68,6 @@ static NSString *fwDebugCopyPath = nil;
         objc_setAssociatedObject(self, _cmd, item, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return item;
-}
-
-- (BOOL)fwDebugTableView:(UITableView *)tableView shouldShowMenuForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    BOOL result = [self fwDebugTableView:tableView shouldShowMenuForRowAtIndexPath:indexPath];
-    NSMutableArray<UIMenuItem *> *menuItems = [NSMutableArray arrayWithArray:[UIMenuController sharedMenuController].menuItems];
-    self.fwDebugCopyItem.title = fwDebugCopyPath ? @"Paste" : @"Copy";
-    [menuItems addObject:self.fwDebugCopyItem];
-    [UIMenuController sharedMenuController].menuItems = menuItems;
-    return result;
-}
-
-- (BOOL)fwDebugTableView:(UITableView *)tableView canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender
-{
-    BOOL result = [self fwDebugTableView:tableView canPerformAction:action forRowAtIndexPath:indexPath withSender:sender];
-    return result || action == @selector(fwDebugFileBrowserCopy:);
 }
 
 - (void)fwDebugFileBrowserCopy:(UITableViewCell *)sender

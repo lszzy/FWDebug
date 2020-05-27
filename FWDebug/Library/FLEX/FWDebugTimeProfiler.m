@@ -16,6 +16,7 @@
 #import <sys/sysctl.h>
 #import <sys/time.h>
 #import <objc/runtime.h>
+#import <objc/message.h>
 
 #pragma mark - FWDebugTimeRecord
 
@@ -142,139 +143,10 @@
 @property (nonatomic, copy) NSString *costTitle;
 @property (nonatomic, copy) NSString *costText;
 
++ (void)traceViewController:(id)viewController;
 + (FWDebugTimeRecord *)timeRecordForObject:(id)object;
 + (void)recordVCRequest:(NSString *)event requestID:(NSString *)requestID;
 + (void)recordVCLife:(NSString *)event viewController:(id)viewController;
-
-@end
-
-#pragma mark - NSObject+FWDebugTimeProfiler
-
-@interface NSObject (FWDebugTimeProfiler)
-
-@end
-
-@implementation NSObject (FWDebugTimeProfiler)
-
-- (BOOL)fwDebugApplication:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.finishLaunch" userInfo:nil];
-    BOOL result = [self fwDebugApplication:application didFinishLaunchingWithOptions:launchOptions];
-    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↥ App.finishLaunch" userInfo:nil];
-    return result;
-}
-
-@end
-
-#pragma mark - UIApplication+FWDebugTimeProfiler
-
-@interface UIApplication (FWDebugTimeProfiler)
-
-@end
-
-@implementation UIApplication (FWDebugTimeProfiler)
-
-- (id)fwDebugInit
-{
-    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.initApplication" userInfo:nil];
-    return [self fwDebugInit];
-}
-
-- (void)fwDebugSetDelegate:(id<UIApplicationDelegate>)delegate
-{
-    if ([delegate isKindOfClass:[NSObject class]]) {
-        [FWDebugManager fwDebugSwizzleMethod:@selector(application:didFinishLaunchingWithOptions:) in:[delegate class] with:@selector(fwDebugApplication:didFinishLaunchingWithOptions:) in:[NSObject class]];
-    }
-    [self fwDebugSetDelegate:delegate];
-}
-
-@end
-
-#pragma mark - UIViewController+FWDebugTimeProfiler
-
-@interface UIViewController (FWDebugTimeProfiler)
-
-@end
-
-@implementation UIViewController (FWDebugTimeProfiler)
-
-- (id)fwDebugInitWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    id object = [self fwDebugInitWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    [FWDebugTimeProfiler recordVCLife:@"↥ VC.init" viewController:object];
-    return object;
-}
-
-- (id)fwDebugInitWithCoder:(NSCoder *)coder
-{
-    id object = [self fwDebugInitWithCoder:coder];
-    [FWDebugTimeProfiler recordVCLife:@"↥ VC.init" viewController:object];
-    return object;
-}
-
-- (void)fwDebugLoadView
-{
-    [FWDebugTimeProfiler recordVCLife:@"↧ loadView" viewController:self];
-    [self fwDebugLoadView];
-    [FWDebugTimeProfiler recordVCLife:@"↥ loadView" viewController:self];
-}
-
-- (void)fwDebugViewDidLoad
-{
-    [FWDebugTimeProfiler recordVCLife:@"↧ viewDidLoad" viewController:self];
-    [self fwDebugViewDidLoad];
-    [FWDebugTimeProfiler recordVCLife:@"↥ viewDidLoad" viewController:self];
-}
-
-- (void)fwDebugViewWillAppear:(BOOL)animated
-{
-    [FWDebugTimeProfiler recordVCLife:@"↧ viewWillAppear:" viewController:self];
-    [self fwDebugViewWillAppear:animated];
-    [FWDebugTimeProfiler recordVCLife:@"↥ viewWillAppear:" viewController:self];
-}
-
-- (void)fwDebugViewDidAppear:(BOOL)animated
-{
-    [FWDebugTimeProfiler recordVCLife:@"↧ viewDidAppear:" viewController:self];
-    [self fwDebugViewDidAppear:animated];
-    [FWDebugTimeProfiler recordVCLife:@"↥ viewDidAppear:" viewController:self];
-    
-    if (![self isKindOfClass:[UINavigationController class]] && ![self isKindOfClass:[UITabBarController class]]) {
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            FWDebugTimeRecord *timeRecord = [FWDebugTimeProfiler timeRecordForObject:self];
-            if (timeRecord) [FWDebugTimeRecord.sharedInstance.timeInfos addObjectsFromArray:[timeRecord.timeInfos copy]];
-        });
-    }
-}
-
-@end
-
-#pragma mark - FLEXNetworkRecorder+FWDebugTimeProfiler
-
-@interface FLEXNetworkRecorder (FWDebugTimeProfiler)
-
-@end
-
-@implementation FLEXNetworkRecorder (FWDebugTimeProfiler)
-
-- (void)fwDebugRecordRequestWillBeSentWithRequestID:(NSString *)requestID request:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse
-{
-    [FWDebugTimeProfiler recordVCRequest:@"↧ startRequest" requestID:requestID];
-    [self fwDebugRecordRequestWillBeSentWithRequestID:requestID request:request redirectResponse:redirectResponse];
-}
-
-- (void)fwDebugRecordLoadingFinishedWithRequestID:(NSString *)requestID responseBody:(NSData *)responseBody
-{
-    [FWDebugTimeProfiler recordVCRequest:@"↥ finishRequest" requestID:requestID];
-    [self fwDebugRecordLoadingFinishedWithRequestID:requestID responseBody:responseBody];
-}
-
-- (void)fwDebugRecordLoadingFailedWithRequestID:(NSString *)requestID error:(NSError *)error
-{
-    [FWDebugTimeProfiler recordVCRequest:@"↥ failRequest" requestID:requestID];
-    [self fwDebugRecordLoadingFailedWithRequestID:requestID error:error];
-}
 
 @end
 
@@ -288,8 +160,18 @@
     dispatch_once(&onceToken, ^{
         [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.objcLoad" userInfo:nil];
         
-        [FWDebugManager fwDebugSwizzleMethod:@selector(init) in:[UIApplication class] with:@selector(fwDebugInit) in:[UIApplication class]];
-        [FWDebugManager fwDebugSwizzleMethod:@selector(setDelegate:) in:[UIApplication class] with:@selector(fwDebugSetDelegate:) in:[UIApplication class]];
+        [FWDebugManager swizzleMethod:@selector(init) in:[UIApplication class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^UIApplication *(UIApplication *selfObject) {
+                [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.initApplication" userInfo:nil];
+                return ((UIApplication *(*)(id, SEL))originalIMP())(selfObject, originalCMD);
+            };
+        }];
+        [FWDebugManager swizzleMethod:@selector(setDelegate:) in:[UIApplication class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(UIApplication *selfObject, id<UIApplicationDelegate> delegate) {
+                [FWDebugTimeProfiler traceAppDelegate:delegate];
+                ((void (*)(id, SEL, id<UIApplicationDelegate>))originalIMP())(selfObject, originalCMD, delegate);
+            };
+        }];
         
         if ([FWDebugAppConfig traceVCLife]) {
             [self enableTraceVCLife];
@@ -305,22 +187,106 @@
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleMethod:@selector(initWithNibName:bundle:) in:[UIViewController class] with:@selector(fwDebugInitWithNibName:bundle:) in:[UIViewController class]];
-        [FWDebugManager fwDebugSwizzleMethod:@selector(initWithCoder:) in:[UIViewController class] with:@selector(fwDebugInitWithCoder:) in:[UIViewController class]];
-        [FWDebugManager fwDebugSwizzleMethod:@selector(loadView) in:[UIViewController class] with:@selector(fwDebugLoadView) in:[UIViewController class]];
-        [FWDebugManager fwDebugSwizzleMethod:@selector(viewDidLoad) in:[UIViewController class] with:@selector(fwDebugViewDidLoad) in:[UIViewController class]];
-        [FWDebugManager fwDebugSwizzleMethod:@selector(viewWillAppear:) in:[UIViewController class] with:@selector(fwDebugViewWillAppear:) in:[UIViewController class]];
-        [FWDebugManager fwDebugSwizzleMethod:@selector(viewDidAppear:) in:[UIViewController class] with:@selector(fwDebugViewDidAppear:) in:[UIViewController class]];
+        [FWDebugManager swizzleMethod:@selector(initWithNibName:bundle:) in:[UIViewController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^UIViewController *(UIViewController *selfObject, NSString *nibNameOrNil, NSBundle *nibBundleOrNil) {
+                UIViewController *viewController = ((UIViewController *(*)(id, SEL, NSString *, NSBundle *))originalIMP())(selfObject, originalCMD, nibNameOrNil, nibBundleOrNil);
+                [FWDebugTimeProfiler traceViewController:viewController];
+                return viewController;
+            };
+        }];
+        [FWDebugManager swizzleMethod:@selector(initWithCoder:) in:[UIViewController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^UIViewController *(UIViewController *selfObject, NSCoder *coder) {
+                UIViewController *viewController = ((UIViewController *(*)(id, SEL, NSCoder *))originalIMP())(selfObject, originalCMD, coder);
+                [FWDebugTimeProfiler traceViewController:viewController];
+                return viewController;
+            };
+        }];
     });
+}
+
++ (void)traceAppDelegate:(id<UIApplicationDelegate>)delegate
+{
+    [FWDebugManager swizzleMethodOnce:@selector(application:didFinishLaunchingWithOptions:) in:[delegate class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^BOOL(id<UIApplicationDelegate> selfObject, UIApplication *application, NSDictionary *launchOptions) {
+            [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.finishLaunch" userInfo:nil];
+            BOOL didFinish = ((BOOL (*)(id, SEL, UIApplication *, NSDictionary *))originalIMP())(selfObject, originalCMD, application, launchOptions);
+            [[FWDebugTimeRecord sharedInstance] recordEvent:@"↥ App.finishLaunch" userInfo:nil];
+            return didFinish;
+        };
+    }];
+}
+
++ (void)traceViewController:(id)viewController
+{
+    if (![FWDebugAppConfig traceVCLife]) return;
+    if ([viewController isKindOfClass:[UINavigationController class]] || [viewController isKindOfClass:[UITabBarController class]]) return;
+    
+    Class controllerClass = [viewController class];
+    [FWDebugManager swizzleMethodOnce:@selector(loadView) in:controllerClass withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^(UIViewController *selfObject) {
+            BOOL isSelf = (controllerClass == [selfObject class]);
+            if (isSelf) [FWDebugTimeProfiler recordVCLife:@"↧ loadView" viewController:selfObject];
+            ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+            if (isSelf) [FWDebugTimeProfiler recordVCLife:@"↥ loadView" viewController:selfObject];
+        };
+    }];
+    [FWDebugManager swizzleMethodOnce:@selector(viewDidLoad) in:controllerClass withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^(UIViewController *selfObject) {
+            BOOL isSelf = (controllerClass == [selfObject class]);
+            if (isSelf) [FWDebugTimeProfiler recordVCLife:@"↧ viewDidLoad" viewController:selfObject];
+            ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+            if (isSelf) [FWDebugTimeProfiler recordVCLife:@"↥ viewDidLoad" viewController:selfObject];
+        };
+    }];
+    [FWDebugManager swizzleMethodOnce:@selector(viewWillAppear:) in:controllerClass withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^(UIViewController *selfObject, BOOL animated) {
+            BOOL isSelf = (controllerClass == [selfObject class]);
+            if (isSelf) [FWDebugTimeProfiler recordVCLife:@"↧ viewWillAppear:" viewController:selfObject];
+            ((void (*)(id, SEL, BOOL))originalIMP())(selfObject, originalCMD, animated);
+            if (isSelf) [FWDebugTimeProfiler recordVCLife:@"↥ viewWillAppear:" viewController:selfObject];
+        };
+    }];
+    [FWDebugManager swizzleMethodOnce:@selector(viewDidAppear:) in:controllerClass withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^(UIViewController *selfObject, BOOL animated) {
+            BOOL isSelf = (controllerClass == [selfObject class]);
+            if (isSelf) [FWDebugTimeProfiler recordVCLife:@"↧ viewDidAppear:" viewController:selfObject];
+            ((void (*)(id, SEL, BOOL))originalIMP())(selfObject, originalCMD, animated);
+            if (isSelf) [FWDebugTimeProfiler recordVCLife:@"↥ viewDidAppear:" viewController:selfObject];
+            
+            if (isSelf) {
+                static dispatch_once_t onceToken;
+                dispatch_once(&onceToken, ^{
+                    FWDebugTimeRecord *timeRecord = [FWDebugTimeProfiler timeRecordForObject:selfObject];
+                    if (timeRecord) [FWDebugTimeRecord.sharedInstance.timeInfos addObjectsFromArray:[timeRecord.timeInfos copy]];
+                });
+            }
+        };
+    }];
+    [FWDebugTimeProfiler recordVCLife:@"↥ VC.init" viewController:viewController];
 }
 
 + (void)enableTraceVCRequest
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleMethod:@selector(recordRequestWillBeSentWithRequestID:request:redirectResponse:) in:[FLEXNetworkRecorder class] with:@selector(fwDebugRecordRequestWillBeSentWithRequestID:request:redirectResponse:) in:[FLEXNetworkRecorder class]];
-        [FWDebugManager fwDebugSwizzleMethod:@selector(recordLoadingFinishedWithRequestID:responseBody:) in:[FLEXNetworkRecorder class] with:@selector(fwDebugRecordLoadingFinishedWithRequestID:responseBody:) in:[FLEXNetworkRecorder class]];
-        [FWDebugManager fwDebugSwizzleMethod:@selector(recordLoadingFailedWithRequestID:error:) in:[FLEXNetworkRecorder class] with:@selector(fwDebugRecordLoadingFailedWithRequestID:error:) in:[FLEXNetworkRecorder class]];
+        [FWDebugManager swizzleMethod:@selector(recordRequestWillBeSentWithRequestID:request:redirectResponse:) in:[FLEXNetworkRecorder class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(FLEXNetworkRecorder *selfObject, NSString *requestID, NSURLRequest *request, NSURLResponse *response) {
+                [FWDebugTimeProfiler recordVCRequest:@"↧ startRequest" requestID:requestID];
+                ((void (*)(id, SEL, NSString *, NSURLRequest *, NSURLResponse *))originalIMP())(selfObject, originalCMD, requestID, request, response);
+            };
+        }];
+        [FWDebugManager swizzleMethod:@selector(recordLoadingFinishedWithRequestID:responseBody:) in:[FLEXNetworkRecorder class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(FLEXNetworkRecorder *selfObject, NSString *requestID, NSData *responseBody) {
+                [FWDebugTimeProfiler recordVCRequest:@"↥ finishRequest" requestID:requestID];
+                ((void (*)(id, SEL, NSString *, NSData *))originalIMP())(selfObject, originalCMD, requestID, responseBody);
+            };
+        }];
+        [FWDebugManager swizzleMethod:@selector(recordLoadingFailedWithRequestID:error:) in:[FLEXNetworkRecorder class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(FLEXNetworkRecorder *selfObject, NSString *requestID, NSError *error) {
+                [FWDebugTimeProfiler recordVCRequest:@"↥ failRequest" requestID:requestID];
+                ((void (*)(id, SEL, NSString *, NSError *))originalIMP())(selfObject, originalCMD, requestID, error);
+            };
+        }];
     });
 }
 
@@ -367,7 +333,7 @@
     if (![FWDebugAppConfig traceVCRequest]) return;
     NSTimeInterval time = [FWDebugTimeProfiler currentTime];
     dispatch_async(dispatch_get_main_queue(), ^{
-        UIViewController *viewController = [FWDebugManager fwDebugViewController];
+        UIViewController *viewController = [FWDebugManager topViewController];
         FWDebugTimeRecord *timeRecord = viewController ? [FWDebugTimeProfiler timeRecordForObject:viewController] : [FWDebugTimeRecord sharedInstance];
         [timeRecord recordRequest:event time:time requestID:requestID];
     });

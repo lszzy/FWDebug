@@ -567,7 +567,7 @@ static const NSInteger FWDebugBufferLength = 512;
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     if (indexPath.section == 0) {
         if (indexPath.row == 1) {
-            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[NSString stringWithFormat:@"%@", @([self.class fakeNotificatinPort])] block:^(BOOL confirm, NSString *text) {
+            [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[NSString stringWithFormat:@"%@", @([self.class fakeNotificatinPort])] block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     NSInteger value = [text integerValue];
                     if (value > 0) {
@@ -583,7 +583,7 @@ static const NSInteger FWDebugBufferLength = 512;
         }
     } else if (indexPath.section == 1) {
         if (indexPath.row == 0) {
-            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class fakeClientIP] block:^(BOOL confirm, NSString *text) {
+            [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[self.class fakeClientIP] block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     if (text.length > 0) {
                         [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugFakeNotificationClientIP"];
@@ -596,7 +596,7 @@ static const NSInteger FWDebugBufferLength = 512;
                 [weakSelf configLabel:cell indexPath:indexPath];
             }];
         } else if (indexPath.row == 1) {
-            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[NSString stringWithFormat:@"%@", @([self.class fakeClientPort])] block:^(BOOL confirm, NSString *text) {
+            [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[NSString stringWithFormat:@"%@", @([self.class fakeClientPort])] block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     NSInteger value = [text integerValue];
                     if (value > 0) {
@@ -610,7 +610,7 @@ static const NSInteger FWDebugBufferLength = 512;
                 [weakSelf configLabel:cell indexPath:indexPath];
             }];
         } else if (indexPath.row == 2) {
-            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class fakeClientMessage] block:^(BOOL confirm, NSString *text) {
+            [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[self.class fakeClientMessage] block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     if (text.length > 0) {
                         [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugFakeNotificationClientMessage"];
@@ -627,7 +627,7 @@ static const NSInteger FWDebugBufferLength = 512;
         }
     } else if (indexPath.section == 2) {
         if (indexPath.row == 0) {
-            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class pushCertName] block:^(BOOL confirm, NSString *text) {
+            [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[self.class pushCertName] block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     if (text.length > 0) {
                         [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugFakeNotificationCertName"];
@@ -640,7 +640,7 @@ static const NSInteger FWDebugBufferLength = 512;
                 [weakSelf configLabel:cell indexPath:indexPath];
             }];
         } else if (indexPath.row == 1) {
-            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class pushCertPassword] block:^(BOOL confirm, NSString *text) {
+            [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[self.class pushCertPassword] block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     if (text.length > 0) {
                         [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugFakeNotificationCertPassword"];
@@ -653,7 +653,7 @@ static const NSInteger FWDebugBufferLength = 512;
                 [weakSelf configLabel:cell indexPath:indexPath];
             }];
         } else if (indexPath.row == 2) {
-            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:([self.class pushCertEnvironment] ? @"1" : @"0") block:^(BOOL confirm, NSString *text) {
+            [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:([self.class pushCertEnvironment] ? @"1" : @"0") block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     if ([text boolValue]) {
                         [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugFakeNotificationCertEnvironment"];
@@ -666,7 +666,7 @@ static const NSInteger FWDebugBufferLength = 512;
                 [weakSelf configLabel:cell indexPath:indexPath];
             }];
         } else if (indexPath.row == 3) {
-            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class pushDeviceToken] block:^(BOOL confirm, NSString *text) {
+            [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[self.class pushDeviceToken] block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     if (text.length > 0) {
                         [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugFakeNotificationDeviceToken"];
@@ -679,7 +679,7 @@ static const NSInteger FWDebugBufferLength = 512;
                 [weakSelf configLabel:cell indexPath:indexPath];
             }];
         } else if (indexPath.row == 4) {
-            [FWDebugManager fwDebugShowPrompt:self security:NO title:@"Input Value" message:nil text:[self.class pushApnsMessage] block:^(BOOL confirm, NSString *text) {
+            [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[self.class pushApnsMessage] block:^(BOOL confirm, NSString *text) {
                 if (confirm) {
                     if (text.length > 0) {
                         [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugFakeNotificationApnsMessage"];

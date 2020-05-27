@@ -111,7 +111,15 @@
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleMethod:@selector(toolbarItems) in:self with:@selector(fwDebugToolbarItems) in:self];
+        [FWDebugManager swizzleMethod:@selector(toolbarItems) in:[FLEXExplorerToolbar class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(FLEXExplorerToolbar *selfObject) {
+                NSArray *originItems = ((NSArray *(*)(id, SEL))originalIMP())(selfObject, originalCMD);
+                
+                NSMutableArray *debugItems = [originItems mutableCopy];
+                [debugItems insertObject:selfObject.fwDebugFpsItem atIndex:debugItems.count > 2 ? 2 : 0];
+                return [debugItems copy];
+            };
+        }];
     });
 }
 
@@ -133,13 +141,6 @@
         objc_setAssociatedObject(self, _cmd, item, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return item;
-}
-
-- (NSArray *)fwDebugToolbarItems
-{
-    NSMutableArray *debugItems = [[self fwDebugToolbarItems] mutableCopy];
-    [debugItems insertObject:self.fwDebugFpsItem atIndex:debugItems.count > 2 ? 2 : 0];
-    return [debugItems copy];
 }
 
 @end

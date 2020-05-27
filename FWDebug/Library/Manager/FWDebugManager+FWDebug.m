@@ -12,32 +12,80 @@
 
 @implementation FWDebugManager (FWDebug)
 
-+ (BOOL)fwDebugSwizzleMethod:(SEL)originalSelector in:(Class)originalClass with:(SEL)swizzleSelector in:(Class)swizzleClass
++ (BOOL)swizzleMethod:(SEL)originalSelector in:(Class)originalClass withBlock:(id (^)(__unsafe_unretained Class, SEL, IMP (^)(void)))block
 {
-    if (!originalClass || !swizzleClass) {
+    if (!originalClass) {
         return NO;
     }
     
     Method originalMethod = class_getInstanceMethod(originalClass, originalSelector);
-    Method swizzleMethod = class_getInstanceMethod(swizzleClass, swizzleSelector);
-    if (!swizzleMethod) {
-        return NO;
+    IMP imp = method_getImplementation(originalMethod);
+    BOOL isOverride = NO;
+    if (originalMethod) {
+        Method superclassMethod = class_getInstanceMethod(class_getSuperclass(originalClass), originalSelector);
+        if (!superclassMethod) {
+            isOverride = YES;
+        } else {
+            isOverride = (originalMethod != superclassMethod);
+        }
     }
     
-    BOOL addMethod = class_addMethod(originalClass, originalSelector, method_getImplementation(swizzleMethod), method_getTypeEncoding(swizzleMethod));
-    if (addMethod) {
-        if (originalMethod) {
-            class_replaceMethod(swizzleClass, swizzleSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
+    IMP (^originalIMP)(void) = ^IMP(void) {
+        IMP result = NULL;
+        if (isOverride) {
+            result = imp;
         } else {
-            class_replaceMethod(swizzleClass, swizzleSelector, imp_implementationWithBlock(^(id selfObject){}), "v@:");
+            Class superclass = class_getSuperclass(originalClass);
+            result = class_getMethodImplementation(superclass, originalSelector);
         }
+        if (!result) {
+            result = imp_implementationWithBlock(^(id selfObject){});
+        }
+        return result;
+    };
+    
+    if (isOverride) {
+        method_setImplementation(originalMethod, imp_implementationWithBlock(block(originalClass, originalSelector, originalIMP)));
     } else {
-        method_exchangeImplementations(originalMethod, swizzleMethod);
+        const char *typeEncoding = method_getTypeEncoding(originalMethod);
+        if (!typeEncoding) {
+            NSMethodSignature *methodSignature = [originalClass instanceMethodSignatureForSelector:originalSelector];
+            #pragma clang diagnostic push
+            #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+            SEL typeSelector = NSSelectorFromString([NSString stringWithFormat:@"_%@String", @"type"]);
+            NSString *typeString = [methodSignature respondsToSelector:typeSelector] ? [methodSignature performSelector:typeSelector] : nil;
+            #pragma clang diagnostic pop
+            typeEncoding = typeString.UTF8String;
+        }
+        
+        class_addMethod(originalClass, originalSelector, imp_implementationWithBlock(block(originalClass, originalSelector, originalIMP)), typeEncoding);
     }
     return YES;
 }
 
-+ (void)fwDebugShowPrompt:(UIViewController *)viewController security:(BOOL)security title:(NSString *)title message:(NSString *)message text:(NSString *)text block:(void (^)(BOOL confirm, NSString *text))block
++ (BOOL)swizzleMethodOnce:(SEL)originalSelector in:(Class)originalClass withBlock:(id (^)(__unsafe_unretained Class, SEL, IMP (^)(void)))block
+{
+    if (!originalClass) {
+        return NO;
+    }
+    
+    static NSMutableSet *swizzleIdentifiers;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        swizzleIdentifiers = [NSMutableSet new];
+    });
+    
+    @synchronized (swizzleIdentifiers) {
+        NSString *swizzleIdentifier = [NSString stringWithFormat:@"%@-%@", NSStringFromClass(originalClass), NSStringFromSelector(originalSelector)];
+        if (![swizzleIdentifiers containsObject:swizzleIdentifier]) {
+            [swizzleIdentifiers addObject:swizzleIdentifier];
+            return [self swizzleMethod:originalSelector in:originalClass withBlock:block];
+        }
+        return NO;
+    }
+}
+
++ (void)showPrompt:(UIViewController *)viewController security:(BOOL)security title:(NSString *)title message:(NSString *)message text:(NSString *)text block:(void (^)(BOOL confirm, NSString *text))block
 {
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
     
@@ -63,7 +111,7 @@
     [viewController presentViewController:alertController animated:YES completion:nil];
 }
 
-+ (UIViewController *)fwDebugViewController
++ (UIViewController *)topViewController
 {
     UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
     if ([keyWindow isKindOfClass:[FLEXWindow class]]) {

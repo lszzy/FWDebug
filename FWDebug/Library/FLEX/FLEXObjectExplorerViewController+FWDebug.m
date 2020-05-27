@@ -34,13 +34,26 @@
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleMethod:@selector(makeSections) in:self with:@selector(fwDebugMakeSections) in:self];
+        [FWDebugManager swizzleMethod:@selector(viewDidLoad) in:[FLEXObjectExplorerViewController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(FLEXObjectExplorerViewController *selfObject) {
+                ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+                
+                [selfObject fwDebugSearchItem];
+            };
+        }];
+        [FWDebugManager swizzleMethod:@selector(makeSections) in:[FLEXObjectExplorerViewController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^NSArray<FLEXTableViewSection *> *(FLEXObjectExplorerViewController *selfObject) {
+                NSArray *originSections = ((NSArray *(*)(id, SEL))originalIMP())(selfObject, originalCMD);
+                
+                return [selfObject fwDebugMakeSections:originSections];
+            };
+        }];
     });
 }
 
 #pragma mark - FWDebug
 
-- (NSArray<FLEXTableViewSection *> *)fwDebugMakeSections
+- (void)fwDebugSearchItem
 {
     UIBarButtonItem *searchItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(fwDebugRetainCycles)];
     if (self.navigationItem.rightBarButtonItems.count > 0) {
@@ -50,8 +63,11 @@
     } else {
         self.navigationItem.rightBarButtonItem = searchItem;
     }
-    
-    NSMutableArray *sections = [NSMutableArray arrayWithArray:[self fwDebugMakeSections]];
+}
+
+- (NSArray<FLEXTableViewSection *> *)fwDebugMakeSections:(NSArray *)originSections
+{
+    NSMutableArray *sections = [NSMutableArray arrayWithArray:originSections];
     FLEXObjectExplorer *explorer = self.explorer;
     if (explorer.objectIsInstance) {
         if (self.descriptionSection) {

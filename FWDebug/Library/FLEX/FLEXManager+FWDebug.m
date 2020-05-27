@@ -32,8 +32,24 @@
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleMethod:@selector(showExplorer) in:self with:@selector(fwDebugShowExplorer) in:self];
-        [FWDebugManager fwDebugSwizzleMethod:@selector(hideExplorer) in:self with:@selector(fwDebugHideExplorer) in:self];
+        [FWDebugManager swizzleMethod:@selector(showExplorer) in:[FLEXManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(FLEXManager *selfObject) {
+                if ([FWDebugAppConfig isAppLocked]) return;
+                
+                ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+                
+                [selfObject.fwDebugFpsInfo start];
+            };
+        }];
+        [FWDebugManager swizzleMethod:@selector(hideExplorer) in:[FLEXManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(FLEXManager *selfObject) {
+                if ([FWDebugAppConfig isAppLocked]) return;
+                
+                ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+                
+                [selfObject.fwDebugFpsInfo stop];
+            };
+        }];
         
         [self fwDebugLoad];
     });
@@ -95,28 +111,6 @@
     return fpsInfo;
 }
 
-- (void)fwDebugShowExplorer
-{
-    if ([FWDebugAppConfig isAppLocked]) {
-        return;
-    }
-    
-    [self fwDebugShowExplorer];
-    
-    [self.fwDebugFpsInfo start];
-}
-
-- (void)fwDebugHideExplorer
-{
-    if ([FWDebugAppConfig isAppLocked]) {
-        return;
-    }
-    
-    [self fwDebugHideExplorer];
-    
-    [self.fwDebugFpsInfo stop];
-}
-
 - (void)fwDebugFpsInfoChanged:(FWDebugFpsData *)fpsData
 {
     [self.explorerViewController.explorerToolbar.fwDebugFpsItem setFpsData:fpsData];
@@ -124,7 +118,7 @@
 
 - (void)fwDebugFpsItemClicked:(FLEXExplorerToolbarItem *)sender
 {
-    FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:[FWDebugManager fwDebugViewController]];
+    FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:[FWDebugManager topViewController]];
     [self.explorerViewController presentViewController:[FLEXNavigationController withRootViewController:viewController] animated:YES completion:nil];
 }
 
@@ -132,7 +126,7 @@
 {
     if (gestureRecognizer.state != UIGestureRecognizerStateBegan) return;
     NSString *previousText = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugOpenUrl"];
-    [FWDebugManager fwDebugShowPrompt:self.explorerViewController security:NO title:@"Input Value" message:nil text:previousText block:^(BOOL confirm, NSString *text) {
+    [FWDebugManager showPrompt:self.explorerViewController security:NO title:@"Input Value" message:nil text:previousText block:^(BOOL confirm, NSString *text) {
         if (!confirm || text.length < 1) return;
         
         [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugOpenUrl"];

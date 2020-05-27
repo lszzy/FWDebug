@@ -14,39 +14,7 @@
 #import "FBRetainCycleDetector+FWDebug.h"
 #import "FWDebugTimeProfiler.h"
 
-#pragma mark - UIApplication+FWDebug
-
 NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
-
-// UIApplication分类，发送摇一摇通知
-@interface UIApplication (FWDebug)
-
-@end
-
-@implementation UIApplication (FWDebug)
-
-+ (void)load
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [FWDebugManager fwDebugSwizzleMethod:@selector(sendEvent:) in:self with:@selector(fwDebugSendEvent:) in:self];
-        
-        [FWDebugManager sharedInstance];
-    });
-}
-
-- (void)fwDebugSendEvent:(UIEvent *)event
-{
-    if (event.type == UIEventTypeMotion && event.subtype == UIEventSubtypeMotionShake) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:FWDebugShakeNotification object:event];
-    }
-    
-    [self fwDebugSendEvent:event];
-}
-
-@end
-
-#pragma mark - FWDebugManager
 
 @interface FWDebugManager ()
 
@@ -57,6 +25,24 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
 @implementation FWDebugManager
 
 #pragma mark - Lifecycle
+
++ (void)load
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [FWDebugManager swizzleMethod:@selector(sendEvent:) in:[UIApplication class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(UIApplication *selfObject, UIEvent *event) {
+                ((void (*)(id, SEL, UIEvent *))originalIMP())(selfObject, originalCMD, event);
+                
+                if (event.type == UIEventTypeMotion && event.subtype == UIEventSubtypeMotionShake) {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:FWDebugShakeNotification object:event];
+                }
+            };
+        }];
+        
+        [FWDebugManager sharedInstance];
+    });
+}
 
 + (instancetype)sharedInstance
 {
