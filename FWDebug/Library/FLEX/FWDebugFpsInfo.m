@@ -7,7 +7,7 @@
 //
 
 #import "FWDebugFpsInfo.h"
-#import "FLEXWindow.h"
+#import "FLEXManager.h"
 #import <UIKit/UIKit.h>
 #import <mach/mach.h>
 
@@ -160,10 +160,7 @@
         return;
     }
     
-    UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
-    if ([keyWindow isKindOfClass:[FLEXWindow class]]) {
-        return;
-    }
+    if ([FLEXManager sharedManager].isHidden) return;
 
     _lastTimestamp = displayLink.timestamp;
     CGFloat fps = _countPerFrame / interval;

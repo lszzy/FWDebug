@@ -92,6 +92,8 @@
 		2F253D8A1E6FD14700A88801 /* FWDebugManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F253BC01E6FD14600A88801 /* FWDebugManager.m */; };
 		2F253F271E6FD15900A88801 /* FWDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F253F251E6FD15900A88801 /* FWDebug.h */; };
 		2F253F281E6FD15900A88801 /* FWDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F253F261E6FD15900A88801 /* FWDebug.m */; };
+		2F6640592480B4160059A26B /* FWDebugTimeProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F6640572480B4160059A26B /* FWDebugTimeProfiler.h */; };
+		2F66405A2480B4160059A26B /* FWDebugTimeProfiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F6640582480B4160059A26B /* FWDebugTimeProfiler.m */; };
 		2F6C845822FDE5DF0012675A /* FBAssociationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F6C82A122FDE5DE0012675A /* FBAssociationManager.h */; };
 		2F6C845922FDE5DF0012675A /* FBAssociationManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F6C82A322FDE5DE0012675A /* FBAssociationManager+Internal.h */; };
 		2F6C845A22FDE5DF0012675A /* FBAssociationManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2F6C82A422FDE5DE0012675A /* FBAssociationManager.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -749,6 +751,8 @@
 		2F253BC01E6FD14600A88801 /* FWDebugManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugManager.m; sourceTree = "<group>"; };
 		2F253F251E6FD15900A88801 /* FWDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebug.h; sourceTree = SOURCE_ROOT; };
 		2F253F261E6FD15900A88801 /* FWDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebug.m; sourceTree = SOURCE_ROOT; };
+		2F6640572480B4160059A26B /* FWDebugTimeProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FWDebugTimeProfiler.h; sourceTree = "<group>"; };
+		2F6640582480B4160059A26B /* FWDebugTimeProfiler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWDebugTimeProfiler.m; sourceTree = "<group>"; };
 		2F6C82A122FDE5DE0012675A /* FBAssociationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBAssociationManager.h; sourceTree = "<group>"; };
 		2F6C82A322FDE5DE0012675A /* FBAssociationManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FBAssociationManager+Internal.h"; sourceTree = "<group>"; };
 		2F6C82A422FDE5DE0012675A /* FBAssociationManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FBAssociationManager.mm; sourceTree = "<group>"; };
@@ -2651,6 +2655,8 @@
 				2FF17C652448098D00B852AE /* FWDebugFpsInfo.m */,
 				2FF17C6D2448098D00B852AE /* FWDebugSystemInfo.h */,
 				2FF17C672448098D00B852AE /* FWDebugSystemInfo.m */,
+				2F6640572480B4160059A26B /* FWDebugTimeProfiler.h */,
+				2F6640582480B4160059A26B /* FWDebugTimeProfiler.m */,
 			);
 			path = FLEX;
 			sourceTree = "<group>";
@@ -2779,6 +2785,7 @@
 				2FF17BB12448097C00B852AE /* FLEXKeychain.h in Headers */,
 				2FF17C532448097D00B852AE /* FLEXRuntime+UIKitHelpers.h in Headers */,
 				2F6C849322FDE5DF0012675A /* KSCrashReportFilterJSON.h in Headers */,
+				2F6640592480B4160059A26B /* FWDebugTimeProfiler.h in Headers */,
 				2F6C850B22FDE5DF0012675A /* KSCrashCachedData.h in Headers */,
 				2F6C84C822FDE5DF0012675A /* KSCrashReportWriter.h in Headers */,
 				2FF17B682448097C00B852AE /* FLEXManager.h in Headers */,
@@ -3351,6 +3358,7 @@
 				2FF17B3E2448097C00B852AE /* FLEXViewShortcuts.m in Sources */,
 				2F6C84B822FDE5DF0012675A /* KSCrashMonitor_NSException.m in Sources */,
 				2FF17B942448097C00B852AE /* FLEXTabsViewController.m in Sources */,
+				2F66405A2480B4160059A26B /* FWDebugTimeProfiler.m in Sources */,
 				2FF17BDC2448097C00B852AE /* FLEXSQLiteDatabaseManager.m in Sources */,
 				2FF17BB22448097C00B852AE /* FLEXKeychainViewController.m in Sources */,
 				2FF17B182448097C00B852AE /* FLEXFilteringTableViewController.m in Sources */,
