@@ -59,6 +59,10 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+Version 1.8.1:
+
+	* Optimize the time view function, add clear button
+
 Version 1.8.0:
 
 	* Increase the launch time, controller loading and network request time viewing function
