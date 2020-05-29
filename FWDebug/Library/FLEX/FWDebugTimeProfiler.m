@@ -9,6 +9,7 @@
 #import "FWDebugTimeProfiler.h"
 #import "FWDebugAppConfig.h"
 #import "FWDebugManager+FWDebug.h"
+#import "UIBarButtonItem+FLEX.h"
 #import "FLEXObjectExplorerFactory.h"
 #import "FLEXNetworkRecorder.h"
 #import "FLEXNetworkTransaction.h"
@@ -137,6 +138,7 @@
 
 @interface FWDebugTimeProfiler ()
 
+@property (nonatomic, weak) FWDebugTimeRecord *timeRecord;
 @property (nonatomic, strong) NSArray<FWDebugTimeInfo *> *timeInfos;
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
 @property (nonatomic, assign) NSUInteger selectedRow;
@@ -354,7 +356,8 @@
 {
     self = [super init];
     if (self) {
-        _timeInfos = [[FWDebugTimeProfiler timeRecordForObject:object] formatedTimeInfos];
+        _timeRecord = [FWDebugTimeProfiler timeRecordForObject:object];
+        _timeInfos = [_timeRecord formatedTimeInfos];
         self.title = NSStringFromClass([object class]);
     }
     return self;
@@ -364,7 +367,8 @@
 {
     self = [super init];
     if (self) {
-        _timeInfos = [[FWDebugTimeRecord sharedInstance] formatedTimeInfos];
+        _timeRecord = [FWDebugTimeRecord sharedInstance];
+        _timeInfos = [_timeRecord formatedTimeInfos];
         self.title = @"Time Profiler";
     }
     return self;
@@ -374,6 +378,8 @@
 {
     [super viewDidLoad];
     
+    [self addToolbarItems:@[[UIBarButtonItem systemItem:UIBarButtonSystemItemTrash target:self action:@selector(trashButtonTapped:)]]];
+    
     self.dateFormatter = [[NSDateFormatter alloc] init];
     self.dateFormatter.dateFormat = @"mm:ss.SSS";
     self.dateFormatter.timeZone = [NSTimeZone localTimeZone];
@@ -382,6 +388,17 @@
     self.selectedRow = NSNotFound;
     self.costTitle = @"Total";
     self.costText = @"";
+}
+
+- (void)trashButtonTapped:(UIBarButtonItem *)sender
+{
+    [_timeRecord.timeInfos removeAllObjects];
+    _timeInfos = [_timeRecord formatedTimeInfos];
+    
+    self.selectedRow = NSNotFound;
+    self.costTitle = @"Total";
+    self.costText = @"";
+    [self.tableView reloadData];
 }
 
 #pragma mark - UITableView
