@@ -33,7 +33,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [FWDebugManager swizzleMethod:@selector(showExplorer) in:[FLEXManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(FLEXManager *selfObject) {
+            return ^(__unsafe_unretained FLEXManager *selfObject) {
                 if ([FWDebugAppConfig isAppLocked]) return;
                 
                 ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
@@ -42,7 +42,7 @@
             };
         }];
         [FWDebugManager swizzleMethod:@selector(hideExplorer) in:[FLEXManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(FLEXManager *selfObject) {
+            return ^(__unsafe_unretained FLEXManager *selfObject) {
                 if ([FWDebugAppConfig isAppLocked]) return;
                 
                 ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);

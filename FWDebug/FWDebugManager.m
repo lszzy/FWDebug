@@ -31,7 +31,7 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [FWDebugManager swizzleMethod:@selector(sendEvent:) in:[UIApplication class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(UIApplication *selfObject, UIEvent *event) {
+            return ^(__unsafe_unretained UIApplication *selfObject, UIEvent *event) {
                 ((void (*)(id, SEL, UIEvent *))originalIMP())(selfObject, originalCMD, event);
                 
                 if (event.type == UIEventTypeMotion && event.subtype == UIEventSubtypeMotionShake) {

@@ -112,7 +112,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [FWDebugManager swizzleMethod:@selector(toolbarItems) in:[FLEXExplorerToolbar class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(FLEXExplorerToolbar *selfObject) {
+            return ^(__unsafe_unretained FLEXExplorerToolbar *selfObject) {
                 NSArray *originItems = ((NSArray *(*)(id, SEL))originalIMP())(selfObject, originalCMD);
                 
                 NSMutableArray *debugItems = [originItems mutableCopy];

@@ -156,7 +156,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [FWDebugManager swizzleMethod:@selector(startUpdatingLocation) in:[CLLocationManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(CLLocationManager *selfObject) {
+            return ^(__unsafe_unretained CLLocationManager *selfObject) {
                 if ([CLLocationManager fwDebugFakeEnabled]) {
                     [selfObject.fwDebugFakeTarget startUpdateLocation];
                     return;
@@ -166,7 +166,7 @@
             };
         }];
         [FWDebugManager swizzleMethod:@selector(stopUpdatingLocation) in:[CLLocationManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(CLLocationManager *selfObject) {
+            return ^(__unsafe_unretained CLLocationManager *selfObject) {
                 if ([CLLocationManager fwDebugFakeEnabled]) {
                     [selfObject.fwDebugFakeTarget stopUpdateLocation];
                     return;
@@ -176,7 +176,7 @@
             };
         }];
         [FWDebugManager swizzleMethod:@selector(location) in:[CLLocationManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^CLLocation *(CLLocationManager *selfObject) {
+            return ^CLLocation *(__unsafe_unretained CLLocationManager *selfObject) {
                 if ([CLLocationManager fwDebugFakeEnabled]) {
                     return selfObject.fwDebugFakeTarget.location;
                 }

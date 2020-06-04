@@ -163,13 +163,13 @@
         [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.objcLoad" userInfo:nil];
         
         [FWDebugManager swizzleMethod:@selector(init) in:[UIApplication class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^UIApplication *(UIApplication *selfObject) {
+            return ^UIApplication *(__unsafe_unretained UIApplication *selfObject) {
                 [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.initApplication" userInfo:nil];
                 return ((UIApplication *(*)(id, SEL))originalIMP())(selfObject, originalCMD);
             };
         }];
         [FWDebugManager swizzleMethod:@selector(setDelegate:) in:[UIApplication class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(UIApplication *selfObject, id<UIApplicationDelegate> delegate) {
+            return ^(__unsafe_unretained UIApplication *selfObject, id<UIApplicationDelegate> delegate) {
                 [FWDebugTimeProfiler traceAppDelegate:delegate];
                 ((void (*)(id, SEL, id<UIApplicationDelegate>))originalIMP())(selfObject, originalCMD, delegate);
             };
@@ -190,14 +190,14 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [FWDebugManager swizzleMethod:@selector(initWithNibName:bundle:) in:[UIViewController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^UIViewController *(UIViewController *selfObject, NSString *nibNameOrNil, NSBundle *nibBundleOrNil) {
+            return ^UIViewController *(__unsafe_unretained UIViewController *selfObject, NSString *nibNameOrNil, NSBundle *nibBundleOrNil) {
                 UIViewController *viewController = ((UIViewController *(*)(id, SEL, NSString *, NSBundle *))originalIMP())(selfObject, originalCMD, nibNameOrNil, nibBundleOrNil);
                 [FWDebugTimeProfiler traceViewController:viewController];
                 return viewController;
             };
         }];
         [FWDebugManager swizzleMethod:@selector(initWithCoder:) in:[UIViewController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^UIViewController *(UIViewController *selfObject, NSCoder *coder) {
+            return ^UIViewController *(__unsafe_unretained UIViewController *selfObject, NSCoder *coder) {
                 UIViewController *viewController = ((UIViewController *(*)(id, SEL, NSCoder *))originalIMP())(selfObject, originalCMD, coder);
                 [FWDebugTimeProfiler traceViewController:viewController];
                 return viewController;
@@ -209,7 +209,7 @@
 + (void)traceAppDelegate:(id<UIApplicationDelegate>)delegate
 {
     [FWDebugManager swizzleMethodOnce:@selector(application:didFinishLaunchingWithOptions:) in:[delegate class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-        return ^BOOL(id<UIApplicationDelegate> selfObject, UIApplication *application, NSDictionary *launchOptions) {
+        return ^BOOL(__unsafe_unretained id<UIApplicationDelegate> selfObject, UIApplication *application, NSDictionary *launchOptions) {
             [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.finishLaunch" userInfo:nil];
             BOOL didFinish = ((BOOL (*)(id, SEL, UIApplication *, NSDictionary *))originalIMP())(selfObject, originalCMD, application, launchOptions);
             [[FWDebugTimeRecord sharedInstance] recordEvent:@"↥ App.finishLaunch" userInfo:nil];
@@ -225,7 +225,7 @@
     
     Class controllerClass = [viewController class];
     [FWDebugManager swizzleMethodOnce:@selector(loadView) in:controllerClass withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-        return ^(UIViewController *selfObject) {
+        return ^(__unsafe_unretained UIViewController *selfObject) {
             BOOL isSelf = (controllerClass == [selfObject class]);
             if (isSelf) [FWDebugTimeProfiler recordVCLife:@"↧ loadView" viewController:selfObject];
             ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
@@ -233,7 +233,7 @@
         };
     }];
     [FWDebugManager swizzleMethodOnce:@selector(viewDidLoad) in:controllerClass withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-        return ^(UIViewController *selfObject) {
+        return ^(__unsafe_unretained UIViewController *selfObject) {
             BOOL isSelf = (controllerClass == [selfObject class]);
             if (isSelf) [FWDebugTimeProfiler recordVCLife:@"↧ viewDidLoad" viewController:selfObject];
             ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
@@ -241,7 +241,7 @@
         };
     }];
     [FWDebugManager swizzleMethodOnce:@selector(viewWillAppear:) in:controllerClass withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-        return ^(UIViewController *selfObject, BOOL animated) {
+        return ^(__unsafe_unretained UIViewController *selfObject, BOOL animated) {
             BOOL isSelf = (controllerClass == [selfObject class]);
             if (isSelf) [FWDebugTimeProfiler recordVCLife:@"↧ viewWillAppear:" viewController:selfObject];
             ((void (*)(id, SEL, BOOL))originalIMP())(selfObject, originalCMD, animated);
@@ -249,7 +249,7 @@
         };
     }];
     [FWDebugManager swizzleMethodOnce:@selector(viewDidAppear:) in:controllerClass withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-        return ^(UIViewController *selfObject, BOOL animated) {
+        return ^(__unsafe_unretained UIViewController *selfObject, BOOL animated) {
             BOOL isSelf = (controllerClass == [selfObject class]);
             if (isSelf) [FWDebugTimeProfiler recordVCLife:@"↧ viewDidAppear:" viewController:selfObject];
             ((void (*)(id, SEL, BOOL))originalIMP())(selfObject, originalCMD, animated);
@@ -272,19 +272,19 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [FWDebugManager swizzleMethod:@selector(recordRequestWillBeSentWithRequestID:request:redirectResponse:) in:[FLEXNetworkRecorder class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(FLEXNetworkRecorder *selfObject, NSString *requestID, NSURLRequest *request, NSURLResponse *response) {
+            return ^(__unsafe_unretained FLEXNetworkRecorder *selfObject, NSString *requestID, NSURLRequest *request, NSURLResponse *response) {
                 [FWDebugTimeProfiler recordVCRequest:@"↧ startRequest" requestID:requestID];
                 ((void (*)(id, SEL, NSString *, NSURLRequest *, NSURLResponse *))originalIMP())(selfObject, originalCMD, requestID, request, response);
             };
         }];
         [FWDebugManager swizzleMethod:@selector(recordLoadingFinishedWithRequestID:responseBody:) in:[FLEXNetworkRecorder class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(FLEXNetworkRecorder *selfObject, NSString *requestID, NSData *responseBody) {
+            return ^(__unsafe_unretained FLEXNetworkRecorder *selfObject, NSString *requestID, NSData *responseBody) {
                 [FWDebugTimeProfiler recordVCRequest:@"↥ finishRequest" requestID:requestID];
                 ((void (*)(id, SEL, NSString *, NSData *))originalIMP())(selfObject, originalCMD, requestID, responseBody);
             };
         }];
         [FWDebugManager swizzleMethod:@selector(recordLoadingFailedWithRequestID:error:) in:[FLEXNetworkRecorder class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(FLEXNetworkRecorder *selfObject, NSString *requestID, NSError *error) {
+            return ^(__unsafe_unretained FLEXNetworkRecorder *selfObject, NSString *requestID, NSError *error) {
                 [FWDebugTimeProfiler recordVCRequest:@"↥ failRequest" requestID:requestID];
                 ((void (*)(id, SEL, NSString *, NSError *))originalIMP())(selfObject, originalCMD, requestID, error);
             };

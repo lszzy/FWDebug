@@ -35,14 +35,14 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [FWDebugManager swizzleMethod:@selector(viewDidLoad) in:[FLEXObjectExplorerViewController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(FLEXObjectExplorerViewController *selfObject) {
+            return ^(__unsafe_unretained FLEXObjectExplorerViewController *selfObject) {
                 ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
                 
                 [selfObject fwDebugSearchItem];
             };
         }];
         [FWDebugManager swizzleMethod:@selector(makeSections) in:[FLEXObjectExplorerViewController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^NSArray<FLEXTableViewSection *> *(FLEXObjectExplorerViewController *selfObject) {
+            return ^NSArray<FLEXTableViewSection *> *(__unsafe_unretained FLEXObjectExplorerViewController *selfObject) {
                 NSArray *originSections = ((NSArray *(*)(id, SEL))originalIMP())(selfObject, originalCMD);
                 
                 return [selfObject fwDebugMakeSections:originSections];
