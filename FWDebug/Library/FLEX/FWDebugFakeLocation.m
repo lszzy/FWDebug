@@ -138,13 +138,6 @@
 
 @implementation CLLocationManager (FWDebug)
 
-+ (void)load
-{
-    if ([self fwDebugFakeEnabled]) {
-        [self fwDebugFakeLocation];
-    }
-}
-
 + (BOOL)fwDebugFakeEnabled
 {
     NSNumber *fakeEnabled = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFakeLocation"];
@@ -207,6 +200,13 @@
 @implementation FWDebugFakeLocation
 
 #pragma mark - Static
+
++ (void)fwDebugLoad
+{
+    if ([CLLocationManager fwDebugFakeEnabled]) {
+        [CLLocationManager fwDebugFakeLocation];
+    }
+}
 
 + (NSString *)currentLocationString
 {

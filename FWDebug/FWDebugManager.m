@@ -40,7 +40,7 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
             };
         }];
         
-        [FWDebugManager sharedInstance];
+        [[FWDebugManager sharedInstance] onLoad];
     });
 }
 
@@ -72,6 +72,11 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
 }
 
 #pragma mark - Private
+
+- (void)onLoad
+{
+    [FLEXManager fwDebugLoad];
+}
 
 - (void)onLaunch:(NSNotification *)notification
 {

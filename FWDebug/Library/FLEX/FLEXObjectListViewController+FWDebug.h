@@ -10,4 +10,6 @@
 
 @interface FLEXObjectListViewController (FWDebug)
 
++ (void)fwDebugLoad;
+
 @end

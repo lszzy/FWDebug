@@ -10,4 +10,6 @@
 
 @interface FLEXObjectExplorerViewController (FWDebug)
 
++ (void)fwDebugLoad;
+
 @end

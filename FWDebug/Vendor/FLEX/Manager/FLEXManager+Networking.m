@@ -15,7 +15,8 @@
 
 @implementation FLEXManager (Networking)
 
-+ (void)load {
+// FWDebug
++ (void)fwDebugLoadNetworking {
     if (NSUserDefaults.standardUserDefaults.flex_registerDictionaryJSONViewerOnLaunch) {
         dispatch_async(dispatch_get_main_queue(), ^{
             // Register array/dictionary viewer for JSON responses

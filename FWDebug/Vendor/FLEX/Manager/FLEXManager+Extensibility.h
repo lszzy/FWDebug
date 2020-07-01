@@ -12,6 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FLEXManager (Extensibility)
 
+// FWDebug
++ (void)fwDebugLoadExtensibility;
+
 #pragma mark - Globals Screen Entries
 
 /// Adds an entry at the bottom of the list of Global State items.

@@ -156,33 +156,31 @@
 
 @implementation FWDebugTimeProfiler
 
-+ (void)load
++ (void)fwDebugLoad
 {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.objcLoad" userInfo:nil];
-        
-        [FWDebugManager swizzleMethod:@selector(init) in:[UIApplication class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^UIApplication *(__unsafe_unretained UIApplication *selfObject) {
-                [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.initApplication" userInfo:nil];
-                return ((UIApplication *(*)(id, SEL))originalIMP())(selfObject, originalCMD);
-            };
-        }];
-        [FWDebugManager swizzleMethod:@selector(setDelegate:) in:[UIApplication class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(__unsafe_unretained UIApplication *selfObject, id<UIApplicationDelegate> delegate) {
-                [FWDebugTimeProfiler traceAppDelegate:delegate];
-                ((void (*)(id, SEL, id<UIApplicationDelegate>))originalIMP())(selfObject, originalCMD, delegate);
-            };
-        }];
-        
-        if ([FWDebugAppConfig traceVCLife]) {
-            [self enableTraceVCLife];
-        }
-        
-        if ([FWDebugAppConfig traceVCRequest]) {
-            [self enableTraceVCRequest];
-        }
-    });
+    [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.objcLoad" userInfo:nil];
+    
+    [FWDebugManager swizzleMethod:@selector(init) in:[UIApplication class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^UIApplication *(__unsafe_unretained UIApplication *selfObject) {
+            [[FWDebugTimeRecord sharedInstance] recordEvent:@"↧ App.initApplication" userInfo:nil];
+            return ((UIApplication *(*)(id, SEL))originalIMP())(selfObject, originalCMD);
+        };
+    }];
+    
+    [FWDebugManager swizzleMethod:@selector(setDelegate:) in:[UIApplication class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^(__unsafe_unretained UIApplication *selfObject, id<UIApplicationDelegate> delegate) {
+            [FWDebugTimeProfiler traceAppDelegate:delegate];
+            ((void (*)(id, SEL, id<UIApplicationDelegate>))originalIMP())(selfObject, originalCMD, delegate);
+        };
+    }];
+    
+    if ([FWDebugAppConfig traceVCLife]) {
+        [self enableTraceVCLife];
+    }
+    
+    if ([FWDebugAppConfig traceVCRequest]) {
+        [self enableTraceVCRequest];
+    }
 }
 
 + (void)enableTraceVCLife

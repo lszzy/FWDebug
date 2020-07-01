@@ -30,25 +30,23 @@
 
 @implementation FLEXObjectExplorerViewController (FWDebug)
 
-+ (void)load
++ (void)fwDebugLoad
 {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [FWDebugManager swizzleMethod:@selector(viewDidLoad) in:[FLEXObjectExplorerViewController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(__unsafe_unretained FLEXObjectExplorerViewController *selfObject) {
-                ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
-                
-                [selfObject fwDebugSearchItem];
-            };
-        }];
-        [FWDebugManager swizzleMethod:@selector(makeSections) in:[FLEXObjectExplorerViewController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^NSArray<FLEXTableViewSection *> *(__unsafe_unretained FLEXObjectExplorerViewController *selfObject) {
-                NSArray *originSections = ((NSArray *(*)(id, SEL))originalIMP())(selfObject, originalCMD);
-                
-                return [selfObject fwDebugMakeSections:originSections];
-            };
-        }];
-    });
+    [FWDebugManager swizzleMethod:@selector(viewDidLoad) in:[FLEXObjectExplorerViewController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^(__unsafe_unretained FLEXObjectExplorerViewController *selfObject) {
+            ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+            
+            [selfObject fwDebugSearchItem];
+        };
+    }];
+    
+    [FWDebugManager swizzleMethod:@selector(makeSections) in:[FLEXObjectExplorerViewController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^NSArray<FLEXTableViewSection *> *(__unsafe_unretained FLEXObjectExplorerViewController *selfObject) {
+            NSArray *originSections = ((NSArray *(*)(id, SEL))originalIMP())(selfObject, originalCMD);
+            
+            return [selfObject fwDebugMakeSections:originSections];
+        };
+    }];
 }
 
 #pragma mark - FWDebug

@@ -28,35 +28,38 @@
 
 @implementation FLEXManager (FWDebug)
 
-+ (void)load
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [FWDebugManager swizzleMethod:@selector(showExplorer) in:[FLEXManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(__unsafe_unretained FLEXManager *selfObject) {
-                if ([FWDebugAppConfig isAppLocked]) return;
-                
-                ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
-                
-                [selfObject.fwDebugFpsInfo start];
-            };
-        }];
-        [FWDebugManager swizzleMethod:@selector(hideExplorer) in:[FLEXManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(__unsafe_unretained FLEXManager *selfObject) {
-                if ([FWDebugAppConfig isAppLocked]) return;
-                
-                ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
-                
-                [selfObject.fwDebugFpsInfo stop];
-            };
-        }];
-        
-        [self fwDebugLoad];
-    });
-}
-
 + (void)fwDebugLoad
 {
+    [FLEXExplorerToolbar fwDebugLoad];
+    [FLEXFileBrowserController fwDebugLoad];
+    [FLEXObjectExplorerViewController fwDebugLoad];
+    [FLEXObjectListViewController fwDebugLoad];
+    [FWDebugFakeLocation fwDebugLoad];
+    [FWDebugTimeProfiler fwDebugLoad];
+    
+    [FLEXManager fwDebugLoadExtensibility];
+    [FLEXManager fwDebugLoadNetworking];
+    
+    [FWDebugManager swizzleMethod:@selector(showExplorer) in:[FLEXManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^(__unsafe_unretained FLEXManager *selfObject) {
+            if ([FWDebugAppConfig isAppLocked]) return;
+            
+            ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+            
+            [selfObject.fwDebugFpsInfo start];
+        };
+    }];
+    
+    [FWDebugManager swizzleMethod:@selector(hideExplorer) in:[FLEXManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^(__unsafe_unretained FLEXManager *selfObject) {
+            if ([FWDebugAppConfig isAppLocked]) return;
+            
+            ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+            
+            [selfObject.fwDebugFpsInfo stop];
+        };
+    }];
+    
     [FLEXManager sharedManager].networkDebuggingEnabled = YES;
     
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"💟  Device Info" viewControllerFutureBlock:^UIViewController *{

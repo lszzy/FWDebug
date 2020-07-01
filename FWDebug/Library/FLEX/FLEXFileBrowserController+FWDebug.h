@@ -10,4 +10,6 @@
 
 @interface FLEXFileBrowserController (FWDebug)
 
++ (void)fwDebugLoad;
+
 @end
