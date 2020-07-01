@@ -24,38 +24,37 @@ static NSString *fwDebugCopyPath = nil;
 
 @implementation FLEXFileBrowserController (FWDebug)
 
-+ (void)load
++ (void)fwDebugLoad
 {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [FWDebugManager swizzleMethod:@selector(tableView:shouldShowMenuForRowAtIndexPath:) in:[FLEXFileBrowserController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^BOOL(FLEXFileBrowserController *selfObject, UITableView *tableView, NSIndexPath *indexPath) {
-                BOOL shouldShow = ((BOOL (*)(id, SEL, UITableView *, NSIndexPath *))originalIMP())(selfObject, originalCMD, tableView, indexPath);
-                
-                NSMutableArray<UIMenuItem *> *menuItems = [NSMutableArray arrayWithArray:[UIMenuController sharedMenuController].menuItems];
-                selfObject.fwDebugCopyItem.title = fwDebugCopyPath ? @"Paste" : @"Copy";
-                [menuItems addObject:selfObject.fwDebugCopyItem];
-                [UIMenuController sharedMenuController].menuItems = menuItems;
-                return shouldShow;
-            };
-        }];
-        [FWDebugManager swizzleMethod:@selector(tableView:canPerformAction:forRowAtIndexPath:withSender:) in:[FLEXFileBrowserController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^BOOL(FLEXFileBrowserController *selfObject, UITableView *tableView, SEL action, NSIndexPath *indexPath, id sender) {
-                BOOL canPerform = ((BOOL (*)(id, SEL, UITableView *, SEL, NSIndexPath *, id))originalIMP())(selfObject, originalCMD, tableView, action, indexPath, sender);
-                
-                return canPerform || action == @selector(fwDebugFileBrowserCopy:);
-            };
-        }];
+    [FWDebugManager swizzleMethod:@selector(tableView:shouldShowMenuForRowAtIndexPath:) in:[FLEXFileBrowserController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^BOOL(__unsafe_unretained FLEXFileBrowserController *selfObject, UITableView *tableView, NSIndexPath *indexPath) {
+            BOOL shouldShow = ((BOOL (*)(id, SEL, UITableView *, NSIndexPath *))originalIMP())(selfObject, originalCMD, tableView, indexPath);
+            
+            NSMutableArray<UIMenuItem *> *menuItems = [NSMutableArray arrayWithArray:[UIMenuController sharedMenuController].menuItems];
+            selfObject.fwDebugCopyItem.title = fwDebugCopyPath ? @"Paste" : @"Copy";
+            [menuItems addObject:selfObject.fwDebugCopyItem];
+            [UIMenuController sharedMenuController].menuItems = menuItems;
+            return shouldShow;
+        };
+    }];
+    
+    [FWDebugManager swizzleMethod:@selector(tableView:canPerformAction:forRowAtIndexPath:withSender:) in:[FLEXFileBrowserController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^BOOL(__unsafe_unretained FLEXFileBrowserController *selfObject, UITableView *tableView, SEL action, NSIndexPath *indexPath, id sender) {
+            BOOL canPerform = ((BOOL (*)(id, SEL, UITableView *, SEL, NSIndexPath *, id))originalIMP())(selfObject, originalCMD, tableView, action, indexPath, sender);
+            
+            return canPerform || action == @selector(fwDebugFileBrowserCopy:);
+        };
+    }];
+    
 #if FLEX_AT_LEAST_IOS13_SDK
-        if (@available(iOS 13.0, *)) {
-            [FWDebugManager swizzleMethod:@selector(tableView:contextMenuConfigurationForRowAtIndexPath:point:) in:[FLEXFileBrowserController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-                return ^UIContextMenuConfiguration *(FLEXFileBrowserController *selfObject, UITableView *tableView, NSIndexPath *indexPath, CGPoint point) {
-                    return [selfObject fwDebugTableView:tableView contextMenuConfigurationForRowAtIndexPath:indexPath point:point];
-                };
-            }];
-        }
+    if (@available(iOS 13.0, *)) {
+        [FWDebugManager swizzleMethod:@selector(tableView:contextMenuConfigurationForRowAtIndexPath:point:) in:[FLEXFileBrowserController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^UIContextMenuConfiguration *(__unsafe_unretained FLEXFileBrowserController *selfObject, UITableView *tableView, NSIndexPath *indexPath, CGPoint point) {
+                return [selfObject fwDebugTableView:tableView contextMenuConfigurationForRowAtIndexPath:indexPath point:point];
+            };
+        }];
+    }
 #endif
-    });
 }
 
 #pragma mark - FWDebug

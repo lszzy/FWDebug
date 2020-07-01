@@ -20,18 +20,15 @@
 
 @implementation FLEXObjectListViewController (FWDebug)
 
-+ (void)load
++ (void)fwDebugLoad
 {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [FWDebugManager swizzleMethod:@selector(viewDidLoad) in:[FLEXObjectListViewController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(FLEXObjectListViewController *selfObject) {
-                ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
-                
-                [selfObject fwDebugSearchItem];
-            };
-        }];
-    });
+    [FWDebugManager swizzleMethod:@selector(viewDidLoad) in:[FLEXObjectListViewController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^(__unsafe_unretained FLEXObjectListViewController *selfObject) {
+            ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+            
+            [selfObject fwDebugSearchItem];
+        };
+    }];
 }
 
 #pragma mark - FWDebug

@@ -13,6 +13,8 @@
 
 @interface FLEXExplorerToolbar (FWDebug)
 
++ (void)fwDebugLoad;
+
 - (FLEXExplorerToolbarItem *)fwDebugFpsItem;
 
 @end

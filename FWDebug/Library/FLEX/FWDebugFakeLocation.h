@@ -10,4 +10,6 @@
 
 @interface FWDebugFakeLocation : FLEXTableViewController
 
++ (void)fwDebugLoad;
+
 @end

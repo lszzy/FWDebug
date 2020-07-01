@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithObject:(id)object;
 
++ (void)fwDebugLoad;
+
 + (void)enableTraceVCLife;
 
 + (void)enableTraceVCRequest;

@@ -160,7 +160,8 @@
     } description:@"Toggle file browser menu"];
 }
 
-+ (void)load {
+// FWDebug
++ (void)fwDebugLoadExtensibility {
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.sharedManager registerDefaultSimulatorShortcuts];
     });

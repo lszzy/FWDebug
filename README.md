@@ -59,6 +59,10 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+Version 1.8.2:
+
+	* Compatible with Xcode 12
+
 Version 1.8.1:
 
 	* Optimize the time view function, add clear button

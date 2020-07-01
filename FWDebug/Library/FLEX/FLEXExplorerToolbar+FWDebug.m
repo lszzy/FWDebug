@@ -107,20 +107,17 @@
 
 @implementation FLEXExplorerToolbar (FWDebug)
 
-+ (void)load
++ (void)fwDebugLoad
 {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [FWDebugManager swizzleMethod:@selector(toolbarItems) in:[FLEXExplorerToolbar class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(FLEXExplorerToolbar *selfObject) {
-                NSArray *originItems = ((NSArray *(*)(id, SEL))originalIMP())(selfObject, originalCMD);
-                
-                NSMutableArray *debugItems = [originItems mutableCopy];
-                [debugItems insertObject:selfObject.fwDebugFpsItem atIndex:debugItems.count > 2 ? 2 : 0];
-                return [debugItems copy];
-            };
-        }];
-    });
+    [FWDebugManager swizzleMethod:@selector(toolbarItems) in:[FLEXExplorerToolbar class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^(__unsafe_unretained FLEXExplorerToolbar *selfObject) {
+            NSArray *originItems = ((NSArray *(*)(id, SEL))originalIMP())(selfObject, originalCMD);
+            
+            NSMutableArray *debugItems = [originItems mutableCopy];
+            [debugItems insertObject:selfObject.fwDebugFpsItem atIndex:debugItems.count > 2 ? 2 : 0];
+            return [debugItems copy];
+        };
+    }];
 }
 
 - (FLEXExplorerToolbarItem *)fwDebugFpsItem
