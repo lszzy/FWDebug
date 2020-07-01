@@ -288,8 +288,8 @@ didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask delegate:(id<NSUR
                 // iOS 8
                 baseResumeClass = [NSURLSessionTask class];
             } else {
-                // iOS 9+
-                baseResumeClass = NSClassFromString(@"__NSCFURLSessionTask");
+                // FWDebug, iOS 9+
+                baseResumeClass = NSClassFromString(@"__NSCFURLSessionTask") ?: [NSURLSessionTask class];
             }
         }
         
