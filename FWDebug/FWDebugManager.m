@@ -7,18 +7,18 @@
 //
 
 #import "FWDebugManager.h"
-#import <UIKit/UIKit.h>
 #import "FWDebugManager+FWDebug.h"
 #import "FLEXManager+FWDebug.h"
 #import "KSCrash+FWDebug.h"
 #import "FBRetainCycleDetector+FWDebug.h"
 #import "FWDebugTimeProfiler.h"
+#import <UIKit/UIKit.h>
 
-NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
+NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
 
 @interface FWDebugManager ()
 
-@property (nonatomic, strong) NSDate *shakeDate;
+@property (nonatomic, strong) NSDate *eventDate;
 
 @end
 
@@ -34,8 +34,21 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
             return ^(__unsafe_unretained UIApplication *selfObject, UIEvent *event) {
                 ((void (*)(id, SEL, UIEvent *))originalIMP())(selfObject, originalCMD, event);
                 
-                if (event.type == UIEventTypeMotion && event.subtype == UIEventSubtypeMotionShake) {
-                    [[NSNotificationCenter defaultCenter] postNotificationName:FWDebugShakeNotification object:event];
+                if ([FWDebugManager sharedInstance].shakeEnabled) {
+                    if (event.type == UIEventTypeMotion && event.subtype == UIEventSubtypeMotionShake) {
+                        [[NSNotificationCenter defaultCenter] postNotificationName:FWDebugEventNotification object:event];
+                    }
+                }
+                
+                if ([FWDebugManager sharedInstance].touchEnabled) {
+                    if (event.type == UIEventTypeTouches && event.subtype == UIEventSubtypeNone && event.allTouches.count == 5) {
+                        [event.allTouches enumerateObjectsUsingBlock:^(UITouch *obj, BOOL *stop) {
+                            if (obj.phase == UITouchPhaseEnded) {
+                                [[NSNotificationCenter defaultCenter] postNotificationName:FWDebugEventNotification object:event];
+                                *stop = YES;
+                            }
+                        }];
+                    }
                 }
             };
         }];
@@ -59,9 +72,10 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
     self = [super init];
     if (self) {
         _shakeEnabled = YES;
+        _touchEnabled = YES;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShake:) name:FWDebugShakeNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onEvent:) name:FWDebugEventNotification object:nil];
     }
     return self;
 }
@@ -85,16 +99,13 @@ NSString * const FWDebugShakeNotification = @"FWDebugShakeNotification";
     [KSCrash fwDebugLaunch];
 }
 
-- (void)onShake:(NSNotification *)notification
+- (void)onEvent:(NSNotification *)notification
 {
-    if (self.shakeDate && fabs([self.shakeDate timeIntervalSinceNow]) > 1.0 && fabs([self.shakeDate timeIntervalSinceNow]) < 5.0) {
-        if (self.shakeEnabled) {
-            [[FLEXManager sharedManager] toggleExplorer];
-        }
-        
-        self.shakeDate = nil;
-    } else if (!self.shakeDate || fabs([self.shakeDate timeIntervalSinceNow]) > 5.0) {
-        self.shakeDate = [NSDate date];
+    if (self.eventDate && fabs([self.eventDate timeIntervalSinceNow]) > 1.0 && fabs([self.eventDate timeIntervalSinceNow]) < 5.0) {
+        [[FLEXManager sharedManager] toggleExplorer];
+        self.eventDate = nil;
+    } else if (!self.eventDate || fabs([self.eventDate timeIntervalSinceNow]) > 5.0) {
+        self.eventDate = [NSDate date];
     }
 }
 
