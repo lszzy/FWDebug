@@ -59,6 +59,10 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+Version 1.8.3:
+
+	* Added 5 finger double click to switch debugger function
+
 Version 1.8.2:
 
 	* Compatible with Xcode 12
