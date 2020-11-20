@@ -3,7 +3,7 @@
 //  FLEX
 //
 //  Created by Tanner on 2/2/20.
-//  Copyright © 2020 Flipboard. All rights reserved.
+//  Copyright © 2020 FLEX Team. All rights reserved.
 //
 
 #import "FLEXManager.h"
@@ -40,6 +40,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// you may want to use __weak references.
 - (void)registerGlobalEntryWithName:(NSString *)entryName
           viewControllerFutureBlock:(UIViewController * (^)(void))viewControllerFutureBlock;
+
+/// Removes all registered global entries.
+- (void)clearGlobalEntries;
 
 #pragma mark - Simulator Shortcuts
 

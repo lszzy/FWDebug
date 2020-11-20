@@ -3,7 +3,7 @@
 //  FLEX
 //
 //  Created by ray on 2019/8/17.
-//  Copyright © 2019 Flipboard. All rights reserved.
+//  Copyright © 2020 FLEX Team. All rights reserved.
 //
 
 #import "FLEXKeychain.h"
@@ -31,8 +31,8 @@
     [super viewDidLoad];
     
     self.navigationItem.rightBarButtonItems = @[
-        [UIBarButtonItem systemItem:UIBarButtonSystemItemTrash target:self action:@selector(trashPressed:)],
-        [UIBarButtonItem systemItem:UIBarButtonSystemItemAdd target:self action:@selector(addPressed)],
+        [UIBarButtonItem flex_systemItem:UIBarButtonSystemItemTrash target:self action:@selector(trashPressed:)],
+        [UIBarButtonItem flex_systemItem:UIBarButtonSystemItemAdd target:self action:@selector(addPressed)],
     ];
 
     [self reloadData];

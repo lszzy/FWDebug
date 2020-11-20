@@ -3,7 +3,7 @@
 //  FLEX
 //
 //  Created by Tanner on 3/10/20.
-//  Copyright © 2020 Flipboard. All rights reserved.
+//  Copyright © 2020 FLEX Team. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -22,7 +22,7 @@ extern NSString * const kFLEXDefaultsRegisterJSONExplorerKey;
 /// All BOOL preferences are NO by default
 @interface NSUserDefaults (FLEX)
 
-- (void)toggleBoolForKey:(NSString *)key;
+- (void)flex_toggleBoolForKey:(NSString *)key;
 
 @property (nonatomic) double flex_toolbarTopMargin;
 

@@ -3,7 +3,7 @@
 //  Flipboard
 //
 //  Created by Ryan Olson on 5/15/14.
-//  Copyright (c) 2020 Flipboard. All rights reserved.
+//  Copyright (c) 2020 FLEX Team. All rights reserved.
 //
 
 #import "FLEXObjectExplorerFactory.h"
@@ -11,6 +11,7 @@
 #import "FLEXClassShortcuts.h"
 #import "FLEXViewShortcuts.h"
 #import "FLEXViewControllerShortcuts.h"
+#import "FLEXUIAppShortcuts.h"
 #import "FLEXImageShortcuts.h"
 #import "FLEXLayerShortcuts.h"
 #import "FLEXColorPreviewSection.h"
@@ -24,6 +25,14 @@ static NSMutableDictionary<Class, Class> *classesToRegisteredSections = nil;
 
 + (void)initialize {
     if (self == [FLEXObjectExplorerFactory class]) {
+        // DO NOT USE STRING KEYS HERE
+        // We NEED to use the class as a key, because we CANNOT
+        // differentiate a class's name from the metaclass's name.
+        // These mappings are per-class-object, not per-class-name.
+        //
+        // For example, if we used class names, this would result in
+        // the object explorer trying to render a color preview for
+        // the UIColor class object, which is not a color itself.
         #define ClassKey(name) (Class<NSCopying>)[name class]
         #define ClassKeyByName(str) (Class<NSCopying>)NSClassFromString(@ #str)
         #define MetaclassKey(meta) (Class<NSCopying>)object_getClass([meta class])
@@ -35,6 +44,7 @@ static NSMutableDictionary<Class, Class> *classesToRegisteredSections = nil;
             ClassKey(NSOrderedSet)     : [FLEXCollectionContentSection class],
             ClassKey(NSUserDefaults)   : [FLEXDefaultsContentSection class],
             ClassKey(UIViewController) : [FLEXViewControllerShortcuts class],
+            ClassKey(UIApplication)    : [FLEXUIAppShortcuts class],
             ClassKey(UIView)           : [FLEXViewShortcuts class],
             ClassKey(UIImage)          : [FLEXImageShortcuts class],
             ClassKey(CALayer)          : [FLEXLayerShortcuts class],

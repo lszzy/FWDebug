@@ -3,7 +3,7 @@
 //  FLEX
 //
 //  Created by Tanner Bennett on 8/22/19.
-//  Copyright © 2019 Flipboard. All rights reserved.
+//  Copyright © 2020 FLEX Team. All rights reserved.
 //
 
 #import "FLEXTypeEncodingParser.h"
@@ -546,10 +546,15 @@ BOOL FLEXGetSizeAndAlignment(const char *type, NSUInteger *sizep, NSUInteger *al
 }
 
 - (BOOL)canScanChar:(char)c {
-    NSScanner *scan = self.scan;
-    if (scan.scanLocation >= scan.string.length) return NO;
+    // By avoiding any ARC calls on these two objects which we know won't be
+    // free'd out from under us, we're making HUGE performance savings in this
+    // parser, because this method is one of the most-used methods of the parser.
+    // This is probably the most performance-critical method in this class.
+    __unsafe_unretained NSScanner *scan = self.scan;
+    __unsafe_unretained NSString *string = scan.string;
+    if (scan.scanLocation >= string.length) return NO;
     
-    return [scan.string characterAtIndex:scan.scanLocation] == c;
+    return [string characterAtIndex:scan.scanLocation] == c;
 }
 
 - (BOOL)scanChar:(char)c {
@@ -805,7 +810,7 @@ BOOL FLEXGetSizeAndAlignment(const char *type, NSUInteger *sizep, NSUInteger *al
     self.scan.scanLocation = scanLocation;
     
     // The return / cleanup code for when the scanned type is already clean
-    NSString * (^typeIsClean)(void) = ^NSString * {
+    NSString * (^typeIsClean)() = ^NSString * {
         NSString *clean = [self.scan.string
             substringWithRange:NSMakeRange(scanLocation, self.scan.scanLocation - scanLocation)
         ];

@@ -3,7 +3,7 @@
 //  FLEX
 //
 //  Created by Tanner on 1/29/20.
-//  Copyright © 2020 Flipboard. All rights reserved.
+//  Copyright © 2020 FLEX Team. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -24,13 +24,17 @@ NS_ASSUME_NONNULL_BEGIN
     @protected
     /// Unused by default, use if you want
     NSString *_title;
+    
+    @private
+    __weak UITableView *_tableView;
+    NSInteger _sectionIndex;
 }
 
 #pragma mark - Data
 
 /// A title to be displayed for the custom section.
 /// Subclasses may override or use the \c _title ivar.
-@property (nonatomic, readonly, nullable) NSString *title;
+@property (nonatomic, readonly, nullable, copy) NSString *title;
 /// The number of rows in this section. Subclasses must override.
 /// This should not change until \c filterText is changed or \c reloadData is called.
 @property (nonatomic, readonly) NSInteger numberOfRows;
@@ -56,6 +60,17 @@ NS_ASSUME_NONNULL_BEGIN
 /// If your section does not, then it might be simpler for you to just override
 /// \c setFilterText: to call \c super and call \c reloadData.
 - (void)reloadData;
+
+/// Like \c reloadData, but optionally reloads the table view section
+/// associated with this section object, if any. Do not override.
+/// Do not call outside of the main thread.
+- (void)reloadData:(BOOL)updateTable;
+
+/// Provide a table view and section index to allow the section to efficiently reload
+/// its own section of the table when something changes it. The table reference is
+/// held weakly, and subclasses cannot access it or the index. Call this method again
+/// if the section numbers have changed since you last called it.
+- (void)setTable:(UITableView *)tableView section:(NSInteger)index;
 
 #pragma mark - Row Selection
 

@@ -3,7 +3,7 @@
 //  FLEX
 //
 //  Created by Tanner on 3/9/20.
-//  Copyright © 2020 Flipboard. All rights reserved.
+//  Copyright © 2020 FLEX Team. All rights reserved.
 //
 
 #import "FLEXMutableListSection.h"
@@ -29,12 +29,12 @@ configurationBlock:(FLEXMutableListCellForElement)cellConfig
     self = [super init];
     if (self) {
         _configureCell = cellConfig;
-        
+
         self.list = list.mutableCopy;
         self.customFilter = filterBlock;
         self.hideSectionTitle = YES;
     }
-    
+
     return self;
 }
 
@@ -47,8 +47,8 @@ configurationBlock:(FLEXMutableListCellForElement)cellConfig
 
 - (void)setList:(NSMutableArray *)list {
     NSParameterAssert(list);
-    _collection = list;
-    
+    _collection = (id)list;
+
     [self reloadData];
 }
 
@@ -79,11 +79,15 @@ configurationBlock:(FLEXMutableListCellForElement)cellConfig
 
 - (void (^)(__kindof UIViewController *))didSelectRowAction:(NSInteger)row {
     if (self.selectionHandler) {
+        __weak __typeof(self) weakSelf = self;
         return ^(UIViewController *host) {
-            self.selectionHandler(host, self.filteredList[row]);
+            __strong __typeof(self) strongSelf = weakSelf;
+            if (strongSelf) {
+                strongSelf.selectionHandler(host, strongSelf.filteredList[row]);
+            }
         };
     }
-    
+
     return nil;
 }
 
@@ -95,7 +99,7 @@ configurationBlock:(FLEXMutableListCellForElement)cellConfig
     if (self.cellRegistrationMapping.count) {
         return self.cellRegistrationMapping.allKeys.firstObject;
     }
-    
+
     return [super reuseIdentifierForRow:row];
 }
 

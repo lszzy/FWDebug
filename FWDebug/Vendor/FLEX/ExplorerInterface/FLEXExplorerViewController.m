@@ -3,7 +3,7 @@
 //  Flipboard
 //
 //  Created by Ryan Olson on 4/4/14.
-//  Copyright (c) 2020 Flipboard. All rights reserved.
+//  Copyright (c) 2020 FLEX Team. All rights reserved.
 //
 
 #import "FLEXExplorerViewController.h"
@@ -838,7 +838,7 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
     [self.view.window makeKeyWindow];
 
     // Move the status bar on top of FLEX so we can get scroll to top behavior for taps.
-    if (@available(iOS 13, *)) { } else {
+    if (!@available(iOS 13, *)) {
         [self statusWindow].windowLevel = self.view.window.windowLevel + 1.0;
     }
     

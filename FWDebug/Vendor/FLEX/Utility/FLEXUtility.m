@@ -3,7 +3,7 @@
 //  Flipboard
 //
 //  Created by Ryan Olson on 4/18/14.
-//  Copyright (c) 2020 Flipboard. All rights reserved.
+//  Copyright (c) 2020 FLEX Team. All rights reserved.
 //
 
 #import "FLEXColor.h"
@@ -11,8 +11,26 @@
 #import "FLEXResources.h"
 #import "FLEXWindow.h"
 #import <ImageIO/ImageIO.h>
-#import <zlib.h>
 #import <objc/runtime.h>
+#import <zlib.h>
+
+BOOL FLEXConstructorsShouldRun() {
+    #if FLEX_DISABLE_CTORS
+        return NO;
+    #else
+        static BOOL _FLEXConstructorsShouldRun_storage = YES;
+        
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            NSString *key = @"FLEX_SKIP_INIT";
+            if (getenv(key.UTF8String) || [NSUserDefaults.standardUserDefaults boolForKey:key]) {
+                _FLEXConstructorsShouldRun_storage = NO;
+            }
+        });
+        
+        return _FLEXConstructorsShouldRun_storage;
+    #endif
+}
 
 @implementation FLEXUtility
 
@@ -117,7 +135,7 @@
 
 + (UIImage *)previewImageForView:(UIView *)view {
     if (CGRectIsEmpty(view.bounds)) {
-        return nil;
+        return [UIImage new];
     }
     
     CGSize viewSize = view.bounds.size;

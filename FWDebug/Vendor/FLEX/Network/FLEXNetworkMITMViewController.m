@@ -3,7 +3,7 @@
 //  Flipboard
 //
 //  Created by Ryan Olson on 2/8/15.
-//  Copyright (c) 2020 Flipboard. All rights reserved.
+//  Copyright (c) 2020 FLEX Team. All rights reserved.
 //
 
 #import "FLEXColor.h"
@@ -49,15 +49,15 @@
     
     [self addToolbarItems:@[
         [UIBarButtonItem
-            itemWithImage:FLEXResources.gearIcon
+            flex_itemWithImage:FLEXResources.gearIcon
             target:self
             action:@selector(settingsButtonTapped:)
         ],
         [[UIBarButtonItem
-          systemItem:UIBarButtonSystemItemTrash
+          flex_systemItem:UIBarButtonSystemItemTrash
           target:self
           action:@selector(trashButtonTapped:)
-        ] withTintColor:UIColor.redColor]
+        ] flex_withTintColor:UIColor.redColor]
     ]];
 
     [self.tableView

@@ -3,7 +3,7 @@
 //  FLEX
 //
 //  Created by Tanner on 7/5/19.
-//  Copyright © 2019 Flipboard. All rights reserved.
+//  Copyright © 2020 FLEX Team. All rights reserved.
 //
 
 #import "FLEXTableViewController.h"
@@ -224,10 +224,10 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
     
     _shareToolbarItem = FLEXBarButtonItemSystem(Action, self, @selector(shareButtonPressed:));
     _bookmarksToolbarItem = [UIBarButtonItem
-        itemWithImage:FLEXResources.bookmarksIcon target:self action:@selector(showBookmarks)
+        flex_itemWithImage:FLEXResources.bookmarksIcon target:self action:@selector(showBookmarks)
     ];
     _openTabsToolbarItem = [UIBarButtonItem
-        itemWithImage:FLEXResources.openTabsIcon target:self action:@selector(showTabSwitcher)
+        flex_itemWithImage:FLEXResources.openTabsIcon target:self action:@selector(showTabSwitcher)
     ];
     
     self.leftmostToolbarItem = UIBarButtonItem.flex_fixedSpace;
@@ -531,7 +531,7 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
     [self.debounceTimer invalidate];
     NSString *text = searchController.searchBar.text;
     
-    void (^updateSearchResults)(void) = ^{
+    void (^updateSearchResults)() = ^{
         if (self.searchResultsUpdater) {
             [self.searchResultsUpdater updateSearchResults:text];
         } else {
@@ -553,14 +553,14 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
 
 - (void)willPresentSearchController:(UISearchController *)searchController {
     // Manually show cancel button for < iOS 13
-    if (@available(iOS 13, *)) { } else if (self.automaticallyShowsSearchBarCancelButton) {
+    if (!@available(iOS 13, *) && self.automaticallyShowsSearchBarCancelButton) {
         [searchController.searchBar setShowsCancelButton:YES animated:YES];
     }
 }
 
 - (void)willDismissSearchController:(UISearchController *)searchController {
     // Manually hide cancel button for < iOS 13
-    if (@available(iOS 13, *)) { } else if (self.automaticallyShowsSearchBarCancelButton) {
+    if (!@available(iOS 13, *) && self.automaticallyShowsSearchBarCancelButton) {
         [searchController.searchBar setShowsCancelButton:NO animated:YES];
     }
 }

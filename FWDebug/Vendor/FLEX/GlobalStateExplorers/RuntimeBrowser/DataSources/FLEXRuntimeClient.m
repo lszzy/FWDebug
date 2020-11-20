@@ -195,7 +195,7 @@ static inline NSString * TBWildcardMap(NSString *token, NSString *candidate, TBW
             "/System/Library/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy",
             RTLD_LAZY
         );
-        void (*WebKitInitialize)(void) = dlsym(handle, "WebKitInitialize");
+        void (*WebKitInitialize)() = dlsym(handle, "WebKitInitialize");
         if (WebKitInitialize) {
             NSAssert(NSThread.isMainThread,
                 @"WebKitInitialize can only be called on the main thread"
