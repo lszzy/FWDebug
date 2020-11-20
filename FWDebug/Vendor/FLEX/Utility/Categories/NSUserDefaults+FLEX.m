@@ -3,7 +3,7 @@
 //  FLEX
 //
 //  Created by Tanner on 3/10/20.
-//  Copyright © 2020 Flipboard. All rights reserved.
+//  Copyright © 2020 FLEX Team. All rights reserved.
 //
 
 #import "NSUserDefaults+FLEX.h"
@@ -42,7 +42,7 @@ NSString * const kFLEXDefaultsRegisterJSONExplorerKey = @"com.flipboard.FLEX.vie
 
 #pragma mark Helper
 
-- (void)toggleBoolForKey:(NSString *)key {
+- (void)flex_toggleBoolForKey:(NSString *)key {
     [self setBool:![self boolForKey:key] forKey:key];
     [NSNotificationCenter.defaultCenter postNotificationName:key object:nil];
 }

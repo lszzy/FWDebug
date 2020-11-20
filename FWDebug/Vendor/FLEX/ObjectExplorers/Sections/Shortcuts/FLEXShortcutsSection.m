@@ -3,7 +3,7 @@
 //  FLEX
 //
 //  Created by Tanner Bennett on 8/29/19.
-//  Copyright © 2019 Flipboard. All rights reserved.
+//  Copyright © 2020 FLEX Team. All rights reserved.
 //
 
 #import "FLEXShortcutsSection.h"
@@ -201,10 +201,10 @@
 
 - (void (^)(__kindof UIViewController *))didPressInfoButtonAction:(NSInteger)row {
     id<FLEXShortcut> shortcut = self.shortcuts[row];
-    if ([shortcut respondsToSelector:@selector(editorWith:)]) {
+    if ([shortcut respondsToSelector:@selector(editorWith:forSection:)]) {
         id object = self.object;
         return ^(UIViewController *host) {
-            UIViewController *editor = [shortcut editorWith:object];
+            UIViewController *editor = [shortcut editorWith:object forSection:self];
             [host.navigationController pushViewController:editor animated:YES];
         };
     }

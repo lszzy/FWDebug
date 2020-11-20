@@ -3,7 +3,7 @@
 //  FLEX
 //
 //  Created by Tanner Bennett on 9/19/19.
-//  Copyright © 2019 Flipboard. All rights reserved.
+//  Copyright © 2020 FLEX Team. All rights reserved.
 //
 
 #import "FLEXMetadataSection.h"
@@ -180,7 +180,7 @@
 }
 
 - (UIViewController *)editorForRow:(NSInteger)row {
-    return [self.metadata[row] editorWithTarget:self.explorer.object];
+    return [self.metadata[row] editorWithTarget:self.explorer.object section:self];
 }
 
 - (void)configureCell:(__kindof FLEXTableViewCell *)cell forRow:(NSInteger)row {

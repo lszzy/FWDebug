@@ -3,7 +3,7 @@
 //  FLEX
 //
 //  Created by Tanner on 3/9/20.
-//  Copyright © 2020 Flipboard. All rights reserved.
+//  Copyright © 2020 FLEX Team. All rights reserved.
 //
 
 #import "FLEXFilteringTableViewController.h"
@@ -111,7 +111,16 @@
 
 - (void)setAllSections:(NSArray<FLEXTableViewSection *> *)allSections {
     _allSections = allSections.copy;
+    // Only display nonempty sections
     self.sections = self.nonemptySections;
+}
+
+- (void)setSections:(NSArray<FLEXTableViewSection *> *)sections {
+    // Allow sections to reload a portion of the table view at will
+    [sections enumerateObjectsUsingBlock:^(FLEXTableViewSection *s, NSUInteger idx, BOOL *stop) {
+        [s setTable:self.tableView section:idx];
+    }];
+    _sections = sections.copy;
 }
 
 

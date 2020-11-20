@@ -376,7 +376,7 @@
 {
     [super viewDidLoad];
     
-    [self addToolbarItems:@[[UIBarButtonItem systemItem:UIBarButtonSystemItemTrash target:self action:@selector(trashButtonTapped:)]]];
+    [self addToolbarItems:@[[UIBarButtonItem flex_systemItem:UIBarButtonSystemItemTrash target:self action:@selector(trashButtonTapped:)]]];
     
     self.dateFormatter = [[NSDateFormatter alloc] init];
     self.dateFormatter.dateFormat = @"mm:ss.SSS";

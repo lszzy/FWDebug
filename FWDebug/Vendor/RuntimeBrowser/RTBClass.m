@@ -468,6 +468,7 @@
                 if([filePath isEqualToString:runtimeBrowserPath]) continue;
             };
             
+            if(filePath == nil) continue;
             if(categoryName == nil) categoryName = @"";
             
             if(groupsByImage[filePath] == nil) {
