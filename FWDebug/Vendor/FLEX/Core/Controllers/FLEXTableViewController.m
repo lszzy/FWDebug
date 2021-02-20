@@ -124,18 +124,15 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
     _showsCarousel = showsCarousel;
     
     if (showsCarousel) {
-        _carousel = ({
-            __weak __typeof(self) weakSelf = self;
-
+        _carousel = ({ weakify(self)
+            
             FLEXScopeCarousel *carousel = [FLEXScopeCarousel new];
-            carousel.selectedIndexChangedAction = ^(NSInteger idx) {
-                __typeof(self) self = weakSelf;
+            carousel.selectedIndexChangedAction = ^(NSInteger idx) { strongify(self);
                 [self.searchDelegate updateSearchResults:self.searchText];
             };
 
             // UITableView won't update the header size unless you reset the header view
-            [carousel registerBlockForDynamicTypeChanges:^(FLEXScopeCarousel *carousel) {
-                __typeof(self) self = weakSelf;
+            [carousel registerBlockForDynamicTypeChanges:^(FLEXScopeCarousel *_) { strongify(self);
                 [self layoutTableHeaderIfNeeded];
             }];
 
@@ -531,7 +528,7 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
     [self.debounceTimer invalidate];
     NSString *text = searchController.searchBar.text;
     
-    void (^updateSearchResults)(void) = ^{
+    void (^updateSearchResults)() = ^{
         if (self.searchResultsUpdater) {
             [self.searchResultsUpdater updateSearchResults:text];
         } else {
@@ -553,14 +550,14 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
 
 - (void)willPresentSearchController:(UISearchController *)searchController {
     // Manually show cancel button for < iOS 13
-    if (@available(iOS 13, *)) { } else if (self.automaticallyShowsSearchBarCancelButton) {
+    if (!@available(iOS 13, *) && self.automaticallyShowsSearchBarCancelButton) {
         [searchController.searchBar setShowsCancelButton:YES animated:YES];
     }
 }
 
 - (void)willDismissSearchController:(UISearchController *)searchController {
     // Manually hide cancel button for < iOS 13
-    if (@available(iOS 13, *)) { } else if (self.automaticallyShowsSearchBarCancelButton) {
+    if (!@available(iOS 13, *) && self.automaticallyShowsSearchBarCancelButton) {
         [searchController.searchBar setShowsCancelButton:NO animated:YES];
     }
 }

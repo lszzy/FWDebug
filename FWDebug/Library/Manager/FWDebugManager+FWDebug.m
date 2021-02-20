@@ -117,20 +117,24 @@
     if ([keyWindow isKindOfClass:[FLEXWindow class]]) {
         keyWindow = ((FLEXWindow *)keyWindow).previousKeyWindow;
     }
-    UIViewController *currentViewController = keyWindow.rootViewController;
-    while ([currentViewController presentedViewController]) {
-        currentViewController = [currentViewController presentedViewController];
+    UIViewController *viewController = keyWindow.rootViewController;
+    while ([viewController presentedViewController]) {
+        viewController = [viewController presentedViewController];
     }
-    while ([currentViewController isKindOfClass:[UITabBarController class]] &&
-           [(UITabBarController *)currentViewController selectedViewController]) {
-        currentViewController = [(UITabBarController *)currentViewController selectedViewController];
-    }
-    while ([currentViewController isKindOfClass:[UINavigationController class]] &&
-           [(UINavigationController *)currentViewController topViewController]) {
-        currentViewController = [(UINavigationController*)currentViewController topViewController];
-    }
-    return currentViewController;
+    return [self topViewController:viewController];
 }
 
++ (UIViewController *)topViewController:(UIViewController *)viewController
+{
+    if ([viewController isKindOfClass:[UITabBarController class]]) {
+        UIViewController *topController = [(UITabBarController *)viewController selectedViewController];
+        if (topController) return [self topViewController:topController];
+    }
+    if ([viewController isKindOfClass:[UINavigationController class]]) {
+        UIViewController *topController = [(UINavigationController *)viewController topViewController];
+        if (topController) return [self topViewController:topController];
+    }
+    return viewController;
+}
 
 @end
