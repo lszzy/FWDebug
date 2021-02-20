@@ -25,11 +25,11 @@
 
 #pragma mark - Initialization
 
-+ (instancetype)target:(id)target data:(nullable id)data commitHandler:(void(^_Nullable)(void))onCommit {
++ (instancetype)target:(id)target data:(nullable id)data commitHandler:(void(^_Nullable)())onCommit {
     return [[self alloc] initWithTarget:target data:data commitHandler:onCommit];
 }
 
-- (id)initWithTarget:(id)target data:(nullable id)data commitHandler:(void(^_Nullable)(void))onCommit {
+- (id)initWithTarget:(id)target data:(nullable id)data commitHandler:(void(^_Nullable)())onCommit {
     self = [super init];
     if (self) {
         _target = target;
