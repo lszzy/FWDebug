@@ -59,6 +59,10 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+Version 1.8.5:
+
+	* Updated FLEX to version 4.4.0
+
 Version 1.8.4:
 
 	* Updated FLEX to version 4.2.2
