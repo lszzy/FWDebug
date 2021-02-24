@@ -16,7 +16,6 @@
 @property (nonatomic, strong) UIButton *locationButton;
 @property (nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic, strong) UILabel *weatherLabel;
-@property (nonatomic, strong) WKWebView *webView;
 
 @property (nonatomic, strong) id object;
 
@@ -153,16 +152,23 @@
 }
 
 - (void)onWebView {
-    if (self.webView != nil) {
-        [self.webView removeFromSuperview];
-        self.webView = nil;
-        return;
-    }
+    UIViewController *webController = [[UIViewController alloc] init];
+    webController.navigationItem.title = @"WKWebView";
+    webController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStylePlain target:self action:@selector(onWebClose)];
+    webController.view.backgroundColor = UIColor.whiteColor;
     
-    self.webView = [[WKWebView alloc] init];
-    self.webView.frame = CGRectMake(20, 220, self.view.frame.size.width - 40, 300);
-    [self.view addSubview:self.webView];
-    [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://github.com/Tencent/vConsole"]]];
+    WKWebView *webView = [[WKWebView alloc] initWithFrame:webController.view.bounds];
+    webView.allowsBackForwardNavigationGestures = YES;
+    [webController.view addSubview:webView];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.wuyong.site/"]]];
+    
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:webController];
+    navController.modalPresentationStyle = UIModalPresentationFullScreen;
+    [self presentViewController:navController animated:YES completion:nil];
+}
+
+- (void)onWebClose {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)onCrash {

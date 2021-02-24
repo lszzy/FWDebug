@@ -10,8 +10,10 @@
 #import "FLEXColor.h"
 #import "FWDebugManager+FWDebug.h"
 #import "FWDebugTimeProfiler.h"
+#import "FWDebugWebBundle.h"
 #import <CommonCrypto/CommonDigest.h>
 #import <WebKit/WebKit.h>
+#import <objc/runtime.h>
 
 static BOOL isAppLocked = NO;
 
@@ -31,16 +33,20 @@ static BOOL isAppLocked = NO;
         }
     }
     
-    if ([self webViewNetworkEnabled]) {
-        [FWDebugAppConfig registerURLProtocolScheme:@"https"];
-        [FWDebugAppConfig registerURLProtocolScheme:@"http"];
-    }
-    
     if ([self isInjectionEnabled]) {
 #if TARGET_OS_SIMULATOR
         // https://itunes.apple.com/cn/app/injectioniii/id1380446739?mt=12
         [[NSBundle bundleWithPath:@"/Applications/InjectionIII.app/Contents/Resources/iOSInjection.bundle"] load];
 #endif
+    }
+    
+    if ([self webViewNetworkEnabled]) {
+        [FWDebugAppConfig registerURLProtocolScheme:@"https"];
+        [FWDebugAppConfig registerURLProtocolScheme:@"http"];
+    }
+    
+    if ([self webViewInjectionEnabled]) {
+        [FWDebugAppConfig webViewInjectVConsole];
     }
 }
 
@@ -172,6 +178,31 @@ static BOOL isAppLocked = NO;
         [(id)cls performSelector:sel withObject:scheme];
 #pragma clang diagnostic pop
     }
+}
+
++ (void)webViewInjectVConsole
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [FWDebugManager swizzleMethod:@selector(setUserContentController:) in:[WKWebViewConfiguration class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(__unsafe_unretained WKWebViewConfiguration *selfObject, WKUserContentController *userContentController) {
+                ((void (*)(id, SEL, WKUserContentController *))originalIMP())(selfObject, originalCMD, userContentController);
+                if (![FWDebugAppConfig webViewInjectionEnabled]) return;
+                BOOL hasInjection = [objc_getAssociatedObject(userContentController, @selector(webViewInjectVConsole)) boolValue];
+                if (hasInjection) return;
+                
+                NSString *vConsoleFile = [[NSBundle bundleWithPath:[FWDebugWebBundle fwDebugBundlePath]] pathForResource:@"GCDWebUploader.bundle/js/vconsole.min" ofType:@"js"];
+                if (vConsoleFile.length < 1) return;
+                NSString *vConsoleJs = [NSString stringWithContentsOfFile:vConsoleFile encoding:NSUTF8StringEncoding error:nil];
+                if (vConsoleJs.length < 1) return;
+                
+                NSString *sourceJs = [vConsoleJs stringByAppendingString:@"if(typeof(VConsole)!='undefined'&&typeof(vConsole)=='undefined'){var vConsole=new VConsole();}"];
+                WKUserScript *userScript = [[WKUserScript alloc] initWithSource:sourceJs injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
+                [userContentController addUserScript:userScript];
+                objc_setAssociatedObject(userContentController, @selector(webViewInjectVConsole), @(YES), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            };
+        }];
+    });
 }
 
 + (NSString *)secretMd5:(NSString *)str
@@ -369,12 +400,11 @@ static BOOL isAppLocked = NO;
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugWebViewInjectionEnabled"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
-            // 3
+            [FWDebugAppConfig webViewInjectVConsole];
         } else {
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugWebViewInjectionEnabled"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
-            // 4
         }
     } else if (indexPath.section == 2 && indexPath.row == 0) {
         if (!cellSwitch.on) {
