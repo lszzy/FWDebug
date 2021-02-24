@@ -8,6 +8,7 @@
 
 #import "ObjectivecController.h"
 #import <CoreLocation/CoreLocation.h>
+#import <WebKit/WebKit.h>
 #import <FWDebug/FWDebug.h>
 
 @interface ObjectivecController () <CLLocationManagerDelegate>
@@ -15,6 +16,7 @@
 @property (nonatomic, strong) UIButton *locationButton;
 @property (nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic, strong) UILabel *weatherLabel;
+@property (nonatomic, strong) WKWebView *webView;
 
 @property (nonatomic, strong) id object;
 
@@ -51,13 +53,19 @@
     memoryDirtyButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100, 120, 200, 30);
     [self.view addSubview:memoryDirtyButton];
     
+    UIButton *webViewButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [webViewButton setTitle:@"Open WebView" forState:UIControlStateNormal];
+    [webViewButton addTarget:self action:@selector(onWebView) forControlEvents:UIControlEventTouchUpInside];
+    webViewButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100, 170, 200, 30);
+    [self.view addSubview:webViewButton];
+    
     UIButton *crashButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [crashButton setTitle:@"Crash" forState:UIControlStateNormal];
     [crashButton addTarget:self action:@selector(onCrash) forControlEvents:UIControlEventTouchUpInside];
-    crashButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100, 170, 200, 30);
+    crashButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100, 220, 200, 30);
     [self.view addSubview:crashButton];
     
-    UILabel *weatherLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 - 100, 220, 200, 30)];
+    UILabel *weatherLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 - 100, 270, 200, 30)];
     self.weatherLabel = weatherLabel;
     weatherLabel.text = @"Loading...";
     weatherLabel.textAlignment = NSTextAlignmentCenter;
@@ -142,6 +150,19 @@
     for (int i = 0; i < 10 * 1024 * 1024; ++i) {
         buf[i] = (char)rand();
     }
+}
+
+- (void)onWebView {
+    if (self.webView != nil) {
+        [self.webView removeFromSuperview];
+        self.webView = nil;
+        return;
+    }
+    
+    self.webView = [[WKWebView alloc] init];
+    self.webView.frame = CGRectMake(20, 220, self.view.frame.size.width - 40, 300);
+    [self.view addSubview:self.webView];
+    [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://github.com/Tencent/vConsole"]]];
 }
 
 - (void)onCrash {
