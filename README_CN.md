@@ -15,21 +15,23 @@ iOS调试库，支持iOS9+，无需添加任何代码，方便iOS开发和测试
 ## 使用教程
 真机或模拟器中5秒内摇一摇两次即可出现调试菜单。功能如下：
 
-* FLEX调试工具
-* 循环引用检测和分析
-* Class和Protocol的头文件查看
-* FPS、内存、CPU占用率显示
-* 手机、App信息查看
-* App崩溃日志的记录、查看
-* App文件管理器
-* Documents文件http、webdav服务器
-* 真机NSLog显示
-* 生成dylib动态库并注入其它App
-* App加密工具
-* CLLocationManager虚拟定位
-* 模拟器虚拟远程推送发送和接收功能
-* APNs远程推送发送功能
-* 启动时间、控制器加载和网络请求时间查看
+* FLEX调试工具（摇一摇开启）
+* 循环引用检测和分析（在对象查看页面点击搜索）
+* Class和Protocol的头文件查看（在类查看页面点击"Runtime Headers"）
+* FPS、内存、CPU占用率显示（摇一摇开启）
+* 手机、App信息查看（"Device Info"入口）
+* App崩溃日志的记录、查看（"Crash Log"入口）
+* App文件管理器（"Browse Directory"入口）
+* Documents文件http、webdav服务器（"Web Server"入口）
+* 真机NSLog显示（"System Log"入口，"App Config"可配置过滤系统日志）
+* 生成dylib动态库并注入其它App（"Dylib"目录，需手机越狱）
+* App加密工具（"App Config"可配置开启）
+* CLLocationManager虚拟定位（"Fake Location"入口）
+* 模拟器虚拟远程推送发送和接收功能（"Fake Notification"入口）
+* APNs远程推送发送功能（"Fake Notification"入口"APNS Client"配置）
+* 启动时间、控制器加载和网络请求时间查看（"Time Profiler"入口或点击帧率图标快速查看当前控制器时间）
+* WKWebView请求抓包功能（"App Config"打开开关后查看"Network History"即可）
+* WKWebView自动注入vConsole功能（"App Config"打开开关后打开WKWebView即可）
 
 ## 审核说明
 针对大家关心的上架审核问题，特别说明一下：
@@ -59,6 +61,11 @@ iOS调试库，支持iOS9+，无需添加任何代码，方便iOS开发和测试
 执行`carthage update`并拷贝`FWDebug.framework`到项目即可。
 
 ## 更新日志
+1.9.0版本：
+
+	* 增加WKWebView请求抓包功能
+	* WKWebView自动注入vConsole调试功能
+
 1.8.5版本：
 
 	* 更新FLEX为4.4.0版本
