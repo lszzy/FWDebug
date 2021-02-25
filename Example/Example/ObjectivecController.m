@@ -8,6 +8,7 @@
 
 #import "ObjectivecController.h"
 #import <CoreLocation/CoreLocation.h>
+#import <WebKit/WebKit.h>
 #import <FWDebug/FWDebug.h>
 
 @interface ObjectivecController () <CLLocationManagerDelegate>
@@ -51,13 +52,19 @@
     memoryDirtyButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100, 120, 200, 30);
     [self.view addSubview:memoryDirtyButton];
     
+    UIButton *webViewButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [webViewButton setTitle:@"Open WebView" forState:UIControlStateNormal];
+    [webViewButton addTarget:self action:@selector(onWebView) forControlEvents:UIControlEventTouchUpInside];
+    webViewButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100, 170, 200, 30);
+    [self.view addSubview:webViewButton];
+    
     UIButton *crashButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [crashButton setTitle:@"Crash" forState:UIControlStateNormal];
     [crashButton addTarget:self action:@selector(onCrash) forControlEvents:UIControlEventTouchUpInside];
-    crashButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100, 170, 200, 30);
+    crashButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100, 220, 200, 30);
     [self.view addSubview:crashButton];
     
-    UILabel *weatherLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 - 100, 220, 200, 30)];
+    UILabel *weatherLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 - 100, 270, 200, 30)];
     self.weatherLabel = weatherLabel;
     weatherLabel.text = @"Loading...";
     weatherLabel.textAlignment = NSTextAlignmentCenter;
@@ -142,6 +149,26 @@
     for (int i = 0; i < 10 * 1024 * 1024; ++i) {
         buf[i] = (char)rand();
     }
+}
+
+- (void)onWebView {
+    UIViewController *webController = [[UIViewController alloc] init];
+    webController.navigationItem.title = @"WKWebView";
+    webController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStylePlain target:self action:@selector(onWebClose)];
+    webController.view.backgroundColor = UIColor.whiteColor;
+    
+    WKWebView *webView = [[WKWebView alloc] initWithFrame:webController.view.bounds];
+    webView.allowsBackForwardNavigationGestures = YES;
+    [webController.view addSubview:webView];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.wuyong.site/"]]];
+    
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:webController];
+    navController.modalPresentationStyle = UIModalPresentationFullScreen;
+    [self presentViewController:navController animated:YES completion:nil];
+}
+
+- (void)onWebClose {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)onCrash {

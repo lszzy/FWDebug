@@ -15,21 +15,23 @@ iOS debugging library, support for iOS9 +, without adding any code to facilitate
 ## Tutorial
 Real machine or simulator shaking within 5 seconds twice to appear debug menu. Functions are as follows:
 
-* FLEX debugging tools
-* Circular reference detection and analysis
-* Class and Protocol header files to view
-* FPS, memory, CPU occupancy rate display
-* Phone, App information view
-* App crash log records, view
-* App file manager
-* Documents file http, webdav server
-* real machine NSLog display
-* Generate dylib dynamic library and inject other App
-* App encryption tools
-* CLLocationManager virtual positioning
-* simulator virtual remote push send and receive
-* APNs remote push sending
-* Launch time, controller loading and network request time view
+* FLEX debugging tool (shaking to open)
+* Circular reference detection and analysis (click to search on the object view page)
+* View the header files of Class and Protocol (click "Runtime Headers" on the class view page)
+* FPS, memory, CPU occupancy rate display (shaking to open)
+* View mobile phone and App information ("Device Info" entrance)
+* App crash log recording and viewing ("Crash Log" entrance)
+* App file manager ("Browse Directory" entrance)
+* Documents file http, webdav server ("Web Server" entrance)
+* Real machine NSLog display ("System Log" entrance, "App Config" can be configured to filter system logs)
+* Generate dylib dynamic library and inject other App ("Dylib" directory, mobile phone jailbreak required)
+* App encryption tool ("App Config" can be configured to open)
+* CLLocationManager virtual location ("Fake Location" entrance)
+* Simulator virtual remote push sending and receiving function ("Fake Notification" entrance)
+* APNs remote push sending function ("Fake Notification" entrance "APNS Client" configuration)
+* View the startup time, controller loading and network request time ("Time Profiler" entry or click the frame rate icon to quickly view the current controller time)
+* WKWebView request packet capture function (just check "Network History" after turning on the "App Config" switch)
+* WKWebView automatically injects the vConsole function (just turn on WKWebView after turning on the "App Config" switch)
 
 ## Review
 For everyone concerned about the issue of shelf audit, in particular, explain:
@@ -59,6 +61,11 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+Version 1.9.0:
+
+	* Added WKWebView request packet capture function
+	* WKWebView automatically injects the vConsole debugging function
+
 Version 1.8.5:
 
 	* Updated FLEX to version 4.4.0
