@@ -1,0 +1,139 @@
+{
+  "name": "FWDebug",
+  "version": "1.10.0",
+  "summary": "ios debug library",
+  "homepage": "http://wuyong.site",
+  "license": "MIT",
+  "authors": {
+    "Wu Yong": "admin@wuyong.site"
+  },
+  "source": {
+    "git": "https://github.com/lszzy/FWDebug.git",
+    "tag": "1.10.0"
+  },
+  "platforms": {
+    "ios": "9.0"
+  },
+  "source_files": "FWDebug/Classes/**/*.{h,m,mm,c,cpp}",
+  "public_header_files": "FWDebug/Classes/Public/*.h",
+  "frameworks": [
+    "Foundation",
+    "UIKit"
+  ],
+  "libraries": "c++",
+  "resources": "FWDebug/Assets/FWDebug.bundle",
+  "requires_arc": [
+    "FWDebug/Classes/Private/FBRetainCycleDetector/FBRetainCycleDetector+FWDebug.h",
+    "FWDebug/Classes/Private/FBRetainCycleDetector/FBRetainCycleDetector+FWDebug.m",
+    "FWDebug/Classes/Private/FBRetainCycleDetector/FWDebugRetainCycle.h",
+    "FWDebug/Classes/Private/FBRetainCycleDetector/FWDebugRetainCycle.m",
+    "FWDebug/Classes/Private/FLEX/FLEXExplorerToolbar+FWDebug.h",
+    "FWDebug/Classes/Private/FLEX/FLEXExplorerToolbar+FWDebug.m",
+    "FWDebug/Classes/Private/FLEX/FLEXFileBrowserController+FWDebug.h",
+    "FWDebug/Classes/Private/FLEX/FLEXFileBrowserController+FWDebug.m",
+    "FWDebug/Classes/Private/FLEX/FLEXManager+FWDebug.h",
+    "FWDebug/Classes/Private/FLEX/FLEXManager+FWDebug.m",
+    "FWDebug/Classes/Private/FLEX/FLEXObjectExplorerViewController+FWDebug.h",
+    "FWDebug/Classes/Private/FLEX/FLEXObjectExplorerViewController+FWDebug.m",
+    "FWDebug/Classes/Private/FLEX/FLEXObjectListViewController+FWDebug.h",
+    "FWDebug/Classes/Private/FLEX/FLEXObjectListViewController+FWDebug.m",
+    "FWDebug/Classes/Private/FLEX/FWDebugAppConfig.h",
+    "FWDebug/Classes/Private/FLEX/FWDebugAppConfig.m",
+    "FWDebug/Classes/Private/FLEX/FWDebugFakeLocation.h",
+    "FWDebug/Classes/Private/FLEX/FWDebugFakeLocation.m",
+    "FWDebug/Classes/Private/FLEX/FWDebugFakeNotification.h",
+    "FWDebug/Classes/Private/FLEX/FWDebugFakeNotification.m",
+    "FWDebug/Classes/Private/FLEX/FWDebugFpsInfo.h",
+    "FWDebug/Classes/Private/FLEX/FWDebugFpsInfo.m",
+    "FWDebug/Classes/Private/FLEX/FWDebugSystemInfo.h",
+    "FWDebug/Classes/Private/FLEX/FWDebugSystemInfo.m",
+    "FWDebug/Classes/Private/FLEX/FWDebugTimeProfiler.h",
+    "FWDebug/Classes/Private/FLEX/FWDebugTimeProfiler.m",
+    "FWDebug/Classes/Private/GCDWebServer/FWDebugWebServer.h",
+    "FWDebug/Classes/Private/GCDWebServer/FWDebugWebServer.m",
+    "FWDebug/Classes/Private/KSCrash/FWDebugKSCrashInstallationFile.h",
+    "FWDebug/Classes/Private/KSCrash/FWDebugKSCrashInstallationFile.m",
+    "FWDebug/Classes/Private/KSCrash/FWDebugKSCrashReportSinkFile.h",
+    "FWDebug/Classes/Private/KSCrash/FWDebugKSCrashReportSinkFile.m",
+    "FWDebug/Classes/Private/KSCrash/KSCrash+FWDebug.h",
+    "FWDebug/Classes/Private/KSCrash/KSCrash+FWDebug.m",
+    "FWDebug/Classes/Private/Manager/FWDebugManager+FWDebug.h",
+    "FWDebug/Classes/Private/Manager/FWDebugManager+FWDebug.m",
+    "FWDebug/Classes/Private/RuntimeBrowser/FWDebugRuntimeBrowser.h",
+    "FWDebug/Classes/Private/RuntimeBrowser/FWDebugRuntimeBrowser.m",
+    "FWDebug/Classes/Public/FWDebug.h",
+    "FWDebug/Classes/Public/FWDebugManager.h",
+    "FWDebug/Classes/Public/FWDebugManager.m",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Associations/Internal/FBAssociationManager+Internal.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Detector/FBNodeEnumerator.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Detector/FBNodeEnumerator.mm",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Detector/FBRetainCycleDetector+Internal.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Detector/FBRetainCycleDetector.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Detector/FBRetainCycleDetector.mm",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/FBRetainCycleUtils.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/FBRetainCycleUtils.m",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Filtering/FBStandardGraphEdgeFilters.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Filtering/FBStandardGraphEdgeFilters.mm",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Graph/FBObjectGraphConfiguration.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Graph/FBObjectGraphConfiguration.m",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Graph/FBObjectiveCBlock.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Graph/FBObjectiveCBlock.m",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Graph/FBObjectiveCGraphElement.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Graph/FBObjectiveCGraphElement.mm",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Graph/FBObjectiveCObject.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Graph/FBObjectiveCObject.m",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Graph/Internal/FBObjectiveCGraphElement+Internal.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Graph/Specialization/FBObjectiveCNSCFTimer.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Graph/Specialization/FBObjectiveCNSCFTimer.mm",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Blocks/FBBlockInterface.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/FBClassStrongLayout.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/FBClassStrongLayout.mm",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/Parser/BaseType.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/Parser/FBStructEncodingParser.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/Parser/FBStructEncodingParser.mm",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/Parser/Struct.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/Parser/Struct.mm",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/Parser/Type.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/Reference/FBIvarReference.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/Reference/FBIvarReference.m",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/Reference/FBObjectInStructReference.h",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/Reference/FBObjectInStructReference.m",
+    "FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/Reference/FBObjectReference.h",
+    "FWDebug/Classes/Vendor/RuntimeBrowser/RTBClass.h",
+    "FWDebug/Classes/Vendor/RuntimeBrowser/RTBClass.m",
+    "FWDebug/Classes/Vendor/RuntimeBrowser/RTBMethod.h",
+    "FWDebug/Classes/Vendor/RuntimeBrowser/RTBMethod.m",
+    "FWDebug/Classes/Vendor/RuntimeBrowser/RTBProtocol.h",
+    "FWDebug/Classes/Vendor/RuntimeBrowser/RTBProtocol.m",
+    "FWDebug/Classes/Vendor/RuntimeBrowser/RTBRuntime.h",
+    "FWDebug/Classes/Vendor/RuntimeBrowser/RTBRuntime.m",
+    "FWDebug/Classes/Vendor/RuntimeBrowser/RTBRuntimeHeader.h",
+    "FWDebug/Classes/Vendor/RuntimeBrowser/RTBRuntimeHeader.m",
+    "FWDebug/Classes/Vendor/RuntimeBrowser/RTBTypeDecoder.h",
+    "FWDebug/Classes/Vendor/RuntimeBrowser/RTBTypeDecoder.m",
+    "FWDebug/Classes/Vendor/RuntimeBrowser/RTBTypeDecoder2.h",
+    "FWDebug/Classes/Vendor/RuntimeBrowser/RTBTypeDecoder2.m",
+    "FWDebug/Classes/Vendor/rcd_fishhook/rcd_fishhook.c",
+    "FWDebug/Classes/Vendor/rcd_fishhook/rcd_fishhook.h"
+  ],
+  "dependencies": {
+    "FLEX": [
+
+    ],
+    "GCDWebServer": [
+
+    ],
+    "GCDWebServer/WebUploader": [
+
+    ],
+    "GCDWebServer/WebDAV": [
+
+    ],
+    "KSCrash": [
+
+    ],
+    "NWPusher": [
+
+    ]
+  }
+}

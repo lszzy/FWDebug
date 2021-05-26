@@ -1,0 +1,6 @@
+framework module FWDebug {
+  umbrella header "FWDebug-umbrella.h"
+
+  export *
+  module * { export * }
+}

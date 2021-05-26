@@ -1,0 +1,105 @@
+PODS:
+  - FLEX (4.4.1)
+  - FWDebug (1.10.0):
+    - FLEX
+    - GCDWebServer
+    - GCDWebServer/WebDAV
+    - GCDWebServer/WebUploader
+    - KSCrash
+    - NWPusher
+  - GCDWebServer (3.5.4):
+    - GCDWebServer/Core (= 3.5.4)
+  - GCDWebServer/Core (3.5.4)
+  - GCDWebServer/WebDAV (3.5.4):
+    - GCDWebServer/Core
+  - GCDWebServer/WebUploader (3.5.4):
+    - GCDWebServer/Core
+  - KSCrash (1.15.25):
+    - KSCrash/Installations (= 1.15.25)
+  - KSCrash/Installations (1.15.25):
+    - KSCrash/Recording
+    - KSCrash/Reporting
+  - KSCrash/Recording (1.15.25):
+    - KSCrash/Recording/Tools (= 1.15.25)
+  - KSCrash/Recording/Tools (1.15.25)
+  - KSCrash/Reporting (1.15.25):
+    - KSCrash/Recording
+    - KSCrash/Reporting/Filters (= 1.15.25)
+    - KSCrash/Reporting/MessageUI (= 1.15.25)
+    - KSCrash/Reporting/Sinks (= 1.15.25)
+    - KSCrash/Reporting/Tools (= 1.15.25)
+  - KSCrash/Reporting/Filters (1.15.25):
+    - KSCrash/Recording
+    - KSCrash/Reporting/Filters/Alert (= 1.15.25)
+    - KSCrash/Reporting/Filters/AppleFmt (= 1.15.25)
+    - KSCrash/Reporting/Filters/Base (= 1.15.25)
+    - KSCrash/Reporting/Filters/Basic (= 1.15.25)
+    - KSCrash/Reporting/Filters/GZip (= 1.15.25)
+    - KSCrash/Reporting/Filters/JSON (= 1.15.25)
+    - KSCrash/Reporting/Filters/Sets (= 1.15.25)
+    - KSCrash/Reporting/Filters/Stringify (= 1.15.25)
+    - KSCrash/Reporting/Filters/Tools (= 1.15.25)
+  - KSCrash/Reporting/Filters/Alert (1.15.25):
+    - KSCrash/Recording
+    - KSCrash/Reporting/Filters/Base
+  - KSCrash/Reporting/Filters/AppleFmt (1.15.25):
+    - KSCrash/Recording
+    - KSCrash/Reporting/Filters/Base
+  - KSCrash/Reporting/Filters/Base (1.15.25):
+    - KSCrash/Recording
+  - KSCrash/Reporting/Filters/Basic (1.15.25):
+    - KSCrash/Recording
+    - KSCrash/Reporting/Filters/Base
+  - KSCrash/Reporting/Filters/GZip (1.15.25):
+    - KSCrash/Recording
+    - KSCrash/Reporting/Filters/Base
+  - KSCrash/Reporting/Filters/JSON (1.15.25):
+    - KSCrash/Recording
+    - KSCrash/Reporting/Filters/Base
+  - KSCrash/Reporting/Filters/Sets (1.15.25):
+    - KSCrash/Recording
+    - KSCrash/Reporting/Filters/AppleFmt
+    - KSCrash/Reporting/Filters/Base
+    - KSCrash/Reporting/Filters/Basic
+    - KSCrash/Reporting/Filters/GZip
+    - KSCrash/Reporting/Filters/JSON
+    - KSCrash/Reporting/Filters/Stringify
+  - KSCrash/Reporting/Filters/Stringify (1.15.25):
+    - KSCrash/Recording
+    - KSCrash/Reporting/Filters/Base
+  - KSCrash/Reporting/Filters/Tools (1.15.25):
+    - KSCrash/Recording
+  - KSCrash/Reporting/MessageUI (1.15.25):
+    - KSCrash/Recording
+  - KSCrash/Reporting/Sinks (1.15.25):
+    - KSCrash/Recording
+    - KSCrash/Reporting/Filters
+    - KSCrash/Reporting/Tools
+  - KSCrash/Reporting/Tools (1.15.25):
+    - KSCrash/Recording
+  - NWPusher (0.7.5)
+
+DEPENDENCIES:
+  - FWDebug (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - FLEX
+    - GCDWebServer
+    - KSCrash
+    - NWPusher
+
+EXTERNAL SOURCES:
+  FWDebug:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  FLEX: 7ca2c8cd3a435ff501ff6d2f2141e9bdc934eaab
+  FWDebug: b6f6dadc51a563d1d689c0dd792475c2ae3991ac
+  GCDWebServer: 2c156a56c8226e2d5c0c3f208a3621ccffbe3ce4
+  KSCrash: 6689ba5c43800f831b68928ccdbcc8b201d4dd86
+  NWPusher: 9b29a44754d88cb02c28a1e9bc8750845506123e
+
+PODFILE CHECKSUM: b187d1acc32e9b5e7bcd881a7724ba970a3a45ae
+
+COCOAPODS: 1.10.1
