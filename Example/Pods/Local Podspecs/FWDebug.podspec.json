@@ -33,6 +33,8 @@
     "FWDebug/Classes/Private/FLEX/FLEXFileBrowserController+FWDebug.m",
     "FWDebug/Classes/Private/FLEX/FLEXManager+FWDebug.h",
     "FWDebug/Classes/Private/FLEX/FLEXManager+FWDebug.m",
+    "FWDebug/Classes/Private/FLEX/FLEXOSLogController+FWDebug.h",
+    "FWDebug/Classes/Private/FLEX/FLEXOSLogController+FWDebug.m",
     "FWDebug/Classes/Private/FLEX/FLEXObjectExplorerViewController+FWDebug.h",
     "FWDebug/Classes/Private/FLEX/FLEXObjectExplorerViewController+FWDebug.m",
     "FWDebug/Classes/Private/FLEX/FLEXObjectListViewController+FWDebug.h",

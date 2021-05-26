@@ -15,6 +15,9 @@
 #import <objc/runtime.h>
 
 static BOOL isAppLocked = NO;
+static BOOL filterSystemLog = NO;
+static BOOL traceVCLife = NO;
+static BOOL traceVCRequest = NO;
 
 @interface FWDebugAppConfig ()
 
@@ -96,20 +99,32 @@ static BOOL isAppLocked = NO;
 
 + (BOOL)filterSystemLog
 {
-    NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFilterSystemLog"];
-    return value ? [value boolValue] : NO;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFilterSystemLog"];
+        filterSystemLog = value ? [value boolValue] : NO;
+    });
+    return filterSystemLog;
 }
 
 + (BOOL)traceVCLife
 {
-    NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugTraceVCLife"];
-    return value ? [value boolValue] : YES;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugTraceVCLife"];
+        traceVCLife = value ? [value boolValue] : YES;
+    });
+    return traceVCLife;
 }
 
 + (BOOL)traceVCRequest
 {
-    NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugTraceVCRequest"];
-    return value ? [value boolValue] : NO;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugTraceVCRequest"];
+        traceVCRequest = value ? [value boolValue] : NO;
+    });
+    return traceVCRequest;
 }
 
 + (NSString *)traceVCUrls
@@ -360,22 +375,26 @@ static BOOL isAppLocked = NO;
     
     if (indexPath.section == 0 && indexPath.row == 0) {
         if (!cellSwitch.on) {
+            traceVCLife = YES;
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugTraceVCLife"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
             [FWDebugTimeProfiler enableTraceVCLife];
         } else {
+            traceVCLife = NO;
             [[NSUserDefaults standardUserDefaults] setObject:@(NO) forKey:@"FWDebugTraceVCLife"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
         }
     } else if (indexPath.section == 0 && indexPath.row == 1) {
         if (!cellSwitch.on) {
+            traceVCRequest = YES;
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugTraceVCRequest"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
             [FWDebugTimeProfiler enableTraceVCRequest];
         } else {
+            traceVCRequest = NO;
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugTraceVCRequest"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
@@ -407,10 +426,12 @@ static BOOL isAppLocked = NO;
         }
     } else if (indexPath.section == 2 && indexPath.row == 0) {
         if (!cellSwitch.on) {
+            filterSystemLog = YES;
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugFilterSystemLog"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
         } else {
+            filterSystemLog = NO;
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFilterSystemLog"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];

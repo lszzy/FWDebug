@@ -18,6 +18,7 @@
 #import "FLEXFileBrowserController+FWDebug.h"
 #import "FLEXExplorerToolbar+FWDebug.h"
 #import "FLEXObjectListViewController+FWDebug.h"
+#import "FLEXOSLogController+FWDebug.h"
 #import "FWDebugSystemInfo.h"
 #import "FWDebugTimeProfiler.h"
 #import "FWDebugWebServer.h"
@@ -30,6 +31,7 @@
 
 + (void)fwDebugLoad
 {
+    [FLEXOSLogController fwDebugLoad];
     [FLEXExplorerToolbar fwDebugLoad];
     [FLEXFileBrowserController fwDebugLoad];
     [FLEXObjectExplorerViewController fwDebugLoad];
