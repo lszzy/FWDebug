@@ -61,6 +61,11 @@ iOS调试库，支持iOS9+，无需添加任何代码，方便iOS开发和测试
 执行`carthage update`并拷贝`FWDebug.framework`到项目即可。
 
 ## 更新日志
+1.10.0版本：
+
+	* 重构项目架构，使用pod依赖引入三方库
+	* 优化过滤系统NSLog日志功能
+
 1.9.0版本：
 
 	* 增加WKWebView请求抓包功能

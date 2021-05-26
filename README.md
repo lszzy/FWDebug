@@ -61,6 +61,11 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
+Version 1.10.0:
+
+	* Refactor the project architecture and use pod dependencies to introduce third-party libraries
+	* Optimize the NSLog log function of the filtering system
+
 Version 1.9.0:
 
 	* Added WKWebView request packet capture function
