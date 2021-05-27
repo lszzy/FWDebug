@@ -205,7 +205,7 @@ static BOOL traceVCRequest = NO;
                 BOOL hasInjection = [objc_getAssociatedObject(userContentController, @selector(webViewInjectVConsole)) boolValue];
                 if (hasInjection) return;
                 
-                NSString *vConsoleFile = [[NSBundle bundleForClass:[FWDebugAppConfig class]] pathForResource:@"FWDebug.bundle/vconsole.min.js" ofType:nil];
+                NSString *vConsoleFile = [[NSBundle bundleForClass:[FWDebugAppConfig class]] pathForResource:@"GCDWebUploader.bundle/Contents/Resources/js/vconsole.min.js" ofType:nil];
                 if (vConsoleFile.length < 1) return;
                 NSString *vConsoleJs = [NSString stringWithContentsOfFile:vConsoleFile encoding:NSUTF8StringEncoding error:nil];
                 if (vConsoleJs.length < 1) return;
