@@ -201,7 +201,7 @@ OSStatus NWSSLRead(SSLConnectionRef connection, void *data, size_t *length) {
     size_t read = 0;
     ssize_t rcvd = 0;
     for(; read < leng; read += rcvd) {
-        rcvd = recv((int)connection, (char *)data + read, leng - read, 0);
+        rcvd = recv((int)(NSInteger)connection, (char *)data + read, leng - read, 0);
         if (rcvd <= 0) break;
     }
     *length = read;
@@ -224,7 +224,7 @@ OSStatus NWSSLWrite(SSLConnectionRef connection, const void *data, size_t *lengt
     size_t sent = 0;
     ssize_t wrtn = 0;
     for (; sent < leng; sent += wrtn) {
-        wrtn = write((int)connection, (char *)data + sent, leng - sent);
+        wrtn = write((int)(NSInteger)connection, (char *)data + sent, leng - sent);
         if (wrtn <= 0) break;
     }
     *length = sent;

@@ -61,9 +61,9 @@ This debug library supports Carthage, Cartfile example:
 Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
-Version 1.10.0:
+Version 1.9.1:
 
-	* Refactor the project architecture and use pod dependencies to introduce third-party libraries
+	* Refactor the project structure and introduce the tripartite library without modification
 	* Optimize the NSLog log function of the filtering system
 
 Version 1.9.0:
