@@ -17,13 +17,13 @@ Pod::Spec.new do |s|
     'FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/FBClassStrongLayoutHelpers.h',
     'FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/FBClassStrongLayoutHelpers.m',
   ]
-  s_arc_files           = Pathname.glob("FWDebug/Classes/**/*.{h,m,mm,c,cpp}")
+  s_arc_files           = Pathname.glob("FWDebug/Classes/**/*.{h,m,mm,c,cpp,def}")
   s_arc_files           = s_arc_files.map {|file| file.to_path}
   s_arc_files           = s_arc_files.reject {|file| s_mrr_files.include?(file)}
   s.requires_arc        = s_arc_files
   
   s.platform            = :ios, "9.0"
-  s.source_files        = 'FWDebug/Classes/**/*.{h,m,mm,c,cpp}'
+  s.source_files        = 'FWDebug/Classes/**/*.{h,m,mm,c,cpp,def}'
   s.public_header_files = 'FWDebug/Classes/Public/*.h'
   s.resource            = 'FWDebug/Assets/GCDWebUploader.bundle'
   s.frameworks          = [ "Foundation", "UIKit" ]
