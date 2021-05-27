@@ -121,6 +121,11 @@ NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
     return [FLEXManager sharedManager].isHidden;
 }
 
+- (void)toggle
+{
+    [[FLEXManager sharedManager] toggleExplorer];
+}
+
 - (void)show
 {
     [[FLEXManager sharedManager] showExplorer];

@@ -64,6 +64,7 @@ Execute `carthage update` and copy `FWDebug.framework` to the project.
 Version 1.9.1:
 
 	* Refactor the project structure and introduce the tripartite library without modification
+	* Sync Vendor latest trunk code
 	* Optimize the NSLog log function of the filtering system
 
 Version 1.9.0:

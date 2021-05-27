@@ -33,6 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 记录自定义事件，object为事件对象，userInfo为weak引用附加信息
 - (void)recordEvent:(NSString *)event object:(id)object userInfo:(nullable id)userInfo;
 
+/// 切换调试器
+- (void)toggle;
+
 /// 显示调试器
 - (void)show;
 

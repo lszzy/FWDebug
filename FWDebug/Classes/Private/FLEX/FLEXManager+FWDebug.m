@@ -59,6 +59,18 @@
         };
     }];
     
+    if (@available(iOS 13.0, *)) {
+        [FWDebugManager swizzleMethod:@selector(showExplorerFromScene:) in:[FLEXManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(__unsafe_unretained FLEXManager *selfObject, UIWindowScene *scene) {
+                if ([FWDebugAppConfig isAppLocked]) return;
+                
+                ((void (*)(id, SEL, UIWindowScene *))originalIMP())(selfObject, originalCMD, scene);
+                
+                [selfObject.fwDebugFpsInfo start];
+            };
+        }];
+    }
+    
     [FLEXManager sharedManager].networkDebuggingEnabled = YES;
     
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"💟  Device Info" viewControllerFutureBlock:^UIViewController *{
