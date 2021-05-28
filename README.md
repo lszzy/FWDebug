@@ -41,7 +41,7 @@ For everyone concerned about the issue of shelf audit, in particular, explain:
 Just set `: configurations => ['Debug']` when adding a pod, valid only in Debug mode.
 
 ## Installation
-CocoaPods installation is recommended for automatic management of dependencies and environment configuration. For manual import, please refer to the Example project configuration.
+CocoaPods installation is recommended for automatic management of dependencies and environment configuration. 
 
 ### CocoaPods
 The debug library supports Debug and Release environment, it is recommended Debug mode is turned on. Podfile example:
@@ -52,13 +52,6 @@ The debug library supports Debug and Release environment, it is recommended Debu
 	target 'Example' do
 	  pod 'FWDebug', :configurations => ['Debug']
 	end
-
-### Carthage
-This debug library supports Carthage, Cartfile example:
-
-	github "lszzy/FWDebug"
-
-Execute `carthage update` and copy `FWDebug.framework` to the project.
 
 ## Changelog
 Version 1.9.1:

@@ -41,7 +41,7 @@ iOS调试库，支持iOS9+，无需添加任何代码，方便iOS开发和测试
 只需在添加pod时设置`:configurations => ['Debug']`，只在Debug模式生效即可。
 
 ## 安装教程
-推荐使用CocoaPods安装，自动管理依赖和环境配置。如需手工导入请参考Example项目配置。
+推荐使用CocoaPods安装，自动管理依赖和环境配置。
 
 ### CocoaPods
 本调试库支持Debug和Release环境，建议Debug模式开启。Podfile示例：
@@ -52,13 +52,6 @@ iOS调试库，支持iOS9+，无需添加任何代码，方便iOS开发和测试
 	target 'Example' do
 	  pod 'FWDebug', :configurations => ['Debug']
 	end
-
-### Carthage
-本调试库支持Carthage，Cartfile示例：
-
-	github "lszzy/FWDebug"
-
-执行`carthage update`并拷贝`FWDebug.framework`到项目即可。
 
 ## 更新日志
 1.9.1版本：
