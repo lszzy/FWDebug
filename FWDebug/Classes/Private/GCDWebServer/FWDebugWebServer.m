@@ -9,16 +9,20 @@
 #import "FWDebugWebServer.h"
 #import "GCDWebDAVServer.h"
 #import "GCDWebUploader.h"
+#import "GCDWebServerDataResponse.h"
+#import "GCDWebServerErrorResponse.h"
 #import "FWDebugManager+FWDebug.h"
 
 #pragma mark - FWDebugWebServer
 
 #define FWDebugWebServerPort 8001
 #define FWDebugWebDavServerPort 8002
+#define FWDebugWebSitePort 8003
 
 // 静态服务器变量
 static GCDWebUploader *_webServer = nil;
 static GCDWebDAVServer *_webDavServer = nil;
+static GCDWebServer *_webSite = nil;
 
 @interface FWDebugWebServer ()
 
@@ -46,6 +50,24 @@ static GCDWebDAVServer *_webDavServer = nil;
             NSString *webDavPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
             _webDavServer = [[GCDWebDAVServer alloc] initWithUploadDirectory:webDavPath];
         }
+        
+        //初始化WebSite
+        if (!_webSite) {
+            NSString *webPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"website"];
+            _webSite = [[GCDWebServer alloc] init];
+            [_webSite addGETHandlerForBasePath:@"/" directoryPath:webPath indexFilename:nil cacheAge:3600 allowRangeRequests:YES];
+            [_webSite addHandlerForMethod:@"GET" pathRegex:@"/.*\\.html" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest *request) {
+                NSString *html = [[NSString alloc] initWithContentsOfFile:[webPath stringByAppendingPathComponent:request.path] encoding:NSUTF8StringEncoding error:NULL];
+                if (html != nil) {
+                    return [GCDWebServerDataResponse responseWithHTML:html];
+                } else {
+                    return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", request.path];
+                }
+            }];
+            [_webSite addHandlerForMethod:@"GET" path:@"/" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest *request) {
+                return [GCDWebServerResponse responseWithRedirect:[NSURL URLWithString:@"index.html" relativeToURL:request.URL] permanent:NO];
+            }];
+        }
     }
     return self;
 }
@@ -59,7 +81,7 @@ static GCDWebDAVServer *_webDavServer = nil;
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return 3;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -67,7 +89,7 @@ static GCDWebDAVServer *_webDavServer = nil;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return section == 0 ? @"Web Server" : @"WebDav Server";
+    return section == 0 ? @"Web Server" : (section == 1 ? @"WebDav Server" : @"WebSite Server");
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -91,7 +113,7 @@ static GCDWebDAVServer *_webDavServer = nil;
 - (void)configCell:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
     UISwitch *cellSwitch = (UISwitch *)cell.accessoryView;
     cellSwitch.tag = indexPath.section;
-    GCDWebServer *server = indexPath.section == 0 ? _webServer : _webDavServer;
+    GCDWebServer *server = indexPath.section == 0 ? _webServer : (indexPath.section == 1 ? _webDavServer : _webSite);
     
     if (server.isRunning) {
         cell.textLabel.text = @"Server Started";
@@ -106,8 +128,8 @@ static GCDWebDAVServer *_webDavServer = nil;
 
 #pragma mark - Action
 - (void)actionSwitch:(UISwitch *)sender {
-    GCDWebServer *server = sender.tag == 0 ? _webServer : _webDavServer;
-    NSUInteger port = sender.tag == 0 ? FWDebugWebServerPort : FWDebugWebDavServerPort;
+    GCDWebServer *server = sender.tag == 0 ? _webServer : (sender.tag == 1 ? _webDavServer : _webSite);
+    NSUInteger port = sender.tag == 0 ? FWDebugWebServerPort : (sender.tag == 1 ? FWDebugWebDavServerPort : FWDebugWebSitePort);
     
     if (sender.on) {
         [server startWithPort:port bonjourName:@""];

@@ -32,6 +32,7 @@ iOS调试库，支持iOS9+，无需添加任何代码，方便iOS开发和测试
 * 启动时间、控制器加载和网络请求时间查看（"Time Profiler"入口或点击帧率图标快速查看当前控制器时间）
 * WKWebView请求抓包功能（"App Config"打开开关后查看"Network History"即可）
 * WKWebView自动注入vConsole功能（"App Config"打开开关后打开WKWebView即可）
+* WebSite静态web服务器（"Web Server"入口，web文件放到Documents/website即可）
 
 ## 审核说明
 针对大家关心的上架审核问题，特别说明一下：
@@ -41,7 +42,7 @@ iOS调试库，支持iOS9+，无需添加任何代码，方便iOS开发和测试
 只需在添加pod时设置`:configurations => ['Debug']`，只在Debug模式生效即可。
 
 ## 安装教程
-推荐使用CocoaPods安装，自动管理依赖和环境配置。如需手工导入请参考Example项目配置。
+推荐使用CocoaPods安装，自动管理依赖和环境配置。
 
 ### CocoaPods
 本调试库支持Debug和Release环境，建议Debug模式开启。Podfile示例：
@@ -53,14 +54,11 @@ iOS调试库，支持iOS9+，无需添加任何代码，方便iOS开发和测试
 	  pod 'FWDebug', :configurations => ['Debug']
 	end
 
-### Carthage
-本调试库支持Carthage，Cartfile示例：
-
-	github "lszzy/FWDebug"
-
-执行`carthage update`并拷贝`FWDebug.framework`到项目即可。
-
 ## 更新日志
+1.9.2版本：
+
+	* 新增内建静态web服务器功能
+
 1.9.1版本：
 
 	* 重构项目架构，无修改方式引入三方库

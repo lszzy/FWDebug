@@ -32,6 +32,7 @@ Real machine or simulator shaking within 5 seconds twice to appear debug menu. F
 * View the startup time, controller loading and network request time ("Time Profiler" entry or click the frame rate icon to quickly view the current controller time)
 * WKWebView request packet capture function (just check "Network History" after turning on the "App Config" switch)
 * WKWebView automatically injects the vConsole function (just turn on WKWebView after turning on the "App Config" switch)
+* WebSite static web server ("Web Server" entrance, the web file can be placed in Documents/website)
 
 ## Review
 For everyone concerned about the issue of shelf audit, in particular, explain:
@@ -41,7 +42,7 @@ For everyone concerned about the issue of shelf audit, in particular, explain:
 Just set `: configurations => ['Debug']` when adding a pod, valid only in Debug mode.
 
 ## Installation
-CocoaPods installation is recommended for automatic management of dependencies and environment configuration. For manual import, please refer to the Example project configuration.
+CocoaPods installation is recommended for automatic management of dependencies and environment configuration. 
 
 ### CocoaPods
 The debug library supports Debug and Release environment, it is recommended Debug mode is turned on. Podfile example:
@@ -53,14 +54,11 @@ The debug library supports Debug and Release environment, it is recommended Debu
 	  pod 'FWDebug', :configurations => ['Debug']
 	end
 
-### Carthage
-This debug library supports Carthage, Cartfile example:
-
-	github "lszzy/FWDebug"
-
-Execute `carthage update` and copy `FWDebug.framework` to the project.
-
 ## Changelog
+Version 1.9.2:
+
+	* Added built-in static web server function
+
 Version 1.9.1:
 
 	* Refactor the project structure and introduce the tripartite library without modification
