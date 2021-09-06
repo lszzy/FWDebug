@@ -55,6 +55,12 @@ The debug library supports Debug and Release environment, it is recommended Debu
 	end
 
 ## Changelog
+Version 1.10.0:
+
+	* Fix iOS15 crash problem
+	* Upgrade FLEX to version 4.5.0
+	* At least compatible with iOS10
+
 Version 1.9.2:
 
 	* Added built-in static web server function

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name                = "FWDebug"
-  s.version             = "1.9.2"
+  s.version             = "1.10.0"
   s.summary             = "ios debug library"
   s.homepage            = "http://wuyong.site"
   s.license             = "MIT"
@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   s_arc_files           = s_arc_files.reject {|file| s_mrr_files.include?(file)}
   s.requires_arc        = s_arc_files
   
-  s.platform            = :ios, "9.0"
+  s.platform            = :ios, "10.0"
   s.source_files        = 'FWDebug/Classes/**/*.{h,m,mm,c,cpp,def}'
   s.public_header_files = 'FWDebug/Classes/Public/*.h'
   s.resource            = 'FWDebug/Assets/GCDWebUploader.bundle'
