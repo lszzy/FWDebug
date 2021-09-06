@@ -69,14 +69,12 @@
 - (void)showExplorer {
     UIWindow *flex = self.explorerWindow;
     flex.hidden = NO;
-#if FLEX_AT_LEAST_IOS13_SDK
     if (@available(iOS 13.0, *)) {
         // Only look for a new scene if we don't have one
         if (!flex.windowScene) {
             flex.windowScene = FLEXUtility.appKeyWindow.windowScene;
         }
     }
-#endif
 }
 
 - (void)hideExplorer {
@@ -104,15 +102,14 @@
 }
 
 - (void)presentTool:(UINavigationController * _Nonnull (^)(void))future completion:(void (^)(void))completion {
-    [self.explorerViewController toggleToolWithViewControllerProvider:future completion:completion];
+    [self showExplorer];
+    [self.explorerViewController presentTool:future completion:completion];
 }
 
 - (void)showExplorerFromScene:(UIWindowScene *)scene {
-    #if FLEX_AT_LEAST_IOS13_SDK
     if (@available(iOS 13.0, *)) {
         self.explorerWindow.windowScene = scene;
     }
-    #endif
     self.explorerWindow.hidden = NO;
 }
 
