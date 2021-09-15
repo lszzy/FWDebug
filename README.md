@@ -55,6 +55,10 @@ The debug library supports Debug and Release environment, it is recommended Debu
 	end
 
 ## Changelog
+Version 1.10.1:
+
+	* Added the ability to simulate the executable name and version number of the application
+
 Version 1.10.0:
 
 	* Fix iOS15 crash problem

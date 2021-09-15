@@ -50,6 +50,11 @@ static BOOL traceVCRequest = NO;
     if ([self webViewInjectionEnabled]) {
         [FWDebugAppConfig webViewInjectVConsole];
     }
+    
+    if ([self fakeBundleExecutable].length > 0 ||
+        [self fakeBundleShortVersion].length > 0) {
+        [self fakeBundleInfoDictionary];
+    }
 }
 
 + (BOOL)isAppLocked
@@ -136,6 +141,44 @@ static BOOL traceVCRequest = NO;
 {
     NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugRetainCycleDepth"];
     return value ? [value integerValue] : 10;
+}
+
++ (NSString *)fakeBundleExecutable
+{
+    NSString *value = [[NSUserDefaults standardUserDefaults] stringForKey:@"FWDebugFakeBundleExecutable"];
+    return value ?: @"";
+}
+
++ (NSString *)fakeBundleShortVersion
+{
+    NSString *value = [[NSUserDefaults standardUserDefaults] stringForKey:@"FWDebugFakeBundleShortVersion"];
+    return value ?: @"";
+}
+
++ (void)fakeBundleInfoDictionary
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [FWDebugManager swizzleMethod:@selector(infoDictionary) in:[NSBundle class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(__unsafe_unretained NSBundle *selfObject) {
+                NSDictionary *infoDictionary = ((NSDictionary * (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+                if ([FWDebugAppConfig fakeBundleExecutable].length <= 0 &&
+                    [FWDebugAppConfig fakeBundleShortVersion].length <= 0) {
+                    return infoDictionary;
+                }
+                
+                NSMutableDictionary *mutableInfo = [infoDictionary mutableCopy];
+                if ([FWDebugAppConfig fakeBundleExecutable].length > 0) {
+                    mutableInfo[(__bridge NSString *)kCFBundleExecutableKey] = [FWDebugAppConfig fakeBundleExecutable];
+                }
+                if ([FWDebugAppConfig fakeBundleShortVersion].length > 0) {
+                    mutableInfo[@"CFBundleShortVersionString"] = [FWDebugAppConfig fakeBundleShortVersion];
+                }
+                infoDictionary = [mutableInfo copy];
+                return infoDictionary;
+            };
+        }];
+    });
 }
 
 + (BOOL)isInjectionEnabled
@@ -260,7 +303,7 @@ static BOOL traceVCRequest = NO;
     } else if (section == 1) {
         return 2;
     } else {
-        return 4;
+        return 6;
     }
 }
 
@@ -287,7 +330,9 @@ static BOOL traceVCRequest = NO;
         }
         [self configLabel:cell indexPath:indexPath];
         return cell;
-    } else if (indexPath.section == 2 && indexPath.row == 3) {
+    } else if ((indexPath.section == 2 && indexPath.row == 3) ||
+               (indexPath.section == 2 && indexPath.row == 4) ||
+               (indexPath.section == 2 && indexPath.row == 5)) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell3"];
         if (cell == nil) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell3"];
@@ -317,7 +362,9 @@ static BOOL traceVCRequest = NO;
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     if ((indexPath.section == 0 && indexPath.row == 2) ||
-        (indexPath.section == 2 && indexPath.row == 3)) {
+        (indexPath.section == 2 && indexPath.row == 3) ||
+        (indexPath.section == 2 && indexPath.row == 4) ||
+        (indexPath.section == 2 && indexPath.row == 5)) {
         [self actionLabel:indexPath];
     } else {
         [self actionSwitch:indexPath];
@@ -361,9 +408,15 @@ static BOOL traceVCRequest = NO;
     if (indexPath.section == 0) {
         cell.textLabel.text = @"Trace VC Url";
         cell.detailTextLabel.text = [[self.class traceVCUrls] stringByReplacingOccurrencesOfString:@";" withString:@";\n"];
-    } else if (indexPath.section == 2) {
+    } else if (indexPath.section == 2 && indexPath.row == 3) {
         cell.textLabel.text = @"Retain Cycle Depth";
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", @([self.class retainCycleDepth])];
+    } else if (indexPath.section == 2 && indexPath.row == 4) {
+        cell.textLabel.text = @"Fake Bundle Executable";
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [self.class fakeBundleExecutable]];
+    } else if (indexPath.section == 2 && indexPath.row == 5) {
+        cell.textLabel.text = @"Fake Bundle Short Version";
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [self.class fakeBundleShortVersion]];
     }
 }
 
@@ -505,6 +558,36 @@ static BOOL traceVCRequest = NO;
                     [[NSUserDefaults standardUserDefaults] setObject:@(value) forKey:@"FWDebugRetainCycleDepth"];
                 } else {
                     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugRetainCycleDepth"];
+                }
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
+            
+            [weakSelf configLabel:cell indexPath:indexPath];
+        }];
+    } else if (indexPath.section == 2 && indexPath.row == 4) {
+        typeof(self) __weak weakSelf = self;
+        [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[self.class fakeBundleExecutable] block:^(BOOL confirm, NSString *text) {
+            if (confirm) {
+                if (text.length > 0) {
+                    [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugFakeBundleExecutable"];
+                    [FWDebugAppConfig fakeBundleInfoDictionary];
+                } else {
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFakeBundleExecutable"];
+                }
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
+            
+            [weakSelf configLabel:cell indexPath:indexPath];
+        }];
+    } else if (indexPath.section == 2 && indexPath.row == 5) {
+        typeof(self) __weak weakSelf = self;
+        [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[self.class fakeBundleShortVersion] block:^(BOOL confirm, NSString *text) {
+            if (confirm) {
+                if (text.length > 0) {
+                    [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugFakeBundleShortVersion"];
+                    [FWDebugAppConfig fakeBundleInfoDictionary];
+                } else {
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFakeBundleShortVersion"];
                 }
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }
