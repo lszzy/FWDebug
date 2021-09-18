@@ -10,6 +10,8 @@
 
 @implementation FLEXSystemLogMessage
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 + (instancetype)logMessageFromASLMessage:(aslmsg)aslMessage {
     NSDate *date = nil;
     NSString *sender = nil, *text = nil;
@@ -44,6 +46,7 @@
     message->_aslMessage = aslMessage;
     return message;
 }
+#pragma clang diagnostic pop
 
 + (instancetype)logMessageFromDate:(NSDate *)date text:(NSString *)text {
     return [[self alloc] initWithDate:date sender:nil text:text messageID:0];

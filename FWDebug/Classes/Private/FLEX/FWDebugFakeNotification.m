@@ -273,9 +273,6 @@ static const NSInteger FWDebugBufferLength = 512;
         if ([application.delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
             [application.delegate application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {}];
             handled = YES;
-        } else if ([application.delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]) {
-            [application.delegate application:application didReceiveRemoteNotification:userInfo];
-            handled = YES;
         }
     }
     if (!handled) {

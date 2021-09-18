@@ -108,6 +108,9 @@
   return [NSSet setWithArray:retainedObjects];
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 - (BOOL)_objectRetainsEnumerableValues
 {
   if ([self.object respondsToSelector:@selector(valuePointerFunctions)]) {
@@ -151,5 +154,7 @@
 
   return YES;
 }
+
+#pragma clang diagnostic pop
 
 @end
