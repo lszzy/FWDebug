@@ -537,6 +537,8 @@ NS_INLINE BOOL FREInsertProtocolMember(FLEXSQLiteDatabaseManager *db,
                 if (!success) return NO;
             }
         } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             // Just... properties.
             for (FLEXProperty *property in proto.properties) {
                 BOOL success = FREInsertProtocolMember(
@@ -545,6 +547,7 @@ NS_INLINE BOOL FREInsertProtocolMember(FLEXSQLiteDatabaseManager *db,
                 
                 if (!success) return NO;
             }
+#pragma clang diagnostic pop
         }
     }
     

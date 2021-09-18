@@ -107,6 +107,7 @@
 + (void)fwDebugLaunch
 {
     [FWDebugAppConfig fwDebugLaunch];
+    [FWDebugSystemInfo fwDebugLaunch];
     [FWDebugFakeNotification fwDebugLaunch];
 }
 
@@ -149,11 +150,7 @@
         
         NSURL *url = [[NSURL alloc] initWithString:text];
         if (url != nil && url.scheme != nil) {
-            if (@available(iOS 10.0, *)) {
-                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
-            } else {
-                [[UIApplication sharedApplication] openURL:url];
-            }
+            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
             return;
         }
         

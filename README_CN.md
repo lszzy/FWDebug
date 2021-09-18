@@ -7,7 +7,7 @@
 
 # [English](README.md)
 
-iOS调试库，支持iOS9+，无需添加任何代码，方便iOS开发和测试。
+iOS调试库，支持iOS11+，无需添加任何代码，方便iOS开发和测试。
 
 ## 屏幕截图
 ![屏幕截图](FWDebug.gif)
@@ -19,7 +19,7 @@ iOS调试库，支持iOS9+，无需添加任何代码，方便iOS开发和测试
 * 循环引用检测和分析（在对象查看页面点击搜索）
 * Class和Protocol的头文件查看（在类查看页面点击"Runtime Headers"）
 * FPS、内存、CPU占用率显示（摇一摇开启）
-* 手机、App信息查看（"Device Info"入口）
+* 手机、App信息查看、模拟功能（"Device Info"入口）
 * App崩溃日志的记录、查看（"Crash Log"入口）
 * App文件管理器（"Browse Directory"入口）
 * Documents文件http、webdav服务器（"Web Server"入口）
@@ -47,7 +47,7 @@ iOS调试库，支持iOS9+，无需添加任何代码，方便iOS开发和测试
 ### CocoaPods
 本调试库支持Debug和Release环境，建议Debug模式开启。Podfile示例：
 
-	platform :ios, '9.0'
+	platform :ios, '11.0'
 	# use_frameworks!
 
 	target 'Example' do
@@ -55,6 +55,12 @@ iOS调试库，支持iOS9+，无需添加任何代码，方便iOS开发和测试
 	end
 
 ## 更新日志
+2.0.0版本：
+
+	* 兼容iOS 15和Xcode 13
+	* 最低兼容iOS 11
+	* 重构应用Bundle信息模拟功能
+
 1.10.1版本：
 
 	* 新增模拟应用可执行名称和版本号功能

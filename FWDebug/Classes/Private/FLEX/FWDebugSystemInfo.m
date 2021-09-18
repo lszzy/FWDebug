@@ -7,13 +7,11 @@
 //
 
 #import "FWDebugSystemInfo.h"
+#import "FWDebugManager+FWDebug.h"
 
 #import <SystemConfiguration/CaptiveNetwork.h>
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
-#import <CoreLocation/CoreLocation.h>
-#import <AVFoundation/AVFoundation.h>
-#import <Photos/Photos.h>
 
 #include <Endian.h>
 
@@ -66,8 +64,8 @@
     NSDictionary *sectionData = nil;
     
     //Application
-    NSString *applicationName = [[[[NSBundle mainBundle] executablePath] componentsSeparatedByString:@"/"] lastObject];
     NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+    NSString *applicationName = [infoDictionary objectForKey:(__bridge NSString *)kCFBundleExecutableKey];
     NSString *version = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
     NSString *build = [infoDictionary objectForKey:@"CFBundleVersion"];
     
@@ -211,19 +209,13 @@
                             ]
                     };
     [self.systemInfo addObject:sectionData];
-    
-    //Authorization
-    sectionData = @{
-                    @"title": @"Authorization",
-                    @"rows": @[
-                            @{ @"Notification" : [self notificationAuthorization] },
-                            @{ @"Location" : [self locationAuthorization] },
-                            @{ @"Camera" : [self cameraAuthority] },
-                            @{ @"Audio" : [self audioAuthority] },
-                            @{ @"Photo" : [self photoAuthority] },
-                            ]
-                    };
-    [self.systemInfo addObject:sectionData];
+}
+
+- (void)reloadSystemInfo
+{
+    [self initSystemInfo];
+    self.tableData = self.systemInfo;
+    [self.tableView reloadData];
 }
 
 #pragma mark - UITableViewDataSource
@@ -296,6 +288,141 @@
         
         [[UIPasteboard generalPasteboard] setString:stringToCopy];
     }
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if (indexPath.section == 0 && indexPath.row == 0) {
+        typeof(self) __weak weakSelf = self;
+        [FWDebugManager showPrompt:self security:NO title:@"Fake Name" message:nil text:[self.class fakeBundleExecutable] block:^(BOOL confirm, NSString *text) {
+            if (confirm) {
+                if (text.length > 0) {
+                    [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugBundleExecutable"];
+                    [FWDebugSystemInfo fakeBundleInfoDictionary];
+                } else {
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugBundleExecutable"];
+                }
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
+            
+            [weakSelf reloadSystemInfo];
+        }];
+    } else if (indexPath.section == 0 && indexPath.row == 1) {
+        typeof(self) __weak weakSelf = self;
+        [FWDebugManager showPrompt:self security:NO title:@"Fake Version" message:nil text:[self.class fakeBundleShortVersion] block:^(BOOL confirm, NSString *text) {
+            if (confirm) {
+                if (text.length > 0) {
+                    [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugBundleShortVersion"];
+                    [FWDebugSystemInfo fakeBundleInfoDictionary];
+                } else {
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugBundleShortVersion"];
+                }
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
+            
+            [weakSelf reloadSystemInfo];
+        }];
+    } else if (indexPath.section == 0 && indexPath.row == 2) {
+        typeof(self) __weak weakSelf = self;
+        [FWDebugManager showPrompt:self security:NO title:@"Fake Build" message:nil text:[self.class fakeBundleBuildVersion] block:^(BOOL confirm, NSString *text) {
+            if (confirm) {
+                if (text.length > 0) {
+                    [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugBundleBuildVersion"];
+                    [FWDebugSystemInfo fakeBundleInfoDictionary];
+                } else {
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugBundleBuildVersion"];
+                }
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
+            
+            [weakSelf reloadSystemInfo];
+        }];
+    } else if (indexPath.section == 0 && indexPath.row == 4) {
+        typeof(self) __weak weakSelf = self;
+        [FWDebugManager showPrompt:self security:NO title:@"Fake Bundle ID" message:nil text:[self.class fakeBundleIdentifier] block:^(BOOL confirm, NSString *text) {
+            if (confirm) {
+                if (text.length > 0) {
+                    [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugBundleIdentifier"];
+                    [FWDebugSystemInfo fakeBundleInfoDictionary];
+                } else {
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugBundleIdentifier"];
+                }
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
+            
+            [weakSelf reloadSystemInfo];
+        }];
+    }
+}
+
+#pragma mark - Fake Bundle
+
++ (void)fwDebugLaunch
+{
+    if ([self fakeBundleExecutable].length > 0 ||
+        [self fakeBundleShortVersion].length > 0 ||
+        [self fakeBundleBuildVersion].length > 0 ||
+        [self fakeBundleIdentifier].length > 0) {
+        [self fakeBundleInfoDictionary];
+    }
+}
+
++ (NSString *)fakeBundleExecutable
+{
+    NSString *value = [[NSUserDefaults standardUserDefaults] stringForKey:@"FWDebugBundleExecutable"];
+    return value ?: @"";
+}
+
++ (NSString *)fakeBundleShortVersion
+{
+    NSString *value = [[NSUserDefaults standardUserDefaults] stringForKey:@"FWDebugBundleShortVersion"];
+    return value ?: @"";
+}
+
++ (NSString *)fakeBundleBuildVersion
+{
+    NSString *value = [[NSUserDefaults standardUserDefaults] stringForKey:@"FWDebugBundleBuildVersion"];
+    return value ?: @"";
+}
+
++ (NSString *)fakeBundleIdentifier
+{
+    NSString *value = [[NSUserDefaults standardUserDefaults] stringForKey:@"FWDebugBundleIdentifier"];
+    return value ?: @"";
+}
+
++ (void)fakeBundleInfoDictionary
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [FWDebugManager swizzleMethod:@selector(infoDictionary) in:[NSBundle class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(__unsafe_unretained NSBundle *selfObject) {
+                NSDictionary *infoDictionary = ((NSDictionary * (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+                if ([FWDebugSystemInfo fakeBundleExecutable].length <= 0 &&
+                    [FWDebugSystemInfo fakeBundleShortVersion].length <= 0 &&
+                    [FWDebugSystemInfo fakeBundleBuildVersion].length <= 0 &&
+                    [FWDebugSystemInfo fakeBundleIdentifier].length <= 0) {
+                    return infoDictionary;
+                }
+                
+                NSMutableDictionary *mutableInfo = [infoDictionary mutableCopy];
+                if ([FWDebugSystemInfo fakeBundleExecutable].length > 0) {
+                    mutableInfo[(__bridge NSString *)kCFBundleExecutableKey] = [FWDebugSystemInfo fakeBundleExecutable];
+                }
+                if ([FWDebugSystemInfo fakeBundleShortVersion].length > 0) {
+                    mutableInfo[@"CFBundleShortVersionString"] = [FWDebugSystemInfo fakeBundleShortVersion];
+                }
+                if ([FWDebugSystemInfo fakeBundleBuildVersion].length > 0) {
+                    mutableInfo[(__bridge NSString *)kCFBundleVersionKey] = [FWDebugSystemInfo fakeBundleBuildVersion];
+                }
+                if ([FWDebugSystemInfo fakeBundleIdentifier].length > 0) {
+                    mutableInfo[(__bridge NSString *)kCFBundleIdentifierKey] = [FWDebugSystemInfo fakeBundleIdentifier];
+                }
+                infoDictionary = [mutableInfo copy];
+                return infoDictionary;
+            };
+        }];
+    });
 }
 
 #pragma mark - Search bar
@@ -858,109 +985,6 @@
     }
     
     return @[ @(WiFiSent), @(WiFiReceived), @(WWANSent), @(WWANReceived) ];
-}
-
-#pragma mark - Authorization
-
-- (NSString *)locationAuthorization
-{
-    NSString *authority = @"";
-    if ([CLLocationManager locationServicesEnabled]) {
-        CLAuthorizationStatus state = [CLLocationManager authorizationStatus];
-        if (state == kCLAuthorizationStatusNotDetermined) {
-            authority = @"NotDetermined";
-        } else if (state == kCLAuthorizationStatusRestricted) {
-            authority = @"Restricted";
-        } else if (state == kCLAuthorizationStatusDenied) {
-            authority = @"Denied";
-        } else if (state == kCLAuthorizationStatusAuthorizedAlways) {
-            authority = @"Always";
-        } else if (state == kCLAuthorizationStatusAuthorizedWhenInUse) {
-            authority = @"WhenInUse";
-        }
-    } else {
-        authority = @"NotEnabled";
-    }
-    return authority;
-}
-
-- (NSString *)notificationAuthorization
-{
-    if ([[UIApplication sharedApplication] currentUserNotificationSettings].types == UIUserNotificationTypeNone) {
-        return @"NO";
-    }
-    return @"YES";
-}
-
-- (NSString *)cameraAuthority
-{
-    NSString *authority = @"";
-    NSString *mediaType = AVMediaTypeVideo;
-    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];
-    switch (authStatus) {
-        case AVAuthorizationStatusNotDetermined:
-            authority = @"NotDetermined";
-            break;
-        case AVAuthorizationStatusRestricted:
-            authority = @"Restricted";
-            break;
-        case AVAuthorizationStatusDenied:
-            authority = @"Denied";
-            break;
-        case AVAuthorizationStatusAuthorized:
-            authority = @"Authorized";
-            break;
-        default:
-            break;
-    }
-    return authority;
-}
-
-- (NSString *)audioAuthority
-{
-    NSString *authority = @"";
-    NSString *mediaType = AVMediaTypeAudio;
-    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];
-    switch (authStatus) {
-        case AVAuthorizationStatusNotDetermined:
-            authority = @"NotDetermined";
-            break;
-        case AVAuthorizationStatusRestricted:
-            authority = @"Restricted";
-            break;
-        case AVAuthorizationStatusDenied:
-            authority = @"Denied";
-            break;
-        case AVAuthorizationStatusAuthorized:
-            authority = @"Authorized";
-            break;
-        default:
-            break;
-    }
-    return authority;
-}
-
-- (NSString *)photoAuthority
-{
-    NSString *authority = @"";
-    PHAuthorizationStatus current = [PHPhotoLibrary authorizationStatus];
-    switch (current) {
-        case PHAuthorizationStatusNotDetermined:
-            authority = @"NotDetermined";
-            break;
-        case PHAuthorizationStatusRestricted:
-            authority = @"Restricted";
-            break;
-        case PHAuthorizationStatusDenied:
-            authority = @"Denied";
-            break;
-        case PHAuthorizationStatusAuthorized:
-            authority = @"Authorized";
-            break;
-        default:
-            break;
-    }
-    return authority;
 }
 
 @end
