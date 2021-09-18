@@ -107,6 +107,7 @@
 + (void)fwDebugLaunch
 {
     [FWDebugAppConfig fwDebugLaunch];
+    [FWDebugSystemInfo fwDebugLaunch];
     [FWDebugFakeNotification fwDebugLaunch];
 }
 
