@@ -7,7 +7,7 @@
 
 # [中文](README_CN.md)
 
-iOS debugging library, support for iOS9 +, without adding any code to facilitate iOS development and testing.
+iOS debugging library, support for iOS11 +, without adding any code to facilitate iOS development and testing.
 
 ## Screenshot
 ![Screenshot](FWDebug.gif)
@@ -19,7 +19,7 @@ Real machine or simulator shaking within 5 seconds twice to appear debug menu. F
 * Circular reference detection and analysis (click to search on the object view page)
 * View the header files of Class and Protocol (click "Runtime Headers" on the class view page)
 * FPS, memory, CPU occupancy rate display (shaking to open)
-* View mobile phone and App information ("Device Info" entrance)
+* Mobile phone, App information view, simulation function ("Device Info" entrance)
 * App crash log recording and viewing ("Crash Log" entrance)
 * App file manager ("Browse Directory" entrance)
 * Documents file http, webdav server ("Web Server" entrance)
@@ -47,7 +47,7 @@ CocoaPods installation is recommended for automatic management of dependencies a
 ### CocoaPods
 The debug library supports Debug and Release environment, it is recommended Debug mode is turned on. Podfile example:
 
-	platform :ios, '9.0'
+	platform :ios, '11.0'
 	# use_frameworks!
 
 	target 'Example' do
@@ -55,6 +55,12 @@ The debug library supports Debug and Release environment, it is recommended Debu
 	end
 
 ## Changelog
+Version 2.0.0:
+
+	* Compatible with iOS 15 and Xcode 13
+	* At least compatible with iOS 11
+	* Refactored application Bundle information simulation function
+
 Version 1.10.1:
 
 	* Added the ability to simulate the executable name and version number of the application
