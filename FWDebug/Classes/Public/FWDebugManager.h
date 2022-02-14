@@ -30,6 +30,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// 单例模式
 + (instancetype)sharedInstance;
 
+/// 注册自定义入口，点击时打开objectBlock返回值，支持控制器和任意对象
+- (void)registerEntry:(NSString *)entryName objectBlock:(id (^)(void))objectBlock;
+
+/// 注册自定义入口，点击时触发actionBlock，参数为调试控制器
+- (void)registerEntry:(NSString *)entryName actionBlock:(void (^)(__kindof UITableViewController *))actionBlock;
+
 /// 记录自定义事件，object为事件对象，userInfo为weak引用附加信息
 - (void)recordEvent:(NSString *)event object:(id)object userInfo:(nullable id)userInfo;
 

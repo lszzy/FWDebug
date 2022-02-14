@@ -8,9 +8,11 @@
 
 #import "FWDebugManager.h"
 #import "FWDebugManager+FWDebug.h"
+#import "FLEXManager+Extensibility.h"
 #import "FLEXManager+FWDebug.h"
 #import "KSCrash+FWDebug.h"
 #import "FBRetainCycleDetector+FWDebug.h"
+#import "FLEXObjectExplorerFactory.h"
 #import "FWDebugTimeProfiler.h"
 #import <UIKit/UIKit.h>
 
@@ -110,6 +112,21 @@ NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
 }
 
 #pragma mark - Public
+
+- (void)registerEntry:(NSString *)entryName objectBlock:(id (^)(void))objectBlock {
+    [[FLEXManager sharedManager] registerGlobalEntryWithName:entryName viewControllerFutureBlock:^UIViewController *{
+        id object = objectBlock();
+        if ([object isKindOfClass:[UIViewController class]]) {
+            return (UIViewController *)object;
+        } else {
+            return [FLEXObjectExplorerFactory explorerViewControllerForObject:object];
+        }
+    }];
+}
+
+- (void)registerEntry:(NSString *)entryName actionBlock:(void (^)(__kindof UITableViewController * _Nonnull))actionBlock {
+    [[FLEXManager sharedManager] registerGlobalEntryWithName:entryName action:actionBlock];
+}
 
 - (void)recordEvent:(NSString *)event object:(id)object userInfo:(id)userInfo
 {
