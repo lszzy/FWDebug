@@ -21,6 +21,7 @@ Real machine or simulator shaking within 5 seconds twice to appear debug menu. F
 * FPS, memory, CPU occupancy rate display (shaking to open)
 * Mobile phone, App information view, simulation function ("Device Info" entrance)
 * App crash log recording and viewing ("Crash Log" entrance)
+* Recording and viewing of file logs ("Custom Log" entrance)
 * App file manager ("Browse Directory" entrance)
 * Documents file http, webdav server ("Web Server" entrance)
 * Real machine NSLog display ("System Log" entrance, "App Config" can be configured to filter system logs)
@@ -55,6 +56,12 @@ The debug library supports Debug and Release environment, it is recommended Debu
 	end
 
 ## Changelog
+Version 2.1.0:
+
+	* Added the function of registering custom debugging entry
+	* Added record and view file log function
+	* Modify the gesture of 5-finger tap twice to 3-finger tap twice
+
 Version 2.0.0:
 
 	* Compatible with iOS 15 and Xcode 13

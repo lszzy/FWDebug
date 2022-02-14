@@ -21,6 +21,7 @@ iOS调试库，支持iOS11+，无需添加任何代码，方便iOS开发和测�
 * FPS、内存、CPU占用率显示（摇一摇开启）
 * 手机、App信息查看、模拟功能（"Device Info"入口）
 * App崩溃日志的记录、查看（"Crash Log"入口）
+* 文件日志的记录、查看（"Custom Log"入口）
 * App文件管理器（"Browse Directory"入口）
 * Documents文件http、webdav服务器（"Web Server"入口）
 * 真机NSLog显示（"System Log"入口，"App Config"可配置过滤系统日志）
@@ -55,6 +56,12 @@ iOS调试库，支持iOS11+，无需添加任何代码，方便iOS开发和测�
 	end
 
 ## 更新日志
+2.1.0版本：
+
+	* 新增注册自定义调试入口功能
+	* 新增记录和查看文件日志功能
+	* 修改5指点击两次手势为3指点击两次
+
 2.0.0版本：
 
 	* 兼容iOS 15和Xcode 13
