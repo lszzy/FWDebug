@@ -43,7 +43,7 @@ NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
                 }
                 
                 if ([FWDebugManager sharedInstance].touchEnabled) {
-                    if (event.type == UIEventTypeTouches && event.subtype == UIEventSubtypeNone && event.allTouches.count == 5) {
+                    if (event.type == UIEventTypeTouches && event.subtype == UIEventSubtypeNone && event.allTouches.count == 3) {
                         [event.allTouches enumerateObjectsUsingBlock:^(UITouch *obj, BOOL *stop) {
                             if (obj.phase == UITouchPhaseEnded) {
                                 [[NSNotificationCenter defaultCenter] postNotificationName:FWDebugEventNotification object:event];

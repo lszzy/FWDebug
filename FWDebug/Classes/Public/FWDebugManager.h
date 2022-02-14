@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 是否启用5秒内摇一摇两次切换调试器，默认YES
 @property (nonatomic, assign) BOOL shakeEnabled;
 
-/// 是否启用5秒内5指点击两次切换调试器，默认YES
+/// 是否启用5秒内3指点击两次切换调试器，默认YES
 @property (nonatomic, assign) BOOL touchEnabled;
 
 /// 调试器是否隐藏
