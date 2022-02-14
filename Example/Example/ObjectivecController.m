@@ -114,9 +114,11 @@
 - (void)onDebug {
     if ([FWDebugManager sharedInstance].isHidden) {
         [[FWDebugManager sharedInstance] show];
+        [[FWDebugManager sharedInstance] log:@"Show FWDebug"];
         NSLog(@"Show FWDebug");
     } else {
         [[FWDebugManager sharedInstance] hide];
+        [[FWDebugManager sharedInstance] log:@"Hide FWDebug"];
         NSLog(@"Hide FWDebug");
     }
 }

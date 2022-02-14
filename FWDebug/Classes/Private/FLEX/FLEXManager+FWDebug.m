@@ -93,10 +93,16 @@
         return [[FWDebugFakeNotification alloc] init];
     }];
     
-    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📝  Crash Log" viewControllerFutureBlock:^UIViewController *{
+    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"☠️  Crash Log" viewControllerFutureBlock:^UIViewController *{
         NSString *crashLogPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
         crashLogPath = [[crashLogPath stringByAppendingPathComponent:@"FWDebug"] stringByAppendingPathComponent:@"CrashLog"];
         return [[FLEXFileBrowserController alloc] initWithPath:crashLogPath];
+    }];
+    
+    [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📝  Custom Log" viewControllerFutureBlock:^UIViewController *{
+        NSString *customLogPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+        customLogPath = [[customLogPath stringByAppendingPathComponent:@"FWDebug"] stringByAppendingPathComponent:@"CustomLog"];
+        return [[FLEXFileBrowserController alloc] initWithPath:customLogPath];
     }];
     
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"🍀  App Config" viewControllerFutureBlock:^UIViewController *{

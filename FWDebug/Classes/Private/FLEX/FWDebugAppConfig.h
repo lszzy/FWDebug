@@ -24,4 +24,6 @@
 
 + (NSInteger)retainCycleDepth;
 
++ (void)logFile:(NSString *)message;
+
 @end

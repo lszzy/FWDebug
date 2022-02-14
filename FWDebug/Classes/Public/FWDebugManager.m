@@ -14,6 +14,7 @@
 #import "FBRetainCycleDetector+FWDebug.h"
 #import "FLEXObjectExplorerFactory.h"
 #import "FWDebugTimeProfiler.h"
+#import "FWDebugAppConfig.h"
 #import <UIKit/UIKit.h>
 
 NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
@@ -136,6 +137,11 @@ NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
 - (BOOL)isHidden
 {
     return [FLEXManager sharedManager].isHidden;
+}
+
+- (void)log:(NSString *)message
+{
+    [FWDebugAppConfig logFile:message];
 }
 
 - (void)toggle
