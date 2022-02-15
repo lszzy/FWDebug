@@ -246,7 +246,7 @@ typedef NS_ENUM(NSInteger, FLEXNetworkObserverMode) {
             break;
         case FLEXNetworkObserverModeWebsockets:
             // Default to REST if Websockets are unavailable
-            if (!kWebsocketsAvailable) {
+            if (kWebsocketsAvailable) {} else {
                 mode--;
             }
             // Firebase will become REST when Firebase is unavailable
