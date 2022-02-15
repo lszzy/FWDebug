@@ -62,6 +62,7 @@ Version 2.1.0:
 	* Added record and view file log function
 	* Modify the gesture of 5-finger tap twice to 3-finger tap twice
 	* Open the filter system log switch by default
+	* Upgrade FLEX to version 4.6.1
 
 Version 2.0.0:
 
