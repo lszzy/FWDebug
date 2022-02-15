@@ -58,9 +58,10 @@ The debug library supports Debug and Release environment, it is recommended Debu
 ## Changelog
 Version 2.1.0:
 
-	* Added the function of registering custom debugging entry
+	* Added the function of registering and removing custom debug entry
 	* Added record and view file log function
 	* Modify the gesture of 5-finger tap twice to 3-finger tap twice
+	* Open the filter system log switch by default
 
 Version 2.0.0:
 
