@@ -102,7 +102,7 @@ static BOOL traceVCRequest = NO;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFilterSystemLog"];
-        filterSystemLog = value ? [value boolValue] : NO;
+        filterSystemLog = value ? [value boolValue] : YES;
     });
     return filterSystemLog;
 }
