@@ -8,10 +8,15 @@
 
 #import "FWDebugManager.h"
 #import "FWDebugManager+FWDebug.h"
+#import "FLEXManager+Extensibility.h"
 #import "FLEXManager+FWDebug.h"
+#import "FLEXManager+Private.h"
 #import "KSCrash+FWDebug.h"
 #import "FBRetainCycleDetector+FWDebug.h"
+#import "FLEXObjectExplorerFactory.h"
+#import "FLEXFileBrowserController.h"
 #import "FWDebugTimeProfiler.h"
+#import "FWDebugAppConfig.h"
 #import <UIKit/UIKit.h>
 
 NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
@@ -41,7 +46,7 @@ NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
                 }
                 
                 if ([FWDebugManager sharedInstance].touchEnabled) {
-                    if (event.type == UIEventTypeTouches && event.subtype == UIEventSubtypeNone && event.allTouches.count == 5) {
+                    if (event.type == UIEventTypeTouches && event.subtype == UIEventSubtypeNone && event.allTouches.count == 3) {
                         [event.allTouches enumerateObjectsUsingBlock:^(UITouch *obj, BOOL *stop) {
                             if (obj.phase == UITouchPhaseEnded) {
                                 [[NSNotificationCenter defaultCenter] postNotificationName:FWDebugEventNotification object:event];
@@ -111,6 +116,43 @@ NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
 
 #pragma mark - Public
 
+- (void)registerEntry:(NSString *)entryName objectBlock:(id (^)(void))objectBlock
+{
+    [[FLEXManager sharedManager] registerGlobalEntryWithName:entryName viewControllerFutureBlock:^UIViewController *{
+        id object = objectBlock();
+        if ([object isKindOfClass:[UIViewController class]]) {
+            return (UIViewController *)object;
+        }
+        if ([object isKindOfClass:[NSString class]] && [object isAbsolutePath]) {
+            return [[FLEXFileBrowserController alloc] initWithPath:(NSString *)object];
+        }
+        if ([object isKindOfClass:[NSURL class]] && [object isFileURL]) {
+            return [[FLEXFileBrowserController alloc] initWithPath:[(NSURL *)object path]];
+        }
+        return [FLEXObjectExplorerFactory explorerViewControllerForObject:object];
+    }];
+}
+
+- (void)registerEntry:(NSString *)entryName actionBlock:(void (^)(__kindof UITableViewController * _Nonnull))actionBlock
+{
+    [[FLEXManager sharedManager] registerGlobalEntryWithName:entryName action:actionBlock];
+}
+
+- (void)removeEntry:(NSString *)entryName
+{
+    FLEXGlobalsEntry *targetEntry;
+    for (FLEXGlobalsEntry *userEntry in [FLEXManager sharedManager].userGlobalEntries) {
+        if ([entryName isEqualToString:userEntry.entryNameFuture()]) {
+            targetEntry = userEntry;
+            break;
+        }
+    }
+    
+    if (targetEntry) {
+        [[FLEXManager sharedManager].userGlobalEntries removeObject:targetEntry];
+    }
+}
+
 - (void)recordEvent:(NSString *)event object:(id)object userInfo:(id)userInfo
 {
     [FWDebugTimeProfiler recordEvent:event object:object userInfo:userInfo];
@@ -119,6 +161,11 @@ NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
 - (BOOL)isHidden
 {
     return [FLEXManager sharedManager].isHidden;
+}
+
+- (void)log:(NSString *)message
+{
+    [FWDebugAppConfig logFile:message];
 }
 
 - (void)toggle

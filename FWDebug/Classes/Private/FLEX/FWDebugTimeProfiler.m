@@ -13,7 +13,7 @@
 #import "FLEXObjectExplorerFactory.h"
 #import "FLEXNetworkRecorder.h"
 #import "FLEXNetworkTransaction.h"
-#import "FLEXNetworkTransactionDetailController.h"
+#import "FLEXHTTPTransactionDetailController.h"
 #import <sys/sysctl.h>
 #import <sys/time.h>
 #import <objc/runtime.h>
@@ -94,12 +94,12 @@
 {
     NSMutableArray *formatedTimeInfos = [NSMutableArray array];
     NSArray *timeInfos = [self.timeInfos copy];
-    NSArray *transactions = FLEXNetworkRecorder.defaultRecorder.networkTransactions;
+    NSArray *transactions = FLEXNetworkRecorder.defaultRecorder.HTTPTransactions;
     NSString *traceUrlsString = [FWDebugAppConfig traceVCUrls];
     NSArray *traceUrls = traceUrlsString.length > 0 ? [traceUrlsString componentsSeparatedByString:@";"] : nil;
     [timeInfos enumerateObjectsUsingBlock:^(FWDebugTimeInfo *obj, NSUInteger idx, BOOL *stop) {
         if (obj.requestID) {
-            [transactions enumerateObjectsUsingBlock:^(FLEXNetworkTransaction *transaction, NSUInteger idx, BOOL *stop) {
+            [transactions enumerateObjectsUsingBlock:^(FLEXHTTPTransaction *transaction, NSUInteger idx, BOOL *stop) {
                 if ([transaction.requestID isEqualToString:obj.requestID]) {
                     BOOL isAllow = YES;
                     if (traceUrls.count > 0) {
@@ -454,9 +454,8 @@
     id object = self.timeInfos[indexPath.row].userInfo;
     if (!object) return;
     
-    if ([object isKindOfClass:[FLEXNetworkTransaction class]]) {
-        FLEXNetworkTransactionDetailController *viewController = [FLEXNetworkTransactionDetailController new];
-        viewController.transaction = object;
+    if ([object isKindOfClass:[FLEXHTTPTransaction class]]) {
+        FLEXHTTPTransactionDetailController *viewController = [FLEXHTTPTransactionDetailController withTransaction:object];
         [self.navigationController pushViewController:viewController animated:YES];
         return;
     }

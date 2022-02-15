@@ -102,7 +102,7 @@ static BOOL traceVCRequest = NO;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugFilterSystemLog"];
-        filterSystemLog = value ? [value boolValue] : NO;
+        filterSystemLog = value ? [value boolValue] : YES;
     });
     return filterSystemLog;
 }
@@ -230,6 +230,80 @@ static BOOL traceVCRequest = NO;
         [output appendFormat:@"%02x", digest[i]];
     }
     return output;
+}
+
++ (void)logFile:(NSString *)message
+{
+    if (message.length < 1) return;
+    
+    static NSString *_logFilePath;
+    static dispatch_queue_t _logFileQueue;
+    static NSDateFormatter *_logFormatter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSString *logPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+        logPath = [[logPath stringByAppendingPathComponent:@"FWDebug"] stringByAppendingPathComponent:@"CustomLog"];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:logPath]) {
+            [[NSFileManager defaultManager] createDirectoryAtPath:logPath withIntermediateDirectories:YES attributes:nil error:NULL];
+        }
+        
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        dateFormatter.dateFormat = @"yyyyMMdd-HHmmss";
+        NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
+        _logFilePath = [logPath stringByAppendingPathComponent:[NSString stringWithFormat:@"FWDebug-%@.log", dateString]];
+        
+        _logFileQueue = dispatch_queue_create("site.wuyong.FWDebug.CustomLog", DISPATCH_QUEUE_SERIAL);
+        _logFormatter = [[NSDateFormatter alloc] init];
+        _logFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.SSS";
+    });
+    
+    dispatch_async(_logFileQueue, ^{
+        NSString *fileText = [NSString stringWithFormat:@"%@: %@\n", [_logFormatter stringFromDate:[NSDate date]], message];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:_logFilePath]) {
+            [fileText writeToFile:_logFilePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        } else {
+            NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:_logFilePath];
+            [fileHandle seekToEndOfFile];
+            [fileHandle writeData:[fileText dataUsingEncoding:NSUTF8StringEncoding]];
+            [fileHandle closeFile];
+        }
+    });
+}
+
++ (void)mergeLogFiles:(NSString *)logPath
+{
+    NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:logPath error:nil];
+    for (NSString *fileName in fileNames) {
+        if (fileName.length == 18 && [fileName hasPrefix:@"FWDebug-"]) {
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            formatter.dateFormat = @"yyyyMMdd";
+            NSDate *date = [formatter dateFromString:[fileName substringWithRange:NSMakeRange(6, 8)]];
+            NSTimeInterval logTime = [date timeIntervalSince1970];
+            NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+            if ((nowTime - logTime) >= 86400 * 7) {
+                NSString *filePath = [logPath stringByAppendingPathComponent:fileName];
+                [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+            }
+            continue;
+        }
+        
+        if (fileName.length != 25 || ![fileName hasPrefix:@"FWDebug-"]) continue;
+        
+        NSString *filePath = [logPath stringByAppendingPathComponent:fileName];
+        NSString *mergePath = [logPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.log", [fileName substringToIndex:14]]];
+        NSString *fileLog = [NSString stringWithFormat:@"\n=====%@=====\n", fileName];
+        fileLog = [fileLog stringByAppendingString:[[NSString alloc] initWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil]];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:mergePath]) {
+            [[NSFileManager defaultManager] createFileAtPath:mergePath contents:[fileLog dataUsingEncoding:NSUTF8StringEncoding] attributes:nil];
+        } else {
+            NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:mergePath];
+            [fileHandle seekToEndOfFile];
+            [fileHandle writeData:[fileLog dataUsingEncoding:NSUTF8StringEncoding]];
+            [fileHandle closeFile];
+        }
+        
+        [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+    }
 }
 
 #pragma mark - Lifecycle

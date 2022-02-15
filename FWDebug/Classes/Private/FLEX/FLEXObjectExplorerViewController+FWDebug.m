@@ -138,7 +138,7 @@
             }
         }];
         
-        NSArray<FLEXObjectRef *> *references = [FLEXObjectRef referencingAll:instances];
+        NSArray<FLEXObjectRef *> *references = [FLEXObjectRef referencingAll:instances retained:NO];
         retainCycles = [FBRetainCycleDetector fwDebugRetainCycleWithObjects:references];
     }
     
