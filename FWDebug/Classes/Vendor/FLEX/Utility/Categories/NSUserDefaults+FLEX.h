@@ -16,6 +16,7 @@ extern NSString * const kFLEXDefaultsHidePropertyMethodsKey;
 extern NSString * const kFLEXDefaultsHidePrivateMethodsKey;
 extern NSString * const kFLEXDefaultsShowMethodOverridesKey;
 extern NSString * const kFLEXDefaultsHideVariablePreviewsKey;
+extern NSString * const kFLEXDefaultsNetworkObserverEnabledKey;
 extern NSString * const kFLEXDefaultsNetworkHostDenylistKey;
 extern NSString * const kFLEXDefaultsDisableOSLogForceASLKey;
 extern NSString * const kFLEXDefaultsRegisterJSONExplorerKey;
@@ -27,11 +28,15 @@ extern NSString * const kFLEXDefaultsRegisterJSONExplorerKey;
 
 @property (nonatomic) double flex_toolbarTopMargin;
 
+@property (nonatomic) BOOL flex_networkObserverEnabled;
 // Not actually stored in defaults, but written to a file
 @property (nonatomic) NSArray<NSString *> *flex_networkHostDenylist;
 
 /// Whether or not to register the object explorer as a JSON viewer on launch
 @property (nonatomic) BOOL flex_registerDictionaryJSONViewerOnLaunch;
+
+/// The last selected screen in the network observer
+@property (nonatomic) NSInteger flex_lastNetworkObserverMode;
 
 /// Disable os_log and re-enable ASL. May break Console.app output.
 @property (nonatomic) BOOL flex_disableOSLog;

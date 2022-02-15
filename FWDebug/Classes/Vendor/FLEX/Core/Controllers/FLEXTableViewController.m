@@ -581,14 +581,14 @@ static UITextField *kDummyTextField = nil;
 
 - (void)willPresentSearchController:(UISearchController *)searchController {
     // Manually show cancel button for < iOS 13
-    if (@available(iOS 13, *)) { } else if (self.automaticallyShowsSearchBarCancelButton) {
+    if (!@available(iOS 13, *) && self.automaticallyShowsSearchBarCancelButton) {
         [searchController.searchBar setShowsCancelButton:YES animated:YES];
     }
 }
 
 - (void)willDismissSearchController:(UISearchController *)searchController {
     // Manually hide cancel button for < iOS 13
-    if (@available(iOS 13, *)) { } else if (self.automaticallyShowsSearchBarCancelButton) {
+    if (!@available(iOS 13, *) && self.automaticallyShowsSearchBarCancelButton) {
         [searchController.searchBar setShowsCancelButton:NO animated:YES];
     }
 }

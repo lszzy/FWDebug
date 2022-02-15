@@ -15,14 +15,6 @@
 
 @implementation FLEXProtocol
 
-- (id)init {
-    [NSException
-        raise:NSInternalInconsistencyException
-        format:@"Class instance should not be created with -init"
-    ];
-    return nil;
-}
-
 #pragma mark Initializers
 
 + (NSArray *)allProtocols {
@@ -59,14 +51,11 @@
     return self.name;
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (NSString *)debugDescription {
     return [NSString stringWithFormat:@"<%@ name=%@, %lu properties, %lu required methods, %lu optional methods, %lu protocols>",
             NSStringFromClass(self.class), self.name, (unsigned long)self.properties.count,
             (unsigned long)self.requiredMethods.count, (unsigned long)self.optionalMethods.count, (unsigned long)self.protocols.count];
 }
-#pragma clang diagnostic pop
 
 - (void)examine {
     _name = @(protocol_getName(self.objc_protocol));
@@ -162,6 +151,9 @@
         _properties = [NSArray flex_forEachUpTo:prcount map:^id(NSUInteger i) {
             return [FLEXProperty property:objcproperties[i]];
         }];
+        
+        _requiredProperties = @[];
+        _optionalProperties = @[];
         
         free(objcproperties);
     }

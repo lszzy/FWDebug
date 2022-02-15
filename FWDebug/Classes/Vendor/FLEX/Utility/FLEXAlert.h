@@ -33,7 +33,7 @@ typedef FLEXAlertAction * _Nonnull (^FLEXAlertActionHandler)(void(^handler)(NSAr
 /// Construct and display an action sheet-style alert
 + (void)makeSheet:(FLEXAlertBuilder)block
          showFrom:(UIViewController *)viewController
-           source:(nullable id)viewOrBarItem;
+           source:(id)viewOrBarItem;
 
 /// Construct an alert
 + (UIAlertController *)makeAlert:(FLEXAlertBuilder)block;
