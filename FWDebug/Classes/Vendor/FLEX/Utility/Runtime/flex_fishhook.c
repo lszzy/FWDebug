@@ -150,7 +150,9 @@ static void flex_perform_rebinding_with_section(struct rebindings_entry *rebindi
                         *(cur->rebindings[j].replaced) = indirect_symbol_bindings[i];
                     }
                     
-                    indirect_symbol_bindings[i] = cur->rebindings[j].replacement;
+                    if(i < (sizeof(indirect_symbol_bindings) / sizeof(indirect_symbol_bindings[0]))) {
+                        indirect_symbol_bindings[i] = cur->rebindings[j].replacement;
+                    }
                     goto symbol_loop;
                 }
             }
