@@ -34,7 +34,8 @@
     if (showRuler) {
         self.title = @"ruler";
         self.image = [self rulerImage];
-        [self setAttributedTitle:nil forState:UIControlStateNormal];
+        self.titleLabel.font = [UIFont systemFontOfSize:12];
+        [self setTitleColor:FLEXColor.primaryTextColor forState:UIControlStateNormal];
         [self setTitle:self.title forState:UIControlStateNormal];
         [self setImage:self.image forState:UIControlStateNormal];
     } else {
@@ -52,6 +53,8 @@
     objc_setAssociatedObject(self, @selector(fwDebugIsRuler), @(isRuler), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     self.title = isRuler ? @"ruler" : @"select";
     self.image = isRuler ? [self rulerImage] : FLEXResources.selectIcon;
+    self.titleLabel.font = [UIFont systemFontOfSize:12];
+    [self setTitleColor:FLEXColor.primaryTextColor forState:UIControlStateNormal];
     [self setTitle:self.title forState:UIControlStateNormal];
     [self setImage:self.image forState:UIControlStateNormal];
 }
@@ -62,13 +65,10 @@
     
     // memory
     NSString *memoryStr = [NSString stringWithFormat:@"%.0fMB", fpsData.memory];
-    NSDictionary *memoryAttr = @{
-                                 NSFontAttributeName: [UIFont systemFontOfSize:10.0],
-                                 NSForegroundColorAttributeName: [self colorForFpsState:fpsData.memoryState],
-                                 };
-    NSAttributedString *attrTitle = [[NSAttributedString alloc] initWithString:memoryStr attributes:memoryAttr];
     self.title = memoryStr;
-    [self setAttributedTitle:attrTitle forState:UIControlStateNormal];
+    self.titleLabel.font = [UIFont systemFontOfSize:10.0];
+    [self setTitleColor:[self colorForFpsState:fpsData.memoryState] forState:UIControlStateNormal];
+    [self setTitle:memoryStr forState:UIControlStateNormal];
     
     // image
     UIImage *fpsImage = [self imageForFpsData:fpsData];
