@@ -16,6 +16,7 @@ iOS debugging library, support for iOS11 +, without adding any code to facilitat
 Real machine or simulator shaking within 5 seconds twice to appear debug menu. Functions are as follows:
 
 * FLEX debugging tool (shaking to open)
+* Measure view distance function (switch toolbar to "ruler" mode)
 * Circular reference detection and analysis (click to search on the object view page)
 * View the header files of Class and Protocol (click "Runtime Headers" on the class view page)
 * FPS, memory, CPU occupancy rate display (shaking to open)
