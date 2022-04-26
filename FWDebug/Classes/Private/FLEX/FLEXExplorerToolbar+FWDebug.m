@@ -148,18 +148,14 @@
     if (!context) return nil;
     
     CGFloat lineWidth = 1.5;
-    CGFloat triggleWidth = 2.0;
+    CGFloat rulerWidth = 6;
     UIBezierPath *totalPath = [UIBezierPath bezierPath];
     [totalPath moveToPoint:CGPointMake(lineWidth / 2.0, size.height / 2.0)];
     [totalPath addLineToPoint:CGPointMake(size.width - lineWidth, size.height / 2.0)];
-    [totalPath moveToPoint:CGPointMake(lineWidth / 2.0, size.height / 2.0)];
-    [totalPath addLineToPoint:CGPointMake(lineWidth / 2.0 + triggleWidth, size.height / 2.0 + triggleWidth)];
-    [totalPath addLineToPoint:CGPointMake(lineWidth / 2.0 + triggleWidth, size.height / 2.0 - triggleWidth)];
-    [totalPath closePath];
-    [totalPath moveToPoint:CGPointMake(size.width - lineWidth, size.height / 2.0)];
-    [totalPath addLineToPoint:CGPointMake(size.width - lineWidth - triggleWidth, size.height / 2.0 + triggleWidth)];
-    [totalPath addLineToPoint:CGPointMake(size.width - lineWidth - triggleWidth, size.height / 2.0 - triggleWidth)];
-    [totalPath closePath];
+    [totalPath moveToPoint:CGPointMake(lineWidth / 2.0, size.height / 2.0 - rulerWidth / 2.0)];
+    [totalPath addLineToPoint:CGPointMake(lineWidth / 2.0, size.height / 2.0 + rulerWidth / 2.0)];
+    [totalPath moveToPoint:CGPointMake(size.width - lineWidth, size.height / 2.0 - rulerWidth / 2.0)];
+    [totalPath addLineToPoint:CGPointMake(size.width - lineWidth, size.height / 2.0 + rulerWidth / 2.0)];
     CGContextSetLineWidth(context, lineWidth);
     [FLEXColor.primaryTextColor setStroke];
     CGContextAddPath(context, totalPath.CGPath);
