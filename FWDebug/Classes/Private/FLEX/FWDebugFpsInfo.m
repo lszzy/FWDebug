@@ -88,6 +88,20 @@
 
 @implementation FWDebugFpsData
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _fps = 0;
+        _fpsState = 1;
+        _memory = 0;
+        _memoryState = 1;
+        _cpu = 0;
+        _cpuState = 1;
+    }
+    return self;
+}
+
 @end
 
 @interface FWDebugFpsInfo ()
@@ -107,8 +121,6 @@
     self = [super init];
     if (self) {
         _fpsData = [[FWDebugFpsData alloc] init];
-        _fpsData.fps = 0;
-        _fpsData.fpsState = 0;
         _fpsData.memory = [self memoryUsage];
         _fpsData.memoryState = [self memoryStateForData:_fpsData.memory];
         _fpsData.cpu = [self cpuUsage];

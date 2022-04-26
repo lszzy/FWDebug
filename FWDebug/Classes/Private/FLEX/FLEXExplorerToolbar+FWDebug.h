@@ -21,6 +21,9 @@
 
 @interface FLEXExplorerToolbarItem (FWDebug)
 
+@property (nonatomic, assign) BOOL fwDebugShowRuler;
+@property (nonatomic, assign) BOOL fwDebugIsRuler;
+
 - (void)setFpsData:(FWDebugFpsData *)fpsData;
 
 @end

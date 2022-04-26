@@ -56,6 +56,10 @@ The debug library supports Debug and Release environment, it is recommended Debu
 	end
 
 ## Changelog
+Version 3.0.0:
+
+	* Added view distance measurement tool
+
 Version 2.1.0:
 
 	* Added the function of registering and removing custom debug entry
