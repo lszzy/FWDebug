@@ -17,6 +17,7 @@
 #import "FLEXObjectExplorerViewController+FWDebug.h"
 #import "FLEXFileBrowserController+FWDebug.h"
 #import "FLEXExplorerToolbar+FWDebug.h"
+#import "FLEXExplorerViewController+FWDebug.h"
 #import "FLEXObjectListViewController+FWDebug.h"
 #import "FLEXOSLogController+FWDebug.h"
 #import "FWDebugSystemInfo.h"
@@ -33,6 +34,7 @@
 {
     [FLEXOSLogController fwDebugLoad];
     [FLEXExplorerToolbar fwDebugLoad];
+    [FLEXExplorerViewController fwDebugLoad];
     [FLEXFileBrowserController fwDebugLoad];
     [FLEXObjectExplorerViewController fwDebugLoad];
     [FLEXObjectListViewController fwDebugLoad];
@@ -132,6 +134,11 @@
     return fpsInfo;
 }
 
+- (FWDebugFpsData *)fwDebugFpsData
+{
+    return [self fwDebugFpsInfo].fpsData;
+}
+
 - (void)fwDebugFpsInfoChanged:(FWDebugFpsData *)fpsData
 {
     [self.explorerViewController.explorerToolbar.fwDebugFpsItem setFpsData:fpsData];
@@ -139,6 +146,14 @@
 
 - (void)fwDebugFpsItemClicked:(FLEXExplorerToolbarItem *)sender
 {
+    if (sender.fwDebugShowRuler) {
+        BOOL isRuler = !self.explorerViewController.explorerToolbar.selectItem.fwDebugIsRuler;
+        sender.fwDebugIsRuler = !isRuler;
+        self.explorerViewController.explorerToolbar.selectItem.fwDebugIsRuler = isRuler;
+        [self.explorerViewController fwDebugRemoveOverlay];
+        return;
+    }
+    
     FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:[FWDebugManager topViewController]];
     [self.explorerViewController presentViewController:[FLEXNavigationController withRootViewController:viewController] animated:YES completion:nil];
 }

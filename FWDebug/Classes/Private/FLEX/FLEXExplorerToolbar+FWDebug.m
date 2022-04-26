@@ -8,8 +8,10 @@
 
 #import "FLEXExplorerToolbar+FWDebug.h"
 #import "FLEXColor.h"
+#import "FLEXResources.h"
 #import "FWDebugFpsInfo.h"
 #import "FWDebugManager+FWDebug.h"
+#import "FLEXManager+FWDebug.h"
 #import <objc/runtime.h>
 
 @interface FLEXExplorerToolbarItem ()
@@ -21,8 +23,43 @@
 
 @implementation FLEXExplorerToolbarItem (FWDebug)
 
+- (BOOL)fwDebugShowRuler
+{
+    return [objc_getAssociatedObject(self, @selector(fwDebugShowRuler)) boolValue];
+}
+
+- (void)setFwDebugShowRuler:(BOOL)showRuler
+{
+    objc_setAssociatedObject(self, @selector(fwDebugShowRuler), @(showRuler), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    if (showRuler) {
+        self.title = @"ruler";
+        self.image = [self rulerImage];
+        [self setAttributedTitle:nil forState:UIControlStateNormal];
+        [self setTitle:self.title forState:UIControlStateNormal];
+        [self setImage:self.image forState:UIControlStateNormal];
+    } else {
+        [self setFpsData:FLEXManager.sharedManager.fwDebugFpsData];
+    }
+}
+
+- (BOOL)fwDebugIsRuler
+{
+    return [objc_getAssociatedObject(self, @selector(fwDebugIsRuler)) boolValue];
+}
+
+- (void)setFwDebugIsRuler:(BOOL)isRuler
+{
+    objc_setAssociatedObject(self, @selector(fwDebugIsRuler), @(isRuler), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    self.title = isRuler ? @"ruler" : @"select";
+    self.image = isRuler ? [self rulerImage] : FLEXResources.selectIcon;
+    [self setTitle:self.title forState:UIControlStateNormal];
+    [self setImage:self.image forState:UIControlStateNormal];
+}
+
 - (void)setFpsData:(FWDebugFpsData *)fpsData
 {
+    if (self.fwDebugShowRuler) return;
+    
     // memory
     NSString *memoryStr = [NSString stringWithFormat:@"%.0fMB", fpsData.memory];
     NSDictionary *memoryAttr = @{
@@ -96,6 +133,36 @@
     CGContextSetLineWidth(context, lineWidth);
     [[self colorForFpsState:fpsData.cpuState] setStroke];
     CGContextAddPath(context, ratePath.CGPath);
+    CGContextDrawPath(context, kCGPathStroke);
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
+- (UIImage *)rulerImage
+{
+    CGSize size = CGSizeMake(21.0, 21.0);
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    if (!context) return nil;
+    
+    CGFloat lineWidth = 1.5;
+    CGFloat triggleWidth = 2.0;
+    UIBezierPath *totalPath = [UIBezierPath bezierPath];
+    [totalPath moveToPoint:CGPointMake(lineWidth / 2.0, size.height / 2.0)];
+    [totalPath addLineToPoint:CGPointMake(size.width - lineWidth, size.height / 2.0)];
+    [totalPath moveToPoint:CGPointMake(lineWidth / 2.0, size.height / 2.0)];
+    [totalPath addLineToPoint:CGPointMake(lineWidth / 2.0 + triggleWidth, size.height / 2.0 + triggleWidth)];
+    [totalPath addLineToPoint:CGPointMake(lineWidth / 2.0 + triggleWidth, size.height / 2.0 - triggleWidth)];
+    [totalPath closePath];
+    [totalPath moveToPoint:CGPointMake(size.width - lineWidth, size.height / 2.0)];
+    [totalPath addLineToPoint:CGPointMake(size.width - lineWidth - triggleWidth, size.height / 2.0 + triggleWidth)];
+    [totalPath addLineToPoint:CGPointMake(size.width - lineWidth - triggleWidth, size.height / 2.0 - triggleWidth)];
+    [totalPath closePath];
+    CGContextSetLineWidth(context, lineWidth);
+    [FLEXColor.primaryTextColor setStroke];
+    CGContextAddPath(context, totalPath.CGPath);
     CGContextDrawPath(context, kCGPathStroke);
     
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
