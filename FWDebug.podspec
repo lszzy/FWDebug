@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name                = "FWDebug"
-  s.version             = "3.0.0"
+  s.version             = "3.1.0"
   s.summary             = "ios debug library"
   s.homepage            = "http://wuyong.site"
   s.license             = "MIT"
@@ -28,5 +28,10 @@ Pod::Spec.new do |s|
   s.resource            = 'FWDebug/Assets/GCDWebUploader.bundle'
   s.frameworks          = [ "Foundation", "UIKit" ]
   s.library             = [ "xml2", "z", "sqlite3", "c++" ]
-  s.xcconfig            = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2", "GCC_ENABLE_CPP_EXCEPTIONS" => "YES" }
+  s.compiler_flags      = [ "-Wno-unsupported-availability-guard", "-Wno-deprecated-declarations" ]
+  s.xcconfig            = {
+    "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2",
+    "GCC_ENABLE_CPP_EXCEPTIONS" => "YES",
+    "CLANG_CXX_LANGUAGE_STANDARD" => "gnu++11",
+  }
 end

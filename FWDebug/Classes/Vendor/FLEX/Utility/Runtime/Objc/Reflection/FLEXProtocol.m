@@ -51,14 +51,11 @@
     return self.name;
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (NSString *)debugDescription {
     return [NSString stringWithFormat:@"<%@ name=%@, %lu properties, %lu required methods, %lu optional methods, %lu protocols>",
             NSStringFromClass(self.class), self.name, (unsigned long)self.properties.count,
             (unsigned long)self.requiredMethods.count, (unsigned long)self.optionalMethods.count, (unsigned long)self.protocols.count];
 }
-#pragma clang diagnostic pop
 
 - (void)examine {
     _name = @(protocol_getName(self.objc_protocol));

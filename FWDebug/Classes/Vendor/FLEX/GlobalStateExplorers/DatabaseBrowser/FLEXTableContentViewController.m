@@ -7,6 +7,7 @@
 //
 
 #import "FLEXTableContentViewController.h"
+#import "FLEXTableRowDataViewController.h"
 #import "FLEXMultiColumnTableView.h"
 #import "FLEXWebViewController.h"
 #import "FLEXUtility.h"
@@ -53,8 +54,8 @@
                       tableName:(nullable NSString *)tableName
                        database:(nullable id<FLEXDatabaseManager>)databaseManager {
     // Must supply all optional parameters as one, or none
-    BOOL all = rowIDs.count && tableName && databaseManager;
-    BOOL none = !rowIDs.count && !tableName && !databaseManager;
+    BOOL all = rowIDs && tableName && databaseManager;
+    BOOL none = !rowIDs && !tableName && !databaseManager;
     NSParameterAssert(all || none);
 
     self = [super init];
@@ -167,6 +168,12 @@
         });
         make.button(@"Copy as CSV").handler(^(NSArray<NSString *> *strings) {
             UIPasteboard.generalPasteboard.string = [values componentsJoinedByString:@", "];
+        });
+        make.button(@"Focus on Row").handler(^(NSArray<NSString *> *strings) {
+            UIViewController *focusedRow = [FLEXTableRowDataViewController
+                rows:[NSDictionary dictionaryWithObjects:self.rows[row] forKeys:self.columns]
+            ];
+            [self.navigationController pushViewController:focusedRow animated:YES];
         });
         
         // Option to delete row

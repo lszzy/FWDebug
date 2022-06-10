@@ -54,16 +54,20 @@
     NSURL *url = [NSURL URLWithString:urlString];
     
     if (url) {
-        [app openURL:url options:@{
-            UIApplicationOpenURLOptionUniversalLinksOnly: @(universalOnly)
-        } completionHandler:^(BOOL success) {
-            if (!success) {
-                [FLEXAlert showAlert:@"No Universal Link Handler"
-                    message:@"No installed application is registered to handle this link."
-                    from:host
-                ];
-            }
-        }];
+        if (@available(iOS 10, *)) {
+            [app openURL:url options:@{
+                UIApplicationOpenURLOptionUniversalLinksOnly: @(universalOnly)
+            } completionHandler:^(BOOL success) {
+                if (!success) {
+                    [FLEXAlert showAlert:@"No Universal Link Handler"
+                        message:@"No installed application is registered to handle this link."
+                        from:host
+                    ];
+                }
+            }];
+        } else {
+            [app openURL:url];
+        }
     } else {
         [FLEXAlert showAlert:@"Error" message:@"Invalid URL" from:host];
     }

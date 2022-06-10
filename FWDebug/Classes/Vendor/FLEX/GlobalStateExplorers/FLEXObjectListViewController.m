@@ -168,15 +168,6 @@ typedef NS_ENUM(NSUInteger, FLEXObjectReferenceSection) {
 }
 
 + (instancetype)objectsWithReferencesToObject:(id)object retained:(BOOL)retain {
-    static Class SwiftObjectClass = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        SwiftObjectClass = NSClassFromString(@"SwiftObject");
-        if (!SwiftObjectClass) {
-            SwiftObjectClass = NSClassFromString(@"Swift._SwiftObject");
-        }
-    });
-
     NSArray<FLEXObjectRef *> *instances = [FLEXHeapEnumerator
         objectsWithReferencesToObject:object retained:retain
     ];
@@ -222,7 +213,7 @@ typedef NS_ENUM(NSUInteger, FLEXObjectReferenceSection) {
     }];
 }
 
-- (FLEXMutableListSection *)makeSection:(NSArray *)rows title:(NSString *)title { weakify(self)
+- (FLEXMutableListSection *)makeSection:(NSArray *)rows title:(NSString *)title {
     FLEXMutableListSection *section = [FLEXMutableListSection list:rows
         cellConfiguration:^(FLEXTableViewCell *cell, FLEXObjectRef *ref, NSInteger row) {
             cell.textLabel.text = ref.reference;
@@ -237,8 +228,8 @@ typedef NS_ENUM(NSUInteger, FLEXObjectReferenceSection) {
         }
     ];
 
-    section.selectionHandler = ^(UIViewController *host, FLEXObjectRef *ref) { strongify(self)
-        [self.navigationController pushViewController:[
+    section.selectionHandler = ^(UIViewController *host, FLEXObjectRef *ref) {
+        [host.navigationController pushViewController:[
             FLEXObjectExplorerFactory explorerViewControllerForObject:ref.object
         ] animated:YES];
     };
