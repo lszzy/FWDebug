@@ -28,14 +28,6 @@
     return self.filterString.length > 0;
 }
 
-- (NSArray *)transactions {
-    return _filteredTransactions;
-}
-
-- (NSInteger)bytesReceived {
-    return _filteredBytesReceived;
-}
-
 - (void)reloadByteCounts {
     [self updateBytesReceived];
     [self updateFilteredBytesReceived];
@@ -53,8 +45,9 @@
         self.filteredTransactions = self.allTransactions;
         if (completion) completion(self);
     } else {
+        NSArray<FLEXNetworkTransaction *> *allTransactions = self.allTransactions.copy;
         [self onBackgroundQueue:^NSArray *{
-            return [self.allTransactions flex_filtered:^BOOL(FLEXNetworkTransaction *entry, NSUInteger idx) {
+            return [allTransactions flex_filtered:^BOOL(FLEXNetworkTransaction *entry, NSUInteger idx) {
                 return [entry matchesQuery:searchString];
             }];
         } thenOnMainQueue:^(NSArray *filteredNetworkTransactions) {
@@ -67,13 +60,18 @@
 }
 
 - (void)setAllTransactions:(NSArray *)transactions {
-    _allTransactions = transactions;
+    _allTransactions = transactions.copy;
     [self updateBytesReceived];
 }
 
+/// This is really just a semantic setter for \c _transactions
 - (void)setFilteredTransactions:(NSArray *)filteredTransactions {
-    _filteredTransactions = filteredTransactions;
+    _transactions = filteredTransactions.copy;
     [self updateFilteredBytesReceived];
+}
+
+- (void)setTransactions:(NSArray *)transactions {
+    self.filteredTransactions = transactions;
 }
 
 - (void)updateBytesReceived {
@@ -87,11 +85,11 @@
 
 - (void)updateFilteredBytesReceived {
     NSInteger filteredBytesReceived = 0;
-    for (FLEXNetworkTransaction *transaction in self.filteredTransactions) {
+    for (FLEXNetworkTransaction *transaction in self.transactions) {
         filteredBytesReceived += transaction.receivedDataLength;
     }
     
-    self.filteredBytesReceived = filteredBytesReceived;
+    self.bytesReceived = filteredBytesReceived;
 }
 
 - (void)onBackgroundQueue:(NSArray *(^)(void))backgroundBlock thenOnMainQueue:(void(^)(NSArray *))mainBlock {
