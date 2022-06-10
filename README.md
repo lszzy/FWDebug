@@ -50,13 +50,17 @@ CocoaPods installation is recommended for automatic management of dependencies a
 The debug library supports Debug and Release environment, it is recommended Debug mode is turned on. Podfile example:
 
 	platform :ios, '11.0'
-	# use_frameworks!
+	use_frameworks!
 
 	target 'Example' do
 	  pod 'FWDebug', :configurations => ['Debug']
 	end
 
 ## Changelog
+Version 3.1.0:
+
+    * Upgrade FLEX to version 4.7.0
+
 Version 3.0.0:
 
 	* Added view distance measurement tool

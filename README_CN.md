@@ -50,13 +50,17 @@ iOS调试库，支持iOS11+，无需添加任何代码，方便iOS开发和测�
 本调试库支持Debug和Release环境，建议Debug模式开启。Podfile示例：
 
 	platform :ios, '11.0'
-	# use_frameworks!
+	use_frameworks!
 
 	target 'Example' do
 	  pod 'FWDebug', :configurations => ['Debug']
 	end
 
 ## 更新日志
+3.1.0版本：
+
+    * 升级FLEX到4.7.0版本
+
 3.0.0版本：
 
 	* 新增视图距离测量工具
