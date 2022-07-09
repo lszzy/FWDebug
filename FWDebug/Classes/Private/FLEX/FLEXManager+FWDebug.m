@@ -117,6 +117,7 @@
     [FWDebugAppConfig fwDebugLaunch];
     [FWDebugSystemInfo fwDebugLaunch];
     [FWDebugFakeNotification fwDebugLaunch];
+    [FWDebugWebServer fwDebugLaunch];
 }
 
 - (FWDebugFpsInfo *)fwDebugFpsInfo

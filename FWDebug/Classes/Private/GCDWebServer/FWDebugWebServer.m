@@ -15,11 +15,13 @@
 
 #pragma mark - FWDebugWebServer
 
+#define FWDebugWebDebugPort 8000
 #define FWDebugWebServerPort 8001
 #define FWDebugWebDavServerPort 8002
 #define FWDebugWebSitePort 8003
 
 // 静态服务器变量
+static GCDWebServer *_webDebug = nil;
 static GCDWebUploader *_webServer = nil;
 static GCDWebDAVServer *_webDavServer = nil;
 static GCDWebServer *_webSite = nil;
@@ -30,44 +32,86 @@ static GCDWebServer *_webSite = nil;
 
 @implementation FWDebugWebServer
 
++ (void)fwDebugLaunch
+{
+    BOOL webDebugEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"FWDebugWebDebugEnabled"];
+    if (!webDebugEnabled) return;
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self setupServer];
+        
+        [_webDebug startWithPort:FWDebugWebDebugPort bonjourName:@""];
+    });
+}
+
++ (void)setupServer
+{
+    //初始化WebDebug
+    if (!_webDebug) {
+        NSString *webPath = [[[NSBundle bundleForClass:[FWDebugWebServer class]] resourcePath] stringByAppendingPathComponent:@"GCDWebUploader.bundle/Contents/Resources/"];
+        _webDebug = [[GCDWebServer alloc] init];
+        [_webDebug addGETHandlerForBasePath:@"/" directoryPath:webPath indexFilename:nil cacheAge:3600 allowRangeRequests:YES];
+        [_webDebug addHandlerForMethod:@"GET" pathRegex:@"/.*\\.html" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest *request) {
+            NSString *path = request.path;
+            if ([path isEqualToString:@"/index.html"]) path = @"/debug.html";
+            NSString *file = [webPath stringByAppendingPathComponent:path];
+            if ([NSFileManager.defaultManager fileExistsAtPath:file]) {
+                NSString *title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+                if (!title) title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
+                
+                return [GCDWebServerDataResponse responseWithHTMLTemplate:file variables:@{
+                    @"title": title ?: @"",
+                }];
+            } else {
+                return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", path];
+            }
+        }];
+        [_webDebug addHandlerForMethod:@"GET" path:@"/" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest *request) {
+            return [GCDWebServerResponse responseWithRedirect:[NSURL URLWithString:@"index.html" relativeToURL:request.URL] permanent:NO];
+        }];
+    }
+    
+    //初始化WebServer
+    if (!_webServer) {
+        NSString *webPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+        _webServer = [[GCDWebUploader alloc] initWithUploadDirectory:webPath];
+        _webServer.title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
+        _webServer.header = _webServer.title;
+        _webServer.prologue = @"<p>Drag &amp; drop files on this window or use the \"Upload Files&hellip;\" button to upload new files.</p>";
+        _webServer.epilogue = @"";
+        _webServer.footer = [NSString stringWithFormat:@"%@ %@", _webServer.title, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
+    }
+    
+    //初始化WebDavServer
+    if (!_webDavServer) {
+        NSString *webDavPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+        _webDavServer = [[GCDWebDAVServer alloc] initWithUploadDirectory:webDavPath];
+    }
+    
+    //初始化WebSite
+    if (!_webSite) {
+        NSString *webPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"website"];
+        _webSite = [[GCDWebServer alloc] init];
+        [_webSite addGETHandlerForBasePath:@"/" directoryPath:webPath indexFilename:nil cacheAge:3600 allowRangeRequests:YES];
+        [_webSite addHandlerForMethod:@"GET" pathRegex:@"/.*\\.html" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest *request) {
+            NSString *html = [[NSString alloc] initWithContentsOfFile:[webPath stringByAppendingPathComponent:request.path] encoding:NSUTF8StringEncoding error:NULL];
+            if (html != nil) {
+                return [GCDWebServerDataResponse responseWithHTML:html];
+            } else {
+                return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", request.path];
+            }
+        }];
+        [_webSite addHandlerForMethod:@"GET" path:@"/" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest *request) {
+            return [GCDWebServerResponse responseWithRedirect:[NSURL URLWithString:@"index.html" relativeToURL:request.URL] permanent:NO];
+        }];
+    }
+}
+
 - (instancetype)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:UITableViewStyleGrouped];
     if (self) {
-        //初始化WebServer
-        if (!_webServer) {
-            NSString *webPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
-            _webServer = [[GCDWebUploader alloc] initWithUploadDirectory:webPath];
-            _webServer.title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
-            _webServer.header = _webServer.title;
-            _webServer.prologue = @"<p>Drag &amp; drop files on this window or use the \"Upload Files&hellip;\" button to upload new files.</p>";
-            _webServer.epilogue = @"";
-            _webServer.footer = [NSString stringWithFormat:@"%@ %@", _webServer.title, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
-        }
-        
-        //初始化WebDavServer
-        if (!_webDavServer) {
-            NSString *webDavPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
-            _webDavServer = [[GCDWebDAVServer alloc] initWithUploadDirectory:webDavPath];
-        }
-        
-        //初始化WebSite
-        if (!_webSite) {
-            NSString *webPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"website"];
-            _webSite = [[GCDWebServer alloc] init];
-            [_webSite addGETHandlerForBasePath:@"/" directoryPath:webPath indexFilename:nil cacheAge:3600 allowRangeRequests:YES];
-            [_webSite addHandlerForMethod:@"GET" pathRegex:@"/.*\\.html" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest *request) {
-                NSString *html = [[NSString alloc] initWithContentsOfFile:[webPath stringByAppendingPathComponent:request.path] encoding:NSUTF8StringEncoding error:NULL];
-                if (html != nil) {
-                    return [GCDWebServerDataResponse responseWithHTML:html];
-                } else {
-                    return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", request.path];
-                }
-            }];
-            [_webSite addHandlerForMethod:@"GET" path:@"/" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest *request) {
-                return [GCDWebServerResponse responseWithRedirect:[NSURL URLWithString:@"index.html" relativeToURL:request.URL] permanent:NO];
-            }];
-        }
+        [FWDebugWebServer setupServer];
     }
     return self;
 }
@@ -81,7 +125,7 @@ static GCDWebServer *_webSite = nil;
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 3;
+    return 4;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -89,7 +133,16 @@ static GCDWebServer *_webSite = nil;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return section == 0 ? @"Web Server" : (section == 1 ? @"WebDav Server" : @"WebSite Server");
+    switch (section) {
+        case 1:
+            return @"Web Server";
+        case 2:
+            return @"WebDav Server";
+        case 3:
+            return @"WebSite Server";
+        default:
+            return @"Debug Server";
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -113,7 +166,28 @@ static GCDWebServer *_webSite = nil;
 - (void)configCell:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
     UISwitch *cellSwitch = (UISwitch *)cell.accessoryView;
     cellSwitch.tag = indexPath.section;
-    GCDWebServer *server = indexPath.section == 0 ? _webServer : (indexPath.section == 1 ? _webDavServer : _webSite);
+    
+    GCDWebServer *server;
+    BOOL autoStart = NO;
+    switch (indexPath.section) {
+        case 1: {
+            server = _webServer;
+            break;
+        }
+        case 2: {
+            server = _webDavServer;
+            break;
+        }
+        case 3: {
+            server = _webSite;
+            break;
+        }
+        default: {
+            server = _webDebug;
+            autoStart = YES;
+            break;
+        }
+    }
     
     if (server.isRunning) {
         cell.textLabel.text = @"Server Started";
@@ -121,20 +195,52 @@ static GCDWebServer *_webSite = nil;
         cellSwitch.on = YES;
     } else {
         cell.textLabel.text = @"Server Stopped";
-        cell.detailTextLabel.text = nil;
+        cell.detailTextLabel.text = autoStart ? @"auto start when app launch" : nil;
         cellSwitch.on = NO;
     }
 }
 
 #pragma mark - Action
 - (void)actionSwitch:(UISwitch *)sender {
-    GCDWebServer *server = sender.tag == 0 ? _webServer : (sender.tag == 1 ? _webDavServer : _webSite);
-    NSUInteger port = sender.tag == 0 ? FWDebugWebServerPort : (sender.tag == 1 ? FWDebugWebDavServerPort : FWDebugWebSitePort);
+    GCDWebServer *server;
+    NSUInteger port;
+    NSString *key;
+    switch (sender.tag) {
+        case 1: {
+            server = _webServer;
+            port = FWDebugWebServerPort;
+            break;
+        }
+        case 2: {
+            server = _webDavServer;
+            port = FWDebugWebDavServerPort;
+            break;
+        }
+        case 3: {
+            server = _webSite;
+            port = FWDebugWebSitePort;
+            break;
+        }
+        default: {
+            server = _webDebug;
+            port = FWDebugWebDebugPort;
+            key = @"FWDebugWebDebugEnabled";
+            break;
+        }
+    }
     
     if (sender.on) {
         [server startWithPort:port bonjourName:@""];
+        if (key.length > 0) {
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:key];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
     } else {
         [server stop];
+        if (key.length > 0) {
+            [[NSUserDefaults standardUserDefaults] setBool:NO forKey:key];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
     }
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:sender.tag];
