@@ -12,6 +12,7 @@
 #import "GCDWebServerDataResponse.h"
 #import "GCDWebServerErrorResponse.h"
 #import "FWDebugManager+FWDebug.h"
+#import "NSUserDefaults+FLEX.h"
 #import "FLEXMITMDataSource.h"
 #import "FLEXNetworkTransaction.h"
 #import "FLEXNetworkRecorder.h"
@@ -317,6 +318,11 @@ static GCDWebServer *_webSite = nil;
         if (key.length > 0) {
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:key];
             [[NSUserDefaults standardUserDefaults] synchronize];
+            if (!FLEXOSLogController.sharedLogController.persistent) {
+                NSUserDefaults.standardUserDefaults.flex_cacheOSLogMessages = YES;
+                FLEXOSLogController.sharedLogController.persistent = YES;
+                [FLEXOSLogController.sharedLogController startMonitoring];
+            }
         }
     } else {
         [server stop];
