@@ -12,6 +12,23 @@
 #import "GCDWebServerDataResponse.h"
 #import "GCDWebServerErrorResponse.h"
 #import "FWDebugManager+FWDebug.h"
+#import "FLEXMITMDataSource.h"
+#import "FLEXNetworkTransaction.h"
+#import "FLEXNetworkRecorder.h"
+#import "FLEXOSLogController.h"
+#import "FLEXSystemLogCell.h"
+
+@interface FLEXOSLogController ()
+
++ (FLEXOSLogController *)sharedLogController;
+
+@end
+
+@interface FLEXSystemLogCell ()
+
++ (NSString *)logTimeStringFromDate:(NSDate *)date;
+
+@end
 
 #pragma mark - FWDebugWebServer
 
@@ -51,6 +68,9 @@ static GCDWebServer *_webSite = nil;
         NSString *webPath = [[[NSBundle bundleForClass:[FWDebugWebServer class]] resourcePath] stringByAppendingPathComponent:@"GCDWebUploader.bundle/Contents/Resources/"];
         _webDebug = [[GCDWebServer alloc] init];
         [_webDebug addGETHandlerForBasePath:@"/" directoryPath:webPath indexFilename:nil cacheAge:3600 allowRangeRequests:YES];
+        [_webDebug addHandlerForMethod:@"GET" path:@"/" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest *request) {
+            return [GCDWebServerResponse responseWithRedirect:[NSURL URLWithString:@"index.html" relativeToURL:request.URL] permanent:NO];
+        }];
         [_webDebug addHandlerForMethod:@"GET" pathRegex:@"/.*\\.html" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest *request) {
             NSString *path = request.path;
             if ([path isEqualToString:@"/index.html"]) path = @"/debug.html";
@@ -58,16 +78,79 @@ static GCDWebServer *_webSite = nil;
             if ([NSFileManager.defaultManager fileExistsAtPath:file]) {
                 NSString *title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
                 if (!title) title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
+                NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
                 
                 return [GCDWebServerDataResponse responseWithHTMLTemplate:file variables:@{
-                    @"title": title ?: @"",
+                    @"title": title,
+                    @"header": title,
+                    @"keywords": request.query[@"keywords"] ?: @"",
+                    @"footer": [NSString stringWithFormat:@"%@ %@", title, version],
                 }];
             } else {
                 return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", path];
             }
         }];
-        [_webDebug addHandlerForMethod:@"GET" path:@"/" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest *request) {
-            return [GCDWebServerResponse responseWithRedirect:[NSURL URLWithString:@"index.html" relativeToURL:request.URL] permanent:NO];
+        
+        [_webDebug addHandlerForMethod:@"GET"
+                                  path:@"/list"
+                          requestClass:[GCDWebServerRequest class]
+                          processBlock:^GCDWebServerResponse * _Nullable(__kindof GCDWebServerRequest * _Nonnull request) {
+            FLEXMITMDataSource<FLEXHTTPTransaction *> *dataSource = [FLEXMITMDataSource dataSourceWithProvider:^NSArray * {
+                return FLEXNetworkRecorder.defaultRecorder.HTTPTransactions;
+            }];
+            
+            NSMutableArray *array = [NSMutableArray array];
+            NSInteger bytesReceived = 0;
+            for (FLEXHTTPTransaction *transaction in dataSource.transactions) {
+                bytesReceived += transaction.receivedDataLength;
+                [array addObject:@{
+                    @"identifier": transaction.requestID,
+                    @"thumbnail": @"",
+                    @"name": transaction.primaryDescription,
+                    @"path": transaction.secondaryDescription,
+                    @"details": transaction.tertiaryDescription,
+                    @"size": @(transaction.receivedDataLength),
+                    @"error": transaction.displayAsError ? @YES : @NO,
+                }];
+            }
+            
+            NSString *byteCountText = [NSByteCountFormatter stringFromByteCount:bytesReceived countStyle:NSByteCountFormatterCountStyleBinary];
+            NSString *requestsText = array.count < 2 ? @"Request" : @"Requests";
+            NSString *totalText = [NSString stringWithFormat:@"%@ %@ (%@ received)", @(array.count), requestsText, byteCountText];
+            return [GCDWebServerDataResponse responseWithJSONObject:@{
+                @"total": totalText,
+                @"list": array,
+            }];
+        }];
+        
+        [_webDebug addHandlerForMethod:@"GET"
+                                  path:@"/logs"
+                          requestClass:[GCDWebServerRequest class]
+                          processBlock:^GCDWebServerResponse * _Nullable(__kindof GCDWebServerRequest * _Nonnull request) {
+            NSArray<FLEXSystemLogMessage *> *messages = [FLEXOSLogController sharedLogController].messages.copy;
+            NSString *keywords = request.query[@"keywords"] ?: @"";
+            
+            NSMutableArray *array = [NSMutableArray array];
+            [messages enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(FLEXSystemLogMessage *message, NSUInteger idx, BOOL *stop) {
+                if (keywords.length > 0) {
+                    NSString *text = [FLEXSystemLogCell displayedTextForLogMessage:message];
+                    if (![text localizedCaseInsensitiveContainsString:keywords]) return;
+                }
+                
+                [array addObject:@{
+                    @"name": message.messageText,
+                    @"path": message.messageText,
+                    @"date": [FLEXSystemLogCell logTimeStringFromDate:message.date],
+                }];
+            }];
+            
+            NSString *logText = array.count < 2 ? @"Log" : @"Logs";
+            NSInteger totalPage = (NSInteger)(array.count / 10) + 1;
+            NSString *totalText = [NSString stringWithFormat:@"%@ %@ (%@ pages)", @(array.count), logText, @(totalPage)];
+            return [GCDWebServerDataResponse responseWithJSONObject:@{
+                @"total": totalText,
+                @"list": array,
+            }];
         }];
     }
     
