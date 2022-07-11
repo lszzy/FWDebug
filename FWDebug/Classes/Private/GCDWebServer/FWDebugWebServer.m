@@ -99,26 +99,42 @@ static GCDWebServer *_webSite = nil;
             FLEXMITMDataSource<FLEXHTTPTransaction *> *dataSource = [FLEXMITMDataSource dataSourceWithProvider:^NSArray * {
                 return FLEXNetworkRecorder.defaultRecorder.HTTPTransactions;
             }];
+            NSString *keywords = request.query[@"keywords"] ?: @"";
+            NSInteger page = [(request.query[@"page"] ?: @"") integerValue];
+            NSInteger perpage = [(request.query[@"perpage"] ?: @"") integerValue];
+            if (page < 1) page = 1;
+            if (perpage < 1) perpage = 10;
             
             NSMutableArray *array = [NSMutableArray array];
-            NSInteger bytesReceived = 0;
-            for (FLEXHTTPTransaction *transaction in dataSource.transactions) {
+            __block NSInteger totalCount = 0;
+            __block NSInteger bytesReceived = 0;
+            [dataSource.transactions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(FLEXHTTPTransaction *transaction, NSUInteger idx, BOOL *stop) {
+                if (keywords.length > 0) {
+                    if (![transaction matchesQuery:keywords]) return;
+                }
+                
+                totalCount += 1;
                 bytesReceived += transaction.receivedDataLength;
-                [array addObject:@{
-                    @"identifier": transaction.requestID,
-                    @"thumbnail": @"",
-                    @"name": transaction.primaryDescription,
-                    @"path": transaction.secondaryDescription,
-                    @"details": transaction.tertiaryDescription,
-                    @"size": @(transaction.receivedDataLength),
-                    @"error": transaction.displayAsError ? @YES : @NO,
-                }];
-            }
+                if (totalCount > perpage * (page - 1) && totalCount <= perpage * page) {
+                    [array addObject:@{
+                        @"identifier": transaction.requestID,
+                        @"thumbnail": @"",
+                        @"name": transaction.primaryDescription,
+                        @"path": transaction.secondaryDescription,
+                        @"details": transaction.tertiaryDescription,
+                        @"size": @(transaction.receivedDataLength),
+                        @"error": transaction.displayAsError ? @YES : @NO,
+                    }];
+                }
+            }];
             
+            NSInteger totalPage = ((NSInteger)(totalCount / perpage)) + ((totalCount % perpage) > 0 ? 1 : 0);
             NSString *byteCountText = [NSByteCountFormatter stringFromByteCount:bytesReceived countStyle:NSByteCountFormatterCountStyleBinary];
-            NSString *totalText = [NSString stringWithFormat:@"%@ %@ (%@ received)", @(array.count), array.count < 2 ? @"Request" : @"Requests", byteCountText];
+            NSString *totalText = [NSString stringWithFormat:@"%@ %@, Page %@ of %@ (%@ received)", @(totalCount), totalCount < 2 ? @"Request" : @"Requests", @(totalPage > 0 ? page : 0), @(totalPage), byteCountText];
             return [GCDWebServerDataResponse responseWithJSONObject:@{
                 @"total": totalText,
+                @"next": totalPage > page ? @YES : @NO,
+                @"prev": page > 1 ? @YES : @NO,
                 @"list": array,
             }];
         }];

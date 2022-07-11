@@ -7,7 +7,7 @@
     <title>%title%</title>
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/bootstrap-theme.css">
-    <link rel="stylesheet" href="css/logger.css">
+    <link rel="stylesheet" href="css/debug.css">
     <!--[if lt IE 9]>
       <script type="text/javascript" src="js/html5shiv.min.js"></script>
       <script type="text/javascript" src="js/respond.min.js"></script>
@@ -18,10 +18,10 @@
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/tmpl.min.js"></script>
     <script type="text/javascript">
-      var _device = "NSLog";
+      var _device = "REST";
       var _keywords = "%keywords%";
     </script>
-    <script type="text/javascript" src="js/logger.js"></script>
+    <script type="text/javascript" src="js/debug.js"></script>
   </head>
   <body>
     
@@ -34,12 +34,12 @@
       <div id="alerts"></div>
       
       <ul class="nav nav-tabs">
-        <li role="presentation"><a href="index.html">📡  Network History</a></li>
-        <li role="presentation" class="active"><a href="#">⚠️  System Log</a></li>
+        <li role="presentation" class="active"><a href="#">📡  Network History</a></li>
+        <li role="presentation"><a href="logger.html">⚠️  System Log</a></li>
         <li role="presentation">
           <form class="navbar-form navbar-left" role="search">
             <div class="form-group">
-              <input type="text" value="%keywords%" name="keywords" class="form-control" placeholder="Search">
+              <input type="text" value="%keywords%" class="form-control" placeholder="Search">
             </div>
             <button type="submit" class="btn btn-default">Submit</button>
           </form>
@@ -92,7 +92,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">NSLog</h4>
+            <h4 class="modal-title" id="share-title">REST</h4>
           </div>
           <div class="modal-body">
             <p id="copy-text"></p>
@@ -109,7 +109,7 @@
       <tr class="row-line">
         <td class="column-icon">
           <button type="button" class="btn btn-default btn-xs button-copy">
-            <span class="glyphicon glyphicon-info-sign"></span>
+            <span class="glyphicon glyphicon-folder-open"></span>
           </button>
         </td>
         <td class="column-name"><p>{%=o.name%}</p></td>
@@ -126,7 +126,7 @@
     
     <script type="text/x-tmpl" id="template-alert">
       <div class="alert alert-{%=o.level%} alert-dismissable">
-        <button type="button" class="close" data-dismiss="alert" id="alert-close">&times;</button>
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
         <strong>{%=o.title%}</strong>{%=o.description%}
       </div>
     </script>
