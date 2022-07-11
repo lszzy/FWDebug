@@ -68,7 +68,7 @@
       
       <div class="panel panel-default">
         <div class="panel-heading">
-          <ol class="breadcrumb" id="path">%device%</ol>
+          <ol class="breadcrumb" id="path">NSLog</ol>
         </div>
         <table class="table table-striped"><tbody id="listing"></tbody></table>
       </div>
@@ -92,14 +92,14 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">NSLog</h4>
+            <h4 class="modal-title" id="share-title">NSLog</h4>
           </div>
           <div class="modal-body">
-            <p id="copy-text"></p>
+            <p id="share-text"></p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="copy-confirm">Copy</button>
+            <button type="button" class="btn btn-primary" id="share-confirm">Copy</button>
           </div>
         </div>
       </div>
@@ -118,7 +118,7 @@
         </td>
         <td class="column-share">
           <button type="button" class="btn btn-default btn-xs button-share">
-            <span class="glyphicon glyphicon glyphicon-share-alt"></span>
+            <span class="glyphicon glyphicon-share-alt"></span>
           </button>
         </td>
       </tr>

@@ -1,5 +1,6 @@
 
 var _path = null;
+var _title = null;
 var _pendingReloads = [];
 var _reloadingDisabled = 0;
 var _interval = true;
@@ -55,7 +56,7 @@ function _reload(path) {
   
   _disableReloads();
   $.ajax({
-    url: 'list',
+    url: path == "/" ? 'list' : 'detail',
     type: 'GET',
     data: {path: path, page: _page, perpage: _perpage, keywords: _keywords},
     dataType: 'json'
@@ -69,16 +70,11 @@ function _reload(path) {
         $("#path").append('<li class="active">' + _device + '</li>');
       } else {
         $("#path").append('<li data-path="/"><a>' + _device + '</a></li>');
-        var components = path.split("/").slice(1, -1);
-        for (var i = 0; i < components.length - 1; ++i) {
-          var subpath = "/" + components.slice(0, i + 1).join("/") + "/";
-          $("#path").append('<li data-path="' + subpath + '"><a>' + components[i] + '</a></li>');
-        }
         $("#path > li").click(function(event) {
           _reload($(this).data("path"));
           event.preventDefault();
         });
-        $("#path").append('<li class="active">' + components[components.length - 1] + '</li>');
+        $("#path").append('<li class="active">' + _title + '</li>');
       }
       _path = path;
     }
@@ -98,17 +94,30 @@ function _reload(path) {
     } else {
       $("#next").addClass("hidden").removeClass("show");
     }
+    if (data.pager) {
+      $("#pager").addClass("show").removeClass("hidden");
+    } else {
+      $("#pager").addClass("hidden").removeClass("show");
+    }
     
     $(".button-copy").click(function(event) {
-      var path = $(this).parent().parent().data("path");
-      $("#copy-textarea").val(path);
+      var copy = $(this).parent().parent().data("copy");
+      $("#copy-textarea").val(copy);
       _copyText();
+    });
+    
+    $(".button-detail").click(function(event) {
+      var path = $(this).parent().parent().data("path");
+      _title = $(this).parent().parent().data("title");
+      _reload(path);
     });
     
     $(".button-share").click(function(event) {
       var path = $(this).parent().parent().data("path");
-      $("#copy-text").text(path);
-      $("#copy-textarea").val(path);
+      var copy = $(this).parent().parent().data("copy");
+      $("#share-title").text(path);
+      $("#share-text").text(copy);
+      $("#copy-textarea").val(copy);
       $("#share-modal").modal("show");
     });
     
@@ -120,7 +129,7 @@ function _reload(path) {
 
 $(document).ready(function() {
   
-  $("#copy-confirm").click(function(event) {
+  $("#share-confirm").click(function(event) {
     $("#share-modal").modal("hide");
     _copyText();
   });

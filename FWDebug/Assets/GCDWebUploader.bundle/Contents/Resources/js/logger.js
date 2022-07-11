@@ -107,7 +107,9 @@ function _reload(path) {
     
     $(".button-share").click(function(event) {
       var path = $(this).parent().parent().data("path");
-      $("#copy-text").text(path);
+      var date = $(this).parent().parent().data("date");
+      $("#share-title").text(date);
+      $("#share-text").text(path);
       $("#copy-textarea").val(path);
       $("#share-modal").modal("show");
     });
@@ -120,7 +122,7 @@ function _reload(path) {
 
 $(document).ready(function() {
   
-  $("#copy-confirm").click(function(event) {
+  $("#share-confirm").click(function(event) {
     $("#share-modal").modal("hide");
     _copyText();
   });

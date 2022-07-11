@@ -68,12 +68,12 @@
       
       <div class="panel panel-default">
         <div class="panel-heading">
-          <ol class="breadcrumb" id="path">%device%</ol>
+          <ol class="breadcrumb" id="path">REST</ol>
         </div>
         <table class="table table-striped"><tbody id="listing"></tbody></table>
       </div>
       
-      <nav aria-label="pager">
+      <nav aria-label="pager" id="pager">
         <ul class="pager">
           <li class="previous"><a id="previous" class="hidden" href="#"><span aria-hidden="true">&larr;</span> Previous</a></li>
           <li><span aria-hidden="true" id="total"></span></li>
@@ -95,11 +95,11 @@
             <h4 class="modal-title" id="share-title">REST</h4>
           </div>
           <div class="modal-body">
-            <p id="copy-text"></p>
+            <p id="share-text"></p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="copy-confirm">Copy</button>
+            <button type="button" class="btn btn-primary" id="share-confirm">Copy</button>
           </div>
         </div>
       </div>
@@ -108,25 +108,35 @@
     <script type="text/x-tmpl" id="template-listing">
       <tr class="row-line">
         <td class="column-icon">
-          <button type="button" class="btn btn-default btn-xs button-copy">
-            <span class="glyphicon glyphicon-folder-open"></span>
-          </button>
+          <img class="button-copy" src="{%=o.thumbnail%}"/>
         </td>
-        <td class="column-name"><p>{%=o.name%}</p></td>
+        <td class="column-name">
+        {% if (o.error) { %}
+          <p class="text-danger">{%=o.name%}</p>
+        {% } else { %}
+          <p>{%=o.name%}</p>
+        {% } %}
+        </td>
         <td class="column-date">
           <p>{%=o.date%}</p>
         </td>
         <td class="column-share">
-          <button type="button" class="btn btn-default btn-xs button-share">
-            <span class="glyphicon glyphicon glyphicon-share-alt"></span>
+        {% if (o.detail) { %}
+          <button type="button" class="btn btn-default btn-xs button-detail">
+            <span class="glyphicon glyphicon-chevron-right"></span>
           </button>
+        {% } else { %}
+          <button type="button" class="btn btn-default btn-xs button-share">
+            <span class="glyphicon glyphicon-share-alt"></span>
+          </button>
+        {% } %}
         </td>
       </tr>
     </script>
     
     <script type="text/x-tmpl" id="template-alert">
       <div class="alert alert-{%=o.level%} alert-dismissable">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <button type="button" class="close" data-dismiss="alert" id="alert-close">&times;</button>
         <strong>{%=o.title%}</strong>{%=o.description%}
       </div>
     </script>

@@ -16,6 +16,7 @@
 #import "FLEXMITMDataSource.h"
 #import "FLEXNetworkTransaction.h"
 #import "FLEXNetworkRecorder.h"
+#import "FLEXNetworkCurlLogger.h"
 #import "FLEXOSLogController.h"
 #import "FLEXSystemLogCell.h"
 
@@ -116,14 +117,19 @@ static GCDWebServer *_webSite = nil;
                 totalCount += 1;
                 bytesReceived += transaction.receivedDataLength;
                 if (totalCount > perpage * (page - 1) && totalCount <= perpage * page) {
+                    NSData *imageData = UIImagePNGRepresentation(transaction.thumbnail);
+                    NSString *imageString = [imageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+                    imageString = [@"data:image/png;base64," stringByAppendingString:imageString];
+                    
                     [array addObject:@{
-                        @"identifier": transaction.requestID,
-                        @"thumbnail": @"",
-                        @"name": transaction.primaryDescription,
-                        @"path": transaction.secondaryDescription,
-                        @"details": transaction.tertiaryDescription,
-                        @"size": @(transaction.receivedDataLength),
+                        @"thumbnail": imageString,
+                        @"name": [transaction.secondaryDescription stringByAppendingString:transaction.primaryDescription],
+                        @"path": transaction.requestID,
+                        @"title": transaction.primaryDescription,
+                        @"date": transaction.tertiaryDescription,
                         @"error": transaction.displayAsError ? @YES : @NO,
+                        @"detail": @YES,
+                        @"copy": [FLEXNetworkCurlLogger curlCommandString:transaction.request],
                     }];
                 }
             }];
@@ -133,8 +139,54 @@ static GCDWebServer *_webSite = nil;
             NSString *totalText = [NSString stringWithFormat:@"%@ %@, Page %@ of %@ (%@ received)", @(totalCount), totalCount < 2 ? @"Request" : @"Requests", @(totalPage > 0 ? page : 0), @(totalPage), byteCountText];
             return [GCDWebServerDataResponse responseWithJSONObject:@{
                 @"total": totalText,
+                @"pager": @YES,
                 @"next": totalPage > page ? @YES : @NO,
                 @"prev": page > 1 ? @YES : @NO,
+                @"list": array,
+            }];
+        }];
+        
+        [_webDebug addHandlerForMethod:@"GET"
+                                  path:@"/detail"
+                          requestClass:[GCDWebServerRequest class]
+                          processBlock:^GCDWebServerResponse * _Nullable(__kindof GCDWebServerRequest * _Nonnull request) {
+            NSString *requestID = request.query[@"path"] ?: @"";
+            __block FLEXHTTPTransaction *transaction = nil;
+            [FLEXNetworkRecorder.defaultRecorder.HTTPTransactions enumerateObjectsUsingBlock:^(FLEXHTTPTransaction *obj, NSUInteger idx, BOOL *stop) {
+                if ([obj.requestID isEqualToString:requestID]) {
+                    transaction = obj;
+                    *stop = YES;
+                }
+            }];
+            if (!transaction) {
+                return [GCDWebServerDataResponse responseWithJSONObject:@{
+                    @"total": @"",
+                    @"pager": @NO,
+                    @"next": @NO,
+                    @"prev": @NO,
+                    @"list": @[],
+                }];
+            }
+            
+            NSMutableArray *array = [NSMutableArray array];
+            for (int i = 0; i < 10; i++) {
+                [array addObject:@{
+                    @"thumbnail": @"",
+                    @"name": [transaction.secondaryDescription stringByAppendingString:transaction.primaryDescription],
+                    @"path": transaction.requestID,
+                    @"title": transaction.primaryDescription,
+                    @"date": transaction.tertiaryDescription,
+                    @"error": transaction.displayAsError ? @YES : @NO,
+                    @"detail": @NO,
+                    @"copy": [FLEXNetworkCurlLogger curlCommandString:transaction.request],
+                }];
+            }
+            
+            return [GCDWebServerDataResponse responseWithJSONObject:@{
+                @"total": @"",
+                @"pager": @NO,
+                @"next": @NO,
+                @"prev": @NO,
                 @"list": array,
             }];
         }];
