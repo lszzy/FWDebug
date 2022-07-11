@@ -54,11 +54,14 @@
             <span class="sr-only">Toggle Dropdown</span>
           </button>
           <ul class="dropdown-menu">
+            <li><a id="interval-toggle" href="#">Interval Off</a></li>
             <li><a id="interval-5" href="#">Interval 5s</a></li>
             <li><a id="interval-10" href="#">Interval 10s</a></li>
             <li><a id="interval-60" href="#">Interval 60s</a></li>
             <li role="separator" class="divider"></li>
-            <li><a id="interval-toggle" href="#">Interval Off</a></li>
+            <li><a id="page-10" href="#">10 per page</a></li>
+            <li><a id="page-20" href="#">20 per page</a></li>
+            <li><a id="page-50" href="#">50 per page</a></li>
           </ul>
         </div>
       </ul>
@@ -70,11 +73,11 @@
         <table class="table table-striped"><tbody id="listing"></tbody></table>
       </div>
       
-      <nav aria-label="...">
+      <nav aria-label="pager">
         <ul class="pager">
-          <li class="previous"><a id="previous" href="#"><span aria-hidden="true">&larr;</span> Previous</a></li>
+          <li class="previous"><a id="previous" class="hidden" href="#"><span aria-hidden="true">&larr;</span> Previous</a></li>
           <li><span aria-hidden="true" id="total"></span></li>
-          <li class="next"><a id="next" href="#">Next <span aria-hidden="true">&rarr;</span></a></li>
+          <li class="next"><a id="next" class="hidden" href="#">Next <span aria-hidden="true">&rarr;</span></a></li>
         </ul>
       </nav>
       

@@ -130,11 +130,12 @@ static GCDWebServer *_webSite = nil;
             NSArray<FLEXSystemLogMessage *> *messages = [FLEXOSLogController sharedLogController].messages.copy;
             NSString *keywords = request.query[@"keywords"] ?: @"";
             NSInteger page = [(request.query[@"page"] ?: @"") integerValue];
+            NSInteger perpage = [(request.query[@"perpage"] ?: @"") integerValue];
             if (page < 1) page = 1;
+            if (perpage < 1) perpage = 10;
             
             NSMutableArray *array = [NSMutableArray array];
             __block NSInteger totalCount = 0;
-            NSInteger pageCount = 10;
             [messages enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(FLEXSystemLogMessage *message, NSUInteger idx, BOOL *stop) {
                 if (keywords.length > 0) {
                     NSString *text = [FLEXSystemLogCell displayedTextForLogMessage:message];
@@ -142,7 +143,7 @@ static GCDWebServer *_webSite = nil;
                 }
                 
                 totalCount += 1;
-                if (totalCount > pageCount * (page - 1) && totalCount <= pageCount * page) {
+                if (totalCount > perpage * (page - 1) && totalCount <= perpage * page) {
                     [array addObject:@{
                         @"name": message.messageText,
                         @"path": message.messageText,
@@ -151,7 +152,7 @@ static GCDWebServer *_webSite = nil;
                 }
             }];
             
-            NSInteger totalPage = ((NSInteger)(totalCount / pageCount)) + ((totalCount % pageCount) > 0 ? 1 : 0);
+            NSInteger totalPage = ((NSInteger)(totalCount / perpage)) + ((totalCount % perpage) > 0 ? 1 : 0);
             NSString *totalText = [NSString stringWithFormat:@"%@ %@, Page %@ of %@", @(totalCount), totalCount < 2 ? @"Log" : @"Logs", @(totalPage > 0 ? page : 0), @(totalPage)];
             return [GCDWebServerDataResponse responseWithJSONObject:@{
                 @"total": totalText,

@@ -5,6 +5,7 @@ var _reloadingDisabled = 0;
 var _interval = true;
 var _intervalId = null;
 var _page = 1;
+var _perpage = 10;
 
 function _copyText() {
     var element = document.getElementById("copy-textarea");
@@ -56,7 +57,7 @@ function _reload(path) {
   $.ajax({
     url: 'logs',
     type: 'GET',
-    data: {path: path, page: _page, keywords: _keywords},
+    data: {path: path, page: _page, perpage: _perpage, keywords: _keywords},
     dataType: 'json'
   }).fail(function(jqXHR, textStatus, errorThrown) {
   }).done(function(data, textStatus, jqXHR) {
@@ -147,17 +148,41 @@ $(document).ready(function() {
   });
   
   $("#interval-5").click(function(event) {
+    _interval = true;
     _setInterval(5000);
     event.preventDefault();
   });
   
   $("#interval-10").click(function(event) {
+    _interval = true;
     _setInterval(10000);
     event.preventDefault();
   });
   
   $("#interval-60").click(function(event) {
+    _interval = true;
     _setInterval(60000);
+    event.preventDefault();
+  });
+    
+  $("#page-10").click(function(event) {
+    _perpage = 10;
+    _page = 1;
+    _reload(_path);
+    event.preventDefault();
+  });
+    
+  $("#page-20").click(function(event) {
+    _perpage = 20;
+    _page = 1;
+    _reload(_path);
+    event.preventDefault();
+  });
+  
+  $("#page-50").click(function(event) {
+    _perpage = 50;
+    _page = 1;
+    _reload(_path);
     event.preventDefault();
   });
 
