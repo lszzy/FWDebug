@@ -82,10 +82,10 @@ static GCDWebServer *_webSite = nil;
                 NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
                 
                 return [GCDWebServerDataResponse responseWithHTMLTemplate:file variables:@{
-                    @"title": title,
+                    @"title": [title stringByAppendingString:@" - FWDebug"],
                     @"header": title,
                     @"keywords": request.query[@"keywords"] ?: @"",
-                    @"footer": [NSString stringWithFormat:@"%@ %@", title, version],
+                    @"footer": [NSString stringWithFormat:@"%@ %@ - FWDebug", title, version],
                 }];
             } else {
                 return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", path];
@@ -116,8 +116,7 @@ static GCDWebServer *_webSite = nil;
             }
             
             NSString *byteCountText = [NSByteCountFormatter stringFromByteCount:bytesReceived countStyle:NSByteCountFormatterCountStyleBinary];
-            NSString *requestsText = array.count < 2 ? @"Request" : @"Requests";
-            NSString *totalText = [NSString stringWithFormat:@"%@ %@ (%@ received)", @(array.count), requestsText, byteCountText];
+            NSString *totalText = [NSString stringWithFormat:@"%@ %@ (%@ received)", @(array.count), array.count < 2 ? @"Request" : @"Requests", byteCountText];
             return [GCDWebServerDataResponse responseWithJSONObject:@{
                 @"total": totalText,
                 @"list": array,
@@ -130,26 +129,34 @@ static GCDWebServer *_webSite = nil;
                           processBlock:^GCDWebServerResponse * _Nullable(__kindof GCDWebServerRequest * _Nonnull request) {
             NSArray<FLEXSystemLogMessage *> *messages = [FLEXOSLogController sharedLogController].messages.copy;
             NSString *keywords = request.query[@"keywords"] ?: @"";
+            NSInteger page = [(request.query[@"page"] ?: @"") integerValue];
+            if (page < 1) page = 1;
             
             NSMutableArray *array = [NSMutableArray array];
+            __block NSInteger totalCount = 0;
+            NSInteger pageCount = 10;
             [messages enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(FLEXSystemLogMessage *message, NSUInteger idx, BOOL *stop) {
                 if (keywords.length > 0) {
                     NSString *text = [FLEXSystemLogCell displayedTextForLogMessage:message];
                     if (![text localizedCaseInsensitiveContainsString:keywords]) return;
                 }
                 
-                [array addObject:@{
-                    @"name": message.messageText,
-                    @"path": message.messageText,
-                    @"date": [FLEXSystemLogCell logTimeStringFromDate:message.date],
-                }];
+                totalCount += 1;
+                if (totalCount > pageCount * (page - 1) && totalCount <= pageCount * page) {
+                    [array addObject:@{
+                        @"name": message.messageText,
+                        @"path": message.messageText,
+                        @"date": [FLEXSystemLogCell logTimeStringFromDate:message.date],
+                    }];
+                }
             }];
             
-            NSString *logText = array.count < 2 ? @"Log" : @"Logs";
-            NSInteger totalPage = (NSInteger)(array.count / 10) + 1;
-            NSString *totalText = [NSString stringWithFormat:@"%@ %@ (%@ pages)", @(array.count), logText, @(totalPage)];
+            NSInteger totalPage = ((NSInteger)(totalCount / pageCount)) + ((totalCount % pageCount) > 0 ? 1 : 0);
+            NSString *totalText = [NSString stringWithFormat:@"%@ %@, Page %@ of %@", @(totalCount), totalCount < 2 ? @"Log" : @"Logs", @(totalPage > 0 ? page : 0), @(totalPage)];
             return [GCDWebServerDataResponse responseWithJSONObject:@{
                 @"total": totalText,
+                @"next": totalPage > page ? @YES : @NO,
+                @"prev": page > 1 ? @YES : @NO,
                 @"list": array,
             }];
         }];
@@ -158,12 +165,13 @@ static GCDWebServer *_webSite = nil;
     //初始化WebServer
     if (!_webServer) {
         NSString *webPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+        NSString *title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
         _webServer = [[GCDWebUploader alloc] initWithUploadDirectory:webPath];
-        _webServer.title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
-        _webServer.header = _webServer.title;
+        _webServer.title = [title stringByAppendingString:@" - FWDebug"];
+        _webServer.header = title;
         _webServer.prologue = @"<p>Drag &amp; drop files on this window or use the \"Upload Files&hellip;\" button to upload new files.</p>";
         _webServer.epilogue = @"";
-        _webServer.footer = [NSString stringWithFormat:@"%@ %@", _webServer.title, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
+        _webServer.footer = [NSString stringWithFormat:@"%@ %@ - FWDebug", title, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
     }
     
     //初始化WebDavServer

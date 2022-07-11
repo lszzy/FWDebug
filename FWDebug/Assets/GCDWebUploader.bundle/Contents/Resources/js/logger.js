@@ -56,7 +56,7 @@ function _reload(path) {
   $.ajax({
     url: 'logs',
     type: 'GET',
-    data: {path: path, keywords: _keywords},
+    data: {path: path, page: _page, keywords: _keywords},
     dataType: 'json'
   }).fail(function(jqXHR, textStatus, errorThrown) {
   }).done(function(data, textStatus, jqXHR) {
@@ -87,6 +87,16 @@ function _reload(path) {
       $(tmpl("template-listing", file)).data(file).appendTo("#listing");
     }
     $("#total").text(data.total);
+    if (data.prev) {
+      $("#previous").addClass("show").removeClass("hidden");
+    } else {
+      $("#previous").addClass("hidden").removeClass("show");
+    }
+    if (data.next) {
+      $("#next").addClass("show").removeClass("hidden");
+    } else {
+      $("#next").addClass("hidden").removeClass("show");
+    }
     
     $(".button-copy").click(function(event) {
       var path = $(this).parent().parent().data("path");
@@ -117,6 +127,18 @@ $(document).ready(function() {
   $("#reload").click(function(event) {
     _reload(_path);
   });
+    
+  $("#previous").click(function(event) {
+    _page = _page - 1;
+    _reload(_path);
+    event.preventDefault();
+  });
+
+  $("#next").click(function(event) {
+    _page = _page + 1;
+    _reload(_path);
+    event.preventDefault();
+  });
   
   $("#interval-toggle").click(function(event) {
     _interval = !_interval;
@@ -141,6 +163,6 @@ $(document).ready(function() {
 
   _reload("/");
   
-  _setInterval(10000);
+  _setInterval(5000);
   
 });
