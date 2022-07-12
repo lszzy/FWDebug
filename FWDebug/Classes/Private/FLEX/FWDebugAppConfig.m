@@ -506,7 +506,7 @@ static BOOL traceVCRequest = NO;
             [self configSwitch:cell indexPath:indexPath];
         } else {
             filterSystemLog = NO;
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugFilterSystemLog"];
+            [[NSUserDefaults standardUserDefaults] setObject:@(NO) forKey:@"FWDebugFilterSystemLog"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
         }

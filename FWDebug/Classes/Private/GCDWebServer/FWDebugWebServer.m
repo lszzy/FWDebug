@@ -155,11 +155,11 @@ static GCDWebServer *_webSite = nil;
                 if (totalCount > perpage * (page - 1) && totalCount <= perpage * page) {
                     NSData *imageData = UIImagePNGRepresentation(transaction.thumbnail);
                     NSString *imageString = [imageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
-                    imageString = [@"data:image/png;base64," stringByAppendingString:imageString];
+                    if (imageString) imageString = [@"data:image/png;base64," stringByAppendingString:imageString];
                     
                     [array addObject:@{
                         @"path": transaction.requestID,
-                        @"image": imageString,
+                        @"image": imageString ?: @"",
                         @"title": transaction.primaryDescription,
                         @"name": [transaction.secondaryDescription stringByAppendingString:transaction.primaryDescription],
                         @"date": transaction.tertiaryDescription,
@@ -299,6 +299,7 @@ static GCDWebServer *_webSite = nil;
     if (generalSection.rows.count > 0) {
         [sections addObject:@{
             @"name": generalSection.title,
+            @"date": @"CURL",
             @"action": @"curl",
             @"title": @"Curl Command",
             @"copy": [FLEXNetworkCurlLogger curlCommandString:transaction.request],
@@ -309,6 +310,7 @@ static GCDWebServer *_webSite = nil;
                     @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
                     @"action": @"link",
                     @"path": row.detailText,
+                    @"copy": row.detailText,
                 }];
             } else {
                 [sections addObject:@{
@@ -326,7 +328,7 @@ static GCDWebServer *_webSite = nil;
         [sections addObject:@{
             @"name": requestHeadersSection.title,
             @"action": @"section",
-            @"title": requestHeadersSection.title,
+            @"title": @"",
             @"copy": requestHeadersSection.title,
         }];
         for (FLEXNetworkDetailRow *row in requestHeadersSection.rows) {
@@ -344,7 +346,7 @@ static GCDWebServer *_webSite = nil;
         [sections addObject:@{
             @"name": queryParametersSection.title,
             @"action": @"section",
-            @"title": queryParametersSection.title,
+            @"title": @"",
             @"copy": queryParametersSection.title,
         }];
         for (FLEXNetworkDetailRow *row in queryParametersSection.rows) {
@@ -362,7 +364,7 @@ static GCDWebServer *_webSite = nil;
         [sections addObject:@{
             @"name": postBodySection.title,
             @"action": @"section",
-            @"title": postBodySection.title,
+            @"title": @"",
             @"copy": postBodySection.title,
         }];
         for (FLEXNetworkDetailRow *row in postBodySection.rows) {
@@ -380,7 +382,7 @@ static GCDWebServer *_webSite = nil;
         [sections addObject:@{
             @"name": responseHeadersSection.title,
             @"action": @"section",
-            @"title": responseHeadersSection.title,
+            @"title": @"",
             @"copy": responseHeadersSection.title,
         }];
         for (FLEXNetworkDetailRow *row in responseHeadersSection.rows) {

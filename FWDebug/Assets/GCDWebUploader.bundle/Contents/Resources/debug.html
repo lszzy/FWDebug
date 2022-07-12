@@ -42,7 +42,9 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" target="_blank" href="https://github.com/lszzy/FWDebug">FWDebug</a>
+            <a class="navbar-brand" target="_blank" href="https://github.com/lszzy/FWDebug">
+              <span class="glyphicon glyphicon-phone"></span>
+            </a>
           </div>
 
           <div class="collapse navbar-collapse" id="navbar-collapse">
@@ -132,9 +134,7 @@
             <span class="glyphicon glyphicon-menu-hamburger"></span>
           </button>
         {% } else { %}
-          <button type="button" class="btn btn-default btn-xs button-copy">
-            <span class="glyphicon glyphicon-info-sign"></span>
-          </button>
+          <span class="glyphicon glyphicon-triangle-right button-copy"></span>
         {% } %}
         </td>
         <td class="column-name">
@@ -164,7 +164,7 @@
           <button type="button" class="btn btn-default btn-xs button-link">
             <span class="glyphicon glyphicon-globe"></span>
           </button>
-        {% } else { %}
+        {% } else if (o.action == "copy") { %}
           <button type="button" class="btn btn-default btn-xs button-share">
             <span class="glyphicon glyphicon-share-alt"></span>
           </button>
