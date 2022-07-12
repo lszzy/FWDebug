@@ -24,6 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 调试器是否隐藏
 @property (nonatomic, readonly) BOOL isHidden;
 
+/// 自定义崩溃上报者，支持url或逗号分隔email，配置后生效，默认记录文件
+@property (nonatomic, copy, nullable) NSString *crashReporter;
+
 /// 打开URL调试钩子方法，长按帧率按钮触发
 @property (nonatomic, copy, nullable) BOOL (^openUrl)(NSString *url);
 
