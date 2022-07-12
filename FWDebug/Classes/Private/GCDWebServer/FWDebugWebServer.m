@@ -167,7 +167,7 @@ static GCDWebServer *_webSite = nil;
                         @"date": transaction.tertiaryDescription,
                         @"error": transaction.displayAsError ? @YES : @NO,
                         @"action": @"detail",
-                        @"copy": [FLEXNetworkCurlLogger curlCommandString:transaction.request],
+                        @"copy": transaction.request.URL.absoluteString ?: @"",
                     }];
                 }
             }];

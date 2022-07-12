@@ -101,7 +101,7 @@ function _reload(path) {
     }
     
     $(".button-copy").click(function(event) {
-      var copy = $(this).parent().parent().data("copy");
+      var copy = $(this).parent().data("copy");
       $("#copy-textarea").val(copy);
       _copyText();
     });
