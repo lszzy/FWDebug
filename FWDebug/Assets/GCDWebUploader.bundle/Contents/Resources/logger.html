@@ -33,38 +33,55 @@
       
       <div id="alerts"></div>
       
-      <ul class="nav nav-tabs">
-        <li role="presentation"><a href="index.html">📡  Network History</a></li>
-        <li role="presentation" class="active"><a href="#">⚠️  System Log</a></li>
-        <li role="presentation">
-          <form class="navbar-form navbar-left" role="search">
-            <div class="form-group">
-              <input type="text" value="%keywords%" name="keywords" class="form-control" placeholder="Search">
-            </div>
-            <button type="submit" class="btn btn-default">Submit</button>
-          </form>
-        </li>
-        
-        <div class="btn-group navbar-right">
-          <button type="button" class="btn btn-default navbar-btn" id="reload">
-            <span class="glyphicon glyphicon-refresh"></span> Refresh
-          </button>
-          <button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="caret"></span>
-            <span class="sr-only">Toggle Dropdown</span>
-          </button>
-          <ul class="dropdown-menu">
-            <li><a id="interval-toggle" href="#">Interval Off</a></li>
-            <li><a id="interval-5" href="#">Interval 5s</a></li>
-            <li><a id="interval-10" href="#">Interval 10s</a></li>
-            <li><a id="interval-60" href="#">Interval 60s</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a id="page-10" href="#">10 per page</a></li>
-            <li><a id="page-20" href="#">20 per page</a></li>
-            <li><a id="page-50" href="#">50 per page</a></li>
-          </ul>
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" target="_blank" href="https://github.com/lszzy/FWDebug">FWDebug</a>
+          </div>
+
+          <div class="collapse navbar-collapse" id="navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="index.html">📡  Network History <span class="sr-only">(current)</span></a></li>
+              <li class="active"><a href="#">⚠️  System Log</a></li>
+            </ul>
+            <form class="navbar-form navbar-left" role="search">
+              <div class="form-group">
+                <input type="text" value="%keywords%" name="keywords" class="form-control" placeholder="Search">
+              </div>
+              <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+              <li>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default navbar-btn" id="reload">
+                    <span class="glyphicon glyphicon-refresh"></span> Refresh
+                  </button>
+                  <button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a id="interval-toggle" href="#">Interval Off</a></li>
+                    <li><a id="interval-5" href="#">Interval 5s</a></li>
+                    <li><a id="interval-10" href="#">Interval 10s</a></li>
+                    <li><a id="interval-60" href="#">Interval 60s</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a id="page-10" href="#">10 per page</a></li>
+                    <li><a id="page-20" href="#">20 per page</a></li>
+                    <li><a id="page-50" href="#">50 per page</a></li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
-      </ul>
+      </nav>
       
       <div class="panel panel-default">
         <div class="panel-heading">
