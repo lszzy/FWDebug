@@ -111,11 +111,16 @@ function _reload(path) {
       _title = $(this).parent().parent().data("title");
       _reload(path);
     });
+      
+    $(".button-link").click(function(event) {
+      var path = $(this).parent().parent().data("path");
+      window.open(path, "_blank");
+    });
     
     $(".button-share").click(function(event) {
-      var path = $(this).parent().parent().data("path");
+      var title = $(this).parent().parent().data("title");
       var copy = $(this).parent().parent().data("copy");
-      $("#share-title").text(path);
+      $("#share-title").text(title);
       $("#share-text").text(copy);
       $("#copy-textarea").val(copy);
       $("#share-modal").modal("show");

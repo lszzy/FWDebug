@@ -17,6 +17,7 @@
 #import "FLEXNetworkTransaction.h"
 #import "FLEXNetworkRecorder.h"
 #import "FLEXNetworkCurlLogger.h"
+#import "FLEXHTTPTransactionDetailController.h"
 #import "FLEXOSLogController.h"
 #import "FLEXSystemLogCell.h"
 
@@ -29,6 +30,41 @@
 @interface FLEXSystemLogCell ()
 
 + (NSString *)logTimeStringFromDate:(NSDate *)date;
+
+@end
+
+@interface FLEXNetworkDetailRow : NSObject
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) NSString *detailText;
+@end
+
+@interface FLEXNetworkDetailSection : NSObject
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) NSArray<FLEXNetworkDetailRow *> *rows;
+@end
+
+@interface FLEXHTTPTransactionDetailController ()
+
+@property (nonatomic, readonly) FLEXHTTPTransaction *transaction;
+@property (nonatomic, copy) NSArray<FLEXNetworkDetailSection *> *sections;
+
++ (FLEXNetworkDetailSection *)generalSectionForTransaction:(FLEXHTTPTransaction *)transaction;
+
++ (FLEXNetworkDetailSection *)requestHeadersSectionForTransaction:(FLEXHTTPTransaction *)transaction;
+
++ (FLEXNetworkDetailSection *)postBodySectionForTransaction:(FLEXHTTPTransaction *)transaction;
+
++ (FLEXNetworkDetailSection *)queryParametersSectionForTransaction:(FLEXHTTPTransaction *)transaction;
+
++ (FLEXNetworkDetailSection *)responseHeadersSectionForTransaction:(FLEXHTTPTransaction *)transaction;
+
++ (NSArray<FLEXNetworkDetailRow *> *)networkDetailRowsFromDictionary:(NSDictionary<NSString *, id> *)dictionary;
+
++ (NSArray<FLEXNetworkDetailRow *> *)networkDetailRowsFromQueryItems:(NSArray<NSURLQueryItem *> *)items;
+
++ (UIViewController *)detailViewControllerForMIMEType:(NSString *)mimeType data:(NSData *)data;
+
++ (NSData *)postBodyDataForTransaction:(FLEXHTTPTransaction *)transaction;
 
 @end
 
@@ -109,7 +145,7 @@ static GCDWebServer *_webSite = nil;
             NSMutableArray *array = [NSMutableArray array];
             __block NSInteger totalCount = 0;
             __block NSInteger bytesReceived = 0;
-            [dataSource.transactions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(FLEXHTTPTransaction *transaction, NSUInteger idx, BOOL *stop) {
+            [dataSource.transactions enumerateObjectsUsingBlock:^(FLEXHTTPTransaction *transaction, NSUInteger idx, BOOL *stop) {
                 if (keywords.length > 0) {
                     if (![transaction matchesQuery:keywords]) return;
                 }
@@ -122,13 +158,13 @@ static GCDWebServer *_webSite = nil;
                     imageString = [@"data:image/png;base64," stringByAppendingString:imageString];
                     
                     [array addObject:@{
-                        @"thumbnail": imageString,
-                        @"name": [transaction.secondaryDescription stringByAppendingString:transaction.primaryDescription],
                         @"path": transaction.requestID,
+                        @"image": imageString,
                         @"title": transaction.primaryDescription,
+                        @"name": [transaction.secondaryDescription stringByAppendingString:transaction.primaryDescription],
                         @"date": transaction.tertiaryDescription,
                         @"error": transaction.displayAsError ? @YES : @NO,
-                        @"detail": @YES,
+                        @"action": @"detail",
                         @"copy": [FLEXNetworkCurlLogger curlCommandString:transaction.request],
                     }];
                 }
@@ -168,20 +204,7 @@ static GCDWebServer *_webSite = nil;
                 }];
             }
             
-            NSMutableArray *array = [NSMutableArray array];
-            for (int i = 0; i < 10; i++) {
-                [array addObject:@{
-                    @"thumbnail": @"",
-                    @"name": [transaction.secondaryDescription stringByAppendingString:transaction.primaryDescription],
-                    @"path": transaction.requestID,
-                    @"title": transaction.primaryDescription,
-                    @"date": transaction.tertiaryDescription,
-                    @"error": transaction.displayAsError ? @YES : @NO,
-                    @"detail": @NO,
-                    @"copy": [FLEXNetworkCurlLogger curlCommandString:transaction.request],
-                }];
-            }
-            
+            NSArray *array = [self transactionSections:transaction];
             return [GCDWebServerDataResponse responseWithJSONObject:@{
                 @"total": @"",
                 @"pager": @NO,
@@ -266,6 +289,111 @@ static GCDWebServer *_webSite = nil;
             return [GCDWebServerResponse responseWithRedirect:[NSURL URLWithString:@"index.html" relativeToURL:request.URL] permanent:NO];
         }];
     }
+}
+
++ (NSArray *)transactionSections:(FLEXHTTPTransaction *)transaction
+{
+    NSMutableArray *sections = [NSMutableArray array];
+    
+    FLEXNetworkDetailSection *generalSection = [FLEXHTTPTransactionDetailController generalSectionForTransaction:transaction];
+    if (generalSection.rows.count > 0) {
+        [sections addObject:@{
+            @"name": generalSection.title,
+            @"action": @"curl",
+            @"title": @"Curl Command",
+            @"copy": [FLEXNetworkCurlLogger curlCommandString:transaction.request],
+        }];
+        for (FLEXNetworkDetailRow *row in generalSection.rows) {
+            if ([row.title isEqualToString:@"Request URL"]) {
+                [sections addObject:@{
+                    @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+                    @"action": @"link",
+                    @"path": row.detailText,
+                }];
+            } else {
+                [sections addObject:@{
+                    @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+                    @"action": @"copy",
+                    @"title": row.title,
+                    @"copy": row.detailText,
+                }];
+            }
+        }
+    }
+    
+    FLEXNetworkDetailSection *requestHeadersSection = [FLEXHTTPTransactionDetailController requestHeadersSectionForTransaction:transaction];
+    if (requestHeadersSection.rows.count > 0) {
+        [sections addObject:@{
+            @"name": requestHeadersSection.title,
+            @"action": @"section",
+            @"title": requestHeadersSection.title,
+            @"copy": requestHeadersSection.title,
+        }];
+        for (FLEXNetworkDetailRow *row in requestHeadersSection.rows) {
+            [sections addObject:@{
+                @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+                @"action": @"copy",
+                @"title": row.title,
+                @"copy": row.detailText,
+            }];
+        }
+    }
+    
+    FLEXNetworkDetailSection *queryParametersSection = [FLEXHTTPTransactionDetailController queryParametersSectionForTransaction:transaction];
+    if (queryParametersSection.rows.count > 0) {
+        [sections addObject:@{
+            @"name": queryParametersSection.title,
+            @"action": @"section",
+            @"title": queryParametersSection.title,
+            @"copy": queryParametersSection.title,
+        }];
+        for (FLEXNetworkDetailRow *row in queryParametersSection.rows) {
+            [sections addObject:@{
+                @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+                @"action": @"copy",
+                @"title": row.title,
+                @"copy": row.detailText,
+            }];
+        }
+    }
+    
+    FLEXNetworkDetailSection *postBodySection = [FLEXHTTPTransactionDetailController postBodySectionForTransaction:transaction];
+    if (postBodySection.rows.count > 0) {
+        [sections addObject:@{
+            @"name": postBodySection.title,
+            @"action": @"section",
+            @"title": postBodySection.title,
+            @"copy": postBodySection.title,
+        }];
+        for (FLEXNetworkDetailRow *row in postBodySection.rows) {
+            [sections addObject:@{
+                @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+                @"action": @"copy",
+                @"title": row.title,
+                @"copy": row.detailText,
+            }];
+        }
+    }
+    
+    FLEXNetworkDetailSection *responseHeadersSection = [FLEXHTTPTransactionDetailController responseHeadersSectionForTransaction:transaction];
+    if (responseHeadersSection.rows.count > 0) {
+        [sections addObject:@{
+            @"name": responseHeadersSection.title,
+            @"action": @"section",
+            @"title": responseHeadersSection.title,
+            @"copy": responseHeadersSection.title,
+        }];
+        for (FLEXNetworkDetailRow *row in responseHeadersSection.rows) {
+            [sections addObject:@{
+                @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+                @"action": @"copy",
+                @"title": row.title,
+                @"copy": row.detailText,
+            }];
+        }
+    }
+    
+    return sections;
 }
 
 - (instancetype)initWithStyle:(UITableViewStyle)style
