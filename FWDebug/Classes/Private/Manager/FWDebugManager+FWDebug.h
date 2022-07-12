@@ -17,6 +17,8 @@
 
 + (void)showPrompt:(UIViewController *)viewController security:(BOOL)security title:(NSString *)title message:(NSString *)message text:(NSString *)text block:(void (^)(BOOL confirm, NSString *text))block;
 
++ (void)showConfirm:(UIViewController *)viewController title:(NSString *)title message:(NSString *)message block:(void (^)(BOOL confirm))block;
+
 + (UIViewController *)topViewController;
 
 @end

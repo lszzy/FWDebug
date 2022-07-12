@@ -332,7 +332,7 @@ static BOOL traceVCRequest = NO;
     if (section == 0) {
         return 3;
     } else if (section == 1) {
-        return 2;
+        return 3;
     } else {
         return 4;
     }
@@ -361,7 +361,8 @@ static BOOL traceVCRequest = NO;
         }
         [self configLabel:cell indexPath:indexPath];
         return cell;
-    } else if (indexPath.section == 2 && indexPath.row == 3) {
+    } else if ((indexPath.section == 2 && indexPath.row == 3) ||
+               (indexPath.section == 1 && indexPath.row == 2)) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell3"];
         if (cell == nil) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell3"];
@@ -391,7 +392,8 @@ static BOOL traceVCRequest = NO;
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     if ((indexPath.section == 0 && indexPath.row == 2) ||
-        (indexPath.section == 2 && indexPath.row == 3)) {
+        (indexPath.section == 2 && indexPath.row == 3) ||
+        (indexPath.section == 1 && indexPath.row == 2)) {
         [self actionLabel:indexPath];
     } else {
         [self actionSwitch:indexPath];
@@ -438,6 +440,9 @@ static BOOL traceVCRequest = NO;
     } else if (indexPath.section == 2 && indexPath.row == 3) {
         cell.textLabel.text = @"Retain Cycle Depth";
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", @([self.class retainCycleDepth])];
+    } else if (indexPath.section == 1 && indexPath.row == 2) {
+        cell.textLabel.text = @"Clear WebView Cache";
+        cell.detailTextLabel.text = @"";
     }
 }
 
@@ -584,6 +589,18 @@ static BOOL traceVCRequest = NO;
             }
             
             [weakSelf configLabel:cell indexPath:indexPath];
+        }];
+    } else if (indexPath.section == 1 && indexPath.row == 2) {
+        __weak UITableViewCell *weakCell = cell;
+        [FWDebugManager showConfirm:self title:@"Are you sure you want to clear the cache of WKWebView?" message:nil block:^(BOOL confirm) {
+            if (confirm) {
+                weakCell.detailTextLabel.text = @"cleaning...";
+                NSSet<NSString *> *dataTypes = [WKWebsiteDataStore allWebsiteDataTypes];
+                NSDate *sinceDate = [NSDate dateWithTimeIntervalSince1970:0];
+                [WKWebsiteDataStore.defaultDataStore removeDataOfTypes:dataTypes modifiedSince:sinceDate completionHandler:^{
+                    weakCell.detailTextLabel.text = @"";
+                }];
+            }
         }];
     }
 }
