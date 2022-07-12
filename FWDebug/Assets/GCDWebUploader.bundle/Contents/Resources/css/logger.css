@@ -9,6 +9,7 @@
 }
 
 .column-name {
+  line-break: anywhere;
 }
 
 .column-date {
@@ -61,6 +62,10 @@
   border-radius: 0px;
   margin-bottom: 0px;
   padding: 0px;
+}
+
+.breadcrumb > li {
+  line-break: anywhere;
 }
 
 .breadcrumb > .active {

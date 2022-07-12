@@ -156,11 +156,13 @@ static GCDWebServer *_webSite = nil;
                     NSData *imageData = UIImagePNGRepresentation(transaction.thumbnail);
                     NSString *imageString = [imageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
                     if (imageString) imageString = [@"data:image/png;base64," stringByAppendingString:imageString];
+                    NSString *title = transaction.primaryDescription;
+                    if ([title containsString:@"?"]) title = [title componentsSeparatedByString:@"?"].firstObject;
                     
                     [array addObject:@{
                         @"path": transaction.requestID,
                         @"image": imageString ?: @"",
-                        @"title": transaction.primaryDescription,
+                        @"title": title ?: @"",
                         @"name": [transaction.secondaryDescription stringByAppendingString:transaction.primaryDescription],
                         @"date": transaction.tertiaryDescription,
                         @"error": transaction.displayAsError ? @YES : @NO,
