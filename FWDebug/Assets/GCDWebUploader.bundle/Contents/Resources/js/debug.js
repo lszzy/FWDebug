@@ -126,7 +126,11 @@ function _reload(path) {
         var path = $(this).parent().parent().data("path");
         window.open(path, "_blank");
       } else if (type == "image") {
+        var title = $(this).parent().parent().data("title");
         var copy = $(this).parent().parent().data("copy");
+        $("#image-title").text(title);
+        $("#image-view").attr("src", copy);
+        $("#image-modal").modal("show");
       } else {
         var title = $(this).parent().parent().data("title");
         var copy = $(this).parent().parent().data("copy");

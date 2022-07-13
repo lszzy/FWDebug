@@ -591,6 +591,7 @@ static GCDWebServer *_webSite = nil;
             @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
             @"action": @"view",
             @"type": @"image",
+            @"title": mimeType,
             @"copy": imageString ?: @"",
         };
     } else if ([mimeType isEqual:@"application/x-plist"]) {
