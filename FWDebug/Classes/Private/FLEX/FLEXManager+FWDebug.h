@@ -19,4 +19,6 @@
 
 - (FWDebugFpsData *)fwDebugFpsData;
 
++ (void)fwDebugOpenUrl:(NSString *)text;
+
 @end

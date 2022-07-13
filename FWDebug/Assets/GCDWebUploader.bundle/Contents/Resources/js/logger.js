@@ -194,7 +194,7 @@ $(document).ready(function() {
   
   $("#toggle").click(function(event) {
     $.ajax({
-      url: 'toggle',
+      url: 'settings',
       type: 'POST',
       data: {},
       dataType: 'json'

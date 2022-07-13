@@ -19,6 +19,7 @@
 #import "FLEXNetworkRecorder.h"
 #import "FLEXNetworkCurlLogger.h"
 #import "FLEXHTTPTransactionDetailController.h"
+#import "GCDWebServerURLEncodedFormRequest.h"
 #import "FLEXOSLogController.h"
 #import "FLEXSystemLogCell.h"
 
@@ -131,8 +132,21 @@ static GCDWebServer *_webSite = nil;
             }
         }];
         
+        [_webDebug addHandlerForMethod:@"POST"
+                                  path:@"/settings"
+                          requestClass:[GCDWebServerRequest class]
+                     asyncProcessBlock:^(__kindof GCDWebServerRequest * request, GCDWebServerCompletionBlock completionBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [FLEXManager.sharedManager toggleExplorer];
+                
+                completionBlock([GCDWebServerDataResponse responseWithJSONObject:@{
+                    @"debug": @([FLEXManager fwDebugVisible]),
+                }]);
+            });
+        }];
+        
         [_webDebug addHandlerForMethod:@"GET"
-                                  path:@"/list"
+                                  path:@"/requests"
                           requestClass:[GCDWebServerRequest class]
                           processBlock:^GCDWebServerResponse * _Nullable(__kindof GCDWebServerRequest * _Nonnull request) {
             FLEXMITMDataSource<FLEXHTTPTransaction *> *dataSource = [FLEXMITMDataSource dataSourceWithProvider:^NSArray * {
@@ -188,7 +202,7 @@ static GCDWebServer *_webSite = nil;
         }];
         
         [_webDebug addHandlerForMethod:@"GET"
-                                  path:@"/detail"
+                                  path:@"/request"
                           requestClass:[GCDWebServerRequest class]
                           processBlock:^GCDWebServerResponse * _Nullable(__kindof GCDWebServerRequest * _Nonnull request) {
             NSString *requestID = request.query[@"path"] ?: @"";
@@ -219,6 +233,17 @@ static GCDWebServer *_webSite = nil;
                 @"list": array,
                 @"debug": @([FLEXManager fwDebugVisible]),
             }];
+        }];
+        
+        [_webDebug addHandlerForMethod:@"DELETE"
+                                  path:@"/requests"
+                          requestClass:[GCDWebServerRequest class]
+                     asyncProcessBlock:^(__kindof GCDWebServerRequest * request, GCDWebServerCompletionBlock completionBlock) {
+            [FLEXNetworkRecorder.defaultRecorder clearRecordedActivity];
+            
+            dispatch_async(FLEXNetworkRecorder.defaultRecorder.queue, ^{
+                completionBlock([GCDWebServerDataResponse responseWithJSONObject:@{}]);
+            });
         }];
         
         [_webDebug addHandlerForMethod:@"GET"
@@ -261,28 +286,77 @@ static GCDWebServer *_webSite = nil;
             }];
         }];
         
-        [_webDebug addHandlerForMethod:@"POST"
-                                  path:@"/toggle"
+        [_webDebug addHandlerForMethod:@"GET"
+                                  path:@"/urls"
                           requestClass:[GCDWebServerRequest class]
-                     asyncProcessBlock:^(__kindof GCDWebServerRequest * request, GCDWebServerCompletionBlock completionBlock) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [FLEXManager.sharedManager toggleExplorer];
+                          processBlock:^GCDWebServerResponse * _Nullable(__kindof GCDWebServerRequest * _Nonnull request) {
+            NSArray *urls = [NSUserDefaults.standardUserDefaults objectForKey:@"FWDebugOpenUrls"];
+            if (![urls isKindOfClass:[NSArray class]]) urls = @[];
+            NSString *keywords = request.query[@"keywords"] ?: @"";
+            NSInteger page = [(request.query[@"page"] ?: @"") integerValue];
+            NSInteger perpage = [(request.query[@"perpage"] ?: @"") integerValue];
+            if (page < 1) page = 1;
+            if (perpage < 1) perpage = 10;
+            
+            NSMutableArray *array = [NSMutableArray array];
+            __block NSInteger totalCount = 0;
+            [urls enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSString *url, NSUInteger idx, BOOL *stop) {
+                if (keywords.length > 0) {
+                    if (![url localizedCaseInsensitiveContainsString:keywords]) return;
+                }
                 
-                completionBlock([GCDWebServerDataResponse responseWithJSONObject:@{
-                    @"debug": @([FLEXManager fwDebugVisible]),
-                }]);
+                totalCount += 1;
+                if (totalCount > perpage * (page - 1) && totalCount <= perpage * page) {
+                    [array addObject:@{
+                        @"name": url,
+                        @"path": url,
+                        @"date": @"",
+                    }];
+                }
+            }];
+            
+            NSInteger totalPage = ((NSInteger)(totalCount / perpage)) + ((totalCount % perpage) > 0 ? 1 : 0);
+            NSString *totalText = [NSString stringWithFormat:@"%@ %@, Page %@ of %@", @(totalCount), totalCount < 2 ? @"URL" : @"URLs", @(totalPage > 0 ? page : 0), @(totalPage)];
+            return [GCDWebServerDataResponse responseWithJSONObject:@{
+                @"total": totalText,
+                @"next": totalPage > page ? @YES : @NO,
+                @"prev": page > 1 ? @YES : @NO,
+                @"list": array,
+                @"debug": @([FLEXManager fwDebugVisible]),
+            }];
+        }];
+        
+        [_webDebug addHandlerForMethod:@"GET"
+                                  path:@"/url"
+                          requestClass:[GCDWebServerRequest class]
+                     asyncProcessBlock:^(__kindof GCDWebServerRequest *request, GCDWebServerCompletionBlock completionBlock) {
+            NSString *url = request.query[@"url"] ?: @"";
+            if (url.length > 0) {
+                id current = [NSUserDefaults.standardUserDefaults objectForKey:@"FWDebugOpenUrls"];
+                NSMutableArray *urls = [current isKindOfClass:[NSArray class]] ? [current mutableCopy] : [NSMutableArray array];
+                [urls removeObject:url];
+                [urls addObject:url];
+                
+                [NSUserDefaults.standardUserDefaults setObject:urls.copy forKey:@"FWDebugOpenUrls"];
+                [NSUserDefaults.standardUserDefaults setObject:url forKey:@"FWDebugOpenUrl"];
+                [NSUserDefaults.standardUserDefaults synchronize];
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [FLEXManager fwDebugOpenUrl:url];
+                
+                completionBlock([GCDWebServerDataResponse responseWithJSONObject:@{}]);
             });
         }];
         
-        [_webDebug addHandlerForMethod:@"POST"
-                                  path:@"/clear"
+        [_webDebug addHandlerForMethod:@"DELETE"
+                                  path:@"/urls"
                           requestClass:[GCDWebServerRequest class]
                      asyncProcessBlock:^(__kindof GCDWebServerRequest * request, GCDWebServerCompletionBlock completionBlock) {
-            [FLEXNetworkRecorder.defaultRecorder clearRecordedActivity];
+            [NSUserDefaults.standardUserDefaults removeObjectForKey:@"FWDebugOpenUrls"];
+            [NSUserDefaults.standardUserDefaults synchronize];
             
-            dispatch_async(FLEXNetworkRecorder.defaultRecorder.queue, ^{
-                completionBlock([GCDWebServerDataResponse responseWithJSONObject:@{}]);
-            });
+            completionBlock([GCDWebServerDataResponse responseWithJSONObject:@{}]);
         }];
     }
     

@@ -7,7 +7,7 @@
     <title>%title%</title>
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/bootstrap-theme.css">
-    <link rel="stylesheet" href="css/debug.css">
+    <link rel="stylesheet" href="css/url.css">
     <!--[if lt IE 9]>
       <script type="text/javascript" src="js/html5shiv.min.js"></script>
       <script type="text/javascript" src="js/respond.min.js"></script>
@@ -18,10 +18,10 @@
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/tmpl.min.js"></script>
     <script type="text/javascript">
-      var _device = "REST";
+      var _device = "URL";
       var _keywords = "%keywords%";
     </script>
-    <script type="text/javascript" src="js/debug.js"></script>
+    <script type="text/javascript" src="js/url.js"></script>
   </head>
   <body>
     
@@ -49,9 +49,9 @@
 
           <div class="collapse navbar-collapse" id="navbar-collapse">
             <ul class="nav navbar-nav">
-              <li class="active"><a href="#">📡  Network History <span class="sr-only">(current)</span></a></li>
+              <li><a href="index.html">📡  Network History</a></li>
               <li><a href="logger.html">⚠️  System Log</a></li>
-              <li><a href="url.html">🚀  Open URL</a></li>
+              <li class="active"><a href="#">🚀  Open URL <span class="sr-only">(current)</span></a></li>
             </ul>
             <form class="navbar-form navbar-left" role="search">
               <div class="form-group">
@@ -79,7 +79,7 @@
                     <li><a id="page-20" href="#">20 per page</a></li>
                     <li><a id="page-50" href="#">50 per page</a></li>
                     <li role="separator" class="divider"></li>
-                    <li><a id="clear" href="#">clear requests</a></li>
+                    <li><a id="clear" href="#">clear urls</a></li>
                   </ul>
                 </div>
               </li>
@@ -88,14 +88,23 @@
         </div>
       </nav>
       
+      <div class="form-inline form-url">
+        <div class="form-group">
+          <input type="text" class="form-control" id="input-url" placeholder="URL">
+        </div>
+        <button type="button" class="btn btn-default" id="submit-url">
+          <span class="glyphicon glyphicon-phone"></span> Open
+        </button>
+      </div>
+      
       <div class="panel panel-default">
         <div class="panel-heading">
-          <ol class="breadcrumb" id="path">REST</ol>
+          <ol class="breadcrumb" id="path">URL</ol>
         </div>
         <table class="table table-striped"><tbody id="listing"></tbody></table>
       </div>
       
-      <nav aria-label="pager" id="pager">
+      <nav aria-label="pager">
         <ul class="pager">
           <li class="previous"><a id="previous" class="hidden" href="#"><span aria-hidden="true">&larr;</span> Previous</a></li>
           <li><span aria-hidden="true" id="total"></span></li>
@@ -114,7 +123,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title" id="share-title">REST</h4>
+            <h4 class="modal-title" id="share-title">URL</h4>
           </div>
           <div class="modal-body">
             <p id="share-text"></p>
@@ -129,51 +138,19 @@
     
     <script type="text/x-tmpl" id="template-listing">
       <tr class="row-line">
-        <td class="column-icon button-copy">
-        {% if (o.image != null) { %}
-          <img src="{%=o.image%}"/>
-        {% } else if (o.action == "curl" || o.action == "section") { %}
-          <button type="button" class="btn btn-default btn-xs">
-            <span class="glyphicon glyphicon-menu-hamburger"></span>
+        <td class="column-icon">
+          <button type="button" class="btn btn-default btn-xs button-copy">
+            <span class="glyphicon glyphicon-link"></span>
           </button>
-        {% } %}
         </td>
-        {% if (o.action == "detail") { %}
-        <td class="column-name column-nowrap">
-        {% } else { %}
-        <td class="column-name">
-        {% } %}
-        {% if (o.error) { %}
-          <p class="text-danger">{%=o.name%}</p>
-        {% } else { %}
-          <p>{%=o.name%}</p>
-        {% } %}
-        </td>
+        <td class="column-name"><p>{%=o.name%}</p></td>
         <td class="column-date">
-        {% if (o.date != null) { %}
           <p>{%=o.date%}</p>
-        {% } else { %}
-          <p></p>
-        {% } %}
         </td>
         <td class="column-share">
-        {% if (o.action == "detail") { %}
-          <button type="button" class="btn btn-default btn-xs button-detail">
-            <span class="glyphicon glyphicon-menu-right"></span>
-          </button>
-        {% } else if (o.action == "curl") { %}
           <button type="button" class="btn btn-default btn-xs button-share">
-            <span class="glyphicon glyphicon-console"></span>
+            <span class="glyphicon glyphicon-phone"></span>
           </button>
-        {% } else if (o.action == "link") { %}
-          <button type="button" class="btn btn-default btn-xs button-link">
-            <span class="glyphicon glyphicon-globe"></span>
-          </button>
-        {% } else if (o.action == "copy") { %}
-          <button type="button" class="btn btn-default btn-xs button-share">
-            <span class="glyphicon glyphicon-share-alt"></span>
-          </button>
-        {% } %}
         </td>
       </tr>
     </script>
