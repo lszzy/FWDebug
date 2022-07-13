@@ -120,9 +120,21 @@ function _reload(path) {
       _reload(path);
     });
       
-    $(".button-link").click(function(event) {
-      var path = $(this).parent().parent().data("path");
-      window.open(path, "_blank");
+    $(".button-view").click(function(event) {
+      var type = $(this).parent().parent().data("type");
+      if (type == "link") {
+        var path = $(this).parent().parent().data("path");
+        window.open(path, "_blank");
+      } else if (type == "image") {
+        var copy = $(this).parent().parent().data("copy");
+      } else {
+        var title = $(this).parent().parent().data("title");
+        var copy = $(this).parent().parent().data("copy");
+        $("#share-title").text(title);
+        $("#share-text").text(copy);
+        $("#copy-textarea").val(copy);
+        $("#share-modal").modal("show");
+      }
     });
     
     $(".button-share").click(function(event) {
