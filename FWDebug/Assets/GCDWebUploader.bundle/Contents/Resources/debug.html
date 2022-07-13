@@ -135,7 +135,11 @@
           </button>
         {% } %}
         </td>
+        {% if (o.action == "detail") { %}
+        <td class="column-name column-nowrap">
+        {% } else { %}
         <td class="column-name">
+        {% } %}
         {% if (o.error) { %}
           <p class="text-danger">{%=o.name%}</p>
         {% } else { %}
