@@ -15,6 +15,8 @@
 
 + (void)fwDebugLaunch;
 
++ (BOOL)fwDebugVisible;
+
 - (FWDebugFpsData *)fwDebugFpsData;
 
 @end

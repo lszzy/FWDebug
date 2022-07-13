@@ -13,6 +13,7 @@
 #import "GCDWebServerErrorResponse.h"
 #import "FWDebugManager+FWDebug.h"
 #import "NSUserDefaults+FLEX.h"
+#import "FLEXManager+FWDebug.h"
 #import "FLEXMITMDataSource.h"
 #import "FLEXNetworkTransaction.h"
 #import "FLEXNetworkRecorder.h"
@@ -122,7 +123,7 @@ static GCDWebServer *_webSite = nil;
                     @"title": [title stringByAppendingString:@" - FWDebug"],
                     @"header": title,
                     @"keywords": request.query[@"keywords"] ?: @"",
-                    @"footer": [NSString stringWithFormat:@"%@ %@ - FWDebug", title, version],
+                    @"footer": [NSString stringWithFormat:@"%@ %@", title, version],
                 }];
             } else {
                 return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", path];
@@ -181,6 +182,7 @@ static GCDWebServer *_webSite = nil;
                 @"next": totalPage > page ? @YES : @NO,
                 @"prev": page > 1 ? @YES : @NO,
                 @"list": array,
+                @"debug": @([FLEXManager fwDebugVisible]),
             }];
         }];
         
@@ -203,6 +205,7 @@ static GCDWebServer *_webSite = nil;
                     @"next": @NO,
                     @"prev": @NO,
                     @"list": @[],
+                    @"debug": @([FLEXManager fwDebugVisible]),
                 }];
             }
             
@@ -213,6 +216,7 @@ static GCDWebServer *_webSite = nil;
                 @"next": @NO,
                 @"prev": @NO,
                 @"list": array,
+                @"debug": @([FLEXManager fwDebugVisible]),
             }];
         }];
         
@@ -252,7 +256,21 @@ static GCDWebServer *_webSite = nil;
                 @"next": totalPage > page ? @YES : @NO,
                 @"prev": page > 1 ? @YES : @NO,
                 @"list": array,
+                @"debug": @([FLEXManager fwDebugVisible]),
             }];
+        }];
+        
+        [_webDebug addHandlerForMethod:@"POST"
+                                  path:@"/toggle"
+                          requestClass:[GCDWebServerRequest class]
+                     asyncProcessBlock:^(__kindof GCDWebServerRequest * request, GCDWebServerCompletionBlock completionBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [FLEXManager.sharedManager toggleExplorer];
+                
+                completionBlock([GCDWebServerDataResponse responseWithJSONObject:@{
+                    @"debug": @([FLEXManager fwDebugVisible]),
+                }]);
+            });
         }];
     }
     
@@ -265,7 +283,7 @@ static GCDWebServer *_webSite = nil;
         _webServer.header = title;
         _webServer.prologue = @"<p>Drag &amp; drop files on this window or use the \"Upload Files&hellip;\" button to upload new files.</p>";
         _webServer.epilogue = @"";
-        _webServer.footer = [NSString stringWithFormat:@"%@ %@ - FWDebug", title, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
+        _webServer.footer = [NSString stringWithFormat:@"%@ %@", title, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
     }
     
     //初始化WebDavServer

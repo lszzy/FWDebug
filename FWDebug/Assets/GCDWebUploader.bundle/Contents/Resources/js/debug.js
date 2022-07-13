@@ -83,6 +83,11 @@ function _reload(path) {
     for (var i = 0, file; file = data.list[i]; ++i) {
       $(tmpl("template-listing", file)).data(file).appendTo("#listing");
     }
+    if (data.debug) {
+      $("#toggle-icon").addClass("glyphicon-off").removeClass("glyphicon-phone");
+    } else {
+      $("#toggle-icon").addClass("glyphicon-phone").removeClass("glyphicon-off");
+    }
     $("#total").text(data.total);
     if (data.prev) {
       $("#previous").addClass("show").removeClass("hidden");
@@ -198,6 +203,22 @@ $(document).ready(function() {
     _page = 1;
     _reload(_path);
     event.preventDefault();
+  });
+  
+  $("#toggle").click(function(event) {
+    $.ajax({
+      url: 'toggle',
+      type: 'POST',
+      data: {},
+      dataType: 'json'
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+    }).done(function(data, textStatus, jqXHR) {
+      if (data.debug) {
+        $("#toggle-icon").addClass("glyphicon-off").removeClass("glyphicon-phone");
+      } else {
+        $("#toggle-icon").addClass("glyphicon-phone").removeClass("glyphicon-off");
+      }
+    });
   });
 
   _reload("/");

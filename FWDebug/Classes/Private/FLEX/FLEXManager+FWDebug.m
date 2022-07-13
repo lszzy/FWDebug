@@ -28,6 +28,8 @@
 #import "FWDebugFakeNotification.h"
 #import <objc/runtime.h>
 
+static BOOL fwDebugVisible = NO;
+
 @implementation FLEXManager (FWDebug)
 
 + (void)fwDebugLoad
@@ -47,6 +49,7 @@
             
             ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
             
+            fwDebugVisible = YES;
             [selfObject.fwDebugFpsInfo start];
         };
     }];
@@ -57,6 +60,7 @@
             
             ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
             
+            fwDebugVisible = NO;
             [selfObject.fwDebugFpsInfo stop];
         };
     }];
@@ -68,6 +72,7 @@
                 
                 ((void (*)(id, SEL, UIWindowScene *))originalIMP())(selfObject, originalCMD, scene);
                 
+                fwDebugVisible = YES;
                 [selfObject.fwDebugFpsInfo start];
             };
         }];
@@ -118,6 +123,11 @@
     [FWDebugSystemInfo fwDebugLaunch];
     [FWDebugFakeNotification fwDebugLaunch];
     [FWDebugWebServer fwDebugLaunch];
+}
+
++ (BOOL)fwDebugVisible
+{
+    return fwDebugVisible;
 }
 
 - (FWDebugFpsInfo *)fwDebugFpsInfo

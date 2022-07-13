@@ -31,6 +31,10 @@
   font-size: 0.9em;
 }
 
+.footer a {
+  color: #999;
+}
+
 #copy-text {
   width: 100%;
 }
