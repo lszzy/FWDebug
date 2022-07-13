@@ -35,6 +35,10 @@
   color: #999;
 }
 
+#share-text {
+  line-break: anywhere;
+}
+
 #copy-text {
   width: 100%;
 }
