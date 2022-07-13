@@ -6,6 +6,7 @@ var _interval = true;
 var _intervalId = null;
 var _page = 1;
 var _perpage = 10;
+var _inputInited = false;
 
 function _copyText() {
     var element = document.getElementById("copy-textarea");
@@ -92,6 +93,10 @@ function _reload(path) {
       $("#toggle-icon").addClass("glyphicon-phone").removeClass("glyphicon-off");
     }
     $("#total").text(data.total);
+    if (!_inputInited) {
+      _inputInited = true;
+      $("#input-url").val(data.url);
+    }
     if (data.prev) {
       $("#previous").addClass("show").removeClass("hidden");
     } else {

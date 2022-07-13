@@ -8,19 +8,23 @@ var _intervalId = null;
 var _page = 1;
 var _perpage = 10;
 
-function _copyText() {
-    var element = document.getElementById("copy-textarea");
-    element.select();
-    document.execCommand('Copy');
-    
+function _showMessage(title) {
     $("#alerts").prepend(tmpl("template-alert", {
       level: "success",
-      title: "Copy Successful",
+      title: title,
       description: ""
     }));
     setTimeout(function() {
       $('#alert-close').alert('close');
     }, 2000);
+}
+
+function _copyText() {
+    var element = document.getElementById("copy-textarea");
+    element.select();
+    document.execCommand('Copy');
+    
+    _showMessage("Copy Successful");
 }
 
 function _setInterval(time) {
@@ -227,6 +231,17 @@ $(document).ready(function() {
       dataType: 'json'
     }).done(function(data, textStatus, jqXHR) {
       _reload("/");
+    });
+  });
+  
+  $("#wkwebview").click(function(event) {
+    $.ajax({
+      url: 'wkwebview',
+      type: 'DELETE',
+      data: {},
+      dataType: 'json'
+    }).done(function(data, textStatus, jqXHR) {
+      _showMessage("Clear Successful");
     });
   });
 

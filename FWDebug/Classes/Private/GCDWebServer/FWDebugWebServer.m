@@ -25,6 +25,7 @@
 #import "GCDWebServerURLEncodedFormRequest.h"
 #import "FLEXOSLogController.h"
 #import "FLEXSystemLogCell.h"
+#import <WebKit/WebKit.h>
 
 @interface FLEXOSLogController ()
 
@@ -255,6 +256,17 @@ static GCDWebServer *_webSite = nil;
             });
         }];
         
+        [_webDebug addHandlerForMethod:@"DELETE"
+                                  path:@"/wkwebview"
+                          requestClass:[GCDWebServerRequest class]
+                     asyncProcessBlock:^(__kindof GCDWebServerRequest * request, GCDWebServerCompletionBlock completionBlock) {
+            NSSet<NSString *> *dataTypes = [WKWebsiteDataStore allWebsiteDataTypes];
+            NSDate *sinceDate = [NSDate dateWithTimeIntervalSince1970:0];
+            [WKWebsiteDataStore.defaultDataStore removeDataOfTypes:dataTypes modifiedSince:sinceDate completionHandler:^{
+                completionBlock([GCDWebServerDataResponse responseWithJSONObject:@{}]);
+            }];
+        }];
+        
         [_webDebug addHandlerForMethod:@"GET"
                                   path:@"/logs"
                           requestClass:[GCDWebServerRequest class]
@@ -326,11 +338,13 @@ static GCDWebServer *_webSite = nil;
             
             NSInteger totalPage = ((NSInteger)(totalCount / perpage)) + ((totalCount % perpage) > 0 ? 1 : 0);
             NSString *totalText = [NSString stringWithFormat:@"%@ %@, Page %@ of %@", @(totalCount), totalCount < 2 ? @"URL" : @"URLs", @(totalPage > 0 ? page : 0), @(totalPage)];
+            NSString *url = [NSUserDefaults.standardUserDefaults stringForKey:@"FWDebugOpenUrl"] ?: @"";
             return [GCDWebServerDataResponse responseWithJSONObject:@{
                 @"total": totalText,
                 @"next": totalPage > page ? @YES : @NO,
                 @"prev": page > 1 ? @YES : @NO,
                 @"list": array,
+                @"url": url,
                 @"debug": @([FLEXManager fwDebugVisible]),
             }];
         }];
@@ -547,6 +561,7 @@ static GCDWebServer *_webSite = nil;
 + (NSDictionary *)detailSection:(FLEXNetworkDetailRow *)row mimeType:(NSString *)mimeType data:(NSData *)data
 {
     if (!data) return nil;
+    if ([mimeType containsString:@";"]) mimeType = [mimeType componentsSeparatedByString:@";"].firstObject;
     
     if ([FLEXUtility isValidJSONData:data]) {
         NSString *prettyJSON = [FLEXUtility prettyJSONStringFromData:data];
@@ -561,7 +576,7 @@ static GCDWebServer *_webSite = nil;
         }
     } else if ([mimeType hasPrefix:@"image/"]) {
         NSString *imageString = [data base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
-        if (imageString) imageString = [@"data:image/png;base64," stringByAppendingString:imageString];
+        if (imageString) imageString = [NSString stringWithFormat:@"data:%@;base64,%@", mimeType, imageString];
         return @{
             @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
             @"action": @"view",
