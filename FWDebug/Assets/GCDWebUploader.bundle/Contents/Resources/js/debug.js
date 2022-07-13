@@ -60,7 +60,6 @@ function _reload(path) {
     type: 'GET',
     data: {path: path, page: _page, perpage: _perpage, keywords: _keywords},
     dataType: 'json'
-  }).fail(function(jqXHR, textStatus, errorThrown) {
   }).done(function(data, textStatus, jqXHR) {
     var scrollPosition = $(document).scrollTop();
     
@@ -211,13 +210,23 @@ $(document).ready(function() {
       type: 'POST',
       data: {},
       dataType: 'json'
-    }).fail(function(jqXHR, textStatus, errorThrown) {
     }).done(function(data, textStatus, jqXHR) {
       if (data.debug) {
         $("#toggle-icon").addClass("glyphicon-off").removeClass("glyphicon-phone");
       } else {
         $("#toggle-icon").addClass("glyphicon-phone").removeClass("glyphicon-off");
       }
+    });
+  });
+  
+  $("#clear").click(function(event) {
+    $.ajax({
+      url: 'clear',
+      type: 'POST',
+      data: {},
+      dataType: 'json'
+    }).done(function(data, textStatus, jqXHR) {
+      _reload("/");
     });
   });
 

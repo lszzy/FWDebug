@@ -34,37 +34,38 @@
 
 @end
 
+@interface FLEXNetworkRecorder ()
+
+@property (nonatomic) dispatch_queue_t queue;
+
+@end
+
 @interface FLEXNetworkDetailRow : NSObject
+
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *detailText;
+
 @end
 
 @interface FLEXNetworkDetailSection : NSObject
+
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSArray<FLEXNetworkDetailRow *> *rows;
+
 @end
 
 @interface FLEXHTTPTransactionDetailController ()
 
 @property (nonatomic, readonly) FLEXHTTPTransaction *transaction;
 @property (nonatomic, copy) NSArray<FLEXNetworkDetailSection *> *sections;
-
 + (FLEXNetworkDetailSection *)generalSectionForTransaction:(FLEXHTTPTransaction *)transaction;
-
 + (FLEXNetworkDetailSection *)requestHeadersSectionForTransaction:(FLEXHTTPTransaction *)transaction;
-
 + (FLEXNetworkDetailSection *)postBodySectionForTransaction:(FLEXHTTPTransaction *)transaction;
-
 + (FLEXNetworkDetailSection *)queryParametersSectionForTransaction:(FLEXHTTPTransaction *)transaction;
-
 + (FLEXNetworkDetailSection *)responseHeadersSectionForTransaction:(FLEXHTTPTransaction *)transaction;
-
 + (NSArray<FLEXNetworkDetailRow *> *)networkDetailRowsFromDictionary:(NSDictionary<NSString *, id> *)dictionary;
-
 + (NSArray<FLEXNetworkDetailRow *> *)networkDetailRowsFromQueryItems:(NSArray<NSURLQueryItem *> *)items;
-
 + (UIViewController *)detailViewControllerForMIMEType:(NSString *)mimeType data:(NSData *)data;
-
 + (NSData *)postBodyDataForTransaction:(FLEXHTTPTransaction *)transaction;
 
 @end
@@ -270,6 +271,17 @@ static GCDWebServer *_webSite = nil;
                 completionBlock([GCDWebServerDataResponse responseWithJSONObject:@{
                     @"debug": @([FLEXManager fwDebugVisible]),
                 }]);
+            });
+        }];
+        
+        [_webDebug addHandlerForMethod:@"POST"
+                                  path:@"/clear"
+                          requestClass:[GCDWebServerRequest class]
+                     asyncProcessBlock:^(__kindof GCDWebServerRequest * request, GCDWebServerCompletionBlock completionBlock) {
+            [FLEXNetworkRecorder.defaultRecorder clearRecordedActivity];
+            
+            dispatch_async(FLEXNetworkRecorder.defaultRecorder.queue, ^{
+                completionBlock([GCDWebServerDataResponse responseWithJSONObject:@{}]);
             });
         }];
     }
