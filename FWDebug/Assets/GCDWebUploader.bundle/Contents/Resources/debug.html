@@ -129,7 +129,7 @@
     
     <script type="text/x-tmpl" id="template-listing">
       <tr class="row-line">
-        <td class="column-icon button-copy">
+        <td class="column-icon column-copy">
         {% if (o.image != null) { %}
           <img src="{%=o.image%}"/>
         {% } else if (o.action == "curl" || o.action == "section") { %}
@@ -165,13 +165,13 @@
           <button type="button" class="btn btn-default btn-xs button-share">
             <span class="glyphicon glyphicon-console"></span>
           </button>
-        {% } else if (o.action == "link") { %}
-          <button type="button" class="btn btn-default btn-xs button-link">
-            <span class="glyphicon glyphicon-globe"></span>
+        {% } else if (o.action == "view") { %}
+          <button type="button" class="btn btn-default btn-xs button-view">
+            <span class="glyphicon glyphicon-menu-right"></span>
           </button>
         {% } else if (o.action == "copy") { %}
           <button type="button" class="btn btn-default btn-xs button-share">
-            <span class="glyphicon glyphicon-share-alt"></span>
+            <span class="glyphicon glyphicon-copy"></span>
           </button>
         {% } %}
         </td>

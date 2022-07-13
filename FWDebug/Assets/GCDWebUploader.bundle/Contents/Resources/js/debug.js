@@ -104,7 +104,7 @@ function _reload(path) {
       $("#pager").addClass("hidden").removeClass("show");
     }
     
-    $(".button-copy").click(function(event) {
+    $(".column-copy").click(function(event) {
       var copy = $(this).parent().data("copy");
       $("#copy-textarea").val(copy);
       _copyText();

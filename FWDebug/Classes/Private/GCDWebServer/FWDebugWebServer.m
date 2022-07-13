@@ -14,11 +14,14 @@
 #import "FWDebugManager+FWDebug.h"
 #import "NSUserDefaults+FLEX.h"
 #import "FLEXManager+FWDebug.h"
+#import "FLEXUtility.h"
 #import "FLEXMITMDataSource.h"
 #import "FLEXNetworkTransaction.h"
 #import "FLEXNetworkRecorder.h"
 #import "FLEXNetworkCurlLogger.h"
 #import "FLEXHTTPTransactionDetailController.h"
+#import "FLEXWebViewController.h"
+#import "FLEXImagePreviewViewController.h"
 #import "GCDWebServerURLEncodedFormRequest.h"
 #import "FLEXOSLogController.h"
 #import "FLEXSystemLogCell.h"
@@ -41,10 +44,19 @@
 
 @end
 
+@interface FLEXWebViewController ()
+
+@property (nonatomic) NSString *originalText;
+
+@end
+
+typedef UIViewController *(^FLEXNetworkDetailRowSelectionFuture)(void);
+
 @interface FLEXNetworkDetailRow : NSObject
 
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *detailText;
+@property (nonatomic, copy) FLEXNetworkDetailRowSelectionFuture selectionFuture;
 
 @end
 
@@ -64,9 +76,6 @@
 + (FLEXNetworkDetailSection *)postBodySectionForTransaction:(FLEXHTTPTransaction *)transaction;
 + (FLEXNetworkDetailSection *)queryParametersSectionForTransaction:(FLEXHTTPTransaction *)transaction;
 + (FLEXNetworkDetailSection *)responseHeadersSectionForTransaction:(FLEXHTTPTransaction *)transaction;
-+ (NSArray<FLEXNetworkDetailRow *> *)networkDetailRowsFromDictionary:(NSDictionary<NSString *, id> *)dictionary;
-+ (NSArray<FLEXNetworkDetailRow *> *)networkDetailRowsFromQueryItems:(NSArray<NSURLQueryItem *> *)items;
-+ (UIViewController *)detailViewControllerForMIMEType:(NSString *)mimeType data:(NSData *)data;
 + (NSData *)postBodyDataForTransaction:(FLEXHTTPTransaction *)transaction;
 
 @end
@@ -414,10 +423,41 @@ static GCDWebServer *_webSite = nil;
             if ([row.title isEqualToString:@"Request URL"]) {
                 [sections addObject:@{
                     @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
-                    @"action": @"link",
+                    @"action": @"view",
+                    @"type": @"link",
                     @"path": row.detailText,
                     @"copy": row.detailText,
                 }];
+            } else if ([row.title isEqualToString:@"Request Body"]) {
+                NSString *contentType = [transaction.request valueForHTTPHeaderField:@"Content-Type"];
+                NSData *requestData = [FLEXHTTPTransactionDetailController postBodyDataForTransaction:transaction];
+                NSDictionary *detailSection = [self detailSection:row mimeType:contentType data:requestData];
+                if (detailSection) {
+                    [sections addObject:detailSection];
+                } else {
+                    [sections addObject:@{
+                        @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+                        @"action": @"view",
+                        @"type": @"copy",
+                        @"title": row.title,
+                        @"copy": @"Can't View HTTP Body Data",
+                    }];
+                }
+            } else if ([row.title isEqualToString:@"Response Body"]) {
+                NSString *contentType = transaction.response.MIMEType;
+                NSData *responseData = [FLEXNetworkRecorder.defaultRecorder cachedResponseBodyForTransaction:transaction];
+                NSDictionary *detailSection = [self detailSection:row mimeType:contentType data:responseData];
+                if (detailSection) {
+                    [sections addObject:detailSection];
+                } else {
+                    [sections addObject:@{
+                        @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+                        @"action": @"view",
+                        @"type": @"copy",
+                        @"title": row.title,
+                        @"copy": @"Unable to View Response",
+                    }];
+                }
             } else {
                 [sections addObject:@{
                     @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
@@ -502,6 +542,55 @@ static GCDWebServer *_webSite = nil;
     }
     
     return sections;
+}
+
++ (NSDictionary *)detailSection:(FLEXNetworkDetailRow *)row mimeType:(NSString *)mimeType data:(NSData *)data
+{
+    if (!data) return nil;
+    
+    if ([FLEXUtility isValidJSONData:data]) {
+        NSString *prettyJSON = [FLEXUtility prettyJSONStringFromData:data];
+        if (prettyJSON.length > 0) {
+            return @{
+                @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+                @"action": @"view",
+                @"type": @"copy",
+                @"title": row.title,
+                @"copy": prettyJSON,
+            };
+        }
+    } else if ([mimeType hasPrefix:@"image/"]) {
+        NSString *imageString = [data base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+        if (imageString) imageString = [@"data:image/png;base64," stringByAppendingString:imageString];
+        return @{
+            @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+            @"action": @"view",
+            @"type": @"image",
+            @"copy": imageString ?: @"",
+        };
+    } else if ([mimeType isEqual:@"application/x-plist"]) {
+        id propertyList = [NSPropertyListSerialization propertyListWithData:data options:0 format:NULL error:NULL];
+        return @{
+            @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+            @"action": @"view",
+            @"type": @"copy",
+            @"title": row.title,
+            @"copy": [propertyList description] ?: @"",
+        };
+    }
+    
+    NSString *text = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    if (text.length > 0) {
+        return @{
+            @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+            @"action": @"view",
+            @"type": @"copy",
+            @"title": row.title,
+            @"copy": text,
+        };
+    }
+    
+    return nil;
 }
 
 - (instancetype)initWithStyle:(UITableViewStyle)style
