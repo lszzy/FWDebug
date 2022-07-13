@@ -307,6 +307,16 @@ static GCDWebServer *_webSite = nil;
             }];
         }];
         
+        [_webDebug addHandlerForMethod:@"DELETE"
+                                  path:@"/logs"
+                          requestClass:[GCDWebServerRequest class]
+                     asyncProcessBlock:^(__kindof GCDWebServerRequest * request, GCDWebServerCompletionBlock completionBlock) {
+            FLEXOSLogController.sharedLogController.persistent = NO;
+            FLEXOSLogController.sharedLogController.persistent = YES;
+            
+            completionBlock([GCDWebServerDataResponse responseWithJSONObject:@{}]);
+        }];
+        
         [_webDebug addHandlerForMethod:@"GET"
                                   path:@"/urls"
                           requestClass:[GCDWebServerRequest class]

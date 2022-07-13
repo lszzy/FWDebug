@@ -206,6 +206,17 @@ $(document).ready(function() {
       }
     });
   });
+  
+  $("#clear").click(function(event) {
+    $.ajax({
+      url: 'logs',
+      type: 'DELETE',
+      data: {},
+      dataType: 'json'
+    }).done(function(data, textStatus, jqXHR) {
+      _reload("/");
+    });
+  });
 
   _reload("/");
   
