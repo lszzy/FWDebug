@@ -1,4 +1,6 @@
 
+var ENTER_KEYCODE = 13;
+
 var _path = null;
 var _pendingReloads = [];
 var _reloadingDisabled = 0;
@@ -232,6 +234,12 @@ $(document).ready(function() {
     }).done(function(data, textStatus, jqXHR) {
       _reload("/");
     });
+  });
+  
+  $("#input-url").keypress(function(event) {
+    if (event.keyCode == ENTER_KEYCODE) {
+      $("#submit-url").click();
+    };
   });
   
   $("#submit-url").click(function(event) {
