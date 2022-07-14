@@ -13,8 +13,11 @@
 #import "GCDWebServerErrorResponse.h"
 #import "FWDebugManager+FWDebug.h"
 #import "NSUserDefaults+FLEX.h"
+#import "UIBarButtonItem+FLEX.h"
 #import "FLEXManager+FWDebug.h"
 #import "FLEXUtility.h"
+#import "FLEXAlert.h"
+#import "FLEXResources.h"
 #import "FLEXMITMDataSource.h"
 #import "FLEXNetworkTransaction.h"
 #import "FLEXNetworkRecorder.h"
@@ -83,11 +86,6 @@ typedef UIViewController *(^FLEXNetworkDetailRowSelectionFuture)(void);
 
 #pragma mark - FWDebugWebServer
 
-#define FWDebugWebDebugPort 8000
-#define FWDebugWebServerPort 8001
-#define FWDebugWebDavServerPort 8002
-#define FWDebugWebSitePort 8003
-
 // 静态服务器变量
 static GCDWebServer *_webDebug = nil;
 static GCDWebUploader *_webServer = nil;
@@ -108,15 +106,70 @@ static GCDWebServer *_webSite = nil;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self setupServer];
         
-        [_webDebug startWithPort:FWDebugWebDebugPort bonjourName:@""];
+        [_webDebug startWithPort:[FWDebugWebServer debugServerPort] bonjourName:@""];
     });
+}
+
++ (NSInteger)debugServerPort
+{
+    NSInteger port = [NSUserDefaults.standardUserDefaults integerForKey:@"FWDebugDebugServerPort"];
+    if (port < 1) port = 8000;
+    return port;
+}
+
++ (NSInteger)webServerPort
+{
+    NSInteger port = [NSUserDefaults.standardUserDefaults integerForKey:@"FWDebugWebServerPort"];
+    if (port < 1) port = 8001;
+    return port;
+}
+
++ (NSInteger)webDAVServerPort
+{
+    NSInteger port = [NSUserDefaults.standardUserDefaults integerForKey:@"FWDebugWebDAVServerPort"];
+    if (port < 1) port = 8002;
+    return port;
+}
+
++ (NSInteger)webSiteServerPort
+{
+    NSInteger port = [NSUserDefaults.standardUserDefaults integerForKey:@"FWDebugWebSiteServerPort"];
+    if (port < 1) port = 8003;
+    return port;
+}
+
++ (NSString *)debugServerPath
+{
+    NSString *path = [[[NSBundle bundleForClass:[FWDebugWebServer class]] resourcePath] stringByAppendingPathComponent:@"GCDWebUploader.bundle/Contents/Resources/"];
+    return path;
+}
+
++ (NSString *)webServerPath
+{
+    NSString *path = [NSUserDefaults.standardUserDefaults stringForKey:@"FWDebugWebServerPath"];
+    if (!path) path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    return path;
+}
+
++ (NSString *)webDAVServerPath
+{
+    NSString *path = [NSUserDefaults.standardUserDefaults stringForKey:@"FWDebugWebDAVServerPath"];
+    if (!path) path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    return path;
+}
+
++ (NSString *)webSiteServerPath
+{
+    NSString *path = [NSUserDefaults.standardUserDefaults stringForKey:@"FWDebugWebSiteServerPath"];
+    if (!path) path = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"website"];
+    return path;
 }
 
 + (void)setupServer
 {
     //初始化WebDebug
     if (!_webDebug) {
-        NSString *webPath = [[[NSBundle bundleForClass:[FWDebugWebServer class]] resourcePath] stringByAppendingPathComponent:@"GCDWebUploader.bundle/Contents/Resources/"];
+        NSString *webPath = [FWDebugWebServer debugServerPath];
         _webDebug = [[GCDWebServer alloc] init];
         [_webDebug addGETHandlerForBasePath:@"/" directoryPath:webPath indexFilename:nil cacheAge:3600 allowRangeRequests:YES];
         [_webDebug addHandlerForMethod:@"GET" path:@"/" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest *request) {
@@ -397,7 +450,7 @@ static GCDWebServer *_webSite = nil;
     
     //初始化WebServer
     if (!_webServer) {
-        NSString *webPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+        NSString *webPath = [FWDebugWebServer webServerPath];
         NSString *title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
         _webServer = [[GCDWebUploader alloc] initWithUploadDirectory:webPath];
         _webServer.title = [title stringByAppendingString:@" - FWDebug"];
@@ -409,13 +462,13 @@ static GCDWebServer *_webSite = nil;
     
     //初始化WebDavServer
     if (!_webDavServer) {
-        NSString *webDavPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+        NSString *webDavPath = [FWDebugWebServer webDAVServerPath];
         _webDavServer = [[GCDWebDAVServer alloc] initWithUploadDirectory:webDavPath];
     }
     
     //初始化WebSite
     if (!_webSite) {
-        NSString *webPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"website"];
+        NSString *webPath = [FWDebugWebServer webSiteServerPath];
         _webSite = [[GCDWebServer alloc] init];
         [_webSite addGETHandlerForBasePath:@"/" directoryPath:webPath indexFilename:nil cacheAge:3600 allowRangeRequests:YES];
         [_webSite addHandlerForMethod:@"GET" pathRegex:@"/.*\\.html" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest *request) {
@@ -635,6 +688,14 @@ static GCDWebServer *_webSite = nil;
     [super viewDidLoad];
     
     self.title = @"Web Server";
+    
+    [self addToolbarItems:@[
+        [UIBarButtonItem
+            flex_itemWithImage:FLEXResources.gearIcon
+            target:self
+            action:@selector(actionSettings:)
+        ],
+    ]];
 }
 
 #pragma mark - Table view data source
@@ -723,22 +784,22 @@ static GCDWebServer *_webSite = nil;
     switch (sender.tag) {
         case 1: {
             server = _webServer;
-            port = FWDebugWebServerPort;
+            port = [FWDebugWebServer webServerPort];
             break;
         }
         case 2: {
             server = _webDavServer;
-            port = FWDebugWebDavServerPort;
+            port = [FWDebugWebServer webDAVServerPort];
             break;
         }
         case 3: {
             server = _webSite;
-            port = FWDebugWebSitePort;
+            port = [FWDebugWebServer webSiteServerPort];
             break;
         }
         default: {
             server = _webDebug;
-            port = FWDebugWebDebugPort;
+            port = [FWDebugWebServer debugServerPort];
             key = @"FWDebugWebDebugEnabled";
             break;
         }
@@ -766,6 +827,119 @@ static GCDWebServer *_webSite = nil;
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:sender.tag];
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     [self configCell:cell indexPath:indexPath];
+}
+
+- (void)actionSettings:(UIBarButtonItem *)sender {
+    [FLEXAlert makeSheet:^(FLEXAlert *make) {
+        make.title(@"Web Server Settings");
+        
+        make.button(@"Cancel").cancelStyle();
+        make.button(@"Debug Server Port")
+            .handler(^(NSArray<NSString *> *strings) {
+                [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[NSString stringWithFormat:@"%@", @([FWDebugWebServer debugServerPort])] block:^(BOOL confirm, NSString *text) {
+                    if (!confirm) return;
+                    
+                    if (text.length < 1) {
+                        [NSUserDefaults.standardUserDefaults removeObjectForKey:@"FWDebugDebugServerPort"];
+                        [NSUserDefaults.standardUserDefaults synchronize];
+                        return;
+                    }
+                    
+                    [NSUserDefaults.standardUserDefaults setInteger:text.integerValue forKey:@"FWDebugDebugServerPort"];
+                    [NSUserDefaults.standardUserDefaults synchronize];
+                }];
+        });
+        make.button(@"Web Server Port")
+            .handler(^(NSArray<NSString *> * _Nonnull strings) {
+                [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[NSString stringWithFormat:@"%@", @([FWDebugWebServer webServerPort])] block:^(BOOL confirm, NSString *text) {
+                    if (!confirm) return;
+                    
+                    if (text.length < 1) {
+                        [NSUserDefaults.standardUserDefaults removeObjectForKey:@"FWDebugWebServerPort"];
+                        [NSUserDefaults.standardUserDefaults synchronize];
+                        return;
+                    }
+                    
+                    [NSUserDefaults.standardUserDefaults setInteger:text.integerValue forKey:@"FWDebugWebServerPort"];
+                    [NSUserDefaults.standardUserDefaults synchronize];
+                }];
+        });
+        make.button(@"Web Server Path")
+            .handler(^(NSArray<NSString *> * _Nonnull strings) {
+                [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[FWDebugWebServer webServerPath] block:^(BOOL confirm, NSString *text) {
+                    if (!confirm) return;
+                    
+                    if (text.length < 1) {
+                        [NSUserDefaults.standardUserDefaults removeObjectForKey:@"FWDebugWebServerPath"];
+                        [NSUserDefaults.standardUserDefaults synchronize];
+                        return;
+                    }
+                    
+                    [NSUserDefaults.standardUserDefaults setObject:text forKey:@"FWDebugWebServerPath"];
+                    [NSUserDefaults.standardUserDefaults synchronize];
+                }];
+        });
+        make.button(@"WebDAV Server Port")
+            .handler(^(NSArray<NSString *> * _Nonnull strings) {
+                [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[NSString stringWithFormat:@"%@", @([FWDebugWebServer webDAVServerPort])] block:^(BOOL confirm, NSString *text) {
+                    if (!confirm) return;
+                    
+                    if (text.length < 1) {
+                        [NSUserDefaults.standardUserDefaults removeObjectForKey:@"FWDebugWebDAVServerPort"];
+                        [NSUserDefaults.standardUserDefaults synchronize];
+                        return;
+                    }
+                    
+                    [NSUserDefaults.standardUserDefaults setInteger:text.integerValue forKey:@"FWDebugWebDAVServerPort"];
+                    [NSUserDefaults.standardUserDefaults synchronize];
+                }];
+        });
+        make.button(@"WebDAV Server Path")
+            .handler(^(NSArray<NSString *> * _Nonnull strings) {
+                [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[FWDebugWebServer webDAVServerPath] block:^(BOOL confirm, NSString *text) {
+                    if (!confirm) return;
+                    
+                    if (text.length < 1) {
+                        [NSUserDefaults.standardUserDefaults removeObjectForKey:@"FWDebugWebDAVServerPath"];
+                        [NSUserDefaults.standardUserDefaults synchronize];
+                        return;
+                    }
+                    
+                    [NSUserDefaults.standardUserDefaults setObject:text forKey:@"FWDebugWebDAVServerPath"];
+                    [NSUserDefaults.standardUserDefaults synchronize];
+                }];
+        });
+        make.button(@"WebSite Server Port")
+            .handler(^(NSArray<NSString *> * _Nonnull strings) {
+                [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[NSString stringWithFormat:@"%@", @([FWDebugWebServer webSiteServerPort])] block:^(BOOL confirm, NSString *text) {
+                    if (!confirm) return;
+                    
+                    if (text.length < 1) {
+                        [NSUserDefaults.standardUserDefaults removeObjectForKey:@"FWDebugWebSiteServerPort"];
+                        [NSUserDefaults.standardUserDefaults synchronize];
+                        return;
+                    }
+                    
+                    [NSUserDefaults.standardUserDefaults setInteger:text.integerValue forKey:@"FWDebugWebSiteServerPort"];
+                    [NSUserDefaults.standardUserDefaults synchronize];
+                }];
+        });
+        make.button(@"WebSite Server Path")
+            .handler(^(NSArray<NSString *> * _Nonnull strings) {
+                [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[FWDebugWebServer webSiteServerPath] block:^(BOOL confirm, NSString *text) {
+                    if (!confirm) return;
+                    
+                    if (text.length < 1) {
+                        [NSUserDefaults.standardUserDefaults removeObjectForKey:@"FWDebugWebSiteServerPath"];
+                        [NSUserDefaults.standardUserDefaults synchronize];
+                        return;
+                    }
+                    
+                    [NSUserDefaults.standardUserDefaults setObject:text forKey:@"FWDebugWebSiteServerPath"];
+                    [NSUserDefaults.standardUserDefaults synchronize];
+                }];
+        });
+    } showFrom:self source:sender];
 }
 
 @end
