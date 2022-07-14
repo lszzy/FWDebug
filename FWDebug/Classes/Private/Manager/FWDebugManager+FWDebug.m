@@ -111,6 +111,23 @@
     [viewController presentViewController:alertController animated:YES completion:nil];
 }
 
++ (void)showConfirm:(UIViewController *)viewController title:(NSString *)title message:(NSString *)message block:(void (^)(BOOL confirm))block
+{
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        if (block) block(NO);
+    }];
+    [alertController addAction:cancelAction];
+    
+    UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        if (block) block(YES);
+    }];
+    [alertController addAction:alertAction];
+    
+    [viewController presentViewController:alertController animated:YES completion:nil];
+}
+
 + (UIViewController *)topViewController
 {
     UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;

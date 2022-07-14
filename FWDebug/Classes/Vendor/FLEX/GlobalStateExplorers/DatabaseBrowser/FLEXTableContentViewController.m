@@ -54,9 +54,9 @@
                       tableName:(nullable NSString *)tableName
                        database:(nullable id<FLEXDatabaseManager>)databaseManager {
     // Must supply all optional parameters as one, or none
-    // BOOL all = rowIDs && tableName && databaseManager;
-    // BOOL none = !rowIDs && !tableName && !databaseManager;
-    // NSParameterAssert(all || none);
+    BOOL all = rowIDs && tableName && databaseManager;
+    BOOL none = !rowIDs && !tableName && !databaseManager;
+    NSParameterAssert(all || none);
 
     self = [super init];
     if (self) {

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>%title%</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.css">
+    <link rel="stylesheet" href="css/debug.css">
+    <!--[if lt IE 9]>
+      <script type="text/javascript" src="js/html5shiv.min.js"></script>
+      <script type="text/javascript" src="js/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.ui.widget.js"></script>
+    <script type="text/javascript" src="js/jquery.iframe-transport.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/tmpl.min.js"></script>
+    <script type="text/javascript">
+      var _device = "REST";
+      var _keywords = "%keywords%";
+    </script>
+    <script type="text/javascript" src="js/debug.js"></script>
+  </head>
+  <body>
+    
+    <div class="container">
+      
+      <div class="page-header">
+        <h1>%header%</h1>
+      </div>
+      
+      <div id="alerts"></div>
+      
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" id="toggle">
+              <span class="glyphicon glyphicon-phone" id="toggle-icon"></span>
+            </a>
+          </div>
+
+          <div class="collapse navbar-collapse" id="navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li class="active"><a href="#">📡  Network History <span class="sr-only">(current)</span></a></li>
+              <li><a href="logger.html">⚠️  System Log</a></li>
+              <li><a href="url.html">🚀  Open URL</a></li>
+            </ul>
+            <form class="navbar-form navbar-left" role="search">
+              <div class="form-group">
+                <input type="text" value="%keywords%" name="keywords" class="form-control" placeholder="Search">
+              </div>
+              <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+              <li>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default navbar-btn" id="reload">
+                    <span class="glyphicon glyphicon-refresh"></span> Refresh
+                  </button>
+                  <button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a id="interval-toggle" href="#">Interval Off</a></li>
+                    <li><a id="interval-5" href="#">Interval 5s</a></li>
+                    <li><a id="interval-10" href="#">Interval 10s</a></li>
+                    <li><a id="interval-60" href="#">Interval 60s</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a id="page-10" href="#">10 per page</a></li>
+                    <li><a id="page-20" href="#">20 per page</a></li>
+                    <li><a id="page-50" href="#">50 per page</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a id="clear" href="#">Clear Requests</a></li>
+                    <li><a id="wkwebview" href="#">Clear WKWebView</a></li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <ol class="breadcrumb" id="path">REST</ol>
+        </div>
+        <table class="table table-striped"><tbody id="listing"></tbody></table>
+      </div>
+      
+      <nav aria-label="pager" id="pager">
+        <ul class="pager">
+          <li class="previous"><a id="previous" class="hidden" href="#"><span aria-hidden="true">&larr;</span> Previous</a></li>
+          <li><span aria-hidden="true" id="total"></span></li>
+          <li class="next"><a id="next" class="hidden" href="#">Next <span aria-hidden="true">&rarr;</span></a></li>
+        </ul>
+      </nav>
+      
+      <p class="footer">%footer% - <a target="_blank" href="https://github.com/lszzy/FWDebug">FWDebug</a></p>
+      
+      <textarea id="copy-textarea"></textarea>
+      
+    </div>
+    
+    <div class="modal fade" id="share-modal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title" id="share-title">REST</h4>
+          </div>
+          <div class="modal-body">
+            <pre id="share-pre" class="hidden"></pre>
+            <p id="share-text" class="show"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="share-confirm">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="image-modal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title" id="image-title"></h4>
+          </div>
+          <div class="modal-body">
+            <img src="" class="img-responsive center-block" id="image-view">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="image-confirm">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <script type="text/x-tmpl" id="template-listing">
+      <tr class="row-line">
+        <td class="column-icon column-copy">
+        {% if (o.image != null) { %}
+          <img src="{%=o.image%}"/>
+        {% } else if (o.action == "curl" || o.action == "section") { %}
+          <button type="button" class="btn btn-default btn-xs">
+            <span class="glyphicon glyphicon-menu-hamburger"></span>
+          </button>
+        {% } %}
+        </td>
+        {% if (o.action == "detail") { %}
+        <td class="column-name column-nowrap">
+        {% } else { %}
+        <td class="column-name">
+        {% } %}
+        {% if (o.error) { %}
+          <p class="text-danger">{%=o.name%}</p>
+        {% } else { %}
+          <p>{%=o.name%}</p>
+        {% } %}
+        </td>
+        <td class="column-date">
+        {% if (o.date != null) { %}
+          <p>{%=o.date%}</p>
+        {% } else { %}
+          <p></p>
+        {% } %}
+        </td>
+        <td class="column-share">
+        {% if (o.action == "detail") { %}
+          <button type="button" class="btn btn-default btn-xs button-detail">
+            <span class="glyphicon glyphicon-menu-right"></span>
+          </button>
+        {% } else if (o.action == "curl") { %}
+          <button type="button" class="btn btn-default btn-xs button-share">
+            <span class="glyphicon glyphicon-console"></span>
+          </button>
+        {% } else if (o.action == "view") { %}
+          <button type="button" class="btn btn-default btn-xs button-view">
+            <span class="glyphicon glyphicon-menu-right"></span>
+          </button>
+        {% } else if (o.action == "copy") { %}
+          <button type="button" class="btn btn-default btn-xs button-share">
+            <span class="glyphicon glyphicon-copy"></span>
+          </button>
+        {% } %}
+        </td>
+      </tr>
+    </script>
+    
+    <script type="text/x-tmpl" id="template-alert">
+      <div class="alert alert-{%=o.level%} alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" id="alert-close">&times;</button>
+        <strong>{%=o.title%}</strong>{%=o.description%}
+      </div>
+    </script>
+    
+  </body>
+</html>

@@ -15,6 +15,10 @@
 
 + (void)fwDebugLaunch;
 
++ (BOOL)fwDebugVisible;
+
 - (FWDebugFpsData *)fwDebugFpsData;
+
++ (void)fwDebugOpenUrl:(NSString *)text;
 
 @end

@@ -28,6 +28,8 @@
 #import "FWDebugFakeNotification.h"
 #import <objc/runtime.h>
 
+static BOOL fwDebugVisible = NO;
+
 @implementation FLEXManager (FWDebug)
 
 + (void)fwDebugLoad
@@ -47,6 +49,7 @@
             
             ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
             
+            fwDebugVisible = YES;
             [selfObject.fwDebugFpsInfo start];
         };
     }];
@@ -57,6 +60,7 @@
             
             ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
             
+            fwDebugVisible = NO;
             [selfObject.fwDebugFpsInfo stop];
         };
     }];
@@ -68,6 +72,7 @@
                 
                 ((void (*)(id, SEL, UIWindowScene *))originalIMP())(selfObject, originalCMD, scene);
                 
+                fwDebugVisible = YES;
                 [selfObject.fwDebugFpsInfo start];
             };
         }];
@@ -117,6 +122,12 @@
     [FWDebugAppConfig fwDebugLaunch];
     [FWDebugSystemInfo fwDebugLaunch];
     [FWDebugFakeNotification fwDebugLaunch];
+    [FWDebugWebServer fwDebugLaunch];
+}
+
++ (BOOL)fwDebugVisible
+{
+    return fwDebugVisible;
 }
 
 - (FWDebugFpsInfo *)fwDebugFpsInfo
@@ -167,26 +178,38 @@
         
         [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugOpenUrl"];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        if ([FWDebugManager sharedInstance].openUrl && [FWDebugManager sharedInstance].openUrl(text)) return;
         
-        NSURL *url = [[NSURL alloc] initWithString:text];
-        if (url != nil && url.scheme != nil) {
-            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
-            return;
-        }
-        
-        Class clazz = NSClassFromString(text);
-        if (clazz == NULL) {
-            NSString *module = [[NSBundle mainBundle] infoDictionary][(__bridge NSString *)kCFBundleExecutableKey];
-            if (module != nil) {
-                clazz = NSClassFromString([NSString stringWithFormat:@"%@.%@", module, text]);
-            }
-        }
-        if (clazz != NULL) {
-            FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:clazz];
-            [self.explorerViewController presentViewController:[FLEXNavigationController withRootViewController:viewController] animated:YES completion:nil];
-        }
+        [FLEXManager fwDebugOpenUrl:text];
     }];
+}
+
++ (void)fwDebugOpenUrl:(NSString *)text
+{
+    if (text.length < 1) return;
+    
+    if ([FWDebugManager sharedInstance].openUrl &&
+        [FWDebugManager sharedInstance].openUrl(text)) return;
+    
+    NSURL *url = [[NSURL alloc] initWithString:text];
+    if (url != nil && url.scheme != nil) {
+        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+        return;
+    }
+    
+    Class clazz = NSClassFromString(text);
+    if (clazz == NULL) {
+        NSString *module = [[NSBundle mainBundle] infoDictionary][(__bridge NSString *)kCFBundleExecutableKey];
+        if (module != nil) {
+            clazz = NSClassFromString([NSString stringWithFormat:@"%@.%@", module, text]);
+        }
+    }
+    if (clazz != NULL) {
+        FLEXObjectExplorerViewController *viewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:clazz];
+        if (FLEXManager.sharedManager.isHidden) {
+            [FLEXManager.sharedManager toggleExplorer];
+        }
+        [FLEXManager.sharedManager.explorerViewController presentViewController:[FLEXNavigationController withRootViewController:viewController] animated:YES completion:nil];
+    }
 }
 
 @end
