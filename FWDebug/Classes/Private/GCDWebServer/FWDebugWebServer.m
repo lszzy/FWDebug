@@ -455,14 +455,15 @@ static GCDWebServer *_webSite = nil;
                     @"copy": row.detailText,
                 }];
             } else if ([row.title isEqualToString:@"Request Body"]) {
-                NSString *contentType = [transaction.request valueForHTTPHeaderField:@"Content-Type"];
+                NSString *mimeType = [transaction.request valueForHTTPHeaderField:@"Content-Type"];
+                if ([mimeType containsString:@";"]) mimeType = [mimeType componentsSeparatedByString:@";"].firstObject;
                 NSData *requestData = [FLEXHTTPTransactionDetailController postBodyDataForTransaction:transaction];
-                NSDictionary *detailSection = [self detailSection:row mimeType:contentType data:requestData transaction:transaction];
+                NSDictionary *detailSection = [self detailSection:row mimeType:mimeType data:requestData transaction:transaction];
                 if (detailSection) {
                     [sections addObject:detailSection];
                 } else {
                     [sections addObject:@{
-                        @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+                        @"name": [NSString stringWithFormat:@"%@: %@", row.title, mimeType ?: row.detailText],
                         @"action": @"view",
                         @"type": @"copy",
                         @"title": row.title,
@@ -470,14 +471,14 @@ static GCDWebServer *_webSite = nil;
                     }];
                 }
             } else if ([row.title isEqualToString:@"Response Body"]) {
-                NSString *contentType = transaction.response.MIMEType;
+                NSString *mimeType = transaction.response.MIMEType;
                 NSData *responseData = [FLEXNetworkRecorder.defaultRecorder cachedResponseBodyForTransaction:transaction];
-                NSDictionary *detailSection = [self detailSection:row mimeType:contentType data:responseData transaction:transaction];
+                NSDictionary *detailSection = [self detailSection:row mimeType:mimeType data:responseData transaction:transaction];
                 if (detailSection) {
                     [sections addObject:detailSection];
                 } else {
                     [sections addObject:@{
-                        @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+                        @"name": [NSString stringWithFormat:@"%@: %@", row.title, mimeType ?: row.detailText],
                         @"action": @"view",
                         @"type": @"copy",
                         @"title": row.title,
@@ -573,13 +574,12 @@ static GCDWebServer *_webSite = nil;
 + (NSDictionary *)detailSection:(FLEXNetworkDetailRow *)row mimeType:(NSString *)mimeType data:(NSData *)data transaction:(FLEXHTTPTransaction *)transaction
 {
     if (!data) return nil;
-    if ([mimeType containsString:@";"]) mimeType = [mimeType componentsSeparatedByString:@";"].firstObject;
     
     if ([FLEXUtility isValidJSONData:data]) {
         NSString *prettyJSON = [FLEXUtility prettyJSONStringFromData:data];
         if (prettyJSON.length > 0) {
             return @{
-                @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+                @"name": [NSString stringWithFormat:@"%@: %@", row.title, mimeType ?: row.detailText],
                 @"action": @"view",
                 @"type": @"copy",
                 @"title": row.title,
@@ -590,7 +590,7 @@ static GCDWebServer *_webSite = nil;
         NSString *imageString = [data base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
         if (imageString) imageString = [NSString stringWithFormat:@"data:%@;base64,%@", mimeType, imageString];
         return @{
-            @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+            @"name": [NSString stringWithFormat:@"%@: %@", row.title, mimeType ?: row.detailText],
             @"action": @"view",
             @"type": @"image",
             @"path": imageString ?: @"",
@@ -600,7 +600,7 @@ static GCDWebServer *_webSite = nil;
     } else if ([mimeType isEqual:@"application/x-plist"]) {
         id propertyList = [NSPropertyListSerialization propertyListWithData:data options:0 format:NULL error:NULL];
         return @{
-            @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+            @"name": [NSString stringWithFormat:@"%@: %@", row.title, mimeType ?: row.detailText],
             @"action": @"view",
             @"type": @"copy",
             @"title": row.title,
@@ -611,7 +611,7 @@ static GCDWebServer *_webSite = nil;
     NSString *text = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     if (text.length > 0) {
         return @{
-            @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+            @"name": [NSString stringWithFormat:@"%@: %@", row.title, mimeType ?: row.detailText],
             @"action": @"view",
             @"type": @"copy",
             @"title": row.title,
