@@ -10,18 +10,25 @@
 iOS调试库，支持iOS11+，无需添加任何代码，方便iOS开发和测试。
 
 ## 屏幕截图
-![屏幕截图](FWDebug.gif)
+
+### 手机端截图
+![手机端截图](FWDebug.gif)
+
+### 浏览器截图
+![浏览器截图](FWDebug_Server.gif)
 
 ## 使用教程
 真机或模拟器中5秒内摇一摇两次即可出现调试菜单。功能如下：
 
 * FLEX调试工具（摇一摇开启）
+* PC Web调试服务器功能，可查看手机网络请求、NSLog、打开URL等（"Web Server"入口）
 * 视图距离测量功能（切换工具栏为"ruler"模式）
 * 循环引用检测和分析（在对象查看页面点击搜索）
 * Class和Protocol的头文件查看（在类查看页面点击"Runtime Headers"）
 * FPS、内存、CPU占用率显示（摇一摇开启）
 * 手机、App信息查看、模拟功能（"Device Info"入口）
 * App崩溃日志的记录、查看（"Crash Log"入口）
+* App崩溃日志上报邮箱和服务器（代码配置crashReporter）
 * 文件日志的记录、查看（"Custom Log"入口）
 * App文件管理器（"Browse Directory"入口）
 * Documents文件http、webdav服务器（"Web Server"入口）
@@ -35,6 +42,7 @@ iOS调试库，支持iOS11+，无需添加任何代码，方便iOS开发和测�
 * WKWebView请求抓包功能（"App Config"打开开关后查看"Network History"即可）
 * WKWebView自动注入vConsole功能（"App Config"打开开关后打开WKWebView即可）
 * WebSite静态web服务器（"Web Server"入口，web文件放到Documents/website即可）
+* WKWebView清理缓存功能（"App Config"入口）
 
 ## 审核说明
 针对大家关心的上架审核问题，特别说明一下：
@@ -57,6 +65,15 @@ iOS调试库，支持iOS11+，无需添加任何代码，方便iOS开发和测�
 	end
 
 ## 更新日志
+4.0.0版本：
+
+    * 新增PC Web调试服务器功能
+    * 新增Web 服务器端口和路径配置功能
+    * 新增崩溃上报到邮箱或服务器功能
+    * 新增WKWebView清理缓存功能
+    * 升级FLEX到最新版本
+    * 兼容iOS 16
+
 3.1.0版本：
 
     * 升级FLEX到4.7.0版本

@@ -10,18 +10,25 @@
 iOS debugging library, support for iOS11 +, without adding any code to facilitate iOS development and testing.
 
 ## Screenshot
-![Screenshot](FWDebug.gif)
+
+### Mobile
+![Mobile](FWDebug.gif)
+
+### Browser
+![Browser](FWDebug_Server.gif)
 
 ## Tutorial
 Real machine or simulator shaking within 5 seconds twice to appear debug menu. Functions are as follows:
 
 * FLEX debugging tool (shaking to open)
-* Measure view distance function (switch toolbar to "ruler" mode)
+* PC Web debugging server, you can view mobile phone network requests, NSLog, open URL, etc. ("Web Server" entrance)
+* Measure view distance (switch toolbar to "ruler" mode)
 * Circular reference detection and analysis (click to search on the object view page)
 * View the header files of Class and Protocol (click "Runtime Headers" on the class view page)
 * FPS, memory, CPU occupancy rate display (shaking to open)
 * Mobile phone, App information view, simulation function ("Device Info" entrance)
 * App crash log recording and viewing ("Crash Log" entrance)
+* App crash log is reported to mailbox and server (code configuration crashReporter)
 * Recording and viewing of file logs ("Custom Log" entrance)
 * App file manager ("Browse Directory" entrance)
 * Documents file http, webdav server ("Web Server" entrance)
@@ -35,6 +42,7 @@ Real machine or simulator shaking within 5 seconds twice to appear debug menu. F
 * WKWebView request packet capture function (just check "Network History" after turning on the "App Config" switch)
 * WKWebView automatically injects the vConsole function (just turn on WKWebView after turning on the "App Config" switch)
 * WebSite static web server ("Web Server" entrance, the web file can be placed in Documents/website)
+* WKWebView cleanup cache ("App Config" entry)
 
 ## Review
 For everyone concerned about the issue of shelf audit, in particular, explain:
@@ -57,6 +65,15 @@ The debug library supports Debug and Release environment, it is recommended Debu
 	end
 
 ## Changelog
+Version 4.0.0:
+
+     * Added PC Web debugging server
+     * Added Web server port and path configuration
+     * Added crash report to email or server
+     * Added WKWebView clearing cache
+     * Upgrade FLEX to the latest version
+     * Compatible with iOS 16
+
 Version 3.1.0:
 
     * Upgrade FLEX to version 4.7.0
