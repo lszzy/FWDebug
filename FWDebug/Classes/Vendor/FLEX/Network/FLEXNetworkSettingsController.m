@@ -213,7 +213,7 @@
 
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)ip {
     // Can only select the "Reset Host Denylist" row
-    return ip.section == 0 && ip.row == 2;
+    return ip.section == 0 && ip.row == 3;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {

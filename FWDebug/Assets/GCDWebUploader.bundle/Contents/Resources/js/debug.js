@@ -126,10 +126,12 @@ function _reload(path) {
         var path = $(this).parent().parent().data("path");
         window.open(path, "_blank");
       } else if (type == "image") {
+        var path = $(this).parent().parent().data("path");
         var title = $(this).parent().parent().data("title");
         var copy = $(this).parent().parent().data("copy");
         $("#image-title").text(title);
-        $("#image-view").attr("src", copy);
+        $("#image-view").attr("src", path);
+        $("#copy-textarea").val(copy);
         $("#image-modal").modal("show");
       } else {
         var title = $(this).parent().parent().data("title");
@@ -160,6 +162,11 @@ $(document).ready(function() {
   
   $("#share-confirm").click(function(event) {
     $("#share-modal").modal("hide");
+    _copyText();
+  });
+    
+  $("#image-confirm").click(function(event) {
+    $("#image-modal").modal("hide");
     _copyText();
   });
   

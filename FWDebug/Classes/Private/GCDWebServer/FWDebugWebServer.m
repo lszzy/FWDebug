@@ -260,11 +260,13 @@ static GCDWebServer *_webSite = nil;
                                   path:@"/wkwebview"
                           requestClass:[GCDWebServerRequest class]
                      asyncProcessBlock:^(__kindof GCDWebServerRequest * request, GCDWebServerCompletionBlock completionBlock) {
-            NSSet<NSString *> *dataTypes = [WKWebsiteDataStore allWebsiteDataTypes];
-            NSDate *sinceDate = [NSDate dateWithTimeIntervalSince1970:0];
-            [WKWebsiteDataStore.defaultDataStore removeDataOfTypes:dataTypes modifiedSince:sinceDate completionHandler:^{
-                completionBlock([GCDWebServerDataResponse responseWithJSONObject:@{}]);
-            }];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSSet<NSString *> *dataTypes = [WKWebsiteDataStore allWebsiteDataTypes];
+                NSDate *sinceDate = [NSDate dateWithTimeIntervalSince1970:0];
+                [WKWebsiteDataStore.defaultDataStore removeDataOfTypes:dataTypes modifiedSince:sinceDate completionHandler:^{
+                    completionBlock([GCDWebServerDataResponse responseWithJSONObject:@{}]);
+                }];
+            });
         }];
         
         [_webDebug addHandlerForMethod:@"GET"
@@ -455,7 +457,7 @@ static GCDWebServer *_webSite = nil;
             } else if ([row.title isEqualToString:@"Request Body"]) {
                 NSString *contentType = [transaction.request valueForHTTPHeaderField:@"Content-Type"];
                 NSData *requestData = [FLEXHTTPTransactionDetailController postBodyDataForTransaction:transaction];
-                NSDictionary *detailSection = [self detailSection:row mimeType:contentType data:requestData];
+                NSDictionary *detailSection = [self detailSection:row mimeType:contentType data:requestData transaction:transaction];
                 if (detailSection) {
                     [sections addObject:detailSection];
                 } else {
@@ -470,7 +472,7 @@ static GCDWebServer *_webSite = nil;
             } else if ([row.title isEqualToString:@"Response Body"]) {
                 NSString *contentType = transaction.response.MIMEType;
                 NSData *responseData = [FLEXNetworkRecorder.defaultRecorder cachedResponseBodyForTransaction:transaction];
-                NSDictionary *detailSection = [self detailSection:row mimeType:contentType data:responseData];
+                NSDictionary *detailSection = [self detailSection:row mimeType:contentType data:responseData transaction:transaction];
                 if (detailSection) {
                     [sections addObject:detailSection];
                 } else {
@@ -568,7 +570,7 @@ static GCDWebServer *_webSite = nil;
     return sections;
 }
 
-+ (NSDictionary *)detailSection:(FLEXNetworkDetailRow *)row mimeType:(NSString *)mimeType data:(NSData *)data
++ (NSDictionary *)detailSection:(FLEXNetworkDetailRow *)row mimeType:(NSString *)mimeType data:(NSData *)data transaction:(FLEXHTTPTransaction *)transaction
 {
     if (!data) return nil;
     if ([mimeType containsString:@";"]) mimeType = [mimeType componentsSeparatedByString:@";"].firstObject;
@@ -591,8 +593,9 @@ static GCDWebServer *_webSite = nil;
             @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
             @"action": @"view",
             @"type": @"image",
-            @"title": mimeType,
-            @"copy": imageString ?: @"",
+            @"path": imageString ?: @"",
+            @"title": row.title,
+            @"copy": transaction.request.URL.absoluteString ?: @"",
         };
     } else if ([mimeType isEqual:@"application/x-plist"]) {
         id propertyList = [NSPropertyListSerialization propertyListWithData:data options:0 format:NULL error:NULL];
