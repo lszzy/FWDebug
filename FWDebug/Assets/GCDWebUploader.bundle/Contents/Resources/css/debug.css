@@ -58,6 +58,11 @@
   line-break: anywhere;
 }
 
+#share-pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
 #copy-text {
   width: 100%;
 }

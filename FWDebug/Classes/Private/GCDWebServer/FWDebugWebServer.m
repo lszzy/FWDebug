@@ -581,7 +581,7 @@ static GCDWebServer *_webSite = nil;
             return @{
                 @"name": [NSString stringWithFormat:@"%@: %@", row.title, mimeType ?: row.detailText],
                 @"action": @"view",
-                @"type": @"copy",
+                @"type": @"json",
                 @"title": row.title,
                 @"copy": prettyJSON,
             };

@@ -137,7 +137,15 @@ function _reload(path) {
         var title = $(this).parent().parent().data("title");
         var copy = $(this).parent().parent().data("copy");
         $("#share-title").text(title);
-        $("#share-text").text(copy);
+        if (type == "json") {
+          $("#share-pre").text(copy);
+          $("#share-text").removeClass("show").addClass("hidden");
+          $("#share-pre").removeClass("hidden").addClass("show");
+        } else {
+          $("#share-text").text(copy);
+          $("#share-pre").removeClass("show").addClass("hidden");
+          $("#share-text").removeClass("hidden").addClass("show");
+        }
         $("#copy-textarea").val(copy);
         $("#share-modal").modal("show");
       }
@@ -148,6 +156,8 @@ function _reload(path) {
       var copy = $(this).parent().parent().data("copy");
       $("#share-title").text(title);
       $("#share-text").text(copy);
+      $("#share-pre").removeClass("show").addClass("hidden");
+      $("#share-text").removeClass("hidden").addClass("show");
       $("#copy-textarea").val(copy);
       $("#share-modal").modal("show");
     });
