@@ -252,7 +252,6 @@ $(document).ready(function() {
     if (event.keyCode == ENTER_KEYCODE) {
       $("#submit-url").click();
     };
-    event.preventDefault();
   });
   
   $("#submit-url").click(function(event) {
