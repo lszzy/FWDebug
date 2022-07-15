@@ -155,10 +155,17 @@ function _reload(path) {
     $(".button-share").click(function(event) {
       var title = $(this).parent().parent().data("title");
       var copy = $(this).parent().parent().data("copy");
+      var type = $(this).parent().parent().data("type");
       $("#share-title").text(title);
-      $("#share-text").text(copy);
-      $("#share-pre").removeClass("show").addClass("hidden");
-      $("#share-text").removeClass("hidden").addClass("show");
+      if (type != null && type == "json") {
+        $("#share-pre").text(copy);
+        $("#share-text").removeClass("show").addClass("hidden");
+        $("#share-pre").removeClass("hidden").addClass("show");
+      } else {
+        $("#share-text").text(copy);
+        $("#share-pre").removeClass("show").addClass("hidden");
+        $("#share-text").removeClass("hidden").addClass("show");
+      }
       $("#copy-textarea").val(copy);
       $("#share-modal").modal("show");
     });
