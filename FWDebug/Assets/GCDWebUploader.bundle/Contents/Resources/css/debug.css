@@ -61,6 +61,7 @@
 #share-pre {
   white-space: pre-wrap;
   word-wrap: break-word;
+  margin: 5px 0px;
 }
 
 #copy-text {
