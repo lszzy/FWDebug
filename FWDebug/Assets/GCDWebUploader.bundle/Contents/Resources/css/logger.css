@@ -12,6 +12,12 @@
   line-break: anywhere;
 }
 
+.column-name pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 5px 0px;
+}
+
 .column-date {
   width: 180px;
   text-align: right;
