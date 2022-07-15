@@ -242,7 +242,7 @@ static GCDWebServer *_webSite = nil;
                         @"path": transaction.requestID,
                         @"image": imageString ?: @"",
                         @"title": title ?: @"",
-                        @"name": [transaction.secondaryDescription stringByAppendingString:transaction.primaryDescription],
+                        @"name": transaction.request.URL.absoluteString ?: @"",
                         @"date": transaction.tertiaryDescription,
                         @"error": transaction.displayAsError ? @YES : @NO,
                         @"action": @"detail",
