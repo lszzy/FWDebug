@@ -542,12 +542,7 @@ static GCDWebServer *_webSite = nil;
                     }];
                 }
             } else {
-                [sections addObject:@{
-                    @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
-                    @"action": @"copy",
-                    @"title": row.title,
-                    @"copy": row.detailText,
-                }];
+                [sections addObject:[self detailSection:row]];
             }
         }
     }
@@ -561,12 +556,7 @@ static GCDWebServer *_webSite = nil;
             @"copy": requestHeadersSection.title,
         }];
         for (FLEXNetworkDetailRow *row in requestHeadersSection.rows) {
-            [sections addObject:@{
-                @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
-                @"action": @"copy",
-                @"title": row.title,
-                @"copy": row.detailText,
-            }];
+            [sections addObject:[self detailSection:row]];
         }
     }
     
@@ -579,12 +569,7 @@ static GCDWebServer *_webSite = nil;
             @"copy": queryParametersSection.title,
         }];
         for (FLEXNetworkDetailRow *row in queryParametersSection.rows) {
-            [sections addObject:@{
-                @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
-                @"action": @"copy",
-                @"title": row.title,
-                @"copy": row.detailText,
-            }];
+            [sections addObject:[self detailSection:row]];
         }
     }
     
@@ -597,12 +582,7 @@ static GCDWebServer *_webSite = nil;
             @"copy": postBodySection.title,
         }];
         for (FLEXNetworkDetailRow *row in postBodySection.rows) {
-            [sections addObject:@{
-                @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
-                @"action": @"copy",
-                @"title": row.title,
-                @"copy": row.detailText,
-            }];
+            [sections addObject:[self detailSection:row]];
         }
     }
     
@@ -615,12 +595,7 @@ static GCDWebServer *_webSite = nil;
             @"copy": responseHeadersSection.title,
         }];
         for (FLEXNetworkDetailRow *row in responseHeadersSection.rows) {
-            [sections addObject:@{
-                @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
-                @"action": @"copy",
-                @"title": row.title,
-                @"copy": row.detailText,
-            }];
+            [sections addObject:[self detailSection:row]];
         }
     }
     
@@ -676,6 +651,30 @@ static GCDWebServer *_webSite = nil;
     }
     
     return nil;
+}
+
++ (NSDictionary *)detailSection:(FLEXNetworkDetailRow *)row
+{
+    NSData *data = row.detailText ? [row.detailText dataUsingEncoding:NSUTF8StringEncoding] : nil;
+    if (data && [FLEXUtility isValidJSONData:data]) {
+        NSString *prettyJSON = [FLEXUtility prettyJSONStringFromData:data];
+        if (prettyJSON.length > 0) {
+            return @{
+                @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+                @"action": @"copy",
+                @"type": @"json",
+                @"title": row.title,
+                @"copy": prettyJSON,
+            };
+        }
+    }
+    
+    return @{
+        @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
+        @"action": @"copy",
+        @"title": row.title,
+        @"copy": row.detailText,
+    };
 }
 
 - (instancetype)initWithStyle:(UITableViewStyle)style
