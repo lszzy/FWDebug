@@ -216,6 +216,7 @@ static GCDWebServer *_webSite = nil;
                 return FLEXNetworkRecorder.defaultRecorder.HTTPTransactions;
             }];
             NSString *keywords = request.query[@"keywords"] ?: @"";
+            BOOL sort = [(request.query[@"sort"] ?: @"0") boolValue];
             NSInteger page = [(request.query[@"page"] ?: @"") integerValue];
             NSInteger perpage = [(request.query[@"perpage"] ?: @"") integerValue];
             if (page < 1) page = 1;
@@ -224,7 +225,7 @@ static GCDWebServer *_webSite = nil;
             NSMutableArray *array = [NSMutableArray array];
             __block NSInteger totalCount = 0;
             __block NSInteger bytesReceived = 0;
-            [dataSource.transactions enumerateObjectsUsingBlock:^(FLEXHTTPTransaction *transaction, NSUInteger idx, BOOL *stop) {
+            [dataSource.transactions enumerateObjectsWithOptions:sort ? NSEnumerationReverse : 0 usingBlock:^(FLEXHTTPTransaction *transaction, NSUInteger idx, BOOL *stop) {
                 if (keywords.length > 0) {
                     if (![transaction matchesQuery:keywords]) return;
                 }
@@ -328,6 +329,7 @@ static GCDWebServer *_webSite = nil;
                           processBlock:^GCDWebServerResponse * _Nullable(__kindof GCDWebServerRequest * _Nonnull request) {
             NSArray<FLEXSystemLogMessage *> *messages = [FLEXOSLogController sharedLogController].messages.copy;
             NSString *keywords = request.query[@"keywords"] ?: @"";
+            BOOL sort = [(request.query[@"sort"] ?: @"0") boolValue];
             NSInteger page = [(request.query[@"page"] ?: @"") integerValue];
             NSInteger perpage = [(request.query[@"perpage"] ?: @"") integerValue];
             if (page < 1) page = 1;
@@ -335,7 +337,7 @@ static GCDWebServer *_webSite = nil;
             
             NSMutableArray *array = [NSMutableArray array];
             __block NSInteger totalCount = 0;
-            [messages enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(FLEXSystemLogMessage *message, NSUInteger idx, BOOL *stop) {
+            [messages enumerateObjectsWithOptions:sort ? 0 : NSEnumerationReverse usingBlock:^(FLEXSystemLogMessage *message, NSUInteger idx, BOOL *stop) {
                 if (keywords.length > 0) {
                     NSString *text = [FLEXSystemLogCell displayedTextForLogMessage:message];
                     if (![text localizedCaseInsensitiveContainsString:keywords]) return;
@@ -379,6 +381,7 @@ static GCDWebServer *_webSite = nil;
             NSArray *urls = [NSUserDefaults.standardUserDefaults objectForKey:@"FWDebugOpenUrls"];
             if (![urls isKindOfClass:[NSArray class]]) urls = @[];
             NSString *keywords = request.query[@"keywords"] ?: @"";
+            BOOL sort = [(request.query[@"sort"] ?: @"0") boolValue];
             NSInteger page = [(request.query[@"page"] ?: @"") integerValue];
             NSInteger perpage = [(request.query[@"perpage"] ?: @"") integerValue];
             if (page < 1) page = 1;
@@ -386,7 +389,7 @@ static GCDWebServer *_webSite = nil;
             
             NSMutableArray *array = [NSMutableArray array];
             __block NSInteger totalCount = 0;
-            [urls enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSString *url, NSUInteger idx, BOOL *stop) {
+            [urls enumerateObjectsWithOptions:sort ? 0 : NSEnumerationReverse usingBlock:^(NSString *url, NSUInteger idx, BOOL *stop) {
                 if (keywords.length > 0) {
                     if (![url localizedCaseInsensitiveContainsString:keywords]) return;
                 }

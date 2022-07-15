@@ -6,6 +6,7 @@ var _interval = true;
 var _intervalId = null;
 var _page = 1;
 var _perpage = 10;
+var _sortAsc = false;
 
 function _copyText() {
     var element = document.getElementById("copy-textarea");
@@ -57,7 +58,7 @@ function _reload(path) {
   $.ajax({
     url: 'logs',
     type: 'GET',
-    data: {path: path, page: _page, perpage: _perpage, keywords: _keywords},
+    data: {path: path, page: _page, perpage: _perpage, sort: _sortAsc ? 1 : 0, keywords: _keywords},
     dataType: 'json'
   }).done(function(data, textStatus, jqXHR) {
     var scrollPosition = $(document).scrollTop();
@@ -129,10 +130,12 @@ $(document).ready(function() {
   $("#share-confirm").click(function(event) {
     $("#share-modal").modal("hide");
     _copyText();
+    event.preventDefault();
   });
   
   $("#reload").click(function(event) {
     _reload(_path);
+    event.preventDefault();
   });
     
   $("#previous").click(function(event) {
@@ -192,6 +195,13 @@ $(document).ready(function() {
     event.preventDefault();
   });
   
+  $("#sort").click(function(event) {
+    _sortAsc = !_sortAsc;
+    $(this).text(_sortAsc ? "Sort Descending" : "Sort Ascending");
+    _reload("/");
+    event.preventDefault();
+  });
+  
   $("#toggle").click(function(event) {
     $.ajax({
       url: 'settings',
@@ -205,6 +215,7 @@ $(document).ready(function() {
         $("#toggle-icon").addClass("glyphicon-phone").removeClass("glyphicon-off");
       }
     });
+    event.preventDefault();
   });
   
   $("#clear").click(function(event) {
@@ -216,6 +227,7 @@ $(document).ready(function() {
     }).done(function(data, textStatus, jqXHR) {
       _reload("/");
     });
+    event.preventDefault();
   });
 
   _reload("/");
