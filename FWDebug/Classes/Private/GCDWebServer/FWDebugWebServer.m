@@ -244,7 +244,7 @@ static GCDWebServer *_webSite = nil;
                         @"image": imageString ?: @"",
                         @"title": title ?: @"",
                         @"name": transaction.request.URL.absoluteString ?: @"",
-                        @"date": transaction.tertiaryDescription,
+                        @"date": transaction.tertiaryDescription ?: @"",
                         @"error": transaction.displayAsError ? @YES : @NO,
                         @"action": @"detail",
                         @"copy": transaction.request.URL.absoluteString ?: @"",
@@ -346,8 +346,8 @@ static GCDWebServer *_webSite = nil;
                 totalCount += 1;
                 if (totalCount > perpage * (page - 1) && totalCount <= perpage * page) {
                     [array addObject:@{
-                        @"name": message.messageText,
-                        @"path": message.messageText,
+                        @"name": message.messageText ?: @"",
+                        @"path": message.messageText ?: @"",
                         @"date": [FLEXSystemLogCell logTimeStringFromDate:message.date],
                     }];
                 }
@@ -495,7 +495,7 @@ static GCDWebServer *_webSite = nil;
     FLEXNetworkDetailSection *generalSection = [FLEXHTTPTransactionDetailController generalSectionForTransaction:transaction];
     if (generalSection.rows.count > 0) {
         [sections addObject:@{
-            @"name": generalSection.title,
+            @"name": generalSection.title ?: @"",
             @"date": @"CURL",
             @"action": @"curl",
             @"title": @"Curl Command",
@@ -507,8 +507,8 @@ static GCDWebServer *_webSite = nil;
                     @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
                     @"action": @"view",
                     @"type": @"link",
-                    @"path": row.detailText,
-                    @"copy": row.detailText,
+                    @"path": row.detailText ?: @"",
+                    @"copy": row.detailText ?: @"",
                 }];
             } else if ([row.title isEqualToString:@"Request Body"]) {
                 NSString *mimeType = [transaction.request valueForHTTPHeaderField:@"Content-Type"];
@@ -522,7 +522,7 @@ static GCDWebServer *_webSite = nil;
                         @"name": [NSString stringWithFormat:@"%@: %@", row.title, mimeType ?: row.detailText],
                         @"action": @"view",
                         @"type": @"copy",
-                        @"title": row.title,
+                        @"title": row.title ?: @"",
                         @"copy": @"Can't View HTTP Body Data",
                     }];
                 }
@@ -537,7 +537,7 @@ static GCDWebServer *_webSite = nil;
                         @"name": [NSString stringWithFormat:@"%@: %@", row.title, mimeType ?: row.detailText],
                         @"action": @"view",
                         @"type": @"copy",
-                        @"title": row.title,
+                        @"title": row.title ?: @"",
                         @"copy": @"Unable to View Response",
                     }];
                 }
@@ -550,10 +550,10 @@ static GCDWebServer *_webSite = nil;
     FLEXNetworkDetailSection *requestHeadersSection = [FLEXHTTPTransactionDetailController requestHeadersSectionForTransaction:transaction];
     if (requestHeadersSection.rows.count > 0) {
         [sections addObject:@{
-            @"name": requestHeadersSection.title,
+            @"name": requestHeadersSection.title ?: @"",
             @"action": @"section",
             @"title": @"",
-            @"copy": requestHeadersSection.title,
+            @"copy": requestHeadersSection.title ?: @"",
         }];
         for (FLEXNetworkDetailRow *row in requestHeadersSection.rows) {
             [sections addObject:[self detailSection:row]];
@@ -563,10 +563,10 @@ static GCDWebServer *_webSite = nil;
     FLEXNetworkDetailSection *queryParametersSection = [FLEXHTTPTransactionDetailController queryParametersSectionForTransaction:transaction];
     if (queryParametersSection.rows.count > 0) {
         [sections addObject:@{
-            @"name": queryParametersSection.title,
+            @"name": queryParametersSection.title ?: @"",
             @"action": @"section",
             @"title": @"",
-            @"copy": queryParametersSection.title,
+            @"copy": queryParametersSection.title ?: @"",
         }];
         for (FLEXNetworkDetailRow *row in queryParametersSection.rows) {
             [sections addObject:[self detailSection:row]];
@@ -576,10 +576,10 @@ static GCDWebServer *_webSite = nil;
     FLEXNetworkDetailSection *postBodySection = [FLEXHTTPTransactionDetailController postBodySectionForTransaction:transaction];
     if (postBodySection.rows.count > 0) {
         [sections addObject:@{
-            @"name": postBodySection.title,
+            @"name": postBodySection.title ?: @"",
             @"action": @"section",
             @"title": @"",
-            @"copy": postBodySection.title,
+            @"copy": postBodySection.title ?: @"",
         }];
         for (FLEXNetworkDetailRow *row in postBodySection.rows) {
             [sections addObject:[self detailSection:row]];
@@ -589,10 +589,10 @@ static GCDWebServer *_webSite = nil;
     FLEXNetworkDetailSection *responseHeadersSection = [FLEXHTTPTransactionDetailController responseHeadersSectionForTransaction:transaction];
     if (responseHeadersSection.rows.count > 0) {
         [sections addObject:@{
-            @"name": responseHeadersSection.title,
+            @"name": responseHeadersSection.title ?: @"",
             @"action": @"section",
             @"title": @"",
-            @"copy": responseHeadersSection.title,
+            @"copy": responseHeadersSection.title ?: @"",
         }];
         for (FLEXNetworkDetailRow *row in responseHeadersSection.rows) {
             [sections addObject:[self detailSection:row]];
@@ -613,7 +613,7 @@ static GCDWebServer *_webSite = nil;
                 @"name": [NSString stringWithFormat:@"%@: %@", row.title, mimeType ?: row.detailText],
                 @"action": @"view",
                 @"type": @"json",
-                @"title": row.title,
+                @"title": row.title ?: @"",
                 @"copy": prettyJSON,
             };
         }
@@ -625,7 +625,7 @@ static GCDWebServer *_webSite = nil;
             @"action": @"view",
             @"type": @"image",
             @"path": imageString ?: @"",
-            @"title": row.title,
+            @"title": row.title ?: @"",
             @"copy": transaction.request.URL.absoluteString ?: @"",
         };
     } else if ([mimeType isEqual:@"application/x-plist"]) {
@@ -634,7 +634,7 @@ static GCDWebServer *_webSite = nil;
             @"name": [NSString stringWithFormat:@"%@: %@", row.title, mimeType ?: row.detailText],
             @"action": @"view",
             @"type": @"copy",
-            @"title": row.title,
+            @"title": row.title ?: @"",
             @"copy": [propertyList description] ?: @"",
         };
     }
@@ -645,7 +645,7 @@ static GCDWebServer *_webSite = nil;
             @"name": [NSString stringWithFormat:@"%@: %@", row.title, mimeType ?: row.detailText],
             @"action": @"view",
             @"type": @"copy",
-            @"title": row.title,
+            @"title": row.title ?: @"",
             @"copy": text,
         };
     }
@@ -663,7 +663,7 @@ static GCDWebServer *_webSite = nil;
                 @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
                 @"action": @"copy",
                 @"type": @"json",
-                @"title": row.title,
+                @"title": row.title ?: @"",
                 @"copy": prettyJSON,
             };
         }
@@ -672,8 +672,8 @@ static GCDWebServer *_webSite = nil;
     return @{
         @"name": [NSString stringWithFormat:@"%@: %@", row.title, row.detailText],
         @"action": @"copy",
-        @"title": row.title,
-        @"copy": row.detailText,
+        @"title": row.title ?: @"",
+        @"copy": row.detailText ?: @"",
     };
 }
 
