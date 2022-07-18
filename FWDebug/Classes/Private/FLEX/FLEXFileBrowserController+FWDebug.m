@@ -46,7 +46,6 @@ static NSString *fwDebugCopyPath = nil;
         };
     }];
     
-#if FLEX_AT_LEAST_IOS13_SDK
     if (@available(iOS 13.0, *)) {
         [FWDebugManager swizzleMethod:@selector(tableView:contextMenuConfigurationForRowAtIndexPath:point:) in:[FLEXFileBrowserController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
             return ^UIContextMenuConfiguration *(__unsafe_unretained FLEXFileBrowserController *selfObject, UITableView *tableView, NSIndexPath *indexPath, CGPoint point) {
@@ -54,7 +53,6 @@ static NSString *fwDebugCopyPath = nil;
             };
         }];
     }
-#endif
 }
 
 #pragma mark - FWDebug
@@ -102,7 +100,6 @@ static NSString *fwDebugCopyPath = nil;
 #pragma clang diagnostic pop
 }
 
-#if FLEX_AT_LEAST_IOS13_SDK
 - (UIContextMenuConfiguration *)fwDebugTableView:(UITableView *)tableView contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point __IOS_AVAILABLE(13.0) {
     __weak typeof(self) weakSelf = self;
     return [UIContextMenuConfiguration configurationWithIdentifier:nil
@@ -142,7 +139,6 @@ static NSString *fwDebugCopyPath = nil;
         return [UIMenu menuWithTitle:@"Manage File" image:nil identifier:@"Manage File" options:UIMenuOptionsDisplayInline children:@[rename, delete, copyPath, share, copy]];
     }];
 }
-#endif
 
 @end
 
