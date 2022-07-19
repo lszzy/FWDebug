@@ -497,9 +497,10 @@ static GCDWebServer *_webSite = nil;
         [sections addObject:@{
             @"name": generalSection.title ?: @"",
             @"date": @"CURL",
-            @"action": @"curl",
+            @"action": @"menu",
             @"title": @"Curl Command",
             @"copy": [FLEXNetworkCurlLogger curlCommandString:transaction.request],
+            @"fast": transaction.request.URL.absoluteString ?: @"",
         }];
         for (FLEXNetworkDetailRow *row in generalSection.rows) {
             if ([row.title isEqualToString:@"Request URL"]) {
@@ -549,12 +550,7 @@ static GCDWebServer *_webSite = nil;
     
     FLEXNetworkDetailSection *requestHeadersSection = [FLEXHTTPTransactionDetailController requestHeadersSectionForTransaction:transaction];
     if (requestHeadersSection.rows.count > 0) {
-        [sections addObject:@{
-            @"name": requestHeadersSection.title ?: @"",
-            @"action": @"section",
-            @"title": @"",
-            @"copy": requestHeadersSection.title ?: @"",
-        }];
+        [sections addObject:[self menuSection:requestHeadersSection fast:nil]];
         for (FLEXNetworkDetailRow *row in requestHeadersSection.rows) {
             [sections addObject:[self detailSection:row]];
         }
@@ -562,12 +558,7 @@ static GCDWebServer *_webSite = nil;
     
     FLEXNetworkDetailSection *queryParametersSection = [FLEXHTTPTransactionDetailController queryParametersSectionForTransaction:transaction];
     if (queryParametersSection.rows.count > 0) {
-        [sections addObject:@{
-            @"name": queryParametersSection.title ?: @"",
-            @"action": @"section",
-            @"title": @"",
-            @"copy": queryParametersSection.title ?: @"",
-        }];
+        [sections addObject:[self menuSection:queryParametersSection fast:transaction.request.URL.query]];
         for (FLEXNetworkDetailRow *row in queryParametersSection.rows) {
             [sections addObject:[self detailSection:row]];
         }
@@ -575,12 +566,15 @@ static GCDWebServer *_webSite = nil;
     
     FLEXNetworkDetailSection *postBodySection = [FLEXHTTPTransactionDetailController postBodySectionForTransaction:transaction];
     if (postBodySection.rows.count > 0) {
-        [sections addObject:@{
-            @"name": postBodySection.title ?: @"",
-            @"action": @"section",
-            @"title": @"",
-            @"copy": postBodySection.title ?: @"",
-        }];
+        NSString *fast = nil;
+        if (transaction.cachedRequestBody.length > 0) {
+            NSString *contentType = [transaction.request valueForHTTPHeaderField:@"Content-Type"];
+            if ([contentType hasPrefix:@"application/x-www-form-urlencoded"]) {
+                NSData *body = [FLEXHTTPTransactionDetailController postBodyDataForTransaction:transaction];
+                fast = [[NSString alloc] initWithData:body encoding:NSUTF8StringEncoding];
+            }
+        }
+        [sections addObject:[self menuSection:postBodySection fast:fast]];
         for (FLEXNetworkDetailRow *row in postBodySection.rows) {
             [sections addObject:[self detailSection:row]];
         }
@@ -588,12 +582,7 @@ static GCDWebServer *_webSite = nil;
     
     FLEXNetworkDetailSection *responseHeadersSection = [FLEXHTTPTransactionDetailController responseHeadersSectionForTransaction:transaction];
     if (responseHeadersSection.rows.count > 0) {
-        [sections addObject:@{
-            @"name": responseHeadersSection.title ?: @"",
-            @"action": @"section",
-            @"title": @"",
-            @"copy": responseHeadersSection.title ?: @"",
-        }];
+        [sections addObject:[self menuSection:responseHeadersSection fast:nil]];
         for (FLEXNetworkDetailRow *row in responseHeadersSection.rows) {
             [sections addObject:[self detailSection:row]];
         }
@@ -651,6 +640,25 @@ static GCDWebServer *_webSite = nil;
     }
     
     return nil;
+}
+
++ (NSDictionary *)menuSection:(FLEXNetworkDetailSection *)section fast:(NSString *)fast
+{
+    NSMutableDictionary *jsonDict = [NSMutableDictionary dictionary];
+    for (FLEXNetworkDetailRow *row in section.rows) {
+        [jsonDict setObject:row.detailText ?: @"" forKey:row.title ?: @""];
+    }
+    
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDict options:0 error:NULL];
+    NSString *prettyString = [FLEXUtility prettyJSONStringFromData:jsonData];
+    return @{
+        @"name": section.title ?: @"",
+        @"action": @"menu",
+        @"type": @"json",
+        @"title": section.title ?: @"",
+        @"copy": prettyString ?: @"",
+        @"fast": fast ?: @"",
+    };
 }
 
 + (NSDictionary *)detailSection:(FLEXNetworkDetailRow *)row
