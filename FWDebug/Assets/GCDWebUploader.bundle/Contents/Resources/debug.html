@@ -154,7 +154,7 @@
         <td class="column-icon column-copy">
         {% if (o.image != null) { %}
           <img src="{%=o.image%}"/>
-        {% } else if (o.action == "curl" || o.action == "section") { %}
+        {% } else if (o.action == "menu") { %}
           <button type="button" class="btn btn-default btn-xs">
             <span class="glyphicon glyphicon-menu-hamburger"></span>
           </button>
@@ -183,15 +183,23 @@
           <button type="button" class="btn btn-default btn-xs button-detail">
             <span class="glyphicon glyphicon-menu-right"></span>
           </button>
-        {% } else if (o.action == "curl") { %}
+        {% } else if (o.action == "menu" && o.date == "CURL") { %}
           <button type="button" class="btn btn-default btn-xs button-share">
             <span class="glyphicon glyphicon-console"></span>
+          </button>
+        {% } else if (o.action == "menu") { %}
+          <button type="button" class="btn btn-default btn-xs button-share">
+            <span class="glyphicon glyphicon-menu-right"></span>
+          </button>
+        {% } else if (o.action == "view" && o.type == "link") { %}
+          <button type="button" class="btn btn-default btn-xs button-view">
+            <span class="glyphicon glyphicon-globe"></span>
           </button>
         {% } else if (o.action == "view") { %}
           <button type="button" class="btn btn-default btn-xs button-view">
             <span class="glyphicon glyphicon-menu-right"></span>
           </button>
-        {% } else if (o.action == "copy") { %}
+        {% } else { %}
           <button type="button" class="btn btn-default btn-xs button-share">
             <span class="glyphicon glyphicon-copy"></span>
           </button>

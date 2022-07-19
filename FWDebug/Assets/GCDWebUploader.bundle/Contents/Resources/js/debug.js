@@ -111,7 +111,12 @@ function _reload(path) {
     
     $(".column-copy").click(function(event) {
       var copy = $(this).parent().data("copy");
-      $("#copy-textarea").val(copy);
+      var fast = $(this).parent().data("fast");
+      if (fast != null && fast != "") {
+        $("#copy-textarea").val(fast);
+      } else {
+        $("#copy-textarea").val(copy);
+      }
       _copyText();
     });
     
