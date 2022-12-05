@@ -518,8 +518,17 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
         [self injectIntoNSURLConnectionAsynchronousClassMethod];
         [self injectIntoNSURLConnectionSynchronousClassMethod];
 
-        [self injectIntoNSURLSessionAsyncDataAndDownloadTaskMethods];
-        [self injectIntoNSURLSessionAsyncUploadTaskMethods];
+        Class URLSession = [NSURLSession class];
+        [self injectIntoNSURLSessionAsyncDataAndDownloadTaskMethods:URLSession];
+        [self injectIntoNSURLSessionAsyncUploadTaskMethods:URLSession];
+        
+        // At some point, NSURLSession.sharedSession became an __NSURLSessionLocal,
+        // which is not the class returned by [NSURLSession class], of course
+        Class URLSessionLocal = NSClassFromString(@"__NSURLSessionLocal");
+        if (URLSessionLocal && (URLSession != URLSessionLocal)) {
+            [self injectIntoNSURLSessionAsyncDataAndDownloadTaskMethods:URLSessionLocal];
+            [self injectIntoNSURLSessionAsyncUploadTaskMethods:URLSessionLocal];
+        }
         
         if (@available(iOS 13.0, *)) {
             Class websocketTask = NSClassFromString(@"__NSURLSessionWebSocketTask");
@@ -803,11 +812,11 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
     });
 }
 
-+ (void)injectIntoNSURLSessionAsyncDataAndDownloadTaskMethods {
++ (void)injectIntoNSURLSessionAsyncDataAndDownloadTaskMethods:(Class)sessionClass {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        Class class = [NSURLSession class];
-
+        Class class = sessionClass;
+        
         // The method signatures here are close enough that
         // we can use the same logic to inject into all of them.
         const SEL selectors[] = {
@@ -871,11 +880,11 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
     });
 }
 
-+ (void)injectIntoNSURLSessionAsyncUploadTaskMethods {
++ (void)injectIntoNSURLSessionAsyncUploadTaskMethods:(Class)sessionClass {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        Class class = [NSURLSession class];
-
+        Class class = sessionClass;
+        
         // The method signatures here are close enough that we can use the same logic to inject into both of them.
         // Note that they have 3 arguments, so we can't easily combine with the data and download method above.
         typedef NSURLSessionUploadTask *(^UploadTaskMethod)(
@@ -1591,15 +1600,19 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
         [FLEXNetworkObserver.sharedObserver
             websocketTask:slf sendMessagage:message
         ];
-        completion = ^(NSError *error) {
+        
+        id completionHook = ^(NSError *error) {
             [FLEXNetworkObserver.sharedObserver
                 websocketTaskMessageSendCompletion:message
                 error:error
             ];
+            if (completion) {
+                completion(error);
+            }
         };
         
         ((void(*)(id, SEL, id, id))objc_msgSend)(
-            slf, swizzledSelector, message, completion
+            slf, swizzledSelector, message, completionHook
         );
     };
 
@@ -1868,6 +1881,12 @@ didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask
         NSString *requestID = [[self class] requestIDForConnectionOrTask:dataTask];
         FLEXInternalRequestState *requestState = [self requestStateForRequestID:requestID];
 
+        // Fix for "Response body not in cache" issue reported by developers
+        // See this github comment for detailed explanation on why this happens
+        // https://github.com/FLEXTool/FLEX/issues/568#issuecomment-1141015572
+        if (requestState.dataAccumulator == nil) {
+            requestState.dataAccumulator = [NSMutableData new];
+        }
         [requestState.dataAccumulator appendData:data];
 
         [FLEXNetworkRecorder.defaultRecorder
