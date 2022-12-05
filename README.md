@@ -65,6 +65,10 @@ The debug library supports Debug and Release environment, it is recommended Debu
 	end
 
 ## Changelog
+Version 4.1.0:
+
+    * Upgrade FLEX to version 5.22.10
+
 Version 4.0.0:
 
      * Added PC Web debugging server
