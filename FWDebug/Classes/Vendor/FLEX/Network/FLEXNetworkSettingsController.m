@@ -107,7 +107,7 @@
 #pragma mark - Table View Data Source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return self.hostDenylist.count ? 2 : 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -226,9 +226,11 @@
             self.hostDenylist = nil;
             [FLEXNetworkRecorder.defaultRecorder.hostDenylist removeAllObjects];
             [FLEXNetworkRecorder.defaultRecorder synchronizeDenylist];
-            [self.tableView deleteSections:
-                [NSIndexSet indexSetWithIndex:1]
-            withRowAnimation:UITableViewRowAnimationAutomatic];
+            if (self.tableView.numberOfSections > 1) {
+                [self.tableView deleteSections:
+                    [NSIndexSet indexSetWithIndex:1]
+                withRowAnimation:UITableViewRowAnimationAutomatic];
+            }
         });
         make.button(@"Cancel").cancelStyle();
     } showFrom:self];
