@@ -28,7 +28,11 @@ Pod::Spec.new do |s|
     'FWDebug/Classes/Public/*.h',
     'FWDebug/Classes/Vendor/swift-atomics/_AtomicsShims/_AtomicsShims.h',
     'FWDebug/Classes/Vendor/Echo/CEcho/*.h',
-    'FWDebug/Classes/Vendor/FLEX/**/*.h',
+    'FWDebug/Classes/Vendor/FLEX/Core/FLEXTableViewSection.h',
+    'FWDebug/Classes/Vendor/FLEX/Utility/Runtime/Objc/*.h',
+    'FWDebug/Classes/Vendor/FLEX/Utility/Runtime/Objc/Reflection/*.h',
+    'FWDebug/Classes/Vendor/FLEX/Utility/Categories/NSArray+FLEX.h',
+    'FWDebug/Classes/Vendor/FLEX/Utility/Categories/FLEXRuntime+UIKitHelpers.h',
   ]
   s.resource            = 'FWDebug/Assets/GCDWebUploader.bundle'
   s.frameworks          = [ "Foundation", "UIKit" ]
