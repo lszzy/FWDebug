@@ -22,6 +22,7 @@ iOS调试库，支持iOS11+，无需添加任何代码，方便iOS开发和测�
 
 * FLEX调试工具（摇一摇开启）
 * PC Web调试服务器功能，可查看手机网络请求、NSLog、打开URL等（"Web Server"入口）
+* 检查Swift对象功能（"App Config"默认开启）
 * 视图距离测量功能（切换工具栏为"ruler"模式）
 * 循环引用检测和分析（在对象查看页面点击搜索）
 * Class和Protocol的头文件查看（在类查看页面点击"Runtime Headers"）
@@ -65,6 +66,11 @@ iOS调试库，支持iOS11+，无需添加任何代码，方便iOS开发和测�
 	end
 
 ## 更新日志
+5.0.0版本：
+
+    * 新增Reflex插件，可检查Swift对象
+    * 新增切换Reflex开关设置，默认开启
+
 4.1.0版本：
 
     * 升级FLEX到5.22.10版本
@@ -256,6 +262,9 @@ iOS调试库，支持iOS11+，无需添加任何代码，方便iOS开发和测�
 * [KSCrash](https://github.com/kstenerud/KSCrash)
 * [FBRetainCycleDetector](https://github.com/facebook/FBRetainCycleDetector)
 * [NWPusher](https://github.com/noodlewerk/NWPusher)
+* [swift-atomics](https://github.com/apple/swift-atomics)
+* [Echo](https://github.com/Azoy/Echo)
+* [Reflex](https://github.com/FLEXTool/Reflex)
 
 ## 官方网站
 [大勇的网站](http://www.wuyong.site)

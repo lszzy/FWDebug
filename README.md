@@ -22,6 +22,7 @@ Real machine or simulator shaking within 5 seconds twice to appear debug menu. F
 
 * FLEX debugging tool (shaking to open)
 * PC Web debugging server, you can view mobile phone network requests, NSLog, open URL, etc. ("Web Server" entrance)
+* Check Swift object capabilities ("App Config" is enabled by default)
 * Measure view distance (switch toolbar to "ruler" mode)
 * Circular reference detection and analysis (click to search on the object view page)
 * View the header files of Class and Protocol (click "Runtime Headers" on the class view page)
@@ -65,6 +66,11 @@ The debug library supports Debug and Release environment, it is recommended Debu
 	end
 
 ## Changelog
+Version 5.0.0:
+
+     * Added Reflex plugin to inspect Swift objects
+     * Added switch Reflex switch setting, enabled by default
+
 Version 4.1.0:
 
     * Upgrade FLEX to version 5.22.10
@@ -256,6 +262,9 @@ This debug library uses a third-party library, thanks to all third-party library
 * [KSCrash](https://github.com/kstenerud/KSCrash)
 * [FBRetainCycleDetector](https://github.com/facebook/FBRetainCycleDetector)
 * [NWPusher](https://github.com/noodlewerk/NWPusher)
+* [swift-atomics](https://github.com/apple/swift-atomics)
+* [Echo](https://github.com/Azoy/Echo)
+* [Reflex](https://github.com/FLEXTool/Reflex)
 
 ## Support
 [wuyong.site](http://www.wuyong.site)
