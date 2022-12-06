@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name                = "FWDebug"
-  s.version             = "4.1.0"
+  s.version             = "5.0.0"
   s.summary             = "ios debug library"
   s.homepage            = "http://wuyong.site"
   s.license             = "MIT"
@@ -17,14 +17,19 @@ Pod::Spec.new do |s|
     'FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/FBClassStrongLayoutHelpers.h',
     'FWDebug/Classes/Vendor/FBRetainCycleDetector/Layout/Classes/FBClassStrongLayoutHelpers.m',
   ]
-  s_arc_files           = Pathname.glob("FWDebug/Classes/**/*.{h,m,mm,c,cpp,def}")
+  s_arc_files           = Pathname.glob("FWDebug/Classes/**/*.{h,m,mm,c,cpp,def,swift}")
   s_arc_files           = s_arc_files.map {|file| file.to_path}
   s_arc_files           = s_arc_files.reject {|file| s_mrr_files.include?(file)}
   s.requires_arc        = s_arc_files
   
   s.platform            = :ios, "11.0"
-  s.source_files        = 'FWDebug/Classes/**/*.{h,m,mm,c,cpp,def}'
-  s.public_header_files = 'FWDebug/Classes/Public/*.h'
+  s.source_files        = 'FWDebug/Classes/**/*.{h,m,mm,c,cpp,def,swift}'
+  s.public_header_files = [
+    'FWDebug/Classes/Public/*.h',
+    'FWDebug/Classes/Vendor/swift-atomics/_AtomicsShims/_AtomicsShims.h',
+    'FWDebug/Classes/Vendor/Echo/CEcho/*.h',
+    'FWDebug/Classes/Vendor/FLEX/**/*.h',
+  ]
   s.resource            = 'FWDebug/Assets/GCDWebUploader.bundle'
   s.frameworks          = [ "Foundation", "UIKit" ]
   s.library             = [ "xml2", "z", "sqlite3", "c++" ]
