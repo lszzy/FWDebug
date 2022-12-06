@@ -8,6 +8,7 @@
 
 #import "FWDebugAppConfig.h"
 #import "FLEXColor.h"
+#import "FLEXObjectExplorer.h"
 #import "FWDebugManager+FWDebug.h"
 #import "FWDebugTimeProfiler.h"
 #import <CommonCrypto/CommonDigest.h>
@@ -50,6 +51,8 @@ static BOOL traceVCRequest = NO;
     if ([self webViewInjectionEnabled]) {
         [FWDebugAppConfig webViewInjectVConsole];
     }
+    
+    FLEXObjectExplorer.reflexAvailable = [self isReflexEnabled];
 }
 
 + (BOOL)isAppLocked
@@ -95,6 +98,12 @@ static BOOL traceVCRequest = NO;
 {
     NSString *value = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugAppSecret"];
     return value && value.length > 0;
+}
+
++ (BOOL)isReflexEnabled
+{
+    NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugReflexEnabled"];
+    return value ? value.boolValue : FLEXObjectExplorer.reflexAvailable;
 }
 
 + (BOOL)filterSystemLog
@@ -334,7 +343,7 @@ static BOOL traceVCRequest = NO;
     } else if (section == 1) {
         return 3;
     } else {
-        return 4;
+        return 5;
     }
 }
 
@@ -361,7 +370,7 @@ static BOOL traceVCRequest = NO;
         }
         [self configLabel:cell indexPath:indexPath];
         return cell;
-    } else if ((indexPath.section == 2 && indexPath.row == 3) ||
+    } else if ((indexPath.section == 2 && indexPath.row == 4) ||
                (indexPath.section == 1 && indexPath.row == 2)) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell3"];
         if (cell == nil) {
@@ -392,7 +401,7 @@ static BOOL traceVCRequest = NO;
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     if ((indexPath.section == 0 && indexPath.row == 2) ||
-        (indexPath.section == 2 && indexPath.row == 3) ||
+        (indexPath.section == 2 && indexPath.row == 4) ||
         (indexPath.section == 1 && indexPath.row == 2)) {
         [self actionLabel:indexPath];
     } else {
@@ -423,10 +432,14 @@ static BOOL traceVCRequest = NO;
         cell.detailTextLabel.text = nil;
         cellSwitch.on = [self.class filterSystemLog];
     } else if (indexPath.section == 2 && indexPath.row == 1) {
+        cell.textLabel.text = @"Inspect Swift Objects";
+        cell.detailTextLabel.text = nil;
+        cellSwitch.on = [self.class isReflexEnabled];
+    } else if (indexPath.section == 2 && indexPath.row == 2) {
         cell.textLabel.text = @"App Launch Secret";
         cell.detailTextLabel.text = nil;
         cellSwitch.on = [self.class isSecretEnabled];
-    } else if (indexPath.section == 2 && indexPath.row == 2) {
+    } else if (indexPath.section == 2 && indexPath.row == 3) {
         cell.textLabel.text = @"Load App InjectionIII";
         cell.detailTextLabel.text = nil;
         cellSwitch.on = [self.class isInjectionEnabled];
@@ -437,7 +450,7 @@ static BOOL traceVCRequest = NO;
     if (indexPath.section == 0) {
         cell.textLabel.text = @"Trace VC Url";
         cell.detailTextLabel.text = [[self.class traceVCUrls] stringByReplacingOccurrencesOfString:@";" withString:@";\n"];
-    } else if (indexPath.section == 2 && indexPath.row == 3) {
+    } else if (indexPath.section == 2 && indexPath.row == 4) {
         cell.textLabel.text = @"Retain Cycle Depth";
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", @([self.class retainCycleDepth])];
     } else if (indexPath.section == 1 && indexPath.row == 2) {
@@ -517,6 +530,18 @@ static BOOL traceVCRequest = NO;
         }
     } else if (indexPath.section == 2 && indexPath.row == 1) {
         if (!cellSwitch.on) {
+            FLEXObjectExplorer.reflexAvailable = YES;
+            [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugReflexEnabled"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self configSwitch:cell indexPath:indexPath];
+        } else {
+            FLEXObjectExplorer.reflexAvailable = NO;
+            [[NSUserDefaults standardUserDefaults] setObject:@(NO) forKey:@"FWDebugReflexEnabled"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self configSwitch:cell indexPath:indexPath];
+        }
+    } else if (indexPath.section == 2 && indexPath.row == 2) {
+        if (!cellSwitch.on) {
             typeof(self) __weak weakSelf = self;
             [FWDebugManager showPrompt:self security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
                 if (confirm && text.length > 0) {
@@ -544,7 +569,7 @@ static BOOL traceVCRequest = NO;
                 [self configSwitch:cell indexPath:indexPath];
             }
         }
-    } else if (indexPath.section == 2 && indexPath.row == 2) {
+    } else if (indexPath.section == 2 && indexPath.row == 3) {
 #if TARGET_OS_SIMULATOR
         if (!cellSwitch.on) {
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugInjectionEnabled"];
@@ -575,7 +600,7 @@ static BOOL traceVCRequest = NO;
             
             [weakSelf configLabel:cell indexPath:indexPath];
         }];
-    } else if (indexPath.section == 2 && indexPath.row == 3) {
+    } else if (indexPath.section == 2 && indexPath.row == 4) {
         typeof(self) __weak weakSelf = self;
         [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:nil block:^(BOOL confirm, NSString *text) {
             if (confirm && text.length > 0) {

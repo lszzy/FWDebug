@@ -15,6 +15,7 @@ import CoreLocation
     private struct AssociatedKeys {
         static var object = "ak_object"
     }
+    
     var object: Any? {
         get {
             return objc_getAssociatedObject(self, &AssociatedKeys.object)
@@ -23,6 +24,13 @@ import CoreLocation
             objc_setAssociatedObject(self, &AssociatedKeys.object, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
+    
+    private class TestObject {
+        var id: Int = 1
+        var name: String = "name"
+    }
+    
+    private var testObject = TestObject()
     
     var locationManager: CLLocationManager?
     var locationButton: UIButton?
