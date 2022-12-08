@@ -64,7 +64,7 @@ public struct ConformanceDescriptor: LayoutWrapper {
         .assumingMemoryBound(to: CChar.self)
       
       guard let anyClass = objc_lookUpClass(ptr) else {
-        fatalError("No Objective-C class named \(ptr.string)")
+        return nil
       }
       
       return reflect(anyClass) as? ObjCClassWrapperMetadata
