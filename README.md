@@ -66,6 +66,10 @@ The debug library supports Debug and Release environment, it is recommended Debu
 	end
 
 ## Changelog
+Version 5.0.1:
+
+     * Fixed the crash problem when the Swift project started occasionally
+
 Version 5.0.0:
 
      * Added Reflex plugin to inspect Swift objects
