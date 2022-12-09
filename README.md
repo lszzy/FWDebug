@@ -69,6 +69,7 @@ The debug library supports Debug and Release environment, it is recommended Debu
 Version 5.0.1:
 
      * Fixed the crash problem when the Swift project started occasionally
+	 * Upgrade vConsole to version 3.15.0
 
 Version 5.0.0:
 
