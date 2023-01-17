@@ -163,7 +163,12 @@ NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
     return [FLEXManager sharedManager].isHidden;
 }
 
-- (void)log:(NSString *)message
+- (void)systemLog:(NSString *)message
+{
+    NSLog(@"%@", message);
+}
+
+- (void)customLog:(NSString *)message
 {
     [FWDebugAppConfig logFile:message];
 }
