@@ -110,6 +110,15 @@ static GCDWebServer *_webSite = nil;
     });
 }
 
++ (void)fwDebugEnableLog
+{
+    if (!FLEXOSLogController.sharedLogController.persistent) {
+        NSUserDefaults.standardUserDefaults.flex_cacheOSLogMessages = YES;
+        FLEXOSLogController.sharedLogController.persistent = YES;
+        [FLEXOSLogController.sharedLogController startMonitoring];
+    }
+}
+
 + (NSInteger)debugServerPort
 {
     NSInteger port = [NSUserDefaults.standardUserDefaults integerForKey:@"FWDebugDebugServerPort"];
@@ -820,11 +829,7 @@ static GCDWebServer *_webSite = nil;
         if (key.length > 0) {
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:key];
             [[NSUserDefaults standardUserDefaults] synchronize];
-            if (!FLEXOSLogController.sharedLogController.persistent) {
-                NSUserDefaults.standardUserDefaults.flex_cacheOSLogMessages = YES;
-                FLEXOSLogController.sharedLogController.persistent = YES;
-                [FLEXOSLogController.sharedLogController startMonitoring];
-            }
+            [FWDebugWebServer fwDebugEnableLog];
         }
     } else {
         [server stop];
