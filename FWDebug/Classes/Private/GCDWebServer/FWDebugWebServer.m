@@ -218,6 +218,37 @@ static GCDWebServer *_webSite = nil;
         }];
         
         [_webDebug addHandlerForMethod:@"GET"
+                                  path:@"/screenshot"
+                          requestClass:[GCDWebServerRequest class]
+                     asyncProcessBlock:^(__kindof GCDWebServerRequest * request, GCDWebServerCompletionBlock completionBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UIView *view = UIApplication.sharedApplication.keyWindow;
+                if (view == nil) {
+                    completionBlock([GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", request.path]);
+                    return;
+                }
+                
+                UIGraphicsBeginImageContextWithOptions(view.bounds.size, NO, 0);
+                [view drawViewHierarchyInRect:view.bounds afterScreenUpdates:YES];
+                UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+                UIGraphicsEndImageContext();
+                if (image == nil) {
+                    completionBlock([GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", request.path]);
+                    return;
+                }
+                
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
+                    if (imageData != nil) {
+                        completionBlock([GCDWebServerDataResponse responseWithData:imageData contentType:@"image/jpeg"]);
+                    } else {
+                        completionBlock([GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", request.path]);
+                    }
+                });
+            });
+        }];
+        
+        [_webDebug addHandlerForMethod:@"GET"
                                   path:@"/requests"
                           requestClass:[GCDWebServerRequest class]
                           processBlock:^GCDWebServerResponse * _Nullable(__kindof GCDWebServerRequest * _Nonnull request) {
