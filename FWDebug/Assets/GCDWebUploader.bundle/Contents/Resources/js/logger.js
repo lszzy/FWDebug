@@ -155,6 +155,12 @@ $(document).ready(function() {
     $("#interval-toggle").text(_interval ? "Interval Off" : "Interval On");
     event.preventDefault();
   });
+
+  $("#interval-2").click(function(event) {
+    _interval = true;
+    _setInterval(2000);
+    event.preventDefault();
+  });
   
   $("#interval-5").click(function(event) {
     _interval = true;
