@@ -1,4 +1,10 @@
 
+.img-responsive {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+}
+
 .footer {
   color: #999;
   text-align: center;
