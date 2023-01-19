@@ -46,8 +46,11 @@
               <li><a href="index.html">📡  Network History</a></li>
               <li><a href="logger.html">⚠️  System Log</a></li>
               <li><a href="url.html">🚀  Open URL</a></li>
-              <li class="active"><a href="#">📱  Screenshot <span class="sr-only">(current)</span></a></li>
+              <li class="active"><a href="javascript:void(0);">📱  Screenshot <span class="sr-only">(current)</span></a></li>
             </ul>
+            <form class="navbar-form navbar-left" role="search">
+              <a class="btn btn-default" target="_blank" href="/screenshot" role="button">Full Screen</a>
+            </form>
             <ul class="nav navbar-nav navbar-right">
               <li>
                 <div class="btn-group">
@@ -73,9 +76,7 @@
       </nav>
       
       <div class="panel panel-default">
-        <a target="_blank" href="/screenshot">
-          <img src="" class="img-responsive center-block" id="image-view">
-        </a>
+        <img src="/screenshot" class="img-responsive center-block" style="width:%width%px;height:%height%px;" id="image-view">
       </div>
       
       <p class="footer">%footer% - <a target="_blank" href="https://github.com/lszzy/FWDebug">FWDebug</a></p>

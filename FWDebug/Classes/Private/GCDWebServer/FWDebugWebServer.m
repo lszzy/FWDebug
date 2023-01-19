@@ -193,12 +193,21 @@ static GCDWebServer *_webSite = nil;
                 if (!title) title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
                 NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
                 
-                return [GCDWebServerDataResponse responseWithHTMLTemplate:file variables:@{
+                NSMutableDictionary *variables = [NSMutableDictionary dictionaryWithDictionary:@{
                     @"title": [title stringByAppendingString:@" - FWDebug"],
                     @"header": title,
                     @"keywords": request.query[@"keywords"] ?: @"",
                     @"footer": [NSString stringWithFormat:@"%@ %@", title, version],
                 }];
+                
+                if ([path isEqualToString:@"/screenshot.html"]) {
+                    [variables addEntriesFromDictionary:@{
+                        @"width": [NSString stringWithFormat:@"%@", @(UIScreen.mainScreen.bounds.size.width)],
+                        @"height": [NSString stringWithFormat:@"%@", @(UIScreen.mainScreen.bounds.size.height)],
+                    }];
+                }
+                
+                return [GCDWebServerDataResponse responseWithHTMLTemplate:file variables:variables];
             } else {
                 return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", path];
             }

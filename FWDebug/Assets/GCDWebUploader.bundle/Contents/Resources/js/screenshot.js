@@ -69,8 +69,6 @@ $(document).ready(function() {
     });
     event.preventDefault();
   });
-
-  _reload();
   
   _setInterval(5000);
   
