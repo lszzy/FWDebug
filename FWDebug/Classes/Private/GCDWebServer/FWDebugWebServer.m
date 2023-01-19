@@ -110,6 +110,15 @@ static GCDWebServer *_webSite = nil;
     });
 }
 
++ (void)fwDebugEnableLog
+{
+    if (!FLEXOSLogController.sharedLogController.persistent) {
+        NSUserDefaults.standardUserDefaults.flex_cacheOSLogMessages = YES;
+        FLEXOSLogController.sharedLogController.persistent = YES;
+        [FLEXOSLogController.sharedLogController startMonitoring];
+    }
+}
+
 + (NSInteger)debugServerPort
 {
     NSInteger port = [NSUserDefaults.standardUserDefaults integerForKey:@"FWDebugDebugServerPort"];
@@ -184,12 +193,21 @@ static GCDWebServer *_webSite = nil;
                 if (!title) title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
                 NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
                 
-                return [GCDWebServerDataResponse responseWithHTMLTemplate:file variables:@{
+                NSMutableDictionary *variables = [NSMutableDictionary dictionaryWithDictionary:@{
                     @"title": [title stringByAppendingString:@" - FWDebug"],
                     @"header": title,
                     @"keywords": request.query[@"keywords"] ?: @"",
                     @"footer": [NSString stringWithFormat:@"%@ %@", title, version],
                 }];
+                
+                if ([path isEqualToString:@"/screenshot.html"]) {
+                    [variables addEntriesFromDictionary:@{
+                        @"width": [NSString stringWithFormat:@"%@", @(UIScreen.mainScreen.bounds.size.width)],
+                        @"height": [NSString stringWithFormat:@"%@", @(UIScreen.mainScreen.bounds.size.height)],
+                    }];
+                }
+                
+                return [GCDWebServerDataResponse responseWithHTMLTemplate:file variables:variables];
             } else {
                 return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", path];
             }
@@ -205,6 +223,37 @@ static GCDWebServer *_webSite = nil;
                 completionBlock([GCDWebServerDataResponse responseWithJSONObject:@{
                     @"debug": @([FLEXManager fwDebugVisible]),
                 }]);
+            });
+        }];
+        
+        [_webDebug addHandlerForMethod:@"GET"
+                                  path:@"/screenshot"
+                          requestClass:[GCDWebServerRequest class]
+                     asyncProcessBlock:^(__kindof GCDWebServerRequest * request, GCDWebServerCompletionBlock completionBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UIView *view = UIApplication.sharedApplication.keyWindow;
+                if (view == nil) {
+                    completionBlock([GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", request.path]);
+                    return;
+                }
+                
+                UIGraphicsBeginImageContextWithOptions(view.bounds.size, NO, 0);
+                [view drawViewHierarchyInRect:view.bounds afterScreenUpdates:YES];
+                UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+                UIGraphicsEndImageContext();
+                if (image == nil) {
+                    completionBlock([GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", request.path]);
+                    return;
+                }
+                
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
+                    if (imageData != nil) {
+                        completionBlock([GCDWebServerDataResponse responseWithData:imageData contentType:@"image/jpeg"]);
+                    } else {
+                        completionBlock([GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", request.path]);
+                    }
+                });
             });
         }];
         
@@ -820,11 +869,7 @@ static GCDWebServer *_webSite = nil;
         if (key.length > 0) {
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:key];
             [[NSUserDefaults standardUserDefaults] synchronize];
-            if (!FLEXOSLogController.sharedLogController.persistent) {
-                NSUserDefaults.standardUserDefaults.flex_cacheOSLogMessages = YES;
-                FLEXOSLogController.sharedLogController.persistent = YES;
-                [FLEXOSLogController.sharedLogController startMonitoring];
-            }
+            [FWDebugWebServer fwDebugEnableLog];
         }
     } else {
         [server stop];

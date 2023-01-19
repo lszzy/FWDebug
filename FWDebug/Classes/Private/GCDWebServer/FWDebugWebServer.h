@@ -12,4 +12,6 @@
 
 + (void)fwDebugLaunch;
 
++ (void)fwDebugEnableLog;
+
 @end

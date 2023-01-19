@@ -17,6 +17,7 @@
 #import "FLEXFileBrowserController.h"
 #import "FWDebugTimeProfiler.h"
 #import "FWDebugAppConfig.h"
+#import "FWDebugWebServer.h"
 #import <UIKit/UIKit.h>
 
 NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
@@ -163,7 +164,18 @@ NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
     return [FLEXManager sharedManager].isHidden;
 }
 
-- (void)log:(NSString *)message
+- (void)systemLog:(NSString *)message
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [FWDebugWebServer fwDebugEnableLog];
+    });
+    
+    // 仅支持OC版本NSLog
+    NSLog(@"%@", message);
+}
+
+- (void)customLog:(NSString *)message
 {
     [FWDebugAppConfig logFile:message];
 }
