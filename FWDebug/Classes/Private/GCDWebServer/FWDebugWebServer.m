@@ -202,8 +202,7 @@ static GCDWebServer *_webSite = nil;
                 
                 if ([path isEqualToString:@"/screenshot.html"]) {
                     [variables addEntriesFromDictionary:@{
-                        @"width": [NSString stringWithFormat:@"%@", @(UIScreen.mainScreen.bounds.size.width)],
-                        @"height": [NSString stringWithFormat:@"%@", @(UIScreen.mainScreen.bounds.size.height)],
+                        @"max": [NSString stringWithFormat:@"%@", @(MAX(UIScreen.mainScreen.bounds.size.width, UIScreen.mainScreen.bounds.size.height))],
                     }];
                 }
                 
