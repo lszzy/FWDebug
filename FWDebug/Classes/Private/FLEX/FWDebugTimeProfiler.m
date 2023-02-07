@@ -379,6 +379,7 @@
     [self addToolbarItems:@[[UIBarButtonItem flex_systemItem:UIBarButtonSystemItemTrash target:self action:@selector(trashButtonTapped:)]]];
     
     self.dateFormatter = [[NSDateFormatter alloc] init];
+    self.dateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
     self.dateFormatter.dateFormat = @"mm:ss.SSS";
     self.dateFormatter.timeZone = [NSTimeZone localTimeZone];
     

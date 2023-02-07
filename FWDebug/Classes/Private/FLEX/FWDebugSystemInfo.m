@@ -106,7 +106,8 @@
     [self.systemInfo addObject:sectionData];
     
     //System
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
     dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
     
     BOOL lowPowerMode = NO;

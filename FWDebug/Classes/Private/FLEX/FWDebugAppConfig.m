@@ -257,12 +257,14 @@ static BOOL traceVCRequest = NO;
         }
         
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        dateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
         dateFormatter.dateFormat = @"yyyyMMdd-HHmmss";
         NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
         _logFilePath = [logPath stringByAppendingPathComponent:[NSString stringWithFormat:@"FWDebug-%@.log", dateString]];
         
         _logFileQueue = dispatch_queue_create("site.wuyong.FWDebug.CustomLog", DISPATCH_QUEUE_SERIAL);
         _logFormatter = [[NSDateFormatter alloc] init];
+        _logFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
         _logFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.SSS";
     });
     
@@ -285,6 +287,7 @@ static BOOL traceVCRequest = NO;
     for (NSString *fileName in fileNames) {
         if (fileName.length == 18 && [fileName hasPrefix:@"FWDebug-"]) {
             NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
             formatter.dateFormat = @"yyyyMMdd";
             NSDate *date = [formatter dateFromString:[fileName substringWithRange:NSMakeRange(6, 8)]];
             NSTimeInterval logTime = [date timeIntervalSince1970];
