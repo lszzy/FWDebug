@@ -52,7 +52,7 @@ static BOOL traceVCRequest = NO;
         [FWDebugAppConfig webViewInjectVConsole];
     }
     
-    if ([self webViewJavascriptString].length > 0) {
+    if ([self webViewJavascriptEnabled]) {
         [FWDebugAppConfig webViewInjectJavascript];
     }
     
@@ -172,6 +172,12 @@ static BOOL traceVCRequest = NO;
     return value ? [value boolValue] : NO;
 }
 
++ (BOOL)webViewJavascriptEnabled
+{
+    BOOL value = [[NSUserDefaults standardUserDefaults] boolForKey:@"FWDebugWebViewJavascriptEnabled"];
+    return value;
+}
+
 + (NSString *)webViewJavascriptString
 {
     NSString *value = [[NSUserDefaults standardUserDefaults] stringForKey:@"FWDebugWebViewInjectionJavascript"];
@@ -245,14 +251,16 @@ static BOOL traceVCRequest = NO;
         [FWDebugManager swizzleMethod:@selector(setUserContentController:) in:[WKWebViewConfiguration class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
             return ^(__unsafe_unretained WKWebViewConfiguration *selfObject, WKUserContentController *userContentController) {
                 ((void (*)(id, SEL, WKUserContentController *))originalIMP())(selfObject, originalCMD, userContentController);
-                NSString *sourceJs = [FWDebugAppConfig webViewJavascriptString];
-                if (sourceJs.length < 1) return;
+                if (![FWDebugAppConfig webViewJavascriptEnabled]) return;
                 BOOL hasInjection = [objc_getAssociatedObject(userContentController, @selector(webViewInjectJavascript)) boolValue];
                 if (hasInjection) return;
                 
+                NSString *sourceJs = [FWDebugAppConfig webViewJavascriptString];
+                if (sourceJs.length < 1) return;
                 if ([sourceJs hasPrefix:@"http"]) {
                     sourceJs = [NSString stringWithFormat:@"(function(){var script=document.createElement('script');script.src='%@';document.body.appendChild(script);})();", sourceJs];
                 }
+                
                 WKUserScript *userScript = [[WKUserScript alloc] initWithSource:sourceJs injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
                 [userContentController addUserScript:userScript];
                 objc_setAssociatedObject(userContentController, @selector(webViewInjectJavascript), @(YES), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -421,9 +429,12 @@ static BOOL traceVCRequest = NO;
     } else {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell1"];
         if (cell == nil) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell1"];
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell1"];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.textLabel.font = [UIFont systemFontOfSize:14];
+            cell.detailTextLabel.font = [UIFont systemFontOfSize:12];
+            cell.detailTextLabel.textColor = FLEXColor.deemphasizedTextColor;
+            cell.detailTextLabel.numberOfLines = 0;
             UISwitch *accessoryView = [[UISwitch alloc] initWithFrame:CGRectZero];
             accessoryView.userInteractionEnabled = NO;
             cell.accessoryView = accessoryView;
@@ -465,8 +476,10 @@ static BOOL traceVCRequest = NO;
         cellSwitch.on = [self.class webViewInjectionEnabled];
     } else if (indexPath.section == 1 && indexPath.row == 2) {
         cell.textLabel.text = @"Inject Javascript";
-        cell.detailTextLabel.text = nil;
-        cellSwitch.on = [self.class webViewJavascriptString].length > 0;
+        NSString *detail = [self.class webViewJavascriptString];
+        if (detail.length > 100) detail = [detail substringToIndex:100];
+        cell.detailTextLabel.text = detail;
+        cellSwitch.on = [self.class webViewJavascriptEnabled];
     } else if (indexPath.section == 2 && indexPath.row == 0) {
         cell.textLabel.text = @"Filter System Log";
         cell.detailTextLabel.text = nil;
@@ -557,20 +570,27 @@ static BOOL traceVCRequest = NO;
             [self configSwitch:cell indexPath:indexPath];
         }
     } else if (indexPath.section == 1 && indexPath.row == 2) {
-        typeof(self) __weak weakSelf = self;
-        [FWDebugManager showPrompt:self security:NO title:@"Input Javascript" message:nil text:[self.class webViewJavascriptString] block:^(BOOL confirm, NSString *text) {
-            if (confirm) {
-                if (text.length > 0) {
-                    [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugWebViewInjectionJavascript"];
-                } else {
-                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugWebViewInjectionJavascript"];
+        if (!cellSwitch.on) {
+            typeof(self) __weak weakSelf = self;
+            [FWDebugManager showPrompt:self security:NO title:@"Input Javascript" message:nil text:[self.class webViewJavascriptString] block:^(BOOL confirm, NSString *text) {
+                if (confirm) {
+                    if (text.length > 0) {
+                        [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugWebViewInjectionJavascript"];
+                    } else {
+                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugWebViewInjectionJavascript"];
+                    }
+                    [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugWebViewJavascriptEnabled"];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
                 }
-                [[NSUserDefaults standardUserDefaults] synchronize];
-            }
-            
-            [weakSelf configSwitch:cell indexPath:indexPath];
-            [FWDebugAppConfig webViewInjectJavascript];
-        }];
+                
+                [weakSelf configSwitch:cell indexPath:indexPath];
+                [FWDebugAppConfig webViewInjectJavascript];
+            }];
+        } else {
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugWebViewJavascriptEnabled"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self configSwitch:cell indexPath:indexPath];
+        }
     } else if (indexPath.section == 2 && indexPath.row == 0) {
         if (!cellSwitch.on) {
             filterSystemLog = YES;

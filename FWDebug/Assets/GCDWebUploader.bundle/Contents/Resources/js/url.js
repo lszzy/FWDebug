@@ -96,9 +96,16 @@ function _reload(path) {
       $("#toggle-icon").addClass("glyphicon-phone").removeClass("glyphicon-off");
     }
     $("#total").text(data.total);
-    if (!_inputInited) {
-      _inputInited = true;
-      $("#input-url").val(data.url);
+    if (data.enabled) {
+      if (!_inputInited) {
+        _inputInited = true;
+        $("#input-url").val(data.url).attr("disabled", false);
+        $("#submit-url").show();
+      }
+    } else {
+      _inputInited = false;
+      $("#input-url").val("Disabled").attr("disabled", true);
+      $("#submit-url").hide();
     }
     if (data.prev) {
       $("#previous").addClass("show").removeClass("hidden");

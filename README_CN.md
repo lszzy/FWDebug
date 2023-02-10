@@ -66,6 +66,11 @@ iOS调试库，支持iOS11+，无需添加任何代码，方便iOS开发和测�
 	end
 
 ## 更新日志
+5.2.0版本：
+
+    * 新增WKWebView注入自定义Javascript调试脚本功能，如(Chii)
+    * 新增PC Web查看手机剪贴板、Javascript脚本功能，可切换关闭
+
 5.1.0版本：
 
     * 新增PC Web实时查看手机屏幕截图功能
