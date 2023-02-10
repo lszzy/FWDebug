@@ -250,6 +250,9 @@ static BOOL traceVCRequest = NO;
                 BOOL hasInjection = [objc_getAssociatedObject(userContentController, @selector(webViewInjectJavascript)) boolValue];
                 if (hasInjection) return;
                 
+                if ([sourceJs hasPrefix:@"http"]) {
+                    sourceJs = [NSString stringWithFormat:@"(function(){var script=document.createElement('script');script.src='%@';document.body.appendChild(script);})();", sourceJs];
+                }
                 WKUserScript *userScript = [[WKUserScript alloc] initWithSource:sourceJs injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
                 [userContentController addUserScript:userScript];
                 objc_setAssociatedObject(userContentController, @selector(webViewInjectJavascript), @(YES), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
