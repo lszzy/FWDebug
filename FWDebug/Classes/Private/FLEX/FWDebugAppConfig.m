@@ -52,6 +52,10 @@ static BOOL traceVCRequest = NO;
         [FWDebugAppConfig webViewInjectVConsole];
     }
     
+    if ([self webViewJavascriptString].length > 0) {
+        [FWDebugAppConfig webViewInjectJavascript];
+    }
+    
     FLEXObjectExplorer.reflexAvailable = [self isReflexEnabled];
 }
 
@@ -168,6 +172,12 @@ static BOOL traceVCRequest = NO;
     return value ? [value boolValue] : NO;
 }
 
++ (NSString *)webViewJavascriptString
+{
+    NSString *value = [[NSUserDefaults standardUserDefaults] stringForKey:@"FWDebugWebViewInjectionJavascript"];
+    return value ?: @"";
+}
+
 + (Class)urlProtocolContextControllerClass
 {
     static Class cls;
@@ -223,6 +233,26 @@ static BOOL traceVCRequest = NO;
                 WKUserScript *userScript = [[WKUserScript alloc] initWithSource:sourceJs injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
                 [userContentController addUserScript:userScript];
                 objc_setAssociatedObject(userContentController, @selector(webViewInjectVConsole), @(YES), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            };
+        }];
+    });
+}
+
++ (void)webViewInjectJavascript
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [FWDebugManager swizzleMethod:@selector(setUserContentController:) in:[WKWebViewConfiguration class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(__unsafe_unretained WKWebViewConfiguration *selfObject, WKUserContentController *userContentController) {
+                ((void (*)(id, SEL, WKUserContentController *))originalIMP())(selfObject, originalCMD, userContentController);
+                NSString *sourceJs = [FWDebugAppConfig webViewJavascriptString];
+                if (sourceJs.length < 1) return;
+                BOOL hasInjection = [objc_getAssociatedObject(userContentController, @selector(webViewInjectJavascript)) boolValue];
+                if (hasInjection) return;
+                
+                WKUserScript *userScript = [[WKUserScript alloc] initWithSource:sourceJs injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
+                [userContentController addUserScript:userScript];
+                objc_setAssociatedObject(userContentController, @selector(webViewInjectJavascript), @(YES), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
             };
         }];
     });
@@ -344,7 +374,7 @@ static BOOL traceVCRequest = NO;
     if (section == 0) {
         return 3;
     } else if (section == 1) {
-        return 3;
+        return 4;
     } else {
         return 5;
     }
@@ -374,7 +404,7 @@ static BOOL traceVCRequest = NO;
         [self configLabel:cell indexPath:indexPath];
         return cell;
     } else if ((indexPath.section == 2 && indexPath.row == 4) ||
-               (indexPath.section == 1 && indexPath.row == 2)) {
+               (indexPath.section == 1 && indexPath.row == 3)) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell3"];
         if (cell == nil) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell3"];
@@ -405,7 +435,7 @@ static BOOL traceVCRequest = NO;
     
     if ((indexPath.section == 0 && indexPath.row == 2) ||
         (indexPath.section == 2 && indexPath.row == 4) ||
-        (indexPath.section == 1 && indexPath.row == 2)) {
+        (indexPath.section == 1 && indexPath.row == 3)) {
         [self actionLabel:indexPath];
     } else {
         [self actionSwitch:indexPath];
@@ -430,6 +460,10 @@ static BOOL traceVCRequest = NO;
         cell.textLabel.text = @"Inject vConsole";
         cell.detailTextLabel.text = nil;
         cellSwitch.on = [self.class webViewInjectionEnabled];
+    } else if (indexPath.section == 1 && indexPath.row == 2) {
+        cell.textLabel.text = @"Inject Javascript";
+        cell.detailTextLabel.text = nil;
+        cellSwitch.on = [self.class webViewJavascriptString].length > 0;
     } else if (indexPath.section == 2 && indexPath.row == 0) {
         cell.textLabel.text = @"Filter System Log";
         cell.detailTextLabel.text = nil;
@@ -443,7 +477,7 @@ static BOOL traceVCRequest = NO;
         cell.detailTextLabel.text = nil;
         cellSwitch.on = [self.class isSecretEnabled];
     } else if (indexPath.section == 2 && indexPath.row == 3) {
-        cell.textLabel.text = @"Load App InjectionIII";
+        cell.textLabel.text = @"Load Simulator InjectionIII";
         cell.detailTextLabel.text = nil;
         cellSwitch.on = [self.class isInjectionEnabled];
     }
@@ -456,7 +490,7 @@ static BOOL traceVCRequest = NO;
     } else if (indexPath.section == 2 && indexPath.row == 4) {
         cell.textLabel.text = @"Retain Cycle Depth";
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", @([self.class retainCycleDepth])];
-    } else if (indexPath.section == 1 && indexPath.row == 2) {
+    } else if (indexPath.section == 1 && indexPath.row == 3) {
         cell.textLabel.text = @"Clear WebView Cache";
         cell.detailTextLabel.text = @"";
     }
@@ -519,6 +553,21 @@ static BOOL traceVCRequest = NO;
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
         }
+    } else if (indexPath.section == 1 && indexPath.row == 2) {
+        typeof(self) __weak weakSelf = self;
+        [FWDebugManager showPrompt:self security:NO title:@"Input Javascript" message:nil text:[self.class webViewJavascriptString] block:^(BOOL confirm, NSString *text) {
+            if (confirm) {
+                if (text.length > 0) {
+                    [[NSUserDefaults standardUserDefaults] setObject:text forKey:@"FWDebugWebViewInjectionJavascript"];
+                } else {
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugWebViewInjectionJavascript"];
+                }
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
+            
+            [weakSelf configSwitch:cell indexPath:indexPath];
+            [FWDebugAppConfig webViewInjectJavascript];
+        }];
     } else if (indexPath.section == 2 && indexPath.row == 0) {
         if (!cellSwitch.on) {
             filterSystemLog = YES;
@@ -618,7 +667,7 @@ static BOOL traceVCRequest = NO;
             
             [weakSelf configLabel:cell indexPath:indexPath];
         }];
-    } else if (indexPath.section == 1 && indexPath.row == 2) {
+    } else if (indexPath.section == 1 && indexPath.row == 3) {
         __weak UITableViewCell *weakCell = cell;
         [FWDebugManager showConfirm:self title:@"Are you sure you want to clear the cache of WKWebView?" message:nil block:^(BOOL confirm) {
             if (confirm) {
