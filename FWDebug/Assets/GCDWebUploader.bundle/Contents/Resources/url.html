@@ -18,7 +18,8 @@
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/tmpl.min.js"></script>
     <script type="text/javascript">
-      var _device = "URL";
+      var _inputType = "%type%";
+      var _device = "%name%";
       var _keywords = "%keywords%";
     </script>
     <script type="text/javascript" src="js/url.js"></script>
@@ -55,6 +56,11 @@
               <li><a href="screenshot.html">📱  Screenshot</a></li>
             </ul>
             <form class="navbar-form navbar-left" role="search">
+              <select name="type" class="form-control" id="select-type">
+                <option value="">URL</option>
+                <option value="clipboard">Clipboard</option>
+                <option value="javascript">Javascript</option>
+              </select>
               <div class="form-group">
                 <input type="text" value="%keywords%" name="keywords" class="form-control" placeholder="Search">
               </div>
@@ -83,7 +89,7 @@
                     <li role="separator" class="divider"></li>
                     <li><a id="sort" href="#">Sort Ascending</a></li>
                     <li role="separator" class="divider"></li>
-                    <li><a id="clear" href="#">Clear URLs</a></li>
+                    <li><a id="clear" href="#">Clear %name%s</a></li>
                   </ul>
                 </div>
               </li>
@@ -94,7 +100,7 @@
       
       <div class="form-inline form-url">
         <div class="form-group">
-          <input type="text" class="form-control" id="input-url" placeholder="URL">
+          <input type="text" class="form-control" id="input-url" placeholder="%name%">
         </div>
         <button type="button" class="btn btn-default" id="submit-url">
           <span class="glyphicon glyphicon-phone"></span> Open
@@ -103,7 +109,7 @@
       
       <div class="panel panel-default">
         <div class="panel-heading">
-          <ol class="breadcrumb" id="path">URL</ol>
+          <ol class="breadcrumb" id="path">%name%</ol>
         </div>
         <table class="table table-striped"><tbody id="listing"></tbody></table>
       </div>
@@ -127,7 +133,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title" id="share-title">URL</h4>
+            <h4 class="modal-title" id="share-title">%name%</h4>
           </div>
           <div class="modal-body">
             <p id="share-text"></p>
@@ -153,7 +159,7 @@
         </td>
         <td class="column-share">
           <button type="button" class="btn btn-default btn-xs button-share">
-            <span class="glyphicon glyphicon-phone"></span>
+            <span class="glyphicon glyphicon-{%=o.icon%}"></span>
           </button>
         </td>
       </tr>

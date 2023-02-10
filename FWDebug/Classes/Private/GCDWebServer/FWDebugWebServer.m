@@ -7,6 +7,7 @@
 //
 
 #import "FWDebugWebServer.h"
+#import "FWDebugAppConfig.h"
 #import "GCDWebDAVServer.h"
 #import "GCDWebUploader.h"
 #import "GCDWebServerDataResponse.h"
@@ -126,6 +127,24 @@ static GCDWebServer *_webSite = nil;
     return port;
 }
 
++ (BOOL)debugServerScreenshotDisabled
+{
+    BOOL disabled = [NSUserDefaults.standardUserDefaults boolForKey:@"FWDebugDebugServerScreenshotDisabled"];
+    return disabled;
+}
+
++ (BOOL)debugServerClipboardDisabled
+{
+    BOOL disabled = [NSUserDefaults.standardUserDefaults boolForKey:@"FWDebugDebugServerClipboardDisabled"];
+    return disabled;
+}
+
++ (BOOL)debugServerJavascriptDisabled
+{
+    BOOL disabled = [NSUserDefaults.standardUserDefaults boolForKey:@"FWDebugDebugServerJavascriptDisabled"];
+    return disabled;
+}
+
 + (NSInteger)webServerPort
 {
     NSInteger port = [NSUserDefaults.standardUserDefaults integerForKey:@"FWDebugWebServerPort"];
@@ -204,6 +223,12 @@ static GCDWebServer *_webSite = nil;
                     [variables addEntriesFromDictionary:@{
                         @"max": [NSString stringWithFormat:@"%@", @(MAX(UIScreen.mainScreen.bounds.size.width, UIScreen.mainScreen.bounds.size.height))],
                     }];
+                } else if ([path isEqualToString:@"/url.html"]) {
+                    NSString *type = request.query[@"type"] ?: @"";
+                    [variables addEntriesFromDictionary:@{
+                        @"type": type,
+                        @"name": [self typeName:type],
+                    }];
                 }
                 
                 return [GCDWebServerDataResponse responseWithHTMLTemplate:file variables:variables];
@@ -230,6 +255,11 @@ static GCDWebServer *_webSite = nil;
                           requestClass:[GCDWebServerRequest class]
                      asyncProcessBlock:^(__kindof GCDWebServerRequest * request, GCDWebServerCompletionBlock completionBlock) {
             dispatch_async(dispatch_get_main_queue(), ^{
+                if ([self debugServerScreenshotDisabled]) {
+                    completionBlock([GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", request.path]);
+                    return;
+                }
+                
                 UIView *view = UIApplication.sharedApplication.keyWindow;
                 if (view == nil) {
                     completionBlock([GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", request.path]);
@@ -426,14 +456,19 @@ static GCDWebServer *_webSite = nil;
                                   path:@"/urls"
                           requestClass:[GCDWebServerRequest class]
                           processBlock:^GCDWebServerResponse * _Nullable(__kindof GCDWebServerRequest * _Nonnull request) {
-            NSArray *urls = [NSUserDefaults.standardUserDefaults objectForKey:@"FWDebugOpenUrls"];
-            if (![urls isKindOfClass:[NSArray class]]) urls = @[];
             NSString *keywords = request.query[@"keywords"] ?: @"";
+            NSString *type = request.query[@"type"] ?: @"";
             BOOL sort = [(request.query[@"sort"] ?: @"0") boolValue];
             NSInteger page = [(request.query[@"page"] ?: @"") integerValue];
             NSInteger perpage = [(request.query[@"perpage"] ?: @"") integerValue];
             if (page < 1) page = 1;
             if (perpage < 1) perpage = 10;
+            
+            NSString *defaultsListKey = [self defaultsListKey:type];
+            NSString *defaultsKey = [self defaultsKey:type];
+            BOOL typeEnabled = [self typeEnabled:type];
+            NSArray *urls = [NSUserDefaults.standardUserDefaults objectForKey:defaultsListKey];
+            if (![urls isKindOfClass:[NSArray class]] || !typeEnabled) urls = @[];
             
             NSMutableArray *array = [NSMutableArray array];
             __block NSInteger totalCount = 0;
@@ -448,19 +483,28 @@ static GCDWebServer *_webSite = nil;
                         @"name": url,
                         @"path": url,
                         @"date": @"",
+                        @"icon": type.length > 0 ? @"floppy-save" : @"phone",
                     }];
                 }
             }];
             
             NSInteger totalPage = ((NSInteger)(totalCount / perpage)) + ((totalCount % perpage) > 0 ? 1 : 0);
-            NSString *totalText = [NSString stringWithFormat:@"%@ %@, Page %@ of %@", @(totalCount), totalCount < 2 ? @"URL" : @"URLs", @(totalPage > 0 ? page : 0), @(totalPage)];
-            NSString *url = [NSUserDefaults.standardUserDefaults stringForKey:@"FWDebugOpenUrl"] ?: @"";
+            NSString *totalText = [NSString stringWithFormat:@"%@ %@, Page %@ of %@", @(totalCount), totalCount < 2 ? @"Row" : @"Rows", @(totalPage > 0 ? page : 0), @(totalPage)];
+            NSString *url = @"";
+            if (typeEnabled) {
+                if (defaultsKey.length > 0) {
+                    url = [NSUserDefaults.standardUserDefaults stringForKey:defaultsKey] ?: @"";
+                } else {
+                    url = UIPasteboard.generalPasteboard.string ?: @"";
+                }
+            }
             return [GCDWebServerDataResponse responseWithJSONObject:@{
                 @"total": totalText,
                 @"next": totalPage > page ? @YES : @NO,
                 @"prev": page > 1 ? @YES : @NO,
                 @"list": array,
                 @"url": url,
+                @"enabled": typeEnabled ? @YES : @NO,
                 @"debug": @([FLEXManager fwDebugVisible]),
             }];
         }];
@@ -470,19 +514,27 @@ static GCDWebServer *_webSite = nil;
                           requestClass:[GCDWebServerRequest class]
                      asyncProcessBlock:^(__kindof GCDWebServerRequest *request, GCDWebServerCompletionBlock completionBlock) {
             NSString *url = request.query[@"url"] ?: @"";
-            if (url.length > 0) {
-                id current = [NSUserDefaults.standardUserDefaults objectForKey:@"FWDebugOpenUrls"];
+            NSString *type = request.query[@"type"] ?: @"";
+            NSString *defaultsListKey = [self defaultsListKey:type];
+            NSString *defaultsKey = [self defaultsKey:type];
+            BOOL typeEnabled = [self typeEnabled:type];
+            
+            if (url.length > 0 && typeEnabled) {
+                id current = [NSUserDefaults.standardUserDefaults objectForKey:defaultsListKey];
                 NSMutableArray *urls = [current isKindOfClass:[NSArray class]] ? [current mutableCopy] : [NSMutableArray array];
                 [urls removeObject:url];
                 [urls addObject:url];
-                
-                [NSUserDefaults.standardUserDefaults setObject:urls.copy forKey:@"FWDebugOpenUrls"];
-                [NSUserDefaults.standardUserDefaults setObject:url forKey:@"FWDebugOpenUrl"];
+                [NSUserDefaults.standardUserDefaults setObject:urls.copy forKey:defaultsListKey];
+            }
+            if (typeEnabled && defaultsKey.length > 0) {
+                [NSUserDefaults.standardUserDefaults setObject:url forKey:defaultsKey];
                 [NSUserDefaults.standardUserDefaults synchronize];
             }
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                [FLEXManager fwDebugOpenUrl:url];
+                if (url.length > 0 && typeEnabled) {
+                    [self openUrl:url type:type];
+                }
                 
                 completionBlock([GCDWebServerDataResponse responseWithJSONObject:@{}]);
             });
@@ -492,8 +544,12 @@ static GCDWebServer *_webSite = nil;
                                   path:@"/urls"
                           requestClass:[GCDWebServerRequest class]
                      asyncProcessBlock:^(__kindof GCDWebServerRequest * request, GCDWebServerCompletionBlock completionBlock) {
-            [NSUserDefaults.standardUserDefaults removeObjectForKey:@"FWDebugOpenUrls"];
-            [NSUserDefaults.standardUserDefaults synchronize];
+            NSString *type = request.query[@"type"] ?: @"";
+            if ([self typeEnabled:type]) {
+                NSString *defaultsListKey = [self defaultsListKey:type];
+                [NSUserDefaults.standardUserDefaults removeObjectForKey:defaultsListKey];
+                [NSUserDefaults.standardUserDefaults synchronize];
+            }
             
             completionBlock([GCDWebServerDataResponse responseWithJSONObject:@{}]);
         }];
@@ -733,6 +789,61 @@ static GCDWebServer *_webSite = nil;
     };
 }
 
++ (NSString *)defaultsListKey:(NSString *)type
+{
+    if ([type isEqualToString:@"javascript"]) {
+        return @"FWDebugWebViewInjectionJavascripts";
+    } else if ([type isEqualToString:@"clipboard"]) {
+        return @"FWDebugClipboardStrings";
+    } else {
+        return @"FWDebugOpenUrls";
+    }
+}
+
++ (NSString *)defaultsKey:(NSString *)type
+{
+    if ([type isEqualToString:@"javascript"]) {
+        return @"FWDebugWebViewInjectionJavascript";
+    } else if ([type isEqualToString:@"clipboard"]) {
+        return @"";
+    } else {
+        return @"FWDebugOpenUrl";
+    }
+}
+
++ (NSString *)typeName:(NSString *)type
+{
+    if ([type isEqualToString:@"javascript"]) {
+        return @"Javascript";
+    } else if ([type isEqualToString:@"clipboard"]) {
+        return @"Clipboard";
+    } else {
+        return @"URL";
+    }
+}
+
++ (void)openUrl:(NSString *)url type:(NSString *)type
+{
+    if ([type isEqualToString:@"javascript"]) {
+        [FWDebugAppConfig webViewInjectJavascript];
+    } else if ([type isEqualToString:@"clipboard"]) {
+        UIPasteboard.generalPasteboard.string = url;
+    } else {
+        [FLEXManager fwDebugOpenUrl:url];
+    }
+}
+
++ (BOOL)typeEnabled:(NSString *)type
+{
+    if ([type isEqualToString:@"javascript"]) {
+        return ![self debugServerJavascriptDisabled];
+    } else if ([type isEqualToString:@"clipboard"]) {
+        return ![self debugServerClipboardDisabled];
+    } else {
+        return YES;
+    }
+}
+
 - (instancetype)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:UITableViewStyleGrouped];
@@ -902,6 +1013,21 @@ static GCDWebServer *_webSite = nil;
                     [NSUserDefaults.standardUserDefaults setInteger:text.integerValue forKey:@"FWDebugDebugServerPort"];
                     [NSUserDefaults.standardUserDefaults synchronize];
                 }];
+        });
+        make.button(![FWDebugWebServer debugServerScreenshotDisabled] ? @"Disable Screenshot" : @"Enable Screenshot")
+            .handler(^(NSArray<NSString *> *strings) {
+                [NSUserDefaults.standardUserDefaults setBool:![FWDebugWebServer debugServerScreenshotDisabled] forKey:@"FWDebugDebugServerScreenshotDisabled"];
+                [NSUserDefaults.standardUserDefaults synchronize];
+        });
+        make.button(![FWDebugWebServer debugServerClipboardDisabled] ? @"Disable Clipboard" : @"Enable Clipboard")
+            .handler(^(NSArray<NSString *> *strings) {
+                [NSUserDefaults.standardUserDefaults setBool:![FWDebugWebServer debugServerClipboardDisabled] forKey:@"FWDebugDebugServerClipboardDisabled"];
+                [NSUserDefaults.standardUserDefaults synchronize];
+        });
+        make.button(![FWDebugWebServer debugServerJavascriptDisabled] ? @"Disable Javascript" : @"Enable Javascript")
+            .handler(^(NSArray<NSString *> *strings) {
+                [NSUserDefaults.standardUserDefaults setBool:![FWDebugWebServer debugServerJavascriptDisabled] forKey:@"FWDebugDebugServerJavascriptDisabled"];
+                [NSUserDefaults.standardUserDefaults synchronize];
         });
         make.button(@"Web Server Port")
             .handler(^(NSArray<NSString *> * _Nonnull strings) {

@@ -24,6 +24,8 @@
 
 + (NSInteger)retainCycleDepth;
 
++ (void)webViewInjectJavascript;
+
 + (void)logFile:(NSString *)message;
 
 @end

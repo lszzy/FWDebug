@@ -61,7 +61,7 @@ function _reload(path) {
   $.ajax({
     url: 'urls',
     type: 'GET',
-    data: {path: path, page: _page, perpage: _perpage, sort: _sortAsc ? 1 : 0, keywords: _keywords},
+    data: {path: path, type: _inputType, page: _page, perpage: _perpage, sort: _sortAsc ? 1 : 0, keywords: _keywords},
     dataType: 'json'
   }).done(function(data, textStatus, jqXHR) {
     var scrollPosition = $(document).scrollTop();
@@ -96,9 +96,16 @@ function _reload(path) {
       $("#toggle-icon").addClass("glyphicon-phone").removeClass("glyphicon-off");
     }
     $("#total").text(data.total);
-    if (!_inputInited) {
-      _inputInited = true;
-      $("#input-url").val(data.url);
+    if (data.enabled) {
+      if (!_inputInited) {
+        _inputInited = true;
+        $("#input-url").val(data.url).attr("disabled", false);
+        $("#submit-url").show();
+      }
+    } else {
+      _inputInited = false;
+      $("#input-url").val("Disabled").attr("disabled", true);
+      $("#submit-url").hide();
     }
     if (data.prev) {
       $("#previous").addClass("show").removeClass("hidden");
@@ -131,12 +138,11 @@ function _reload(path) {
 
 function _openUrl() {
   var url = $("#input-url").val().trim();
-  if (url.length < 1) { return; }
-  
+    
   $.ajax({
     url: 'url',
     type: 'GET',
-    data: {url: url},
+    data: {url: url, type: _inputType},
     dataType: 'json'
   }).done(function(data, textStatus, jqXHR) {
     _reload("/");
@@ -244,7 +250,7 @@ $(document).ready(function() {
     
   $("#clear").click(function(event) {
     $.ajax({
-      url: 'urls',
+      url: 'urls?type=' + _inputType,
       type: 'DELETE',
       data: {},
       dataType: 'json'
@@ -264,6 +270,13 @@ $(document).ready(function() {
     _openUrl();
     event.preventDefault();
   });
+    
+  $("#select-type").val(_inputType);
+  if (_inputType == "") {
+    $("#submit-url").html('<span class="glyphicon glyphicon-phone"></span> Open');
+  } else {
+    $("#submit-url").html('<span class="glyphicon glyphicon-floppy-save"></span> Save');
+  }
 
   _reload("/");
   

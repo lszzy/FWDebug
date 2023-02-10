@@ -60,6 +60,7 @@
     
     // 按日期命名
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
     dateFormatter.dateFormat = @"yyyyMMdd-HHmmss";
     NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
     reportPath = [reportPath stringByAppendingPathComponent:[NSString stringWithFormat:@"Crash-%@", dateString]];

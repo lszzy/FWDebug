@@ -66,6 +66,11 @@ The debug library supports Debug and Release environment, it is recommended Debu
 	end
 
 ## Changelog
+Version 5.2.0:
+
+     * Added WKWebView injection custom Javascript debugging script function, such as (Chii)
+     * Added PC Web to view mobile phone clipboard and Javascript script functions, which can be switched off
+
 Version 5.1.0:
 
      * Added PC Web real-time view mobile phone screenshot feature
