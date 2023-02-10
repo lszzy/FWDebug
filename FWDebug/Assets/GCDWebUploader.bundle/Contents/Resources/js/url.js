@@ -61,7 +61,7 @@ function _reload(path) {
   $.ajax({
     url: 'urls',
     type: 'GET',
-    data: {path: path, page: _page, perpage: _perpage, sort: _sortAsc ? 1 : 0, keywords: _keywords},
+    data: {path: path, type: _inputType, page: _page, perpage: _perpage, sort: _sortAsc ? 1 : 0, keywords: _keywords},
     dataType: 'json'
   }).done(function(data, textStatus, jqXHR) {
     var scrollPosition = $(document).scrollTop();
@@ -131,12 +131,11 @@ function _reload(path) {
 
 function _openUrl() {
   var url = $("#input-url").val().trim();
-  if (url.length < 1) { return; }
-  
+    
   $.ajax({
     url: 'url',
     type: 'GET',
-    data: {url: url},
+    data: {url: url, type: _inputType},
     dataType: 'json'
   }).done(function(data, textStatus, jqXHR) {
     _reload("/");
@@ -244,7 +243,7 @@ $(document).ready(function() {
     
   $("#clear").click(function(event) {
     $.ajax({
-      url: 'urls',
+      url: 'urls?type=' + _inputType,
       type: 'DELETE',
       data: {},
       dataType: 'json'
@@ -264,6 +263,13 @@ $(document).ready(function() {
     _openUrl();
     event.preventDefault();
   });
+    
+  $("#select-type").val(_inputType);
+  if (_inputType == "") {
+    $("#submit-url").html('<span class="glyphicon glyphicon-phone"></span> Open');
+  } else {
+    $("#submit-url").html('<span class="glyphicon glyphicon-floppy-save"></span> Save');
+  }
 
   _reload("/");
   
