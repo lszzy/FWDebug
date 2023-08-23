@@ -468,7 +468,7 @@ static BOOL traceVCRequest = NO;
         cellSwitch.on = [self.class traceVCRequest];
     } else if (indexPath.section == 1 && indexPath.row == 0) {
         cell.textLabel.text = @"Network Debugging";
-        cell.detailTextLabel.text = nil;
+        cell.detailTextLabel.text = @"POST body will be lost";
         cellSwitch.on = [self.class webViewNetworkEnabled];
     } else if (indexPath.section == 1 && indexPath.row == 1) {
         cell.textLabel.text = @"Inject vConsole";
@@ -546,11 +546,16 @@ static BOOL traceVCRequest = NO;
         }
     } else if (indexPath.section == 1 && indexPath.row == 0) {
         if (!cellSwitch.on) {
-            [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugWebViewNetworkEnabled"];
-            [[NSUserDefaults standardUserDefaults] synchronize];
-            [self configSwitch:cell indexPath:indexPath];
-            [FWDebugAppConfig registerURLProtocolScheme:@"https"];
-            [FWDebugAppConfig registerURLProtocolScheme:@"http"];
+            typeof(self) __weak weakSelf = self;
+            [FWDebugManager showConfirm:self title:@"POST body will be lost, are you sure?" message:nil block:^(BOOL confirm) {
+                if (confirm) {
+                    [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugWebViewNetworkEnabled"];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                    [weakSelf configSwitch:cell indexPath:indexPath];
+                    [FWDebugAppConfig registerURLProtocolScheme:@"https"];
+                    [FWDebugAppConfig registerURLProtocolScheme:@"http"];
+                }
+            }];
         } else {
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugWebViewNetworkEnabled"];
             [[NSUserDefaults standardUserDefaults] synchronize];
