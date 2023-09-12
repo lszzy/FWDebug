@@ -16,6 +16,8 @@
 
 + (BOOL)filterSystemLog;
 
++ (BOOL)hookSystemLog;
+
 + (BOOL)traceVCLife;
 
 + (BOOL)traceVCRequest;

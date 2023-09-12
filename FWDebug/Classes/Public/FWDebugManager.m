@@ -172,7 +172,7 @@ NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
         [FWDebugWebServer fwDebugEnableLog];
     });
     
-    [FLEXOSLogController logMessage:message];
+    [FLEXOSLogController appendMessage:message];
 }
 
 - (void)customLog:(NSString *)message

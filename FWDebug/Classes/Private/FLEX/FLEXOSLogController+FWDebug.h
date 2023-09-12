@@ -12,6 +12,8 @@
 
 + (void)fwDebugLoad;
 
-+ (void)logMessage:(NSString *)msg;
++ (void)swizzleSystemLog;
+
++ (void)appendMessage:(NSString *)msg;
 
 @end
