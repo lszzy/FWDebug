@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 记录自定义事件，object为事件对象，userInfo为weak引用附加信息
 - (void)recordEvent:(NSString *)event object:(id)object userInfo:(nullable id)userInfo;
 
-/// 记录系统日志，从System Log入口可查看
+/// 记录系统日志，从System Log入口或终端可查看
 - (void)systemLog:(NSString *)message;
 
 /// 记录自定义日志到文件，从Custom Log入口可查看

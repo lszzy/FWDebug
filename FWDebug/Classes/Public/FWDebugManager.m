@@ -172,7 +172,12 @@ NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
         [FWDebugWebServer fwDebugEnableLog];
     });
     
-    [FLEXOSLogController appendMessage:message];
+    NSLog(@"%@", message);
+    #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 170000
+    if (![FWDebugAppConfig hookSystemLog]) {
+        [FLEXOSLogController appendMessage:message];
+    }
+    #endif
 }
 
 - (void)customLog:(NSString *)message
