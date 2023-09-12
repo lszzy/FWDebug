@@ -7,21 +7,20 @@
 //
 
 import UIKit
+import OSLog
 import FWDebug
 import CoreLocation
 
 @objcMembers class SwiftController: UIViewController, CLLocationManagerDelegate {
     // MARK: - Property
-    private struct AssociatedKeys {
-        static var object = "ak_object"
-    }
-    
     var object: Any? {
         get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.object)
+            let key = unsafeBitCast(Selector(#function), to: UnsafeRawPointer.self)
+            return objc_getAssociatedObject(self, key)
         }
         set {
-            objc_setAssociatedObject(self, &AssociatedKeys.object, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            let key = unsafeBitCast(Selector(#function), to: UnsafeRawPointer.self)
+            objc_setAssociatedObject(self, key, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     
@@ -62,6 +61,18 @@ import CoreLocation
         crashButton.addTarget(self, action: #selector(onCrash), for: .touchUpInside)
         crashButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 120, width: 200, height: 30)
         self.view.addSubview(crashButton)
+        
+        let nslogButton = UIButton(type: .system)
+        nslogButton.setTitle("NSLog", for: .normal)
+        nslogButton.addTarget(self, action: #selector(onNSLog), for: .touchUpInside)
+        nslogButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 170, width: 200, height: 30)
+        self.view.addSubview(nslogButton)
+        
+        let oslogButton = UIButton(type: .system)
+        oslogButton.setTitle("OSLog", for: .normal)
+        oslogButton.addTarget(self, action: #selector(onOSLog), for: .touchUpInside)
+        oslogButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 220, width: 200, height: 30)
+        self.view.addSubview(oslogButton)
     }
     
     // MARK: - CLLocationManagerDelegate
@@ -80,12 +91,12 @@ import CoreLocation
     func onDebug() {
         if FWDebugManager.sharedInstance().isHidden {
             FWDebugManager.sharedInstance().show()
-            FWDebugManager.sharedInstance().systemLog("Show FWDebug")
-            FWDebugManager.sharedInstance().customLog("Show FWDebug")
+            FWDebugManager.sharedInstance().systemLog("systemLog: Show FWDebug")
+            FWDebugManager.sharedInstance().customLog("customLog: Show FWDebug")
         } else {
             FWDebugManager.sharedInstance().hide()
-            FWDebugManager.sharedInstance().systemLog("Hide FWDebug")
-            FWDebugManager.sharedInstance().customLog("Hide FWDebug")
+            FWDebugManager.sharedInstance().systemLog("systemLog: Hide FWDebug")
+            FWDebugManager.sharedInstance().customLog("customLog: Hide FWDebug")
         }
     }
     
@@ -115,5 +126,13 @@ import CoreLocation
     func onCrash() {
         let object = NSObject()
         object.perform(#selector(onCrash))
+    }
+    
+    func onNSLog() {
+        NSLog("NSLog: onNSLog clicked")
+    }
+    
+    func onOSLog() {
+        os_log("OSLog: onOSLog clicked", log: .default, type: .error)
     }
 }

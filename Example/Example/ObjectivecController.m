@@ -7,6 +7,7 @@
 //
 
 #import "ObjectivecController.h"
+#import <os/log.h>
 #import <CoreLocation/CoreLocation.h>
 #import <WebKit/WebKit.h>
 #import <FWDebug/FWDebug.h>
@@ -64,7 +65,19 @@
     crashButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100, 220, 200, 30);
     [self.view addSubview:crashButton];
     
-    UILabel *weatherLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 - 100, 270, 200, 30)];
+    UIButton *nslogButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [nslogButton setTitle:@"NSLog" forState:UIControlStateNormal];
+    [nslogButton addTarget:self action:@selector(onNSLog) forControlEvents:UIControlEventTouchUpInside];
+    nslogButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100, 270, 200, 30);
+    [self.view addSubview:nslogButton];
+    
+    UIButton *oslogButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [oslogButton setTitle:@"OSLog" forState:UIControlStateNormal];
+    [oslogButton addTarget:self action:@selector(onOSLog) forControlEvents:UIControlEventTouchUpInside];
+    oslogButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100, 320, 200, 30);
+    [self.view addSubview:oslogButton];
+    
+    UILabel *weatherLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 - 100, 370, 200, 30)];
     self.weatherLabel = weatherLabel;
     weatherLabel.text = @"Loading...";
     weatherLabel.textAlignment = NSTextAlignmentCenter;
@@ -114,12 +127,12 @@
 - (void)onDebug {
     if ([FWDebugManager sharedInstance].isHidden) {
         [[FWDebugManager sharedInstance] show];
-        [[FWDebugManager sharedInstance] systemLog:@"Show FWDebug"];
-        [[FWDebugManager sharedInstance] customLog:@"Show FWDebug"];
+        [[FWDebugManager sharedInstance] systemLog:@"systemLog: Show FWDebug"];
+        [[FWDebugManager sharedInstance] customLog:@"customLog: Show FWDebug"];
     } else {
         [[FWDebugManager sharedInstance] hide];
-        [[FWDebugManager sharedInstance] systemLog:@"Hide FWDebug"];
-        [[FWDebugManager sharedInstance] customLog:@"Hide FWDebug"];
+        [[FWDebugManager sharedInstance] systemLog:@"systemLog: Hide FWDebug"];
+        [[FWDebugManager sharedInstance] customLog:@"customLog: Hide FWDebug"];
     }
 }
 
@@ -176,6 +189,15 @@
 - (void)onCrash {
     id object = [[NSObject alloc] init];
     [object onCrash];
+}
+
+- (void)onNSLog {
+    NSLog(@"NSLog: onNSLog clicked");
+}
+
+- (void)onOSLog {
+    os_log_t log = os_log_create("FWDebug", "category");
+    os_log_error(log, "OSLog: onOSLog clicked");
 }
 
 @end

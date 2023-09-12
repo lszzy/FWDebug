@@ -12,8 +12,10 @@
 
 @interface FLEXOSLogController ()
 
++ (FLEXOSLogController *)sharedLogController;
 @property (nonatomic) BOOL canPrint;
 @property (nonatomic) int filterPid;
+@property (nonatomic) void (^updateHandler)(NSArray<FLEXSystemLogMessage *> *);
 - (BOOL)handleStreamEntry:(os_activity_stream_entry_t)entry error:(int)error;
 
 @end
@@ -33,6 +35,19 @@
             return handleResult;
         };
     }];
+}
+
++ (void)logMessage:(NSString *)msg {
+    NSDate *date = [[NSDate alloc] init];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        FLEXSystemLogMessage *message = [FLEXSystemLogMessage logMessageFromDate:date text:msg];
+        if (FLEXOSLogController.sharedLogController.persistent) {
+            [FLEXOSLogController.sharedLogController.messages addObject:message];
+        }
+        if (FLEXOSLogController.sharedLogController.updateHandler) {
+            FLEXOSLogController.sharedLogController.updateHandler(@[message]);
+        }
+    });
 }
 
 - (BOOL)fwDebugHandleStreamEntry:(os_activity_stream_entry_t)entry error:(int)error {

@@ -12,4 +12,6 @@
 
 + (void)fwDebugLoad;
 
++ (void)logMessage:(NSString *)msg;
+
 @end

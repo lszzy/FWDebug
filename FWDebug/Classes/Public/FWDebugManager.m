@@ -13,6 +13,7 @@
 #import "FLEXManager+Private.h"
 #import "KSCrash+FWDebug.h"
 #import "FBRetainCycleDetector+FWDebug.h"
+#import "FLEXOSLogController+FWDebug.h"
 #import "FLEXObjectExplorerFactory.h"
 #import "FLEXFileBrowserController.h"
 #import "FWDebugTimeProfiler.h"
@@ -171,8 +172,7 @@ NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
         [FWDebugWebServer fwDebugEnableLog];
     });
     
-    // 仅支持OC版本NSLog
-    NSLog(@"%@", message);
+    [FLEXOSLogController logMessage:message];
 }
 
 - (void)customLog:(NSString *)message
