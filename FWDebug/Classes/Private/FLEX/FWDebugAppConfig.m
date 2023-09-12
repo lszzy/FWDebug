@@ -10,6 +10,7 @@
 #import "FLEXColor.h"
 #import "FLEXObjectExplorer.h"
 #import "FWDebugManager+FWDebug.h"
+#import "FLEXOSLogController+FWDebug.h"
 #import "FWDebugTimeProfiler.h"
 #import <CommonCrypto/CommonDigest.h>
 #import <WebKit/WebKit.h>
@@ -17,8 +18,41 @@
 
 static BOOL isAppLocked = NO;
 static BOOL filterSystemLog = NO;
+static BOOL hookSystemLog = NO;
 static BOOL traceVCLife = NO;
 static BOOL traceVCRequest = NO;
+
+typedef NS_ENUM(NSInteger, FWDebugAppConfigSection) {
+    FWDebugAppConfigSectionTime = 0,
+    FWDebugAppConfigSectionWeb,
+    FWDebugAppConfigSectionApp,
+    FWDebugAppConfigSectionCount,
+};
+
+typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionTimeRow) {
+    FWDebugAppConfigSectionTimeRowVCLife = 0,
+    FWDebugAppConfigSectionTimeRowVCRequest,
+    FWDebugAppConfigSectionTimeRowVCUrl,
+    FWDebugAppConfigSectionTimeRowCount,
+};
+
+typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionWebRow) {
+    FWDebugAppConfigSectionWebRowNetwork = 0,
+    FWDebugAppConfigSectionWebRowVConsole,
+    FWDebugAppConfigSectionWebRowJavascript,
+    FWDebugAppConfigSectionWebRowClear,
+    FWDebugAppConfigSectionWebRowCount,
+};
+
+typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
+    FWDebugAppConfigSectionAppRowFilterLog = 0,
+    FWDebugAppConfigSectionAppRowHookLog,
+    FWDebugAppConfigSectionAppRowInspectSwift,
+    FWDebugAppConfigSectionAppRowLaunchSecret,
+    FWDebugAppConfigSectionAppRowInjectionIII,
+    FWDebugAppConfigSectionAppRowRetainCycle,
+    FWDebugAppConfigSectionAppRowCount,
+};
 
 @interface FWDebugAppConfig ()
 
@@ -118,6 +152,16 @@ static BOOL traceVCRequest = NO;
         filterSystemLog = value ? [value boolValue] : YES;
     });
     return filterSystemLog;
+}
+
++ (BOOL)hookSystemLog
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugHookSystemLog"];
+        hookSystemLog = value ? [value boolValue] : YES;
+    });
+    return hookSystemLog;
 }
 
 + (BOOL)traceVCLife
@@ -377,24 +421,24 @@ static BOOL traceVCRequest = NO;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 3;
+    return FWDebugAppConfigSectionCount;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (section == 0) {
-        return 3;
-    } else if (section == 1) {
-        return 4;
+    if (section == FWDebugAppConfigSectionTime) {
+        return FWDebugAppConfigSectionTimeRowCount;
+    } else if (section == FWDebugAppConfigSectionWeb) {
+        return FWDebugAppConfigSectionWebRowCount;
     } else {
-        return 5;
+        return FWDebugAppConfigSectionAppRowCount;
     }
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if (section == 0) {
+    if (section == FWDebugAppConfigSectionTime) {
         return @"Time Option";
-    } else if (section == 1) {
+    } else if (section == FWDebugAppConfigSectionWeb) {
         return @"WKWebView Option";
     } else {
         return @"App Option";
@@ -402,7 +446,7 @@ static BOOL traceVCRequest = NO;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0 && indexPath.row == 2) {
+    if (indexPath.section == FWDebugAppConfigSectionTime && indexPath.row == FWDebugAppConfigSectionTimeRowVCUrl) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell2"];
         if (cell == nil) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell2"];
@@ -414,8 +458,8 @@ static BOOL traceVCRequest = NO;
         }
         [self configLabel:cell indexPath:indexPath];
         return cell;
-    } else if ((indexPath.section == 2 && indexPath.row == 4) ||
-               (indexPath.section == 1 && indexPath.row == 3)) {
+    } else if ((indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowRetainCycle) ||
+               (indexPath.section == FWDebugAppConfigSectionWeb && indexPath.row == FWDebugAppConfigSectionWebRowClear)) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell3"];
         if (cell == nil) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell3"];
@@ -447,9 +491,9 @@ static BOOL traceVCRequest = NO;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if ((indexPath.section == 0 && indexPath.row == 2) ||
-        (indexPath.section == 2 && indexPath.row == 4) ||
-        (indexPath.section == 1 && indexPath.row == 3)) {
+    if ((indexPath.section == FWDebugAppConfigSectionTime && indexPath.row == FWDebugAppConfigSectionTimeRowVCUrl) ||
+        (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowRetainCycle) ||
+        (indexPath.section == FWDebugAppConfigSectionWeb && indexPath.row == FWDebugAppConfigSectionWebRowClear)) {
         [self actionLabel:indexPath];
     } else {
         [self actionSwitch:indexPath];
@@ -458,41 +502,45 @@ static BOOL traceVCRequest = NO;
 
 - (void)configSwitch:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
     UISwitch *cellSwitch = (UISwitch *)cell.accessoryView;
-    if (indexPath.section == 0 && indexPath.row == 0) {
+    if (indexPath.section == FWDebugAppConfigSectionTime && indexPath.row == FWDebugAppConfigSectionTimeRowVCLife) {
         cell.textLabel.text = @"Trace VC Life";
         cell.detailTextLabel.text = nil;
         cellSwitch.on = [self.class traceVCLife];
-    } else if (indexPath.section == 0 && indexPath.row == 1) {
+    } else if (indexPath.section == FWDebugAppConfigSectionTime && indexPath.row == FWDebugAppConfigSectionTimeRowVCRequest) {
         cell.textLabel.text = @"Trace VC Request";
         cell.detailTextLabel.text = nil;
         cellSwitch.on = [self.class traceVCRequest];
-    } else if (indexPath.section == 1 && indexPath.row == 0) {
+    } else if (indexPath.section == FWDebugAppConfigSectionWeb && indexPath.row == FWDebugAppConfigSectionWebRowNetwork) {
         cell.textLabel.text = @"Network Debugging";
-        cell.detailTextLabel.text = nil;
+        cell.detailTextLabel.text = @"POST body will be lost";
         cellSwitch.on = [self.class webViewNetworkEnabled];
-    } else if (indexPath.section == 1 && indexPath.row == 1) {
+    } else if (indexPath.section == FWDebugAppConfigSectionWeb && indexPath.row == FWDebugAppConfigSectionWebRowVConsole) {
         cell.textLabel.text = @"Inject vConsole";
         cell.detailTextLabel.text = nil;
         cellSwitch.on = [self.class webViewInjectionEnabled];
-    } else if (indexPath.section == 1 && indexPath.row == 2) {
+    } else if (indexPath.section == FWDebugAppConfigSectionWeb && indexPath.row == FWDebugAppConfigSectionWebRowJavascript) {
         cell.textLabel.text = @"Inject Javascript";
         NSString *detail = [self.class webViewJavascriptString];
         if (detail.length > 100) detail = [detail substringToIndex:100];
         cell.detailTextLabel.text = detail;
         cellSwitch.on = [self.class webViewJavascriptEnabled];
-    } else if (indexPath.section == 2 && indexPath.row == 0) {
+    } else if (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowFilterLog) {
         cell.textLabel.text = @"Filter System Log";
         cell.detailTextLabel.text = nil;
         cellSwitch.on = [self.class filterSystemLog];
-    } else if (indexPath.section == 2 && indexPath.row == 1) {
+    } else if (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowHookLog) {
+        cell.textLabel.text = @"Hook System Log";
+        cell.detailTextLabel.text = nil;
+        cellSwitch.on = [self.class hookSystemLog];
+    } else if (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowInspectSwift) {
         cell.textLabel.text = @"Inspect Swift Objects";
         cell.detailTextLabel.text = nil;
         cellSwitch.on = [self.class isReflexEnabled];
-    } else if (indexPath.section == 2 && indexPath.row == 2) {
+    } else if (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowLaunchSecret) {
         cell.textLabel.text = @"App Launch Secret";
         cell.detailTextLabel.text = nil;
         cellSwitch.on = [self.class isSecretEnabled];
-    } else if (indexPath.section == 2 && indexPath.row == 3) {
+    } else if (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowInjectionIII) {
         cell.textLabel.text = @"Load Simulator InjectionIII";
         cell.detailTextLabel.text = nil;
         cellSwitch.on = [self.class isInjectionEnabled];
@@ -500,13 +548,13 @@ static BOOL traceVCRequest = NO;
 }
 
 - (void)configLabel:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0) {
+    if (indexPath.section == FWDebugAppConfigSectionTime && indexPath.row == FWDebugAppConfigSectionTimeRowVCUrl) {
         cell.textLabel.text = @"Trace VC Url";
         cell.detailTextLabel.text = [[self.class traceVCUrls] stringByReplacingOccurrencesOfString:@";" withString:@";\n"];
-    } else if (indexPath.section == 2 && indexPath.row == 4) {
+    } else if (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowRetainCycle) {
         cell.textLabel.text = @"Retain Cycle Depth";
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", @([self.class retainCycleDepth])];
-    } else if (indexPath.section == 1 && indexPath.row == 3) {
+    } else if (indexPath.section == FWDebugAppConfigSectionWeb && indexPath.row == FWDebugAppConfigSectionWebRowClear) {
         cell.textLabel.text = @"Clear WebView Cache";
         cell.detailTextLabel.text = @"";
     }
@@ -518,7 +566,7 @@ static BOOL traceVCRequest = NO;
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     UISwitch *cellSwitch = (UISwitch *)cell.accessoryView;
     
-    if (indexPath.section == 0 && indexPath.row == 0) {
+    if (indexPath.section == FWDebugAppConfigSectionTime && indexPath.row == FWDebugAppConfigSectionTimeRowVCLife) {
         if (!cellSwitch.on) {
             traceVCLife = YES;
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugTraceVCLife"];
@@ -531,7 +579,7 @@ static BOOL traceVCRequest = NO;
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
         }
-    } else if (indexPath.section == 0 && indexPath.row == 1) {
+    } else if (indexPath.section == FWDebugAppConfigSectionTime && indexPath.row == FWDebugAppConfigSectionTimeRowVCRequest) {
         if (!cellSwitch.on) {
             traceVCRequest = YES;
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugTraceVCRequest"];
@@ -544,13 +592,18 @@ static BOOL traceVCRequest = NO;
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
         }
-    } else if (indexPath.section == 1 && indexPath.row == 0) {
+    } else if (indexPath.section == FWDebugAppConfigSectionWeb && indexPath.row == FWDebugAppConfigSectionWebRowNetwork) {
         if (!cellSwitch.on) {
-            [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugWebViewNetworkEnabled"];
-            [[NSUserDefaults standardUserDefaults] synchronize];
-            [self configSwitch:cell indexPath:indexPath];
-            [FWDebugAppConfig registerURLProtocolScheme:@"https"];
-            [FWDebugAppConfig registerURLProtocolScheme:@"http"];
+            typeof(self) __weak weakSelf = self;
+            [FWDebugManager showConfirm:self title:@"POST body will be lost, are you sure?" message:nil block:^(BOOL confirm) {
+                if (confirm) {
+                    [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugWebViewNetworkEnabled"];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                    [weakSelf configSwitch:cell indexPath:indexPath];
+                    [FWDebugAppConfig registerURLProtocolScheme:@"https"];
+                    [FWDebugAppConfig registerURLProtocolScheme:@"http"];
+                }
+            }];
         } else {
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugWebViewNetworkEnabled"];
             [[NSUserDefaults standardUserDefaults] synchronize];
@@ -558,7 +611,7 @@ static BOOL traceVCRequest = NO;
             [FWDebugAppConfig unregisterURLProtocolScheme:@"https"];
             [FWDebugAppConfig unregisterURLProtocolScheme:@"http"];
         }
-    } else if (indexPath.section == 1 && indexPath.row == 1) {
+    } else if (indexPath.section == FWDebugAppConfigSectionWeb && indexPath.row == FWDebugAppConfigSectionWebRowVConsole) {
         if (!cellSwitch.on) {
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugWebViewInjectionEnabled"];
             [[NSUserDefaults standardUserDefaults] synchronize];
@@ -569,7 +622,7 @@ static BOOL traceVCRequest = NO;
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
         }
-    } else if (indexPath.section == 1 && indexPath.row == 2) {
+    } else if (indexPath.section == FWDebugAppConfigSectionWeb && indexPath.row == FWDebugAppConfigSectionWebRowJavascript) {
         if (!cellSwitch.on) {
             typeof(self) __weak weakSelf = self;
             [FWDebugManager showPrompt:self security:NO title:@"Input Javascript" message:nil text:[self.class webViewJavascriptString] block:^(BOOL confirm, NSString *text) {
@@ -591,7 +644,7 @@ static BOOL traceVCRequest = NO;
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
         }
-    } else if (indexPath.section == 2 && indexPath.row == 0) {
+    } else if (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowFilterLog) {
         if (!cellSwitch.on) {
             filterSystemLog = YES;
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugFilterSystemLog"];
@@ -603,7 +656,20 @@ static BOOL traceVCRequest = NO;
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
         }
-    } else if (indexPath.section == 2 && indexPath.row == 1) {
+    } else if (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowHookLog) {
+        if (!cellSwitch.on) {
+            hookSystemLog = YES;
+            [FLEXOSLogController swizzleSystemLog];
+            [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugHookSystemLog"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self configSwitch:cell indexPath:indexPath];
+        } else {
+            hookSystemLog = NO;
+            [[NSUserDefaults standardUserDefaults] setObject:@(NO) forKey:@"FWDebugHookSystemLog"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self configSwitch:cell indexPath:indexPath];
+        }
+    } else if (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowInspectSwift) {
         if (!cellSwitch.on) {
             FLEXObjectExplorer.reflexAvailable = YES;
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugReflexEnabled"];
@@ -615,7 +681,7 @@ static BOOL traceVCRequest = NO;
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
         }
-    } else if (indexPath.section == 2 && indexPath.row == 2) {
+    } else if (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowLaunchSecret) {
         if (!cellSwitch.on) {
             typeof(self) __weak weakSelf = self;
             [FWDebugManager showPrompt:self security:YES title:@"Input Password" message:nil text:nil block:^(BOOL confirm, NSString *text) {
@@ -644,7 +710,7 @@ static BOOL traceVCRequest = NO;
                 [self configSwitch:cell indexPath:indexPath];
             }
         }
-    } else if (indexPath.section == 2 && indexPath.row == 3) {
+    } else if (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowInjectionIII) {
 #if TARGET_OS_SIMULATOR
         if (!cellSwitch.on) {
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugInjectionEnabled"];
@@ -661,7 +727,7 @@ static BOOL traceVCRequest = NO;
 
 - (void)actionLabel:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-    if (indexPath.section == 0 && indexPath.row == 2) {
+    if (indexPath.section == FWDebugAppConfigSectionTime && indexPath.row == FWDebugAppConfigSectionTimeRowVCUrl) {
         typeof(self) __weak weakSelf = self;
         [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:[self.class traceVCUrls] block:^(BOOL confirm, NSString *text) {
             if (confirm) {
@@ -675,7 +741,7 @@ static BOOL traceVCRequest = NO;
             
             [weakSelf configLabel:cell indexPath:indexPath];
         }];
-    } else if (indexPath.section == 2 && indexPath.row == 4) {
+    } else if (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowRetainCycle) {
         typeof(self) __weak weakSelf = self;
         [FWDebugManager showPrompt:self security:NO title:@"Input Value" message:nil text:nil block:^(BOOL confirm, NSString *text) {
             if (confirm && text.length > 0) {
@@ -690,7 +756,7 @@ static BOOL traceVCRequest = NO;
             
             [weakSelf configLabel:cell indexPath:indexPath];
         }];
-    } else if (indexPath.section == 1 && indexPath.row == 3) {
+    } else if (indexPath.section == FWDebugAppConfigSectionWeb && indexPath.row == FWDebugAppConfigSectionWebRowClear) {
         __weak UITableViewCell *weakCell = cell;
         [FWDebugManager showConfirm:self title:@"Are you sure you want to clear the cache of WKWebView?" message:nil block:^(BOOL confirm) {
             if (confirm) {

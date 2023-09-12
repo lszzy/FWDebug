@@ -66,6 +66,10 @@ The debug library supports Debug and Release environment, it is recommended Debu
 	end
 
 ## Changelog
+Version 5.2.1:
+
+     * Compatible with XCode15, iOS17 system OC version NSLog
+
 Version 5.2.0:
 
      * Added WKWebView injection custom Javascript debugging script function, such as (Chii)

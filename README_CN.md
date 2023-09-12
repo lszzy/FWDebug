@@ -66,6 +66,10 @@ iOS调试库，支持iOS11+，无需添加任何代码，方便iOS开发和测�
 	end
 
 ## 更新日志
+5.2.1版本：
+
+    * 兼容XCode15，iOS17系统OC版本NSLog日志
+
 5.2.0版本：
 
     * 新增WKWebView注入自定义Javascript调试脚本功能，如(Chii)
