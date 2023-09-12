@@ -71,6 +71,7 @@ void fwDebug_NSLogv(NSString *format, va_list args) {
 }
 
 + (void)swizzleSystemLog {
+    #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 170000
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         flex_rebind_symbols((struct rebinding[2]){
@@ -78,6 +79,7 @@ void fwDebug_NSLogv(NSString *format, va_list args) {
             {"NSLogv", (void *)fwDebug_NSLogv, (void **)&orig_NSLogv}
         }, 2);
     });
+    #endif
 }
 
 + (void)appendMessage:(NSString *)msg {
