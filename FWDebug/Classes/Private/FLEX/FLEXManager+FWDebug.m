@@ -42,6 +42,8 @@ static BOOL fwDebugVisible = NO;
     [FLEXObjectListViewController fwDebugLoad];
     [FWDebugFakeLocation fwDebugLoad];
     [FWDebugTimeProfiler fwDebugLoad];
+    [FWDebugSystemInfo fwDebugLoad];
+    [FWDebugAppConfig fwDebugLoad];
     
     [FWDebugManager swizzleMethod:@selector(showExplorer) in:[FLEXManager class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
         return ^(__unsafe_unretained FLEXManager *selfObject) {
@@ -120,7 +122,6 @@ static BOOL fwDebugVisible = NO;
 + (void)fwDebugLaunch
 {
     [FWDebugAppConfig fwDebugLaunch];
-    [FWDebugSystemInfo fwDebugLaunch];
     [FWDebugFakeNotification fwDebugLaunch];
     [FWDebugWebServer fwDebugLaunch];
 }

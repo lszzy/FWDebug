@@ -10,6 +10,8 @@
 
 @interface FWDebugAppConfig : FLEXTableViewController
 
++ (void)fwDebugLoad;
+
 + (void)fwDebugLaunch;
 
 + (BOOL)isAppLocked;
