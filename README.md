@@ -66,6 +66,10 @@ The debug library supports Debug and Release environment, it is recommended Debu
 	end
 
 ## Changelog
+Version 5.2.2:
+
+     * Fixed the problem that features such as the simulated version number did not take effect before startup was completed
+
 Version 5.2.1:
 
      * Compatible with XCode15, iOS17 system OC version NSLog
