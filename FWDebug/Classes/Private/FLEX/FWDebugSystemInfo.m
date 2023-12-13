@@ -358,7 +358,7 @@
 
 #pragma mark - Fake Bundle
 
-+ (void)fwDebugLaunch
++ (void)fwDebugLoad
 {
     if ([self fakeBundleExecutable].length > 0 ||
         [self fakeBundleShortVersion].length > 0 ||

@@ -62,14 +62,8 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
 
 #pragma mark - Static
 
-+ (void)fwDebugLaunch
++ (void)fwDebugLoad
 {
-    if ([self isSecretEnabled]) {
-        if ([UIApplication sharedApplication].keyWindow != nil) {
-            [FWDebugAppConfig secretPrompt];
-        }
-    }
-    
     if ([self isInjectionEnabled]) {
 #if TARGET_OS_SIMULATOR
         // https://itunes.apple.com/cn/app/injectioniii/id1380446739?mt=12
@@ -88,6 +82,15 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
     
     if ([self webViewJavascriptEnabled]) {
         [FWDebugAppConfig webViewInjectJavascript];
+    }
+}
+
++ (void)fwDebugLaunch
+{
+    if ([self isSecretEnabled]) {
+        if ([UIApplication sharedApplication].keyWindow != nil) {
+            [FWDebugAppConfig secretPrompt];
+        }
     }
     
     FLEXObjectExplorer.reflexAvailable = [self isReflexEnabled];

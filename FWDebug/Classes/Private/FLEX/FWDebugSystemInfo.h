@@ -10,6 +10,6 @@
 
 @interface FWDebugSystemInfo : FLEXTableViewController
 
-+ (void)fwDebugLaunch;
++ (void)fwDebugLoad;
 
 @end
