@@ -8,8 +8,18 @@
 
 #import "FLEXFileBrowserController.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface FLEXFileBrowserController (FWDebug)
 
 + (void)fwDebugLoad;
 
 @end
+
+@interface UINavigationController (FWDebug)
+
+@property (nonatomic, copy, nullable) BOOL (^fwDebugFileHandler)(FLEXFileBrowserController *fileBrowser, NSString *filePath);
+
+@end
+
+NS_ASSUME_NONNULL_END

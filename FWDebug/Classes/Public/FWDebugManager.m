@@ -14,6 +14,7 @@
 #import "KSCrash+FWDebug.h"
 #import "FBRetainCycleDetector+FWDebug.h"
 #import "FLEXOSLogController+FWDebug.h"
+#import "FLEXFileBrowserController+FWDebug.h"
 #import "FLEXObjectExplorerFactory.h"
 #import "FLEXFileBrowserController.h"
 #import "FWDebugTimeProfiler.h"
@@ -158,6 +159,19 @@ NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
 - (void)recordEvent:(NSString *)event object:(id)object userInfo:(id)userInfo
 {
     [FWDebugTimeProfiler recordEvent:event object:object userInfo:userInfo];
+}
+
+- (void)chooseFile:(NSString *)directory filter:(BOOL (^)(NSString * _Nonnull))filter completion:(void (^)(NSString * _Nonnull))completion
+{
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:[[FLEXFileBrowserController alloc] initWithPath:directory]];
+    navigationController.fwDebugFileHandler = ^BOOL(FLEXFileBrowserController * _Nonnull fileBrowser, NSString * _Nonnull filePath) {
+        if (filter && !filter(filePath)) return YES;
+        [fileBrowser dismissViewControllerAnimated:YES completion:^{
+            if (completion) completion(filePath);
+        }];
+        return NO;
+    };
+    [[FWDebugManager topViewController] presentViewController:navigationController animated:YES completion:nil];
 }
 
 - (BOOL)isHidden

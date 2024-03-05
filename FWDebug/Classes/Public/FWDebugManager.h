@@ -45,6 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 记录自定义事件，object为事件对象，userInfo为weak引用附加信息
 - (void)recordEvent:(NSString *)event object:(id)object userInfo:(nullable id)userInfo;
 
+/// 打开指定目录文件选择器，完成后回调所选文件路径
+- (void)chooseFile:(NSString *)directory filter:(nullable BOOL (^)(NSString *filePath))filter completion:(nullable void (^)(NSString *filePath))completion;
+
 /// 记录系统日志，从System Log入口或终端可查看
 - (void)systemLog:(NSString *)message;
 
