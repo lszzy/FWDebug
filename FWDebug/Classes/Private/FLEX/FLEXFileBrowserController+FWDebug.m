@@ -15,6 +15,8 @@ static NSString *fwDebugCopyPath = nil;
 
 @interface FLEXFileBrowserController ()
 
+- (NSString *)filePathAtIndexPath:(NSIndexPath *)indexPath;
+
 - (void)fileBrowserRename:(UITableViewCell *)sender;
 - (void)fileBrowserDelete:(UITableViewCell *)sender;
 - (void)fileBrowserCopyPath:(UITableViewCell *)sender;
@@ -26,6 +28,32 @@ static NSString *fwDebugCopyPath = nil;
 
 + (void)fwDebugLoad
 {
+    [FWDebugManager swizzleMethod:@selector(viewDidLoad) in:[FLEXFileBrowserController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^void(__unsafe_unretained FLEXFileBrowserController *selfObject) {
+            ((void (*)(id, SEL))originalIMP())(selfObject, originalCMD);
+            
+            if (selfObject.navigationController.fwDebugFileHandler) {
+                selfObject.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:selfObject action:@selector(fwDebugDismiss)];
+            }
+        };
+    }];
+    
+    [FWDebugManager swizzleMethod:@selector(tableView:didSelectRowAtIndexPath:) in:[FLEXFileBrowserController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^void(__unsafe_unretained FLEXFileBrowserController *selfObject, UITableView *tableView, NSIndexPath *indexPath) {
+            if (selfObject.navigationController.fwDebugFileHandler) {
+                NSString *filePath = [selfObject filePathAtIndexPath:indexPath];
+                BOOL isDirectory = NO;
+                BOOL fileExists = [NSFileManager.defaultManager fileExistsAtPath:filePath isDirectory:&isDirectory];
+                if (fileExists && !isDirectory && !selfObject.navigationController.fwDebugFileHandler(selfObject, filePath)) {
+                    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+                    return;
+                }
+            }
+            
+            ((void (*)(id, SEL, UITableView *, NSIndexPath *))originalIMP())(selfObject, originalCMD, tableView, indexPath);
+        };
+    }];
+    
     [FWDebugManager swizzleMethod:@selector(tableView:shouldShowMenuForRowAtIndexPath:) in:[FLEXFileBrowserController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
         return ^BOOL(__unsafe_unretained FLEXFileBrowserController *selfObject, UITableView *tableView, NSIndexPath *indexPath) {
             BOOL shouldShow = ((BOOL (*)(id, SEL, UITableView *, NSIndexPath *))originalIMP())(selfObject, originalCMD, tableView, indexPath);
@@ -53,6 +81,11 @@ static NSString *fwDebugCopyPath = nil;
             };
         }];
     }
+}
+
+- (void)fwDebugDismiss
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - FWDebug
@@ -158,6 +191,22 @@ static NSString *fwDebugCopyPath = nil;
 {
     id target = [self.nextResponder targetForAction:_cmd withSender:sender];
     [[UIApplication sharedApplication] sendAction:_cmd to:target from:self forEvent:nil];
+}
+
+@end
+
+#pragma mark - UINavigationController+FWDebug
+
+@implementation UINavigationController (FWDebug)
+
+- (BOOL (^)(FLEXFileBrowserController * _Nonnull, NSString * _Nonnull))fwDebugFileHandler
+{
+    return objc_getAssociatedObject(self, @selector(fwDebugFileHandler));
+}
+
+- (void)setFwDebugFileHandler:(BOOL (^)(FLEXFileBrowserController * _Nonnull, NSString * _Nonnull))fileHandler
+{
+    objc_setAssociatedObject(self, @selector(fwDebugFileHandler), fileHandler, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
 @end

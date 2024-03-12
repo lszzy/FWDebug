@@ -33,6 +33,7 @@ import CoreLocation
     
     var locationManager: CLLocationManager?
     var locationButton: UIButton?
+    var imageView: UIImageView?
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -56,23 +57,35 @@ import CoreLocation
         fakeLocationButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 70, width: 200, height: 30)
         self.view.addSubview(fakeLocationButton)
         
+        let chooseFileButton = UIButton(type: .system)
+        chooseFileButton.setTitle("Choose Image", for: .normal)
+        chooseFileButton.addTarget(self, action: #selector(onChooseImage), for: .touchUpInside)
+        chooseFileButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 120, width: 200, height: 30)
+        self.view.addSubview(chooseFileButton)
+        
         let crashButton = UIButton(type: .system)
         crashButton.setTitle("Crash", for: .normal)
         crashButton.addTarget(self, action: #selector(onCrash), for: .touchUpInside)
-        crashButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 120, width: 200, height: 30)
+        crashButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 170, width: 200, height: 30)
         self.view.addSubview(crashButton)
         
         let nslogButton = UIButton(type: .system)
         nslogButton.setTitle("NSLog", for: .normal)
         nslogButton.addTarget(self, action: #selector(onNSLog), for: .touchUpInside)
-        nslogButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 170, width: 200, height: 30)
+        nslogButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 220, width: 200, height: 30)
         self.view.addSubview(nslogButton)
         
         let oslogButton = UIButton(type: .system)
         oslogButton.setTitle("OSLog", for: .normal)
         oslogButton.addTarget(self, action: #selector(onOSLog), for: .touchUpInside)
-        oslogButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 220, width: 200, height: 30)
+        oslogButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 270, width: 200, height: 30)
         self.view.addSubview(oslogButton)
+        
+        let imageView = UIImageView()
+        self.imageView = imageView
+        imageView.contentMode = .scaleAspectFit
+        imageView.frame = CGRect(x: self.view.frame.size.width / 2 - 50, y: 320, width: 100, height: 100)
+        self.view.addSubview(imageView)
     }
     
     // MARK: - CLLocationManagerDelegate
@@ -121,6 +134,18 @@ import CoreLocation
             self.locationManager = nil
             self.locationButton?.setTitle("Fake Location", for: .normal)
         }
+    }
+    
+    func onChooseImage() {
+        FWDebugManager.sharedInstance().chooseFile(Bundle.main.resourcePath ?? "") { filePath in
+            return filePath.hasSuffix(".png")
+        } completion: { [weak self] filePath in
+            self?.imageView?.image = UIImage(contentsOfFile: filePath)
+        }
+    }
+    
+    func onClose() {
+        dismiss(animated: true)
     }
     
     func onCrash() {

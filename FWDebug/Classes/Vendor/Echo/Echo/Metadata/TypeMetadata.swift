@@ -144,12 +144,10 @@ extension TypeMetadata {
     
     let length = getSymbolicMangledNameLength(mangledName)
     let name = mangledName.assumingMemoryBound(to: UInt8.self)
-    let type = _getTypeByMangledNameInContext(
-      name,
-      UInt(length),
-      genericContext: contextDescriptor.ptr,
-      genericArguments: genericArgumentPtr
-    )
+    let functionMap: [String: () -> Any.Type?] = [
+      "function": { _getTypeByMangledNameInContext(name, UInt(length), genericContext: contextDescriptor.ptr, genericArguments: genericArgumentPtr) }
+    ]
+    let type = functionMap["function"]!()
     
     mangledNameLock.withLock {
       mangledNames[mangledName] = type

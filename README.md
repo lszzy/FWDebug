@@ -66,6 +66,12 @@ The debug library supports Debug and Release environment, it is recommended Debu
 	end
 
 ## Changelog
+Version 5.2.3:
+
+     * Compatible with Xcode15.3, fix Archive failure problem
+     * Upgrade vConsole to version 3.15.1
+     * Added the function of debugging file selector
+
 Version 5.2.2:
 
      * Fixed the problem that features such as the simulated version number did not take effect before startup was completed
