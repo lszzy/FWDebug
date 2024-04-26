@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>%title%</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.css">
+    <link rel="stylesheet" href="css/screenshot.css">
+    <!--[if lt IE 9]>
+      <script type="text/javascript" src="js/html5shiv.min.js"></script>
+      <script type="text/javascript" src="js/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.ui.widget.js"></script>
+    <script type="text/javascript" src="js/jquery.iframe-transport.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/tmpl.min.js"></script>
+    <script type="text/javascript" src="js/screenshot.js"></script>
+  </head>
+  <body>
+    
+    <div class="container">
+      
+      <div class="page-header">
+        <h1>%header%</h1>
+      </div>
+      
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" id="toggle">
+              <span class="glyphicon glyphicon-phone" id="toggle-icon"></span>
+            </a>
+          </div>
+
+          <div class="collapse navbar-collapse" id="navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="index.html">📡  Network History</a></li>
+              <li><a href="logger.html">⚠️  System Log</a></li>
+              <li><a href="url.html">🚀  Open URL</a></li>
+              <li class="active"><a href="javascript:void(0);">📱  Screenshot <span class="sr-only">(current)</span></a></li>
+            </ul>
+            <form class="navbar-form navbar-left" role="search">
+              <a class="btn btn-default" target="_blank" href="/screenshot" role="button">Full Screen</a>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+              <li>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default navbar-btn" id="reload">
+                    <span class="glyphicon glyphicon-refresh"></span> Refresh
+                  </button>
+                  <button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a id="interval-toggle" href="#">Interval Off</a></li>
+                    <li><a id="interval-2" href="#">Interval 2s</a></li>
+                    <li><a id="interval-5" href="#">Interval 5s</a></li>
+                    <li><a id="interval-10" href="#">Interval 10s</a></li>
+                    <li><a id="interval-60" href="#">Interval 60s</a></li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      
+      <div class="panel panel-default">
+        <img src="/screenshot" class="img-responsive center-block" style="max-width:%max%px;max-height:%max%px;" id="image-view">
+      </div>
+      
+      <p class="footer">%footer% - <a target="_blank" href="https://github.com/lszzy/FWDebug">FWDebug</a></p>
+      
+    </div>
+    
+  </body>
+</html>

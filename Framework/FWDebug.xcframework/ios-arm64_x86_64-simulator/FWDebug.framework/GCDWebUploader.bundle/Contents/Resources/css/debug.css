@@ -1,0 +1,135 @@
+
+.table-striped {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.row-line {
+  width: 100%;
+  height: 40px;
+}
+
+.column-icon {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+}
+
+.column-icon img {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #ddd;
+}
+
+.column-name {
+  line-break: anywhere;
+}
+
+.column-nowrap p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.column-date {
+  width: 180px;
+  text-align: right;
+}
+
+.column-share {
+  width: 40px;
+  text-align: center;
+}
+
+.column-path {  
+}
+
+.footer {
+  color: #999;
+  text-align: center;
+  font-size: 0.9em;
+}
+
+.footer a {
+  color: #999;
+}
+
+#share-text {
+  line-break: anywhere;
+}
+
+#share-pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 5px 0px;
+}
+
+#copy-text {
+  width: 100%;
+}
+
+#copy-textarea {
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* Bootstrap overrides */
+
+.btn:focus {
+  outline: none;  /* FIXME: Work around for Chrome only but still draws focus ring while button pressed */
+}
+
+.btn-toolbar {
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.table .progress {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  height: 16px;
+}
+
+.panel-default > .panel-heading {
+  color: #555;
+}
+
+.breadcrumb {
+  background-color: transparent;
+  border-radius: 0px;
+  margin-bottom: 0px;
+  padding: 0px;
+}
+
+.breadcrumb > li {
+  line-break: anywhere;
+}
+
+.breadcrumb > li > a {
+  cursor: pointer;
+}
+
+.breadcrumb > .active {
+  color: #555;
+}
+
+.breadcrumb > li + li:before {
+  color: #999;
+}
+
+.table > tbody > tr > td {
+  vertical-align: middle;
+}
+
+.table > tbody > tr > td > p {
+  margin: 0px;
+}
+
+#total {
+  display: inline-block;
+  padding: 5px 14px;
+  background-color: #fff;
+  border: 0px solid #ddd;
+  border-radius: 0px;
+}

@@ -1,0 +1,11 @@
+framework module FWDebug {
+  umbrella header "FWDebug-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module FWDebug.Swift {
+  header "FWDebug-Swift.h"
+  requires objc
+}
