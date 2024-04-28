@@ -21,9 +21,14 @@ public struct ClassMetadata: TypeMetadata, LayoutWrapper {
   public let ptr: UnsafeRawPointer
   
   /// The class context descriptor that describes this class.
-  public var descriptor: ClassDescriptor {
+  public var descriptor: ClassDescriptor! {
     precondition(isSwiftClass)
-    return ClassDescriptor(ptr: layout._descriptor.signed)
+    
+    if let descriptorPtr = layout._descriptor.signed {
+        return ClassDescriptor(ptr: descriptorPtr)
+    }
+    
+    return nil
   }
   
   /// The Objective-C ISA pointer, if it has one.
@@ -101,7 +106,10 @@ public struct ClassMetadata: TypeMetadata, LayoutWrapper {
   
   /// An array of field offsets for this class's stored representation.
   public var fieldOffsets: [Int] {
-    Array(unsafeUninitializedCapacity: descriptor.numFields) {
+    guard let descriptor = descriptor else {
+      return []
+    }
+    return Array(unsafeUninitializedCapacity: descriptor.numFields) {
       let start = ptr.offset(of: descriptor.fieldOffsetVectorOffset)
       
       for i in 0 ..< descriptor.numFields {

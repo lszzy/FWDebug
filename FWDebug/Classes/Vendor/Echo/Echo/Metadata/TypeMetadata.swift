@@ -40,14 +40,18 @@ extension TypeMetadata {
     #if os(Linux)
     iterateSharedObjects()
     #endif
+      
+    guard let contextDescriptorPtr = contextDescriptor?.ptr else {
+      return []
+    }
     
     return conformanceLock.withLock {
-      _conformances[contextDescriptor.ptr, default: []]
+      _conformances[contextDescriptorPtr, default: []]
     }
   }
   
   /// The base type context descriptor for this type metadata record.
-  public var contextDescriptor: TypeContextDescriptor {
+  public var contextDescriptor: TypeContextDescriptor? {
     switch self {
     case let structMetadata as StructMetadata:
       return structMetadata.descriptor
@@ -74,7 +78,7 @@ extension TypeMetadata {
     }
   }
   
-  var genericArgumentPtr: UnsafeRawPointer {
+  var genericArgumentPtr: UnsafeRawPointer? {
     switch self {
     case is StructMetadata:
       return ptr + MemoryLayout<_StructMetadata>.size
@@ -83,7 +87,10 @@ extension TypeMetadata {
       return ptr + MemoryLayout<_EnumMetadata>.size
       
     case let classMetadata as ClassMetadata:
-      return ptr.offset(of: classMetadata.descriptor.genericArgumentOffset)
+      guard let descriptor = classMetadata.descriptor else {
+        return nil
+      }
+      return ptr.offset(of: descriptor.genericArgumentOffset)
       
     default:
       fatalError("Unknown TypeMetadata conformance")
@@ -93,17 +100,15 @@ extension TypeMetadata {
   /// An array of types that represent the generic arguments that make up this
   /// type.
   public var genericTypes: [Any.Type] {
-    guard contextDescriptor.flags.isGeneric else {
+    guard let contextDescriptor = contextDescriptor,
+          contextDescriptor.flags.isGeneric,
+          let gap = genericArgumentPtr else {
       return []
     }
     
     let numParams = contextDescriptor.genericContext!.numParams
     
     return Array(unsafeUninitializedCapacity: numParams) {
-      // Explicitly only call this once because class metadata could require
-      // computation, so only do it once if needed.
-      let gap = genericArgumentPtr
-      
       for i in 0 ..< numParams {
         let type = gap.load(
           fromByteOffset: i * MemoryLayout<Any.Type>.stride,
@@ -140,6 +145,10 @@ extension TypeMetadata {
     
     if entry != nil {
       return entry!
+    }
+      
+    guard let contextDescriptor = contextDescriptor else {
+      return nil
     }
     
     let length = getSymbolicMangledNameLength(mangledName)

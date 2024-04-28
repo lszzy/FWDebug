@@ -21,7 +21,7 @@ public struct StructMetadata: TypeMetadata, LayoutWrapper {
   public let ptr: UnsafeRawPointer
   
   /// The struct context descriptor that describes this struct.
-  public var descriptor: StructDescriptor {
+  public var descriptor: StructDescriptor! {
     StructDescriptor(ptr: layout._descriptor.signed)
   }
   
