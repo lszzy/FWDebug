@@ -220,7 +220,7 @@ protocol NominalType: TypeMetadata {
 
 protocol ContextualNominalType: NominalType {
     associatedtype NominalTypeDescriptor: TypeContextDescriptor
-    var descriptor: NominalTypeDescriptor { get }
+    var descriptor: NominalTypeDescriptor! { get }
 }
 
 extension ClassMetadata: NominalType, ContextualNominalType {

@@ -10,7 +10,7 @@ struct RelativeIndirectablePointer<Pointee>: RelativePointer {
   let offset: Int32
   
   func address(from ptr: UnsafeRawPointer) -> UnsafeRawPointer {
-    let start = ptr + Int(offset & ~1)
+    let start = ptr + Int(Int(offset) & ~1)
     
     if Int(offset) & 1 == 1 {
       return start.load(as: UnsafeRawPointer.self)

@@ -135,7 +135,7 @@ public struct GenericRequirementDescriptor: LayoutWrapper {
         and: UInt8.self
       )
     ).signed
-    return ProtocolDescriptor(ptr: ptr)
+    return ProtocolDescriptor(ptr: ptr!)
   }
   
   /// If this requirement is some layout (currently can only be a class),

@@ -5600,14 +5600,22 @@
             "children": [
               {
                 "kind": "TypeNominal",
-                "name": "ClassDescriptor",
-                "printedName": "FWDebug.ClassDescriptor",
-                "usr": "s:7FWDebug15ClassDescriptorV"
+                "name": "ImplicitlyUnwrappedOptional",
+                "printedName": "FWDebug.ClassDescriptor?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ClassDescriptor",
+                    "printedName": "FWDebug.ClassDescriptor",
+                    "usr": "s:7FWDebug15ClassDescriptorV"
+                  }
+                ],
+                "usr": "s:Sq"
               }
             ],
             "declKind": "Var",
-            "usr": "s:7FWDebug13ClassMetadataV10descriptorAA0B10DescriptorVvp",
-            "mangledName": "$s7FWDebug13ClassMetadataV10descriptorAA0B10DescriptorVvp",
+            "usr": "s:7FWDebug13ClassMetadataV10descriptorAA0B10DescriptorVSgvp",
+            "mangledName": "$s7FWDebug13ClassMetadataV10descriptorAA0B10DescriptorVSgvp",
             "moduleName": "FWDebug",
             "declAttributes": [
               "AccessControl",
@@ -5621,14 +5629,22 @@
                 "children": [
                   {
                     "kind": "TypeNominal",
-                    "name": "ClassDescriptor",
-                    "printedName": "FWDebug.ClassDescriptor",
-                    "usr": "s:7FWDebug15ClassDescriptorV"
+                    "name": "ImplicitlyUnwrappedOptional",
+                    "printedName": "FWDebug.ClassDescriptor?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "ClassDescriptor",
+                        "printedName": "FWDebug.ClassDescriptor",
+                        "usr": "s:7FWDebug15ClassDescriptorV"
+                      }
+                    ],
+                    "usr": "s:Sq"
                   }
                 ],
                 "declKind": "Accessor",
-                "usr": "s:7FWDebug13ClassMetadataV10descriptorAA0B10DescriptorVvg",
-                "mangledName": "$s7FWDebug13ClassMetadataV10descriptorAA0B10DescriptorVvg",
+                "usr": "s:7FWDebug13ClassMetadataV10descriptorAA0B10DescriptorVSgvg",
+                "mangledName": "$s7FWDebug13ClassMetadataV10descriptorAA0B10DescriptorVSgvg",
                 "moduleName": "FWDebug",
                 "accessorKind": "get"
               }
@@ -10656,14 +10672,22 @@
             "children": [
               {
                 "kind": "TypeNominal",
-                "name": "EnumDescriptor",
-                "printedName": "FWDebug.EnumDescriptor",
-                "usr": "s:7FWDebug14EnumDescriptorV"
+                "name": "ImplicitlyUnwrappedOptional",
+                "printedName": "FWDebug.EnumDescriptor?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "EnumDescriptor",
+                    "printedName": "FWDebug.EnumDescriptor",
+                    "usr": "s:7FWDebug14EnumDescriptorV"
+                  }
+                ],
+                "usr": "s:Sq"
               }
             ],
             "declKind": "Var",
-            "usr": "s:7FWDebug12EnumMetadataV10descriptorAA0B10DescriptorVvp",
-            "mangledName": "$s7FWDebug12EnumMetadataV10descriptorAA0B10DescriptorVvp",
+            "usr": "s:7FWDebug12EnumMetadataV10descriptorAA0B10DescriptorVSgvp",
+            "mangledName": "$s7FWDebug12EnumMetadataV10descriptorAA0B10DescriptorVSgvp",
             "moduleName": "FWDebug",
             "declAttributes": [
               "AccessControl",
@@ -10677,14 +10701,22 @@
                 "children": [
                   {
                     "kind": "TypeNominal",
-                    "name": "EnumDescriptor",
-                    "printedName": "FWDebug.EnumDescriptor",
-                    "usr": "s:7FWDebug14EnumDescriptorV"
+                    "name": "ImplicitlyUnwrappedOptional",
+                    "printedName": "FWDebug.EnumDescriptor?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "EnumDescriptor",
+                        "printedName": "FWDebug.EnumDescriptor",
+                        "usr": "s:7FWDebug14EnumDescriptorV"
+                      }
+                    ],
+                    "usr": "s:Sq"
                   }
                 ],
                 "declKind": "Accessor",
-                "usr": "s:7FWDebug12EnumMetadataV10descriptorAA0B10DescriptorVvg",
-                "mangledName": "$s7FWDebug12EnumMetadataV10descriptorAA0B10DescriptorVvg",
+                "usr": "s:7FWDebug12EnumMetadataV10descriptorAA0B10DescriptorVSgvg",
+                "mangledName": "$s7FWDebug12EnumMetadataV10descriptorAA0B10DescriptorVSgvg",
                 "moduleName": "FWDebug",
                 "accessorKind": "get"
               }
@@ -25868,14 +25900,22 @@
             "children": [
               {
                 "kind": "TypeNominal",
-                "name": "StructDescriptor",
-                "printedName": "FWDebug.StructDescriptor",
-                "usr": "s:7FWDebug16StructDescriptorV"
+                "name": "ImplicitlyUnwrappedOptional",
+                "printedName": "FWDebug.StructDescriptor?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "StructDescriptor",
+                    "printedName": "FWDebug.StructDescriptor",
+                    "usr": "s:7FWDebug16StructDescriptorV"
+                  }
+                ],
+                "usr": "s:Sq"
               }
             ],
             "declKind": "Var",
-            "usr": "s:7FWDebug14StructMetadataV10descriptorAA0B10DescriptorVvp",
-            "mangledName": "$s7FWDebug14StructMetadataV10descriptorAA0B10DescriptorVvp",
+            "usr": "s:7FWDebug14StructMetadataV10descriptorAA0B10DescriptorVSgvp",
+            "mangledName": "$s7FWDebug14StructMetadataV10descriptorAA0B10DescriptorVSgvp",
             "moduleName": "FWDebug",
             "declAttributes": [
               "AccessControl",
@@ -25889,14 +25929,22 @@
                 "children": [
                   {
                     "kind": "TypeNominal",
-                    "name": "StructDescriptor",
-                    "printedName": "FWDebug.StructDescriptor",
-                    "usr": "s:7FWDebug16StructDescriptorV"
+                    "name": "ImplicitlyUnwrappedOptional",
+                    "printedName": "FWDebug.StructDescriptor?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "StructDescriptor",
+                        "printedName": "FWDebug.StructDescriptor",
+                        "usr": "s:7FWDebug16StructDescriptorV"
+                      }
+                    ],
+                    "usr": "s:Sq"
                   }
                 ],
                 "declKind": "Accessor",
-                "usr": "s:7FWDebug14StructMetadataV10descriptorAA0B10DescriptorVvg",
-                "mangledName": "$s7FWDebug14StructMetadataV10descriptorAA0B10DescriptorVvg",
+                "usr": "s:7FWDebug14StructMetadataV10descriptorAA0B10DescriptorVSgvg",
+                "mangledName": "$s7FWDebug14StructMetadataV10descriptorAA0B10DescriptorVSgvg",
                 "moduleName": "FWDebug",
                 "accessorKind": "get"
               }
@@ -27144,14 +27192,22 @@
             "children": [
               {
                 "kind": "TypeNominal",
-                "name": "TypeContextDescriptor",
-                "printedName": "any FWDebug.TypeContextDescriptor",
-                "usr": "s:7FWDebug21TypeContextDescriptorP"
+                "name": "Optional",
+                "printedName": "(any FWDebug.TypeContextDescriptor)?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "TypeContextDescriptor",
+                    "printedName": "any FWDebug.TypeContextDescriptor",
+                    "usr": "s:7FWDebug21TypeContextDescriptorP"
+                  }
+                ],
+                "usr": "s:Sq"
               }
             ],
             "declKind": "Var",
-            "usr": "s:7FWDebug12TypeMetadataPAAE17contextDescriptorAA0b7ContextE0_pvp",
-            "mangledName": "$s7FWDebug12TypeMetadataPAAE17contextDescriptorAA0b7ContextE0_pvp",
+            "usr": "s:7FWDebug12TypeMetadataPAAE17contextDescriptorAA0b7ContextE0_pSgvp",
+            "mangledName": "$s7FWDebug12TypeMetadataPAAE17contextDescriptorAA0b7ContextE0_pSgvp",
             "moduleName": "FWDebug",
             "declAttributes": [
               "AccessControl",
@@ -27166,14 +27222,22 @@
                 "children": [
                   {
                     "kind": "TypeNominal",
-                    "name": "TypeContextDescriptor",
-                    "printedName": "any FWDebug.TypeContextDescriptor",
-                    "usr": "s:7FWDebug21TypeContextDescriptorP"
+                    "name": "Optional",
+                    "printedName": "(any FWDebug.TypeContextDescriptor)?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "TypeContextDescriptor",
+                        "printedName": "any FWDebug.TypeContextDescriptor",
+                        "usr": "s:7FWDebug21TypeContextDescriptorP"
+                      }
+                    ],
+                    "usr": "s:Sq"
                   }
                 ],
                 "declKind": "Accessor",
-                "usr": "s:7FWDebug12TypeMetadataPAAE17contextDescriptorAA0b7ContextE0_pvg",
-                "mangledName": "$s7FWDebug12TypeMetadataPAAE17contextDescriptorAA0b7ContextE0_pvg",
+                "usr": "s:7FWDebug12TypeMetadataPAAE17contextDescriptorAA0b7ContextE0_pSgvg",
+                "mangledName": "$s7FWDebug12TypeMetadataPAAE17contextDescriptorAA0b7ContextE0_pSgvg",
                 "moduleName": "FWDebug",
                 "genericSig": "<τ_0_0 where τ_0_0 : FWDebug.TypeMetadata>",
                 "sugared_genericSig": "<Self where Self : FWDebug.TypeMetadata>",
@@ -38608,119 +38672,119 @@
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 18175,
+      "offset": 18176,
       "length": 46,
       "value": "\"\""
     },
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 18220,
+      "offset": 18221,
       "length": 1,
       "value": "\"\""
     },
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 18273,
+      "offset": 18274,
       "length": 41,
       "value": "\"\""
     },
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 18312,
+      "offset": 18313,
       "length": 1,
       "value": "\"?\""
     },
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 18370,
+      "offset": 18371,
       "length": 15,
       "value": "\"~ForeignClass\""
     },
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 18435,
+      "offset": 18436,
       "length": 9,
       "value": "\"~Opaque\""
     },
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 18755,
+      "offset": 18756,
       "length": 14,
       "value": "\"\""
     },
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 18768,
+      "offset": 18769,
       "length": 1,
       "value": "\"\""
     },
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 18945,
+      "offset": 18946,
       "length": 5,
       "value": "\" & \""
     },
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 19061,
+      "offset": 19062,
       "length": 5,
       "value": "\" & \""
     },
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 19269,
+      "offset": 19270,
       "length": 7,
       "value": "\".self\""
     },
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 19336,
+      "offset": 19337,
       "length": 19,
       "value": "\"~ObjcClassWrapper\""
     },
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 19471,
+      "offset": 19472,
       "length": 10,
       "value": "\"AnyClass\""
     },
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 19523,
+      "offset": 19524,
       "length": 14,
       "value": "\"~Existential\""
     },
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 19598,
+      "offset": 19599,
       "length": 6,
       "value": "\"~HLV\""
     },
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 19672,
+      "offset": 19673,
       "length": 7,
       "value": "\"~HGLV\""
     },
     {
       "filePath": "\/Volumes\/Data\/Work\/Github\/lszzy\/FWDebug\/FWDebug\/Classes\/Vendor\/Reflex\/EchoExtensions.swift",
       "kind": "StringLiteral",
-      "offset": 19734,
+      "offset": 19735,
       "length": 14,
       "value": "\"~ErrorObject\""
     },

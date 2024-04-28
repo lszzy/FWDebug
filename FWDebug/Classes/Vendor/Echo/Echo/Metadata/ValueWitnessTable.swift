@@ -28,7 +28,7 @@ public struct ValueWitnessTable: LayoutWrapper {
   let ptr: UnsafeRawPointer
   
   var _vwt: _ValueWitnessTable {
-    layout.signed.load(as: _ValueWitnessTable.self)
+    layout.signed!.load(as: _ValueWitnessTable.self)
   }
   
   /// Given a buffer an instance of the type in the source buffer, initialize

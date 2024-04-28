@@ -21,7 +21,7 @@ public struct EnumMetadata: TypeMetadata, LayoutWrapper {
   public let ptr: UnsafeRawPointer
   
   /// The enum context descriptor that describes this enum.
-  public var descriptor: EnumDescriptor {
+  public var descriptor: EnumDescriptor! {
     EnumDescriptor(ptr: layout._descriptor.signed)
   }
 }

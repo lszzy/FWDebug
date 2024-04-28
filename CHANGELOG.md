@@ -1,5 +1,10 @@
 # Changelog
 
+Version 5.3.1:
+
+     * Compatible with Swift Package Manager
+     * Fixed occasional crash issue when checking Swift objects
+
 Version 5.3.0:
 
      * Compatible with Swift Package Manager

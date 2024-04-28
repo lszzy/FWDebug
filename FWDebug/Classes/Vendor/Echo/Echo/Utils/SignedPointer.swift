@@ -11,9 +11,9 @@ import Foundation
 // A wrapper around a pointer who will return the signed version of the wrapped
 // pointer through the `signed` property.
 struct SignedPointer<Pointee> {
-  var ptr: UnsafeRawPointer
+  var ptr: UnsafeRawPointer!
   
-  var signed: UnsafeRawPointer {
+  var signed: UnsafeRawPointer! {
     ptr
   }
 }
