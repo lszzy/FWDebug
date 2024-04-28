@@ -50,21 +50,29 @@ For everyone concerned about the issue of shelf audit, in particular, explain:
 
 **Since this debug library calls the private APIs, the on-board review will not pass, so please remove it when submitting to AppStore.**
 
-Just set `: configurations => ['Debug']` when adding a pod, valid only in Debug mode.
+The CocoaPods project only needs to set `:configurations => ['Debug']` when adding a pod, which will only take effect in Debug mode.
 
-## Installation
-CocoaPods installation is recommended for automatic management of dependencies and environment configuration. 
+The Swift Package Manager project can remove FWDebug from the Target when packaging the AppStore.
+
+## Installation tutorial
+It is recommended to use CocoaPods or Swift Package Manager to install and automatically manage dependencies and environment configuration.
 
 ### CocoaPods
-The debug library supports Debug and Release environment, it is recommended Debug mode is turned on. Podfile example:
+This debugging library supports Debug and Release environments. It is recommended that Debug mode be turned on. Podfile example:
 
-	platform :ios, '11.0'
-	use_frameworks!
+    platform:ios, '11.0'
+    use_frameworks!
 
-	target 'Example' do
-	  pod 'FWDebug', :configurations => ['Debug']
-	end
+    target 'Example' do
+    pod 'FWDebug', :configurations => ['Debug']
+    end
 
+### Swift Package Manager
+This debugging library supports Swift Package Manager. Please note that when packaging AppStore, please remove FWDebug from the Target. Package example:
+
+     https://github.com/lszzy/FWDebug.git
+    
+     import FWDebug
 ## [Changelog](https://github.com/lszzy/FWDebug/blob/master/CHANGELOG.md)
 
 ## Vendor
