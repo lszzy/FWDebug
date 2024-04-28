@@ -1,5 +1,10 @@
 # 更新日志
 
+5.3.1版本：
+
+    * 兼容Swift Package Manager
+    * 修复检查Swift对象时偶现崩溃问题
+
 5.3.0版本：
 
     * 兼容Swift Package Manager

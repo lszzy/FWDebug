@@ -1,6 +1,6 @@
 // swift-interface-format-version: 1.0
 // swift-compiler-version: Apple Swift version 5.10 (swiftlang-5.10.0.13 clang-1500.3.9.4)
-// swift-module-flags: -target arm64-apple-ios13.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -enable-bare-slash-regex -module-name FWDebug
+// swift-module-flags: -target arm64-apple-ios11.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -enable-bare-slash-regex -module-name FWDebug
 @_exported import FWDebug
 import Foundation
 import MachO
@@ -990,7 +990,7 @@ public struct MetadataBounds {
 }
 public struct ClassMetadata : FWDebug.TypeMetadata {
   public let ptr: Swift.UnsafeRawPointer
-  public var descriptor: FWDebug.ClassDescriptor {
+  public var descriptor: FWDebug.ClassDescriptor! {
     get
   }
   public var isaPointer: Swift.UnsafeRawPointer? {
@@ -1420,7 +1420,7 @@ extension FWDebug.EnumDescriptor : Swift.Equatable {
 }
 public struct EnumMetadata : FWDebug.TypeMetadata {
   public let ptr: Swift.UnsafeRawPointer
-  public var descriptor: FWDebug.EnumDescriptor {
+  public var descriptor: FWDebug.EnumDescriptor! {
     get
   }
 }
@@ -7484,7 +7484,7 @@ extension FWDebug.StructDescriptor : Swift.Equatable {
 }
 public struct StructMetadata : FWDebug.TypeMetadata {
   public let ptr: Swift.UnsafeRawPointer
-  public var descriptor: FWDebug.StructDescriptor {
+  public var descriptor: FWDebug.StructDescriptor! {
     get
   }
   public var fieldOffsets: [Swift.Int] {
@@ -7560,7 +7560,7 @@ extension FWDebug.TypeMetadata {
   public var conformances: [FWDebug.ConformanceDescriptor] {
     get
   }
-  public var contextDescriptor: any FWDebug.TypeContextDescriptor {
+  public var contextDescriptor: (any FWDebug.TypeContextDescriptor)? {
     get
   }
   public var fieldOffsets: [Swift.Int] {
