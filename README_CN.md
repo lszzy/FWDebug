@@ -50,10 +50,12 @@ iOS调试库，支持iOS11+，无需添加任何代码，方便iOS开发和测�
 
 **由于本调试库调用了私有Api，上架审核会不通过的，所以提交AppStore时请移除。**
 
-只需在添加pod时设置`:configurations => ['Debug']`，只在Debug模式生效即可。
+CocoaPods项目只需在添加pod时设置`:configurations => ['Debug']`，只在Debug模式生效即可。
+
+Swift Package Manager项目可在打包AppStore时从所在Target中移除FWDebug即可。
 
 ## 安装教程
-推荐使用CocoaPods安装，自动管理依赖和环境配置。
+推荐使用CocoaPods或Swift Package Manager安装，自动管理依赖和环境配置。
 
 ### CocoaPods
 本调试库支持Debug和Release环境，建议Debug模式开启。Podfile示例：
@@ -64,6 +66,13 @@ iOS调试库，支持iOS11+，无需添加任何代码，方便iOS开发和测�
 	target 'Example' do
 	  pod 'FWDebug', :configurations => ['Debug']
 	end
+
+### Swift Package Manager
+本调试库支持Swift Package Manager，注意打包AppStore时请从所在Target中移除FWDebug，Package示例：
+
+    https://github.com/lszzy/FWDebug.git
+    
+    import FWDebug
 
 ## [更新日志](https://github.com/lszzy/FWDebug/blob/master/CHANGELOG_CN.md)
 
