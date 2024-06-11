@@ -1,5 +1,9 @@
 # 更新日志
 
+5.4.0版本：
+
+    * 兼容Xcode16
+
 5.3.1版本：
 
     * 兼容Swift Package Manager

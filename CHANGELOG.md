@@ -1,5 +1,9 @@
 # Changelog
 
+Version 5.4.0:
+
+     * Compatible with Xcode16
+
 Version 5.3.1:
 
      * Compatible with Swift Package Manager
