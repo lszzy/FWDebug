@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name                = "FWDebug"
-  s.version             = "5.3.1"
+  s.version             = "5.4.0"
   s.summary             = "ios debug library"
   s.homepage            = "http://wuyong.site"
   s.license             = "MIT"
@@ -23,6 +23,7 @@ Pod::Spec.new do |s|
   s.requires_arc        = s_arc_files
   
   s.platform            = :ios, "11.0"
+  s.swift_version       = '5'
   s.source_files        = 'FWDebug/Classes/**/*.{h,m,mm,c,cpp,def,swift}'
   s.public_header_files = [
     'FWDebug/Classes/Public/*.h',
