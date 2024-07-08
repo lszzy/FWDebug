@@ -1,5 +1,9 @@
 # Changelog
 
+Version 5.4.1:
+
+     * Compatible with Swift Package Index
+
 Version 5.4.0:
 
      * Compatible with Xcode16

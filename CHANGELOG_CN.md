@@ -1,5 +1,9 @@
 # 更新日志
 
+5.4.1版本：
+
+    * 兼容Swift Package Index
+
 5.4.0版本：
 
     * 兼容Xcode16
