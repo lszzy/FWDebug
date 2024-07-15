@@ -1,236 +1,282 @@
 # Changelog
 
-Version 5.4.1:
+## [5.4.1] - 2024-07-08
 
-     * Compatible with Swift Package Index
+### Added
+* Compatible with Swift Package Index
 
-Version 5.4.0:
+## [5.4.0] - 2024-06-12
 
-     * Compatible with Xcode16
+### Added
+* Compatible with Xcode16
 
-Version 5.3.1:
+## [5.3.1] - 2024-04-29
 
-     * Compatible with Swift Package Manager
-     * Fixed occasional crash issue when checking Swift objects
+### Changed
+* Compatible with Swift Package Manager
+* Fix occasional crash when checking Swift objects
 
-Version 5.3.0:
+## [5.3.0] - 2024-04-26
 
-     * Compatible with Swift Package Manager
-     * Generate FWDebug.xcframework
+### Added
+* Compatible with Swift Package Manager
+* Generate FWDebug.xcframework
 
-Version 5.2.3:
+## [5.2.3] - 2024-03-12
 
-     * Compatible with Xcode15.3, fix Archive failure problem
-     * Upgrade vConsole to version 3.15.1
-     * Added the function of debugging file selector
+### Changed
+* Compatible with Xcode15.3, fix Archive failure issue
+* Upgrade vConsole to version 3.15.1
+* Added the function of debugging file selector
 
-Version 5.2.2:
+## [5.2.2] - 2023-12-13
 
-     * Fixed the problem that features such as the simulated version number did not take effect before startup was completed
+### Fixed
+* Fixed the problem that the simulated version number and other functions did not take effect before the startup was completed
 
-Version 5.2.1:
+## [5.2.1] - 2023-09-12
 
-     * Compatible with XCode15, iOS17 system OC version NSLog
+### Changed
+* Compatible with XCode15, iOS17 system OC version NSLog log
 
-Version 5.2.0:
+## [5.2.0] - 2023-02-10
 
-     * Added WKWebView injection custom Javascript debugging script function, such as (Chii)
-     * Added PC Web to view mobile phone clipboard and Javascript script functions, which can be switched off
+### Added
+* Added the function of injecting custom Javascript debugging script into WKWebView, such as (Chii)
+* Added the function of viewing the mobile clipboard and Javascript script on PC Web, which can be switched off
 
-Version 5.1.0:
+## [5.1.0] - 2023-01-19
 
-     * Added PC Web real-time view mobile phone screenshot feature
-     * Add systemLog and rename customLog to meet custom log requirements
+### Added
+* Added the function of viewing mobile screenshots in real time on PC Web
+* Added systemLog and renamed customLog to meet the needs of custom logs
 
-Version 5.0.1:
+## [5.0.1] - 2022-12-09
 
-     * Fixed the crash problem when the Swift project started occasionally
-	 * Upgrade vConsole to version 3.15.0
+### Changed
+* Fix the occasional crash when starting a Swift project
+* Upgrade vConsole to version 3.15.0
 
-Version 5.0.0:
+## [5.0.0] - 2022-12-06
 
-     * Added Reflex plugin to inspect Swift objects
-     * Added switch Reflex switch setting, enabled by default
+### Added
+* Added Reflex plugin to check Swift objects
+* Added Reflex switch setting, enabled by default
 
-Version 4.1.0:
+## [4.1.0] - 2022-12-05
 
-    * Upgrade FLEX to version 5.22.10
+### Changed
+* Upgrade FLEX to version 5.22.10
 
-Version 4.0.0:
+## [4.0.0] - 2022-07-15
 
-     * Added PC Web debugging server
-     * Added Web server port and path configuration
-     * Added crash report to email or server
-     * Added WKWebView clearing cache
-     * Upgrade FLEX to the latest version
-     * Compatible with iOS 16
+### Added
+* Added PC Web debugging server function
+* Added Web server port and path configuration function
+* Added crash reporting to email or server function
+* Added WKWebView cache cleanup function
+* Upgrade FLEX to the latest version
+* Compatible with iOS 16
 
-Version 3.1.0:
+## [3.1.0] - 2022-06-10
 
-    * Upgrade FLEX to version 4.7.0
+### Changed
+* Upgrade FLEX to version 4.7.0
 
-Version 3.0.0:
+## [3.0.0] - 2022-04-26
 
-	* Added view distance measurement tool
+### Added
+* Added view distance measurement tool
 
-Version 2.1.0:
+## [2.1.0] - 2022-02-15
 
-	* Added the function of registering and removing custom debug entry
-	* Added record and view file log function
-	* Modify the gesture of 5-finger tap twice to 3-finger tap twice
-	* Open the filter system log switch by default
-	* Upgrade FLEX to version 4.6.1
+### Added
+* Added the function of registering and removing custom debugging entry points
+* Added the function of recording and viewing file logs
+* Modified the gesture of 5-finger double-click to 3-finger double-click
+* Enable the filter system log switch by default
+* Upgrade FLEX to version 4.6.1
 
-Version 2.0.0:
+## [2.0.0] - 2021-09-18
 
-	* Compatible with iOS 15 and Xcode 13
-	* At least compatible with iOS 11
-	* Refactored application Bundle information simulation function
+### Added
+* Compatible with iOS 15 and Xcode 13
+* Minimum compatible with iOS 11
+* Refactored the application Bundle information simulation function
 
-Version 1.10.1:
+## [1.10.1] - 2021-09-15
 
-	* Added the ability to simulate the executable name and version number of the application
+### Added
+* Added the function of simulating the executable name and version number of the application
 
-Version 1.10.0:
+## [1.10.0] - 2021-09-07
 
-	* Fix iOS15 crash problem
-	* Upgrade FLEX to version 4.5.0
+### Fixed
+* Fix the crash problem of iOS15
+* Upgrade FLEX to version 4.5.0
 
-Version 1.9.2:
+## [1.9.2] - 2021-06-15
 
-	* Added built-in static web server function
+### Added
+* Added the built-in static web server function
 
-Version 1.9.1:
+## [1.9.1] - 2021-05-27
 
-	* Refactor the project structure and introduce the tripartite library without modification
-	* Sync Vendor latest trunk code
-	* Optimize the NSLog log function of the filtering system
+### Changed
+* Restructure the project architecture and introduce the third-party library without modification
+* Synchronize the latest trunk code of Vendor
+* Optimize the NSLog log function of the filtering system
 
-Version 1.9.0:
+## [1.9.0] - 2021-02-26
 
-	* Added WKWebView request packet capture function
-	* WKWebView automatically injects the vConsole debugging function
+### Added
+* Add the WKWebView request packet capture function
+* WKWebView automatically injects vConsole debugging function
 
-Version 1.8.5:
+## [1.8.5] - 2021-02-20
 
-	* Updated FLEX to version 4.4.0
+### Changed
+* Update FLEX to version 4.4.0
 
-Version 1.8.4:
+## [1.8.4] - 2020-11-21
 
-	* Updated FLEX to version 4.2.2
+### Changed
+* Update FLEX to version 4.2.2
 
-Version 1.8.3:
+## [1.8.3] - 2020-07-29
 
-	* Added 5 finger double click to switch debugger function
+### Added
+* Added 5-finger double-click to switch debugger function
 
-Version 1.8.2:
+## [1.8.2] - 2020-07-01
 
-	* Compatible with Xcode 12
+### Added
+* Compatible with Xcode 12
 
-Version 1.8.1:
+## [1.8.1] - 2020-05-29
 
-	* Optimize the time view function, add clear button
+### Changed
+* Optimize time viewing function and add clear button
 
-Version 1.8.0:
+## [1.8.0] - 2020-05-27
 
-	* Increase the launch time, controller loading and network request time viewing function
-	* Add long press debug button to jump URL function
-	* Optimized memory determination method
+### Added
+* Added the function of viewing the startup time, controller loading and network request time
+* Added the function of jumping to the URL by pressing and holding the debug button
+* Optimized the memory judgment method
 
-Version 1.7.4:
+## [1.7.4] - 2020-04-16
 
-	* Updated FLEX to version 4.1.1
-	* Minimum compatible with iOS9
-	* Compatible with dark mode
+### Added
+* Updated FLEX to version 4.1.1
+* Minimum compatibility with iOS9
+* Compatible with dark mode
 
-Version 1.7.3:
+## [1.7.3] - 2020-02-06
 
-	* Sync Vendor latest trunk code
+### Changed
+* Synchronize the latest trunk code of Vendor
 
-Version 1.7.2:
+## [1.7.2] - 2019-11-26
 
-	* Sync Vendor latest trunk code
+### Changed
+* Synchronize the latest trunk code of Vendor
 
-Version 1.7.1:
+## [1.7.1] - 2019-09-12
 
-	* Sync Vendor latest trunk code
-	* Add a switch that can filter the System Log
+### Added
+* Synchronize the latest trunk code of Vendor
+* Added the switch for filtering System Log
 
-Version 1.7.0:
+## [1.7.0] - 2019-08-10
 
-	* Sync the latest trunk code such as FLEX 3
-	* Compatible with Xcode 11
+### Added
+* Synchronize the latest trunk code of FLEX 3 and other versions
+* Compatible with Xcode 11
 
-Version 1.6.0:
+## [1.6.0] - 2019-04-16
 
-	* Added simulator virtual remote push send and receive function
-	* Added APNs remote push sending function
+### Added
+* Added simulator virtual remote push sending and receiving functions
+* Added APNs remote push sending function
 
-1.5.3 version:
+## [1.5.3] - 2019-03-07
 
-	* Sync Vendor latest trunk code
+### Changed
+* Synchronize the latest trunk code of Vendor
 
-1.5.2 version:
+## [1.5.2] - 2019-02-15
 
-	* Support InjectionIII
+### Added
+* Support InjectionIII development and debugging
 
-1.5.1 version:
+## [1.5.1] - 2018-09-06
 
-	* Sync Vendor latest trunk code
-	* Example project Swift 4 compatible
+### Changed
+* Synchronize the latest trunk code of Vendor
+* Example project is compatible with Swift 4
 
-1.5.0 version:
+## [1.5.0] - 2018-04-26
 
-	* Add CLLocationManager virtual positioning and movement
+### Added
+* Add CLLocationManager virtual positioning and movement functions
 
-1.4.2 version:
+## [1.4.2] - 2018-04-12
 
-	* Increase NSLog display limit
-	* Example project Swift mixed debugging
+### Added
+* Add NSLog display limit
+* Example project Swift mixed debugging
 
-1.4.1 version:
+## [1.4.1] - 2018-01-22
 
-    * Optimized circular reference detection
+### Changed
+* Optimize circular reference detection function
 
-1.4.0 version:
+## [1.4.0] - 2018-01-08
 
-    * Add circular reference detection for classes and objects
-    * Add circular reference detection for current ViewController
+### Added
+* Add circular reference detection function for classes and objects
+* Add circular reference detection function for current ViewController
 
-1.3.1 version:
+## [1.3.1] - 2017-11-06
 
-	* Example project iPhoneX adaptation
-	* Repair Documents file http server
+### Changed
+* Example project iPhoneX adaptation
+* Fix Documents file http server
 
-1.3.0 version:
+## [1.3.0] - 2017-10-23
 
-	* Remove some tools, keep the core functions
-	* Reconstruction, optimization code
-	* Add App Encryption Tool
+### Changed
+* Remove some tools, keep core functions
+* Refactor and optimize code
+* Add App encryption tool
 
-1.2.1 version:
+## [1.2.1] - 2017-05-23
 
-	* Sync FLEX latest trunk code
-	* Add screenshots, update instructions
+### Changed
+* Synchronize the latest trunk code of FLEX
+* Add screenshots and update notes
 
-1.2.0 version:
+## [1.2.0] - 2017-05-09
 
-	* Repair iOS10 real machine NSLog display
-	* Add mobile app list to view
-	* Add JSPatch dynamically modify the application
-	* Add dylib projects and inject existing App tools
+### Added
+* Fix iOS10 real machine NSLog display
+* Add mobile App list view
+* Add JSPatch to dynamically modify applications
+* Add dylib project and inject existing App tools
 
-1.1.0 version:
-	
-	* Adjust the project structure
-	* Update FLEX to 2.4.0 version
-	* Add crash log debugging
-	* Add Documents file http, webdav server
-	* Add header files to view
-	* Add FPS display
-	* Add App, Device Information
+## [1.1.0] - 2017-03-02
 
-1.0.0 version:
+### Added
+* Adjust project structure
+* Update FLEX to version 2.4.0
+* Add crash log debugging
+* Add Documents file http, webdav server
+* Add header file view
+* Add FPS display
+* Add App, device information
 
-	* Add FLEX debugging
+## [1.0.0] - 2017-02-20
 
+### Added
+* Added FLEX debugging
