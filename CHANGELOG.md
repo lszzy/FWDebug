@@ -1,5 +1,10 @@
 # Changelog
 
+## [5.4.2] - 2024-08-12
+
+### Added
+* Compatible with Xcode16
+
 ## [5.4.1] - 2024-07-08
 
 ### Added
