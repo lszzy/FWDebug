@@ -68,6 +68,14 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
 #if TARGET_OS_SIMULATOR
         // https://itunes.apple.com/cn/app/injectioniii/id1380446739?mt=12
         [[NSBundle bundleWithPath:@"/Applications/InjectionIII.app/Contents/Resources/iOSInjection.bundle"] load];
+        
+        #ifdef DEBUG
+        [FWDebugManager swizzleMethod:NSSelectorFromString(@"injected") in:[UIViewController class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+            return ^(__unsafe_unretained UIViewController *selfObject) {
+                [selfObject viewDidLoad];
+            };
+        }];
+        #endif
 #endif
     }
     
@@ -545,7 +553,7 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
         cellSwitch.on = [self.class isSecretEnabled];
     } else if (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowInjectionIII) {
         cell.textLabel.text = @"Load Simulator InjectionIII";
-        cell.detailTextLabel.text = nil;
+        cell.detailTextLabel.text = [self.class isInjectionEnabled] ? @"Implement UIViewController.injected" : nil;
         cellSwitch.on = [self.class isInjectionEnabled];
     }
 }
