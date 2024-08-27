@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name                = "FWDebug"
-  s.version             = "5.4.2"
+  s.version             = "5.4.3"
   s.summary             = "ios debug library"
   s.homepage            = "http://wuyong.site"
   s.license             = "MIT"

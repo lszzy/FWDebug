@@ -1,5 +1,10 @@
 # 更新日志
 
+## [5.4.3] - 2024-08-27
+
+### Added
+* 启用InjectionIII时自动实现UIViewController.injected方法
+
 ## [5.4.2] - 2024-08-12
 
 ### Added

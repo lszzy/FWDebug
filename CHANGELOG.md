@@ -1,5 +1,10 @@
 # Changelog
 
+## [5.4.3] - 2024-08-27
+
+### Added
+* Automatically implement UIViewController.injected method when InjectionIII is enabled
+
 ## [5.4.2] - 2024-08-12
 
 ### Added
