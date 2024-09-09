@@ -100,8 +100,9 @@ BOOL FLEXConstructorsShouldRun() {
         description = [description stringByAppendingFormat:@" %@", [self stringForCGRect:view.frame]];
     }
     
-    if (view.accessibilityLabel.length > 0) {
-        description = [description stringByAppendingFormat:@" · %@", view.accessibilityLabel];
+    if (view.accessibilityLabel.length > 0 || view.accessibilityIdentifier.length > 0) {
+        description = [description stringByAppendingFormat:@" · %@",
+                       view.accessibilityLabel.length > 0 ? view.accessibilityLabel : view.accessibilityIdentifier];
     }
     
     return description;
@@ -410,6 +411,11 @@ BOOL FLEXConstructorsShouldRun() {
         }
     }
     return inflatedData;
+}
+
++ (BOOL)hasCompressedContentEncoding:(NSURLRequest *)request {
+    NSString *contentEncoding = [request valueForHTTPHeaderField:@"Content-Encoding"];
+    return ([contentEncoding rangeOfString:@"deflate" options:NSCaseInsensitiveSearch].length > 0 || [contentEncoding rangeOfString:@"gzip" options:NSCaseInsensitiveSearch].length > 0);
 }
 
 + (NSArray<UIWindow *> *)allWindows {

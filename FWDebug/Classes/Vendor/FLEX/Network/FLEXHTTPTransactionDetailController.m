@@ -290,7 +290,8 @@ typedef UIViewController *(^FLEXNetworkDetailRowSelectionFuture)(void);
         postBodyRow.selectionFuture = ^UIViewController * () {
             // Show the body if we can
             NSString *contentType = [transaction.request valueForHTTPHeaderField:@"Content-Type"];
-            UIViewController *detailViewController = [self detailViewControllerForMIMEType:contentType data:[self postBodyDataForTransaction:transaction]];
+            NSData *body = [self postBodyDataForTransaction:transaction];
+            UIViewController *detailViewController = [self detailViewControllerForMIMEType:contentType data:body];
             if (detailViewController) {
                 detailViewController.title = @"Request Body";
                 return detailViewController;
@@ -298,8 +299,12 @@ typedef UIViewController *(^FLEXNetworkDetailRowSelectionFuture)(void);
 
             // We can't show the body, alert user
             return [FLEXAlert makeAlert:^(FLEXAlert *make) {
-                make.title(@"Can't View HTTP Body Data");
-                make.message(@"FLEX does not have a viewer for request body data with MIME type: ");
+                if (!body) {
+                    make.title(@"Empty HTTP Body");
+                } else {
+                    make.title(@"Can't View HTTP Body Data");
+                    make.message(@"FLEX does not have a viewer for request body data with MIME type: ");
+                }
                 make.message(contentType);
                 make.button(@"Dismiss").cancelStyle();
             }];
@@ -482,6 +487,10 @@ typedef UIViewController *(^FLEXNetworkDetailRowSelectionFuture)(void);
 }
 
 + (UIViewController *)detailViewControllerForMIMEType:(NSString *)mimeType data:(NSData *)data {
+    if (!data) {
+        return nil; // An alert will be presented in place of this screen
+    }
+    
     FLEXCustomContentViewerFuture makeCustomViewer = FLEXManager.sharedManager.customContentTypeViewers[mimeType.lowercaseString];
 
     if (makeCustomViewer) {
@@ -519,11 +528,8 @@ typedef UIViewController *(^FLEXNetworkDetailRowSelectionFuture)(void);
 
 + (NSData *)postBodyDataForTransaction:(FLEXHTTPTransaction *)transaction {
     NSData *bodyData = transaction.cachedRequestBody;
-    if (bodyData.length > 0) {
-        NSString *contentEncoding = [transaction.request valueForHTTPHeaderField:@"Content-Encoding"];
-        if ([contentEncoding rangeOfString:@"deflate" options:NSCaseInsensitiveSearch].length > 0 || [contentEncoding rangeOfString:@"gzip" options:NSCaseInsensitiveSearch].length > 0) {
-            bodyData = [FLEXUtility inflatedDataFromCompressedData:bodyData];
-        }
+    if (bodyData.length > 0 && [FLEXUtility hasCompressedContentEncoding:transaction.request]) {
+        bodyData = [FLEXUtility inflatedDataFromCompressedData:bodyData];
     }
     return bodyData;
 }

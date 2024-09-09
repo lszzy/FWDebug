@@ -22,6 +22,21 @@
 #import "FBRetainCycleDetector+FWDebug.h"
 #import <malloc/malloc.h>
 
+static NSMutableArray *fwDebugCustomObjectEntries = nil;
+
+@interface FWDebugCustomObjectEntry : NSObject
+
+@property (nonatomic, copy) NSString *entryName;
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) BOOL (^filter)(id object);
+@property (nonatomic, copy) void (^actionBlock)(__kindof UIViewController *viewController, id object);
+
+@end
+
+@implementation FWDebugCustomObjectEntry
+
+@end
+
 @interface FLEXObjectExplorerViewController ()
 
 @property (nonatomic, readonly) FLEXSingleRowSection *descriptionSection;
@@ -47,6 +62,33 @@
             return [selfObject fwDebugMakeSections:originSections];
         };
     }];
+}
+
++ (void)fwDebugRegisterEntry:(NSString *)entryName title:(NSString *)title filter:(BOOL (^)(id _Nonnull))filter actionBlock:(void (^)(__kindof UIViewController * _Nonnull, id _Nonnull))actionBlock
+{
+    FWDebugCustomObjectEntry *entry = [FWDebugCustomObjectEntry new];
+    entry.entryName = entryName;
+    entry.title = title;
+    entry.filter = filter;
+    entry.actionBlock = actionBlock;
+    
+    if (!fwDebugCustomObjectEntries) {
+        fwDebugCustomObjectEntries = [NSMutableArray new];
+    }
+    [fwDebugCustomObjectEntries addObject:entry];
+}
+
++ (void)fwDebugRemoveEntry:(NSString *)entryName
+{
+    if (!fwDebugCustomObjectEntries) return;
+    
+    NSMutableArray *removeEntries = [NSMutableArray new];
+    for (FWDebugCustomObjectEntry *entry in fwDebugCustomObjectEntries) {
+        if ([entry.entryName isEqualToString:entryName]) {
+            [removeEntries addObject:entry];
+        }
+    }
+    [fwDebugCustomObjectEntries removeObjectsInArray:removeEntries];
 }
 
 #pragma mark - FWDebug
@@ -75,7 +117,7 @@
             };
         }
         
-        FLEXSingleRowSection *customSection = [FLEXSingleRowSection title:@"Custom" reuse:kFLEXDefaultCell cell:^(FLEXTableViewCell *cell) {
+        FLEXSingleRowSection *customSection = [FLEXSingleRowSection title:@"Time Profiler" reuse:kFLEXDefaultCell cell:^(FLEXTableViewCell *cell) {
             cell.titleLabel.font = UIFont.flex_defaultTableCellFont;
             cell.titleLabel.text = @"Time Profiler";
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -89,7 +131,7 @@
         };
         [sections insertObject:customSection atIndex:0];
     } else {
-        FLEXSingleRowSection *customSection = [FLEXSingleRowSection title:@"Custom" reuse:kFLEXDefaultCell cell:^(FLEXTableViewCell *cell) {
+        FLEXSingleRowSection *customSection = [FLEXSingleRowSection title:@"Runtime Headers" reuse:kFLEXDefaultCell cell:^(FLEXTableViewCell *cell) {
             cell.titleLabel.font = UIFont.flex_defaultTableCellFont;
             cell.titleLabel.text = @"Runtime Headers";
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -117,6 +159,27 @@
             } showFrom:host source:nil];
         };
         [sections insertObject:customSection atIndex:0];
+    }
+    
+    if (fwDebugCustomObjectEntries) {
+        for (FWDebugCustomObjectEntry *entry in [fwDebugCustomObjectEntries reverseObjectEnumerator]) {
+            if (entry.filter && !entry.filter(explorer.object)) continue;
+            
+            FLEXSingleRowSection *customSection = [FLEXSingleRowSection title:entry.title reuse:kFLEXDefaultCell cell:^(FLEXTableViewCell *cell) {
+                cell.titleLabel.font = UIFont.flex_defaultTableCellFont;
+                cell.titleLabel.text = entry.entryName;
+                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            }];
+            customSection.filterMatcher = ^BOOL(NSString *filterText) {
+                return [entry.entryName localizedCaseInsensitiveContainsString:filterText];
+            };
+            customSection.selectionAction = ^(UIViewController *host) {
+                if (entry.actionBlock) {
+                    entry.actionBlock(host, explorer.object);
+                }
+            };
+            [sections insertObject:customSection atIndex:0];
+        }
     }
     return sections.copy;
 }

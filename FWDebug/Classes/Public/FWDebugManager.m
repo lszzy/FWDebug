@@ -15,6 +15,7 @@
 #import "FBRetainCycleDetector+FWDebug.h"
 #import "FLEXOSLogController+FWDebug.h"
 #import "FLEXFileBrowserController+FWDebug.h"
+#import "FLEXObjectExplorerViewController+FWDebug.h"
 #import "FLEXObjectExplorerFactory.h"
 #import "FLEXFileBrowserController.h"
 #import "FWDebugTimeProfiler.h"
@@ -154,6 +155,16 @@ NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
     if (targetEntry) {
         [[FLEXManager sharedManager].userGlobalEntries removeObject:targetEntry];
     }
+}
+
+- (void)registerObjectEntry:(NSString *)entryName title:(NSString *)title filter:(BOOL (^)(id _Nonnull))filter actionBlock:(void (^)(__kindof UIViewController * _Nonnull, id _Nonnull))actionBlock
+{
+    [FLEXObjectExplorerViewController fwDebugRegisterEntry:entryName title:title filter:filter actionBlock:actionBlock];
+}
+
+- (void)removeObjectEntry:(NSString *)entryName
+{
+    [FLEXObjectExplorerViewController fwDebugRemoveEntry:entryName];
 }
 
 - (void)recordEvent:(NSString *)event object:(id)object userInfo:(id)userInfo

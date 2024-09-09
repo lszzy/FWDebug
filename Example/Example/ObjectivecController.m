@@ -175,7 +175,7 @@
     WKWebView *webView = [[WKWebView alloc] initWithFrame:webController.view.bounds];
     webView.allowsBackForwardNavigationGestures = YES;
     [webController.view addSubview:webView];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.wuyong.site/"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.wuyong.site/"]]];
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:webController];
     navController.modalPresentationStyle = UIModalPresentationFullScreen;
