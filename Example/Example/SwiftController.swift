@@ -94,6 +94,23 @@ import CoreLocation
         self.view.addSubview(imageView)
     }
     
+    // MARK: - Public
+    public static func registerCustomEntry() {
+        FWDebugManager.sharedInstance().registerEntry("📱 Custom Entry") { vc in
+            vc.dismiss(animated: true) {
+                print("Custom Entry clicked")
+            }
+        }
+        
+        FWDebugManager.sharedInstance().registerObjectEntry("Custom Entry", title: "Custom") { object in
+            return object is UIViewController
+        } actionBlock: { vc, object in
+            vc.dismiss(animated: true) {
+                print("Custom Entry clicked")
+            }
+        }
+    }
+    
     // MARK: - CLLocationManagerDelegate
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         //if let location = locations.last {
