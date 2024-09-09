@@ -21,7 +21,7 @@ iOS debugging library, support for iOS11 +, without adding any code to facilitat
 Real machine or simulator shaking within 5 seconds twice to appear debug menu. Functions are as follows:
 
 * FLEX debugging tool (shaking to open)
-* PC Web debugging server, you can view mobile phone network requests, NSLog, open URL, real-time screenshots, etc. ("Web Server" entrance)
+* PC Web debugging server, you can view mobile phone network requests, NSLog, open URL, Generate QR code, real-time screenshots, etc. ("Web Server" entrance)
 * Check Swift object capabilities ("App Config" is enabled by default)
 * Measure view distance (switch toolbar to "ruler" mode)
 * Circular reference detection and analysis (click to search on the object view page)

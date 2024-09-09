@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.5.0] - 2024-09-09
+
+### Added
+* Web debugging server adds the function of generating QR code images from URL
+* Browse object interface supports adding custom entry function
+* Synchronize the latest trunk code of FLEX
+
 ## [5.4.3] - 2024-08-27
 
 ### Added
