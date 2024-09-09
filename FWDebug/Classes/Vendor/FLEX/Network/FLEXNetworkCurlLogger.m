@@ -6,6 +6,7 @@
 //
 
 #import "FLEXNetworkCurlLogger.h"
+#import "FLEXUtility.h"
 
 @implementation FLEXNetworkCurlLogger
 
@@ -28,8 +29,22 @@
     }
 
     if (request.HTTPBody) {
-        NSString *body = [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding];
-        [curlCommandString appendFormat:@"-d \'%@\'", body];
+        NSData *bodyData = request.HTTPBody;
+        if ([FLEXUtility hasCompressedContentEncoding:request]) {
+            bodyData = [FLEXUtility inflatedDataFromCompressedData:bodyData];
+        }
+        NSString *body = [[NSString alloc] initWithData:bodyData encoding:NSUTF8StringEncoding];
+        
+        if (body != nil) {
+            [curlCommandString appendFormat:@"-d \'%@\'", body];
+        } else {
+            // Fallback to using base64 encoding
+            [curlCommandString appendString:@"--data-binary @-"];
+
+            NSString *base64 = [request.HTTPBody base64EncodedStringWithOptions:0];
+            NSString *prefix = [NSString stringWithFormat:@"echo -n '%@' | base64 -D | ", base64];
+            [curlCommandString insertString:prefix atIndex:0];
+        }
     }
 
     return curlCommandString;
