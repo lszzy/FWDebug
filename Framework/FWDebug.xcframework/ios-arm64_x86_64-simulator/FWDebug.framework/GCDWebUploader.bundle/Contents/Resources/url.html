@@ -105,6 +105,9 @@
         <button type="button" class="btn btn-default" id="submit-url">
           <span class="glyphicon glyphicon-phone"></span> Open
         </button>
+        <button type="button" class="btn btn-default" id="qrcode-url">
+          <span class="glyphicon glyphicon-qrcode"></span> Qrcode
+        </button>
       </div>
       
       <div class="panel panel-default">
@@ -141,6 +144,25 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-primary" id="share-confirm">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="image-modal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title" id="image-title"></h4>
+          </div>
+          <div class="modal-body">
+            <img src="" class="img-responsive center-block" id="image-view">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-default" id="image-open">Full Screen</button>
+            <button type="button" class="btn btn-primary" id="image-confirm">Copy</button>
           </div>
         </div>
       </div>

@@ -149,11 +149,34 @@ function _openUrl() {
   });
 }
 
+function _qrcodeUrl() {
+  var text = $("#input-url").val().trim();
+  var url = "qrcode?text=" + encodeURIComponent(text);
+  
+  $("#image-title").text("Qrcode");
+  $("#image-view").attr("src", url);
+  $("#copy-textarea").val(text);
+  $("#image-modal").modal("show");
+}
+
 $(document).ready(function() {
   
   $("#share-confirm").click(function(event) {
     $("#share-modal").modal("hide");
     _copyText();
+    event.preventDefault();
+  });
+  
+  $("#image-confirm").click(function(event) {
+    $("#image-modal").modal("hide");
+    _copyText();
+    event.preventDefault();
+  });
+  
+  $("#image-open").click(function(event) {
+    $("#image-modal").modal("hide");
+    var url = $("#image-view").attr("src");
+    window.open(url + "&size=", "_blank");
     event.preventDefault();
   });
   
@@ -268,6 +291,11 @@ $(document).ready(function() {
   
   $("#submit-url").click(function(event) {
     _openUrl();
+    event.preventDefault();
+  });
+  
+  $("#qrcode-url").click(function(event) {
+    _qrcodeUrl();
     event.preventDefault();
   });
     

@@ -33,14 +33,20 @@ NS_ASSUME_NONNULL_BEGIN
 /// 单例模式
 + (instancetype)sharedInstance;
 
-/// 注册自定义入口，点击时打开objectBlock返回值，支持控制器、文件路径和任意对象
+/// 注册全局自定义入口，点击时打开objectBlock返回值，支持控制器、文件路径和任意对象
 - (void)registerEntry:(NSString *)entryName objectBlock:(id (^)(void))objectBlock;
 
-/// 注册自定义入口，点击时触发actionBlock，参数为调试控制器
+/// 注册全局自定义入口，点击时触发actionBlock，参数为调试控制器
 - (void)registerEntry:(NSString *)entryName actionBlock:(void (^)(__kindof UITableViewController *))actionBlock;
 
-/// 移除自定义入口
+/// 移除全局自定义入口
 - (void)removeEntry:(NSString *)entryName;
+
+/// 注册对象自定义入口，可过滤指定对象，点击时触发actionBlock，参数为对象控制器和对象
+- (void)registerObjectEntry:(NSString *)entryName title:(NSString *)title filter:(nullable BOOL (^)(id object))filter actionBlock:(void (^)(__kindof UIViewController *viewController, id object))actionBlock;
+
+/// 移除对象自定义入口
+- (void)removeObjectEntry:(NSString *)entryName;
 
 /// 记录自定义事件，object为事件对象，userInfo为weak引用附加信息
 - (void)recordEvent:(NSString *)event object:(id)object userInfo:(nullable id)userInfo;
