@@ -540,6 +540,39 @@ static GCDWebServer *_webSite = nil;
             });
         }];
         
+        [_webDebug addHandlerForMethod:@"GET"
+                                  path:@"/qrcode"
+                          requestClass:[GCDWebServerRequest class]
+                     asyncProcessBlock:^(__kindof GCDWebServerRequest *request, GCDWebServerCompletionBlock completionBlock) {
+            NSString *queryText = request.query[@"text"] ?: @"";
+            NSString *querySize = request.query[@"size"] ?: @"";
+            CGFloat size = querySize.doubleValue > 0 ? querySize.doubleValue : 375.0;
+            
+            NSData *textData = [queryText dataUsingEncoding:NSUTF8StringEncoding];
+            CIFilter *fileter = [CIFilter filterWithName:@"CIQRCodeGenerator"];
+            [fileter setValue:textData forKey:@"inputMessage"];
+            [fileter setValue:@"H" forKey:@"inputCorrectionLevel"];
+            CIImage *ciImage = fileter.outputImage;
+            
+            CIFilter *colorFilter = [CIFilter filterWithName:@"CIFalseColor"];
+            [colorFilter setValue:ciImage forKey:@"inputImage"];
+            [colorFilter setValue:[CIColor colorWithCGColor:UIColor.blackColor.CGColor] forKey:@"inputColor0"];
+            [colorFilter setValue:[CIColor colorWithCGColor:UIColor.whiteColor.CGColor] forKey:@"inputColor1"];
+            
+            CIImage *outImage = colorFilter.outputImage;
+            CGFloat outWidth = outImage.extent.size.width;
+            CGFloat scale = outWidth > 0 ? (size / outWidth) : 1;
+            outImage = [outImage imageByApplyingTransform:CGAffineTransformMakeScale(scale, scale)];
+            UIImage *qrcodeImage = [UIImage imageWithCIImage:outImage];
+            
+            NSData *imageData = UIImageJPEGRepresentation(qrcodeImage, 1.0);
+            if (imageData != nil) {
+                completionBlock([GCDWebServerDataResponse responseWithData:imageData contentType:@"image/jpeg"]);
+            } else {
+                completionBlock([GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", request.path]);
+            }
+        }];
+        
         [_webDebug addHandlerForMethod:@"DELETE"
                                   path:@"/urls"
                           requestClass:[GCDWebServerRequest class]
@@ -624,7 +657,7 @@ static GCDWebServer *_webSite = nil;
                     [sections addObject:detailSection];
                 } else {
                     [sections addObject:@{
-                        @"name": [NSString stringWithFormat:@"%@: %@", row.title, mimeType ?: row.detailText],
+                        @"name": [NSString stringWithFormat:@"%@: %@", row.title, requestData != nil ? (mimeType ?: row.detailText) : row.detailText],
                         @"action": @"view",
                         @"type": @"copy",
                         @"title": row.title ?: @"",
@@ -639,7 +672,7 @@ static GCDWebServer *_webSite = nil;
                     [sections addObject:detailSection];
                 } else {
                     [sections addObject:@{
-                        @"name": [NSString stringWithFormat:@"%@: %@", row.title, mimeType ?: row.detailText],
+                        @"name": [NSString stringWithFormat:@"%@: %@", row.title, responseData != nil ? (mimeType ?: row.detailText) : row.detailText],
                         @"action": @"view",
                         @"type": @"copy",
                         @"title": row.title ?: @"",

@@ -63,28 +63,34 @@ import CoreLocation
         chooseFileButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 120, width: 200, height: 30)
         self.view.addSubview(chooseFileButton)
         
+        let requestImageButton = UIButton(type: .system)
+        requestImageButton.setTitle("Request Image", for: .normal)
+        requestImageButton.addTarget(self, action: #selector(onRequestImage), for: .touchUpInside)
+        requestImageButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 170, width: 200, height: 30)
+        self.view.addSubview(requestImageButton)
+        
         let crashButton = UIButton(type: .system)
         crashButton.setTitle("Crash", for: .normal)
         crashButton.addTarget(self, action: #selector(onCrash), for: .touchUpInside)
-        crashButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 170, width: 200, height: 30)
+        crashButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 220, width: 200, height: 30)
         self.view.addSubview(crashButton)
         
         let nslogButton = UIButton(type: .system)
         nslogButton.setTitle("NSLog", for: .normal)
         nslogButton.addTarget(self, action: #selector(onNSLog), for: .touchUpInside)
-        nslogButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 220, width: 200, height: 30)
+        nslogButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 270, width: 200, height: 30)
         self.view.addSubview(nslogButton)
         
         let oslogButton = UIButton(type: .system)
         oslogButton.setTitle("OSLog", for: .normal)
         oslogButton.addTarget(self, action: #selector(onOSLog), for: .touchUpInside)
-        oslogButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 270, width: 200, height: 30)
+        oslogButton.frame = CGRect(x: self.view.frame.size.width / 2 - 100, y: 320, width: 200, height: 30)
         self.view.addSubview(oslogButton)
         
         let imageView = UIImageView()
         self.imageView = imageView
         imageView.contentMode = .scaleAspectFit
-        imageView.frame = CGRect(x: self.view.frame.size.width / 2 - 50, y: 320, width: 100, height: 100)
+        imageView.frame = CGRect(x: self.view.frame.size.width / 2 - 50, y: 370, width: 100, height: 100)
         self.view.addSubview(imageView)
     }
     
@@ -142,6 +148,17 @@ import CoreLocation
         } completion: { [weak self] filePath in
             self?.imageView?.image = UIImage(contentsOfFile: filePath)
         }
+    }
+    
+    func onRequestImage() {
+        let urlRequest = URLRequest(url: URL(string: "http://kvm.wuyong.site/images/images/progressive.jpg")!)
+        let dataTask = URLSession.shared.dataTask(with: urlRequest) { [weak self] data, _, _ in
+            guard let data = data else { return }
+            DispatchQueue.main.async { [weak self] in
+                self?.imageView?.image = UIImage(data: data)
+            }
+        }
+        dataTask.resume()
     }
     
     func onClose() {
