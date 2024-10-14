@@ -1,6 +1,6 @@
 {
   "name": "FWDebug",
-  "version": "5.4.3",
+  "version": "6.0.0",
   "summary": "ios debug library",
   "homepage": "http://wuyong.site",
   "license": "MIT",
@@ -9,7 +9,7 @@
   },
   "source": {
     "git": "https://github.com/lszzy/FWDebug.git",
-    "tag": "5.4.3"
+    "tag": "6.0.0"
   },
   "requires_arc": [
     "FWDebug/Classes/Private/FBRetainCycleDetector/FBRetainCycleDetector+FWDebug.h",

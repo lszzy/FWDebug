@@ -41,7 +41,7 @@ Real machine or simulator shaking within 5 seconds twice to appear debug menu. F
 * APNs remote push sending function ("Fake Notification" entrance "APNS Client" configuration)
 * View the startup time, controller loading and network request time ("Time Profiler" entry or click the frame rate icon to quickly view the current controller time)
 * WKWebView request packet capture function (just check "Network History" after turning on the "App Config" switch)
-* WKWebView automatically injects the vConsole function (just turn on WKWebView after turning on the "App Config" switch)
+* WKWebView automatically injects the vConsole or Eruda function (just turn on WKWebView after turning on the "App Config" switch)
 * WebSite static web server ("Web Server" entrance, the web file can be placed in Documents/website)
 * WKWebView cleanup cache ("App Config" entry)
 
