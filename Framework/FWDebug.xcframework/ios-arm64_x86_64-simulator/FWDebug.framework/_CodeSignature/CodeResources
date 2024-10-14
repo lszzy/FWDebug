@@ -85,6 +85,10 @@
 		<data>
 		q8+XGLTNkXlzO3jy+O1wSnqvxDQ=
 		</data>
+		<key>GCDWebUploader.bundle/Contents/Resources/js/eruda.min.js</key>
+		<data>
+		MhLTPkebTOv+vojHtS01c4P900k=
+		</data>
 		<key>GCDWebUploader.bundle/Contents/Resources/js/html5shiv.min.js</key>
 		<data>
 		PHs2lIXK3VhdJL5EcB5FnIqlTWA=
@@ -267,7 +271,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		c66nXoh4q7CwsmJxqg1/+6YO2/A=
+		joBOf5k2s/kfP0LtI44nDKy6KKg=
 		</data>
 		<key>Modules/FWDebug.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
 		<data>
@@ -287,7 +291,7 @@
 		</data>
 		<key>Modules/FWDebug.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		BOG/4aKkHBB8gQT0tvDvk2h3opY=
+		nMWjOJv1IUHuKu9qLAgtaS2AM6o=
 		</data>
 		<key>Modules/FWDebug.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<data>
@@ -307,7 +311,7 @@
 		</data>
 		<key>Modules/FWDebug.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		9jBN/k7RFliUy2oUzzsAL8tqXyA=
+		j8sB65X1xTULMVHarrqgwEtp3zQ=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -449,6 +453,13 @@
 			<key>hash2</key>
 			<data>
 			P5wgmKbS8kXoGy/aWJUhFO2EIcg6IkJ9eNlArfoMLWg=
+			</data>
+		</dict>
+		<key>GCDWebUploader.bundle/Contents/Resources/js/eruda.min.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			mGTnxu5oOutn/k2Cs9vbHi0YCXEFLGFWmsKoaHhkcLE=
 			</data>
 		</dict>
 		<key>GCDWebUploader.bundle/Contents/Resources/js/html5shiv.min.js</key>
@@ -798,7 +809,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			LEnwlZmwa4SnxlzhAHT3pDvglIC2j+p62G7CTQv1NQw=
+			2MBb6uNw56c828RDALpREKqzkIFLHLoSyP5htuufccM=
 			</data>
 		</dict>
 		<key>Modules/FWDebug.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
@@ -833,7 +844,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			w1p2FH3Ci0WCQs9umRo7yd7xAojS+M+d9JQ7slDn7OU=
+			wb878Cv4TRRq+uBXEeNXyCWDhE9AzdsAw70YWzU/uEY=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
