@@ -39,6 +39,7 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionTimeRow) {
 typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionWebRow) {
     FWDebugAppConfigSectionWebRowNetwork = 0,
     FWDebugAppConfigSectionWebRowVConsole,
+    FWDebugAppConfigSectionWebRowEruda,
     FWDebugAppConfigSectionWebRowJavascript,
     FWDebugAppConfigSectionWebRowClear,
     FWDebugAppConfigSectionWebRowCount,
@@ -86,6 +87,10 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
     
     if ([self webViewInjectionEnabled]) {
         [FWDebugAppConfig webViewInjectVConsole];
+    }
+    
+    if ([self webViewErudaEnabled]) {
+        [FWDebugAppConfig webViewInjectEruda];
     }
     
     if ([self webViewJavascriptEnabled]) {
@@ -227,6 +232,12 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
     return value ? [value boolValue] : NO;
 }
 
++ (BOOL)webViewErudaEnabled
+{
+    NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:@"FWDebugWebViewErudaEnabled"];
+    return value ? [value boolValue] : NO;
+}
+
 + (BOOL)webViewJavascriptEnabled
 {
     BOOL value = [[NSUserDefaults standardUserDefaults] boolForKey:@"FWDebugWebViewJavascriptEnabled"];
@@ -274,27 +285,64 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
     }
 }
 
++ (void)webViewInjectBlock:(void (^)(WKUserContentController *userContentController))block
+{
+    [FWDebugManager swizzleMethod:@selector(setUserContentController:) in:[WKWebViewConfiguration class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^(__unsafe_unretained WKWebViewConfiguration *selfObject, WKUserContentController *userContentController) {
+            ((void (*)(id, SEL, WKUserContentController *))originalIMP())(selfObject, originalCMD, userContentController);
+            block(userContentController);
+        };
+    }];
+    
+    [FWDebugManager swizzleMethod:@selector(init) in:[WKWebViewConfiguration class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
+        return ^WKWebViewConfiguration *(__unsafe_unretained WKWebViewConfiguration *selfObject) {
+            WKWebViewConfiguration *webViewConfiguration = ((WKWebViewConfiguration *(*)(id, SEL))originalIMP())(selfObject, originalCMD);
+            block(webViewConfiguration.userContentController);
+            return webViewConfiguration;
+        };
+    }];
+}
+
 + (void)webViewInjectVConsole
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager swizzleMethod:@selector(setUserContentController:) in:[WKWebViewConfiguration class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(__unsafe_unretained WKWebViewConfiguration *selfObject, WKUserContentController *userContentController) {
-                ((void (*)(id, SEL, WKUserContentController *))originalIMP())(selfObject, originalCMD, userContentController);
-                if (![FWDebugAppConfig webViewInjectionEnabled]) return;
-                BOOL hasInjection = [objc_getAssociatedObject(userContentController, @selector(webViewInjectVConsole)) boolValue];
-                if (hasInjection) return;
-                
-                NSString *vConsoleFile = [[NSBundle bundleForClass:[FWDebugAppConfig class]] pathForResource:@"GCDWebUploader.bundle/Contents/Resources/js/vconsole.min.js" ofType:nil];
-                if (vConsoleFile.length < 1) return;
-                NSString *vConsoleJs = [NSString stringWithContentsOfFile:vConsoleFile encoding:NSUTF8StringEncoding error:nil];
-                if (vConsoleJs.length < 1) return;
-                
-                NSString *sourceJs = [vConsoleJs stringByAppendingString:@"if(typeof(VConsole)!='undefined'&&typeof(vConsole)=='undefined'){var vConsole=new VConsole();}"];
-                WKUserScript *userScript = [[WKUserScript alloc] initWithSource:sourceJs injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
-                [userContentController addUserScript:userScript];
-                objc_setAssociatedObject(userContentController, @selector(webViewInjectVConsole), @(YES), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-            };
+        [self webViewInjectBlock:^(WKUserContentController *userContentController) {
+            if (![FWDebugAppConfig webViewInjectionEnabled]) return;
+            BOOL hasInjection = [objc_getAssociatedObject(userContentController, @selector(webViewInjectVConsole)) boolValue];
+            if (hasInjection) return;
+            
+            NSString *vConsoleFile = [[NSBundle bundleForClass:[FWDebugAppConfig class]] pathForResource:@"GCDWebUploader.bundle/Contents/Resources/js/vconsole.min.js" ofType:nil];
+            if (vConsoleFile.length < 1) return;
+            NSString *vConsoleJs = [NSString stringWithContentsOfFile:vConsoleFile encoding:NSUTF8StringEncoding error:nil];
+            if (vConsoleJs.length < 1) return;
+            
+            NSString *sourceJs = [vConsoleJs stringByAppendingString:@"if(typeof(VConsole)!='undefined'&&typeof(vConsole)=='undefined'){var vConsole=new VConsole();}"];
+            WKUserScript *userScript = [[WKUserScript alloc] initWithSource:sourceJs injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
+            [userContentController addUserScript:userScript];
+            objc_setAssociatedObject(userContentController, @selector(webViewInjectVConsole), @(YES), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        }];
+    });
+}
+
++ (void)webViewInjectEruda
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [self webViewInjectBlock:^(WKUserContentController *userContentController) {
+            if (![FWDebugAppConfig webViewErudaEnabled]) return;
+            BOOL hasInjection = [objc_getAssociatedObject(userContentController, @selector(webViewInjectEruda)) boolValue];
+            if (hasInjection) return;
+            
+            NSString *erudaFile = [[NSBundle bundleForClass:[FWDebugAppConfig class]] pathForResource:@"GCDWebUploader.bundle/Contents/Resources/js/eruda.min.js" ofType:nil];
+            if (erudaFile.length < 1) return;
+            NSString *erudaJs = [NSString stringWithContentsOfFile:erudaFile encoding:NSUTF8StringEncoding error:nil];
+            if (erudaJs.length < 1) return;
+            
+            NSString *sourceJs = [erudaJs stringByAppendingString:@"if(typeof(eruda)!='undefined'&&typeof(erudaFWDebug)=='undefined'){var erudaFWDebug=true;eruda.init();}"];
+            WKUserScript *userScript = [[WKUserScript alloc] initWithSource:sourceJs injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
+            [userContentController addUserScript:userScript];
+            objc_setAssociatedObject(userContentController, @selector(webViewInjectEruda), @(YES), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         }];
     });
 }
@@ -303,23 +351,20 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FWDebugManager swizzleMethod:@selector(setUserContentController:) in:[WKWebViewConfiguration class] withBlock:^id(__unsafe_unretained Class targetClass, SEL originalCMD, IMP (^originalIMP)(void)) {
-            return ^(__unsafe_unretained WKWebViewConfiguration *selfObject, WKUserContentController *userContentController) {
-                ((void (*)(id, SEL, WKUserContentController *))originalIMP())(selfObject, originalCMD, userContentController);
-                if (![FWDebugAppConfig webViewJavascriptEnabled]) return;
-                BOOL hasInjection = [objc_getAssociatedObject(userContentController, @selector(webViewInjectJavascript)) boolValue];
-                if (hasInjection) return;
-                
-                NSString *sourceJs = [FWDebugAppConfig webViewJavascriptString];
-                if (sourceJs.length < 1) return;
-                if ([sourceJs hasPrefix:@"http"]) {
-                    sourceJs = [NSString stringWithFormat:@"(function(){var script=document.createElement('script');script.src='%@';document.body.appendChild(script);})();", sourceJs];
-                }
-                
-                WKUserScript *userScript = [[WKUserScript alloc] initWithSource:sourceJs injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
-                [userContentController addUserScript:userScript];
-                objc_setAssociatedObject(userContentController, @selector(webViewInjectJavascript), @(YES), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-            };
+        [self webViewInjectBlock:^(WKUserContentController *userContentController) {
+            if (![FWDebugAppConfig webViewJavascriptEnabled]) return;
+            BOOL hasInjection = [objc_getAssociatedObject(userContentController, @selector(webViewInjectJavascript)) boolValue];
+            if (hasInjection) return;
+            
+            NSString *sourceJs = [FWDebugAppConfig webViewJavascriptString];
+            if (sourceJs.length < 1) return;
+            if ([sourceJs hasPrefix:@"http"]) {
+                sourceJs = [NSString stringWithFormat:@"(function(){var script=document.createElement('script');script.src='%@';document.body.appendChild(script);})();", sourceJs];
+            }
+            
+            WKUserScript *userScript = [[WKUserScript alloc] initWithSource:sourceJs injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
+            [userContentController addUserScript:userScript];
+            objc_setAssociatedObject(userContentController, @selector(webViewInjectJavascript), @(YES), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         }];
     });
 }
@@ -529,6 +574,10 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
         cell.textLabel.text = @"Inject vConsole";
         cell.detailTextLabel.text = nil;
         cellSwitch.on = [self.class webViewInjectionEnabled];
+    } else if (indexPath.section == FWDebugAppConfigSectionWeb && indexPath.row == FWDebugAppConfigSectionWebRowEruda) {
+        cell.textLabel.text = @"Inject Eruda";
+        cell.detailTextLabel.text = nil;
+        cellSwitch.on = [self.class webViewErudaEnabled];
     } else if (indexPath.section == FWDebugAppConfigSectionWeb && indexPath.row == FWDebugAppConfigSectionWebRowJavascript) {
         cell.textLabel.text = @"Inject Javascript";
         NSString *detail = [self.class webViewJavascriptString];
@@ -630,6 +679,17 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
             [FWDebugAppConfig webViewInjectVConsole];
         } else {
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugWebViewInjectionEnabled"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self configSwitch:cell indexPath:indexPath];
+        }
+    } else if (indexPath.section == FWDebugAppConfigSectionWeb && indexPath.row == FWDebugAppConfigSectionWebRowEruda) {
+        if (!cellSwitch.on) {
+            [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"FWDebugWebViewErudaEnabled"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self configSwitch:cell indexPath:indexPath];
+            [FWDebugAppConfig webViewInjectEruda];
+        } else {
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"FWDebugWebViewErudaEnabled"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self configSwitch:cell indexPath:indexPath];
         }

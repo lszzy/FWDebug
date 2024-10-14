@@ -1,5 +1,11 @@
 # Changelog
 
+## [6.0.0] - 2024-10-14
+
+### Added
+* Added Eruda debugging function for WKWebView
+* Compatible with iOS 18, fix WKWebView injection failure issue
+
 ## [5.5.0] - 2024-09-09
 
 ### Added
