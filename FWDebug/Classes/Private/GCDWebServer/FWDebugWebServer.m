@@ -127,22 +127,22 @@ static GCDWebServer *_webSite = nil;
     return port;
 }
 
-+ (BOOL)debugServerScreenshotDisabled
++ (BOOL)debugServerScreenshotEnabled
 {
-    BOOL disabled = [NSUserDefaults.standardUserDefaults boolForKey:@"FWDebugDebugServerScreenshotDisabled"];
-    return disabled;
+    BOOL enabled = [NSUserDefaults.standardUserDefaults boolForKey:@"FWDebugDebugServerScreenshotEnabled"];
+    return enabled;
 }
 
-+ (BOOL)debugServerClipboardDisabled
++ (BOOL)debugServerClipboardEnabled
 {
-    BOOL disabled = [NSUserDefaults.standardUserDefaults boolForKey:@"FWDebugDebugServerClipboardDisabled"];
-    return disabled;
+    BOOL enabled = [NSUserDefaults.standardUserDefaults boolForKey:@"FWDebugDebugServerClipboardEnabled"];
+    return enabled;
 }
 
-+ (BOOL)debugServerJavascriptDisabled
++ (BOOL)debugServerJavascriptEnabled
 {
-    BOOL disabled = [NSUserDefaults.standardUserDefaults boolForKey:@"FWDebugDebugServerJavascriptDisabled"];
-    return disabled;
+    BOOL enabled = [NSUserDefaults.standardUserDefaults boolForKey:@"FWDebugDebugServerJavascriptEnabled"];
+    return enabled;
 }
 
 + (NSInteger)webServerPort
@@ -255,7 +255,7 @@ static GCDWebServer *_webSite = nil;
                           requestClass:[GCDWebServerRequest class]
                      asyncProcessBlock:^(__kindof GCDWebServerRequest * request, GCDWebServerCompletionBlock completionBlock) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                if ([self debugServerScreenshotDisabled]) {
+                if (![self debugServerScreenshotEnabled]) {
                     completionBlock([GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", request.path]);
                     return;
                 }
@@ -869,9 +869,9 @@ static GCDWebServer *_webSite = nil;
 + (BOOL)typeEnabled:(NSString *)type
 {
     if ([type isEqualToString:@"javascript"]) {
-        return ![self debugServerJavascriptDisabled];
+        return [self debugServerJavascriptEnabled];
     } else if ([type isEqualToString:@"clipboard"]) {
-        return ![self debugServerClipboardDisabled];
+        return [self debugServerClipboardEnabled];
     } else {
         return YES;
     }
@@ -1047,19 +1047,19 @@ static GCDWebServer *_webSite = nil;
                     [NSUserDefaults.standardUserDefaults synchronize];
                 }];
         });
-        make.button(![FWDebugWebServer debugServerScreenshotDisabled] ? @"Disable Screenshot" : @"Enable Screenshot")
+        make.button([FWDebugWebServer debugServerScreenshotEnabled] ? @"Disable Screenshot" : @"Enable Screenshot")
             .handler(^(NSArray<NSString *> *strings) {
-                [NSUserDefaults.standardUserDefaults setBool:![FWDebugWebServer debugServerScreenshotDisabled] forKey:@"FWDebugDebugServerScreenshotDisabled"];
+                [NSUserDefaults.standardUserDefaults setBool:![FWDebugWebServer debugServerScreenshotEnabled] forKey:@"FWDebugDebugServerScreenshotEnabled"];
                 [NSUserDefaults.standardUserDefaults synchronize];
         });
-        make.button(![FWDebugWebServer debugServerClipboardDisabled] ? @"Disable Clipboard" : @"Enable Clipboard")
+        make.button([FWDebugWebServer debugServerClipboardEnabled] ? @"Disable Clipboard" : @"Enable Clipboard")
             .handler(^(NSArray<NSString *> *strings) {
-                [NSUserDefaults.standardUserDefaults setBool:![FWDebugWebServer debugServerClipboardDisabled] forKey:@"FWDebugDebugServerClipboardDisabled"];
+                [NSUserDefaults.standardUserDefaults setBool:![FWDebugWebServer debugServerClipboardEnabled] forKey:@"FWDebugDebugServerClipboardEnabled"];
                 [NSUserDefaults.standardUserDefaults synchronize];
         });
-        make.button(![FWDebugWebServer debugServerJavascriptDisabled] ? @"Disable Javascript" : @"Enable Javascript")
+        make.button([FWDebugWebServer debugServerJavascriptEnabled] ? @"Disable Javascript" : @"Enable Javascript")
             .handler(^(NSArray<NSString *> *strings) {
-                [NSUserDefaults.standardUserDefaults setBool:![FWDebugWebServer debugServerJavascriptDisabled] forKey:@"FWDebugDebugServerJavascriptDisabled"];
+                [NSUserDefaults.standardUserDefaults setBool:![FWDebugWebServer debugServerJavascriptEnabled] forKey:@"FWDebugDebugServerJavascriptEnabled"];
                 [NSUserDefaults.standardUserDefaults synchronize];
         });
         make.button(@"Web Server Port")
