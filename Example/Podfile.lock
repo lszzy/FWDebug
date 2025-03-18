@@ -1,5 +1,5 @@
 PODS:
-  - FWDebug (6.0.0)
+  - FWDebug (6.0.1)
 
 DEPENDENCIES:
   - FWDebug (from `../`)
@@ -9,8 +9,8 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  FWDebug: 344424b84ad33789415bd704901b3581cd50f48d
+  FWDebug: 5d4ecda1191446c3ed954d197c32a3471ff1f7ce
 
 PODFILE CHECKSUM: bfd25050ff2f8ce8d3b20e2e93e52d3045df26e7
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
