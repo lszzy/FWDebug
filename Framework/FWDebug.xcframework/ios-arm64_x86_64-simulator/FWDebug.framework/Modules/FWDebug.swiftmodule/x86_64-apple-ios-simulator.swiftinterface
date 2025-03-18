@@ -1,6 +1,7 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 5.10 (swiftlang-5.10.0.13 clang-1500.3.9.4)
+// swift-compiler-version: Apple Swift version 6.0.3 effective-5.10 (swiftlang-6.0.3.1.10 clang-1600.0.30.1)
 // swift-module-flags: -target x86_64-apple-ios11.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -enable-bare-slash-regex -module-name FWDebug
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface
 @_exported import FWDebug
 import Foundation
 import MachO
@@ -37,7 +38,7 @@ extension Swift.Bool : FWDebug.AtomicValue {
 extension Swift.Bool.AtomicRepresentation {
   @usableFromInline
   @_transparent @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<Swift.Bool.AtomicRepresentation>) -> Swift.UnsafeMutablePointer<FWDebug._AtomicBoolStorage> {
-    // `Self` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _AtomicBoolStorage.self)
   }
@@ -115,10 +116,10 @@ extension Swift.Bool.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicCompareExchange(expected: Swift.Bool, desired: __owned Swift.Bool, at pointer: Swift.UnsafeMutablePointer<Swift.Bool.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.Bool) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Bool(
@@ -203,10 +204,10 @@ extension Swift.Bool.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicWeakCompareExchange(expected: Swift.Bool, desired: __owned Swift.Bool, at pointer: Swift.UnsafeMutablePointer<Swift.Bool.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.Bool) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_weak_relaxed_relaxed_Bool(
@@ -471,7 +472,7 @@ public protocol AtomicIntegerStorage : FWDebug.AtomicStorage {
   @usableFromInline
   internal let _ptr: Swift.UnsafeMutablePointer<FWDebug.UnsafeAtomicLazyReference<Instance>._Rep>
   @_transparent public init(@_nonEphemeral at pointer: Swift.UnsafeMutablePointer<FWDebug.UnsafeAtomicLazyReference<Instance>.Storage>) {
-    // `Storage` is layout-compatible with its only stored property.
+     
     _ptr = UnsafeMutableRawPointer(pointer).assumingMemoryBound(to: _Rep.self)
   }
 }
@@ -499,7 +500,7 @@ extension FWDebug.UnsafeAtomicLazyReference {
   }
   @discardableResult
   @inlinable public func destroy() -> FWDebug.UnsafeAtomicLazyReference<Instance>.Value {
-    // `Storage` is layout-compatible with its only stored property.
+     
     let address = UnsafeMutableRawPointer(_ptr)
       .assumingMemoryBound(to: Storage.self)
     defer { address.deallocate() }
@@ -679,9 +680,15 @@ extension FWDebug.AtomicUpdateOrdering : Swift.CustomStringConvertible {
 public protocol AtomicOptionalWrappable : FWDebug.AtomicValue {
   associatedtype AtomicOptionalRepresentation : FWDebug.AtomicStorage where Self.AtomicOptionalRepresentation.Value == Self?
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.Optional : FWDebug.AtomicValue where Wrapped : FWDebug.AtomicOptionalWrappable {
   public typealias AtomicRepresentation = Wrapped.AtomicOptionalRepresentation
 }
+#else
+extension Swift.Optional : FWDebug.AtomicValue where Wrapped : FWDebug.AtomicOptionalWrappable {
+  public typealias AtomicRepresentation = Wrapped.AtomicOptionalRepresentation
+}
+#endif
 extension Swift.RawRepresentable where Self : FWDebug.AtomicValue, Self.RawValue : FWDebug.AtomicValue {
   public typealias AtomicRepresentation = FWDebug.AtomicRawRepresentableStorage<Self>
 }
@@ -697,7 +704,7 @@ extension Swift.RawRepresentable where Self : FWDebug.AtomicValue, Self.RawValue
     Value(rawValue: _storage.dispose())!
   }
   @_transparent @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<FWDebug.AtomicRawRepresentableStorage<Value>>) -> Swift.UnsafeMutablePointer<FWDebug.AtomicRawRepresentableStorage<Value>.Storage> {
-    // `Self` is layout-compatible with its only stored property.
+     
     UnsafeMutableRawPointer(ptr).assumingMemoryBound(to: Storage.self)
   }
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<FWDebug.AtomicRawRepresentableStorage<Value>>, ordering: FWDebug.AtomicLoadOrdering) -> Value {
@@ -745,6 +752,7 @@ public protocol AtomicReference : AnyObject, FWDebug.AtomicOptionalWrappable whe
 @inlinable @inline(__always) internal var _concurrencyWindow: Swift.Int {
   get { 20 }
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == FWDebug._AtomicReferenceStorage {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug.DoubleWord.AtomicRepresentation> {
     get {
@@ -753,6 +761,16 @@ extension Swift.UnsafeMutablePointer where Pointee == FWDebug._AtomicReferenceSt
   }
   }
 }
+#else
+extension Swift.UnsafeMutablePointer where Pointee == FWDebug._AtomicReferenceStorage {
+  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug.DoubleWord.AtomicRepresentation> {
+    get {
+    UnsafeMutableRawPointer(self)
+      .assumingMemoryBound(to: DoubleWord.AtomicRepresentation.self)
+  }
+  }
+}
+#endif
 @usableFromInline
 internal struct _AtomicReferenceStorage {
   @usableFromInline
@@ -778,32 +796,32 @@ internal struct _AtomicReferenceStorage {
 }
 extension FWDebug.AtomicReferenceStorage {
   @inlinable @inline(__always) @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<FWDebug.AtomicReferenceStorage<Value>>) -> Swift.UnsafeMutablePointer<FWDebug._AtomicReferenceStorage> {
-    // `Self` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _AtomicReferenceStorage.self)
   }
 }
 extension FWDebug.AtomicReferenceStorage : FWDebug.AtomicStorage {
   @inlinable @inline(__always) @_alwaysEmitIntoClient @_semantics("atomics.requires_constant_orderings") public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<FWDebug.AtomicReferenceStorage<Value>>, ordering: FWDebug.AtomicLoadOrdering) -> Value {
-    // FIXME: All orderings are treated as acquiring-and-releasing.
+     
     let result = _AtomicReferenceStorage.atomicLoad(at: Self._extract(pointer))
     return unsafeDowncast(result!, to: Value.self)
   }
   @inlinable @inline(__always) @_alwaysEmitIntoClient @_semantics("atomics.requires_constant_orderings") public static func atomicStore(_ desired: __owned Value, at pointer: Swift.UnsafeMutablePointer<FWDebug.AtomicReferenceStorage<Value>>, ordering: FWDebug.AtomicStoreOrdering) {
-    // FIXME: All orderings are treated as acquiring-and-releasing.
+     
     _ = _AtomicReferenceStorage.atomicExchange(
       desired,
       at: _extract(pointer))
   }
   @inlinable @inline(__always) @_alwaysEmitIntoClient @_semantics("atomics.requires_constant_orderings") public static func atomicExchange(_ desired: __owned Value, at pointer: Swift.UnsafeMutablePointer<FWDebug.AtomicReferenceStorage<Value>>, ordering: FWDebug.AtomicUpdateOrdering) -> Value {
-    // FIXME: All orderings are treated as acquiring-and-releasing.
+     
     let result = _AtomicReferenceStorage.atomicExchange(
       desired,
       at: _extract(pointer))
     return unsafeDowncast(result!, to: Value.self)
   }
   @inlinable @inline(__always) @_alwaysEmitIntoClient @_semantics("atomics.requires_constant_orderings") public static func atomicCompareExchange(expected: Value, desired: __owned Value, at pointer: Swift.UnsafeMutablePointer<FWDebug.AtomicReferenceStorage<Value>>, ordering: FWDebug.AtomicUpdateOrdering) -> (exchanged: Swift.Bool, original: Value) {
-    // FIXME: All orderings are treated as acquiring-and-releasing.
+     
     let result = _AtomicReferenceStorage.atomicCompareExchange(
       expected: expected,
       desired: desired,
@@ -811,7 +829,7 @@ extension FWDebug.AtomicReferenceStorage : FWDebug.AtomicStorage {
     return (result.exchanged, unsafeDowncast(result.original!, to: Value.self))
   }
   @inlinable @inline(__always) @_alwaysEmitIntoClient @_semantics("atomics.requires_constant_orderings") public static func atomicCompareExchange(expected: Value, desired: __owned Value, at pointer: Swift.UnsafeMutablePointer<FWDebug.AtomicReferenceStorage<Value>>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Value) {
-    // FIXME: All orderings are treated as acquiring-and-releasing.
+     
     let result = _AtomicReferenceStorage.atomicCompareExchange(
       expected: expected,
       desired: desired,
@@ -819,7 +837,7 @@ extension FWDebug.AtomicReferenceStorage : FWDebug.AtomicStorage {
     return (result.exchanged, unsafeDowncast(result.original!, to: Value.self))
   }
   @inlinable @inline(__always) @_alwaysEmitIntoClient @_semantics("atomics.requires_constant_orderings") public static func atomicWeakCompareExchange(expected: Value, desired: __owned Value, at pointer: Swift.UnsafeMutablePointer<FWDebug.AtomicReferenceStorage<Value>>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Value) {
-    // FIXME: All orderings are treated as acquiring-and-releasing.
+     
     let result = _AtomicReferenceStorage.atomicCompareExchange(
       expected: expected,
       desired: desired,
@@ -840,7 +858,7 @@ extension FWDebug.AtomicReferenceStorage : FWDebug.AtomicStorage {
 }
 extension FWDebug.AtomicOptionalReferenceStorage {
   @inlinable @inline(__always) @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<FWDebug.AtomicOptionalReferenceStorage<Instance>>) -> Swift.UnsafeMutablePointer<FWDebug._AtomicReferenceStorage> {
-    // `Self` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: _AtomicReferenceStorage.self)
   }
@@ -848,19 +866,19 @@ extension FWDebug.AtomicOptionalReferenceStorage {
 extension FWDebug.AtomicOptionalReferenceStorage : FWDebug.AtomicStorage {
   public typealias Value = Instance?
   @inlinable @inline(__always) @_alwaysEmitIntoClient @_semantics("atomics.requires_constant_orderings") public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<FWDebug.AtomicOptionalReferenceStorage<Instance>>, ordering: FWDebug.AtomicLoadOrdering) -> Instance? {
-    // FIXME: All orderings are treated as acquiring-and-releasing.
+     
     let result = _AtomicReferenceStorage.atomicLoad(at: Self._extract(pointer))
     guard let r = result else { return nil }
     return unsafeDowncast(r, to: Instance.self)
   }
   @inlinable @inline(__always) @_alwaysEmitIntoClient @_semantics("atomics.requires_constant_orderings") public static func atomicStore(_ desired: __owned Instance?, at pointer: Swift.UnsafeMutablePointer<FWDebug.AtomicOptionalReferenceStorage<Instance>>, ordering: FWDebug.AtomicStoreOrdering) {
-    // FIXME: All orderings are treated as acquiring-and-releasing.
+     
     _ = _AtomicReferenceStorage.atomicExchange(
       desired,
       at: _extract(pointer))
   }
   @inlinable @inline(__always) @_alwaysEmitIntoClient @_semantics("atomics.requires_constant_orderings") public static func atomicExchange(_ desired: __owned Instance?, at pointer: Swift.UnsafeMutablePointer<FWDebug.AtomicOptionalReferenceStorage<Instance>>, ordering: FWDebug.AtomicUpdateOrdering) -> Instance? {
-    // FIXME: All orderings are treated as acquiring-and-releasing.
+     
     let result = _AtomicReferenceStorage.atomicExchange(
       desired,
       at: _extract(pointer))
@@ -868,7 +886,7 @@ extension FWDebug.AtomicOptionalReferenceStorage : FWDebug.AtomicStorage {
     return unsafeDowncast(r, to: Instance.self)
   }
   @inlinable @inline(__always) @_alwaysEmitIntoClient @_semantics("atomics.requires_constant_orderings") public static func atomicCompareExchange(expected: Instance?, desired: __owned Instance?, at pointer: Swift.UnsafeMutablePointer<FWDebug.AtomicOptionalReferenceStorage<Instance>>, ordering: FWDebug.AtomicUpdateOrdering) -> (exchanged: Swift.Bool, original: Instance?) {
-    // FIXME: All orderings are treated as acquiring-and-releasing.
+     
     let result = _AtomicReferenceStorage.atomicCompareExchange(
       expected: expected,
       desired: desired,
@@ -877,7 +895,7 @@ extension FWDebug.AtomicOptionalReferenceStorage : FWDebug.AtomicStorage {
     return (result.exchanged, unsafeDowncast(original, to: Instance.self))
   }
   @inlinable @inline(__always) @_alwaysEmitIntoClient @_semantics("atomics.requires_constant_orderings") public static func atomicCompareExchange(expected: Instance?, desired: __owned Instance?, at pointer: Swift.UnsafeMutablePointer<FWDebug.AtomicOptionalReferenceStorage<Instance>>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Instance?) {
-    // FIXME: All orderings are treated as acquiring-and-releasing.
+     
     let result = _AtomicReferenceStorage.atomicCompareExchange(
       expected: expected,
       desired: desired,
@@ -886,7 +904,7 @@ extension FWDebug.AtomicOptionalReferenceStorage : FWDebug.AtomicStorage {
     return (result.exchanged, unsafeDowncast(original, to: Instance.self))
   }
   @inlinable @inline(__always) @_alwaysEmitIntoClient @_semantics("atomics.requires_constant_orderings") public static func atomicWeakCompareExchange(expected: Instance?, desired: __owned Instance?, at pointer: Swift.UnsafeMutablePointer<FWDebug.AtomicOptionalReferenceStorage<Instance>>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Instance?) {
-    // FIXME: All orderings are treated as acquiring-and-releasing.
+     
     let result = _AtomicReferenceStorage.atomicCompareExchange(
       expected: expected,
       desired: desired,
@@ -2049,15 +2067,27 @@ extension Swift.Int : FWDebug.AtomicValue {
     }
   }
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.Int.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicIntStorage> {
     get {
-    // `Int` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(self)
       .assumingMemoryBound(to: _AtomicIntStorage.self)
   }
   }
 }
+#else
+extension Swift.UnsafeMutablePointer where Pointee == Swift.Int.AtomicRepresentation {
+  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicIntStorage> {
+    get {
+     
+    return UnsafeMutableRawPointer(self)
+      .assumingMemoryBound(to: _AtomicIntStorage.self)
+  }
+  }
+}
+#endif
 extension Swift.Int.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.Int.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.Int.AtomicRepresentation.Value {
     switch ordering {
@@ -2131,10 +2161,10 @@ extension Swift.Int.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicCompareExchange(expected: Swift.Int.AtomicRepresentation.Value, desired: Swift.Int.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.Int.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.Int.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Int(
@@ -2219,10 +2249,10 @@ extension Swift.Int.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicWeakCompareExchange(expected: Swift.Int.AtomicRepresentation.Value, desired: Swift.Int.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.Int.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.Int.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_weak_relaxed_relaxed_Int(
@@ -2457,15 +2487,27 @@ extension Swift.Int64 : FWDebug.AtomicValue {
     }
   }
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.Int64.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicInt64Storage> {
     get {
-    // `Int64` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(self)
       .assumingMemoryBound(to: _AtomicInt64Storage.self)
   }
   }
 }
+#else
+extension Swift.UnsafeMutablePointer where Pointee == Swift.Int64.AtomicRepresentation {
+  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicInt64Storage> {
+    get {
+     
+    return UnsafeMutableRawPointer(self)
+      .assumingMemoryBound(to: _AtomicInt64Storage.self)
+  }
+  }
+}
+#endif
 extension Swift.Int64.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.Int64.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.Int64.AtomicRepresentation.Value {
     switch ordering {
@@ -2539,10 +2581,10 @@ extension Swift.Int64.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicCompareExchange(expected: Swift.Int64.AtomicRepresentation.Value, desired: Swift.Int64.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.Int64.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.Int64.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Int64(
@@ -2627,10 +2669,10 @@ extension Swift.Int64.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicWeakCompareExchange(expected: Swift.Int64.AtomicRepresentation.Value, desired: Swift.Int64.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.Int64.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.Int64.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_weak_relaxed_relaxed_Int64(
@@ -2865,15 +2907,27 @@ extension Swift.Int32 : FWDebug.AtomicValue {
     }
   }
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.Int32.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicInt32Storage> {
     get {
-    // `Int32` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(self)
       .assumingMemoryBound(to: _AtomicInt32Storage.self)
   }
   }
 }
+#else
+extension Swift.UnsafeMutablePointer where Pointee == Swift.Int32.AtomicRepresentation {
+  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicInt32Storage> {
+    get {
+     
+    return UnsafeMutableRawPointer(self)
+      .assumingMemoryBound(to: _AtomicInt32Storage.self)
+  }
+  }
+}
+#endif
 extension Swift.Int32.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.Int32.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.Int32.AtomicRepresentation.Value {
     switch ordering {
@@ -2947,10 +3001,10 @@ extension Swift.Int32.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicCompareExchange(expected: Swift.Int32.AtomicRepresentation.Value, desired: Swift.Int32.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.Int32.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.Int32.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Int32(
@@ -3035,10 +3089,10 @@ extension Swift.Int32.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicWeakCompareExchange(expected: Swift.Int32.AtomicRepresentation.Value, desired: Swift.Int32.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.Int32.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.Int32.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_weak_relaxed_relaxed_Int32(
@@ -3273,15 +3327,27 @@ extension Swift.Int16 : FWDebug.AtomicValue {
     }
   }
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.Int16.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicInt16Storage> {
     get {
-    // `Int16` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(self)
       .assumingMemoryBound(to: _AtomicInt16Storage.self)
   }
   }
 }
+#else
+extension Swift.UnsafeMutablePointer where Pointee == Swift.Int16.AtomicRepresentation {
+  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicInt16Storage> {
+    get {
+     
+    return UnsafeMutableRawPointer(self)
+      .assumingMemoryBound(to: _AtomicInt16Storage.self)
+  }
+  }
+}
+#endif
 extension Swift.Int16.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.Int16.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.Int16.AtomicRepresentation.Value {
     switch ordering {
@@ -3355,10 +3421,10 @@ extension Swift.Int16.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicCompareExchange(expected: Swift.Int16.AtomicRepresentation.Value, desired: Swift.Int16.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.Int16.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.Int16.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Int16(
@@ -3443,10 +3509,10 @@ extension Swift.Int16.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicWeakCompareExchange(expected: Swift.Int16.AtomicRepresentation.Value, desired: Swift.Int16.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.Int16.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.Int16.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_weak_relaxed_relaxed_Int16(
@@ -3681,15 +3747,27 @@ extension Swift.Int8 : FWDebug.AtomicValue {
     }
   }
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.Int8.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicInt8Storage> {
     get {
-    // `Int8` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(self)
       .assumingMemoryBound(to: _AtomicInt8Storage.self)
   }
   }
 }
+#else
+extension Swift.UnsafeMutablePointer where Pointee == Swift.Int8.AtomicRepresentation {
+  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicInt8Storage> {
+    get {
+     
+    return UnsafeMutableRawPointer(self)
+      .assumingMemoryBound(to: _AtomicInt8Storage.self)
+  }
+  }
+}
+#endif
 extension Swift.Int8.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.Int8.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.Int8.AtomicRepresentation.Value {
     switch ordering {
@@ -3763,10 +3841,10 @@ extension Swift.Int8.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicCompareExchange(expected: Swift.Int8.AtomicRepresentation.Value, desired: Swift.Int8.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.Int8.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.Int8.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_strong_relaxed_relaxed_Int8(
@@ -3851,10 +3929,10 @@ extension Swift.Int8.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicWeakCompareExchange(expected: Swift.Int8.AtomicRepresentation.Value, desired: Swift.Int8.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.Int8.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.Int8.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_weak_relaxed_relaxed_Int8(
@@ -4089,15 +4167,27 @@ extension Swift.UInt : FWDebug.AtomicValue {
     }
   }
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUIntStorage> {
     get {
-    // `UInt` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(self)
       .assumingMemoryBound(to: _AtomicUIntStorage.self)
   }
   }
 }
+#else
+extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt.AtomicRepresentation {
+  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUIntStorage> {
+    get {
+     
+    return UnsafeMutableRawPointer(self)
+      .assumingMemoryBound(to: _AtomicUIntStorage.self)
+  }
+  }
+}
+#endif
 extension Swift.UInt.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.UInt.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.UInt.AtomicRepresentation.Value {
     switch ordering {
@@ -4171,10 +4261,10 @@ extension Swift.UInt.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicCompareExchange(expected: Swift.UInt.AtomicRepresentation.Value, desired: Swift.UInt.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.UInt.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.UInt.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_strong_relaxed_relaxed_UInt(
@@ -4259,10 +4349,10 @@ extension Swift.UInt.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicWeakCompareExchange(expected: Swift.UInt.AtomicRepresentation.Value, desired: Swift.UInt.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.UInt.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.UInt.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_weak_relaxed_relaxed_UInt(
@@ -4497,15 +4587,27 @@ extension Swift.UInt64 : FWDebug.AtomicValue {
     }
   }
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt64.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUInt64Storage> {
     get {
-    // `UInt64` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(self)
       .assumingMemoryBound(to: _AtomicUInt64Storage.self)
   }
   }
 }
+#else
+extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt64.AtomicRepresentation {
+  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUInt64Storage> {
+    get {
+     
+    return UnsafeMutableRawPointer(self)
+      .assumingMemoryBound(to: _AtomicUInt64Storage.self)
+  }
+  }
+}
+#endif
 extension Swift.UInt64.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.UInt64.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.UInt64.AtomicRepresentation.Value {
     switch ordering {
@@ -4579,10 +4681,10 @@ extension Swift.UInt64.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicCompareExchange(expected: Swift.UInt64.AtomicRepresentation.Value, desired: Swift.UInt64.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.UInt64.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.UInt64.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_strong_relaxed_relaxed_UInt64(
@@ -4667,10 +4769,10 @@ extension Swift.UInt64.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicWeakCompareExchange(expected: Swift.UInt64.AtomicRepresentation.Value, desired: Swift.UInt64.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.UInt64.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.UInt64.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_weak_relaxed_relaxed_UInt64(
@@ -4905,15 +5007,27 @@ extension Swift.UInt32 : FWDebug.AtomicValue {
     }
   }
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt32.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUInt32Storage> {
     get {
-    // `UInt32` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(self)
       .assumingMemoryBound(to: _AtomicUInt32Storage.self)
   }
   }
 }
+#else
+extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt32.AtomicRepresentation {
+  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUInt32Storage> {
+    get {
+     
+    return UnsafeMutableRawPointer(self)
+      .assumingMemoryBound(to: _AtomicUInt32Storage.self)
+  }
+  }
+}
+#endif
 extension Swift.UInt32.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.UInt32.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.UInt32.AtomicRepresentation.Value {
     switch ordering {
@@ -4987,10 +5101,10 @@ extension Swift.UInt32.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicCompareExchange(expected: Swift.UInt32.AtomicRepresentation.Value, desired: Swift.UInt32.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.UInt32.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.UInt32.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_strong_relaxed_relaxed_UInt32(
@@ -5075,10 +5189,10 @@ extension Swift.UInt32.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicWeakCompareExchange(expected: Swift.UInt32.AtomicRepresentation.Value, desired: Swift.UInt32.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.UInt32.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.UInt32.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_weak_relaxed_relaxed_UInt32(
@@ -5313,15 +5427,27 @@ extension Swift.UInt16 : FWDebug.AtomicValue {
     }
   }
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt16.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUInt16Storage> {
     get {
-    // `UInt16` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(self)
       .assumingMemoryBound(to: _AtomicUInt16Storage.self)
   }
   }
 }
+#else
+extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt16.AtomicRepresentation {
+  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUInt16Storage> {
+    get {
+     
+    return UnsafeMutableRawPointer(self)
+      .assumingMemoryBound(to: _AtomicUInt16Storage.self)
+  }
+  }
+}
+#endif
 extension Swift.UInt16.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.UInt16.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.UInt16.AtomicRepresentation.Value {
     switch ordering {
@@ -5395,10 +5521,10 @@ extension Swift.UInt16.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicCompareExchange(expected: Swift.UInt16.AtomicRepresentation.Value, desired: Swift.UInt16.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.UInt16.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.UInt16.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_strong_relaxed_relaxed_UInt16(
@@ -5483,10 +5609,10 @@ extension Swift.UInt16.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicWeakCompareExchange(expected: Swift.UInt16.AtomicRepresentation.Value, desired: Swift.UInt16.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.UInt16.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.UInt16.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_weak_relaxed_relaxed_UInt16(
@@ -5721,15 +5847,27 @@ extension Swift.UInt8 : FWDebug.AtomicValue {
     }
   }
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt8.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUInt8Storage> {
     get {
-    // `UInt8` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(self)
       .assumingMemoryBound(to: _AtomicUInt8Storage.self)
   }
   }
 }
+#else
+extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt8.AtomicRepresentation {
+  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUInt8Storage> {
+    get {
+     
+    return UnsafeMutableRawPointer(self)
+      .assumingMemoryBound(to: _AtomicUInt8Storage.self)
+  }
+  }
+}
+#endif
 extension Swift.UInt8.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.UInt8.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.UInt8.AtomicRepresentation.Value {
     switch ordering {
@@ -5803,10 +5941,10 @@ extension Swift.UInt8.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicCompareExchange(expected: Swift.UInt8.AtomicRepresentation.Value, desired: Swift.UInt8.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.UInt8.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.UInt8.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_strong_relaxed_relaxed_UInt8(
@@ -5891,10 +6029,10 @@ extension Swift.UInt8.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicWeakCompareExchange(expected: Swift.UInt8.AtomicRepresentation.Value, desired: Swift.UInt8.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<Swift.UInt8.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: Swift.UInt8.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_weak_relaxed_relaxed_UInt8(
@@ -6125,9 +6263,9 @@ extension FWDebug.DoubleWord : FWDebug.AtomicValue {
       self._storage = _sa_prepare_DoubleWord(value)
     }
     @inline(__always) @_alwaysEmitIntoClient public func dispose() -> FWDebug.DoubleWord.AtomicRepresentation.Value {
-      // Work around https://github.com/apple/swift-atomics/issues/41
+       
       #if compiler(>=5.5) && arch(arm64) && DEBUG
-      var copy = self // This is not great
+      var copy = self  
       var expected = DoubleWord(high: 0, low: 0)
       withUnsafeMutablePointer(to: &copy) { pointer in
         _ = _sa_cmpxchg_strong_relaxed_relaxed_DoubleWord(
@@ -6142,24 +6280,36 @@ extension FWDebug.DoubleWord : FWDebug.AtomicValue {
     }
   }
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == FWDebug.DoubleWord.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicDoubleWordStorage> {
     get {
-    // `DoubleWord` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(self)
       .assumingMemoryBound(to: _AtomicDoubleWordStorage.self)
   }
   }
 }
+#else
+extension Swift.UnsafeMutablePointer where Pointee == FWDebug.DoubleWord.AtomicRepresentation {
+  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicDoubleWordStorage> {
+    get {
+     
+    return UnsafeMutableRawPointer(self)
+      .assumingMemoryBound(to: _AtomicDoubleWordStorage.self)
+  }
+  }
+}
+#endif
 extension FWDebug.DoubleWord.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<FWDebug.DoubleWord.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> FWDebug.DoubleWord.AtomicRepresentation.Value {
-    // Work around https://github.com/apple/swift-atomics/issues/41
+     
     #if compiler(>=5.5) && arch(arm64) && DEBUG
     let (_, original) = atomicCompareExchange(
       expected: DoubleWord(high: 0, low: 0),
       desired: DoubleWord(high: 0, low: 0),
       at: pointer,
-      successOrdering: .relaxed, // Note: this relies on the FIXME below.
+      successOrdering: .relaxed,  
       failureOrdering: ordering)
     return original
     #else
@@ -6235,10 +6385,10 @@ extension FWDebug.DoubleWord.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicCompareExchange(expected: FWDebug.DoubleWord.AtomicRepresentation.Value, desired: FWDebug.DoubleWord.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<FWDebug.DoubleWord.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: FWDebug.DoubleWord.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_strong_relaxed_relaxed_DoubleWord(
@@ -6323,10 +6473,10 @@ extension FWDebug.DoubleWord.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicWeakCompareExchange(expected: FWDebug.DoubleWord.AtomicRepresentation.Value, desired: FWDebug.DoubleWord.AtomicRepresentation.Value, at pointer: Swift.UnsafeMutablePointer<FWDebug.DoubleWord.AtomicRepresentation>, successOrdering: FWDebug.AtomicUpdateOrdering, failureOrdering: FWDebug.AtomicLoadOrdering) -> (exchanged: Swift.Bool, original: FWDebug.DoubleWord.AtomicRepresentation.Value) {
     var expected = expected
     let exchanged: Bool
-    // FIXME: stdatomic.h (and LLVM underneath) doesn't support
-    // arbitrary ordering combinations yet, so upgrade the success
-    // ordering when necessary so that it is at least as "strong" as
-    // the failure case.
+     
+     
+     
+     
     switch (successOrdering, failureOrdering) {
     case (.relaxed, .relaxed):
       exchanged = _sa_cmpxchg_weak_relaxed_relaxed_DoubleWord(
@@ -6748,7 +6898,7 @@ extension Swift.UnsafeRawPointer : FWDebug.AtomicValue {
 extension Swift.UnsafeRawPointer.AtomicRepresentation {
   @usableFromInline
   @_transparent @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<Swift.UnsafeRawPointer.AtomicRepresentation>) -> Swift.UnsafeMutablePointer<Swift.UnsafeRawPointer.AtomicRepresentation.Storage> {
-    // `Self` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: Storage.self)
   }
@@ -6815,7 +6965,7 @@ extension Swift.UnsafeMutableRawPointer : FWDebug.AtomicValue {
 extension Swift.UnsafeMutableRawPointer.AtomicRepresentation {
   @usableFromInline
   @_transparent @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<Swift.UnsafeMutableRawPointer.AtomicRepresentation>) -> Swift.UnsafeMutablePointer<Swift.UnsafeMutableRawPointer.AtomicRepresentation.Storage> {
-    // `Self` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: Storage.self)
   }
@@ -6864,6 +7014,7 @@ extension Swift.UnsafeMutableRawPointer.AtomicRepresentation : FWDebug.AtomicSto
     return (exchanged, _decode(original))
   }
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafePointer : FWDebug.AtomicValue {
   @frozen public struct AtomicRepresentation {
     public typealias Value = Swift.UnsafePointer<Pointee>
@@ -6879,10 +7030,27 @@ extension Swift.UnsafePointer : FWDebug.AtomicValue {
     }
   }
 }
+#else
+extension Swift.UnsafePointer : FWDebug.AtomicValue {
+  @frozen public struct AtomicRepresentation {
+    public typealias Value = Swift.UnsafePointer<Pointee>
+    @usableFromInline
+    internal typealias Storage = Swift.Int.AtomicRepresentation
+    @usableFromInline
+    internal let _storage: Swift.UnsafePointer<Pointee>.AtomicRepresentation.Storage
+    @inline(__always) @_alwaysEmitIntoClient public init(_ value: Swift.UnsafePointer<Pointee>.AtomicRepresentation.Value) {
+      self._storage = .init(Self._encode(value))
+    }
+    @inline(__always) @_alwaysEmitIntoClient public func dispose() -> Swift.UnsafePointer<Pointee>.AtomicRepresentation.Value {
+      Self._decode(_storage.dispose())
+    }
+  }
+}
+#endif
 extension Swift.UnsafePointer.AtomicRepresentation {
   @usableFromInline
   @_transparent @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<Swift.UnsafePointer<Pointee>.AtomicRepresentation>) -> Swift.UnsafeMutablePointer<Swift.UnsafePointer<Pointee>.AtomicRepresentation.Storage> {
-    // `Self` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: Storage.self)
   }
@@ -6931,6 +7099,7 @@ extension Swift.UnsafePointer.AtomicRepresentation : FWDebug.AtomicStorage {
     return (exchanged, _decode(original))
   }
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer : FWDebug.AtomicValue {
   @frozen public struct AtomicRepresentation {
     public typealias Value = Swift.UnsafeMutablePointer<Pointee>
@@ -6946,10 +7115,27 @@ extension Swift.UnsafeMutablePointer : FWDebug.AtomicValue {
     }
   }
 }
+#else
+extension Swift.UnsafeMutablePointer : FWDebug.AtomicValue {
+  @frozen public struct AtomicRepresentation {
+    public typealias Value = Swift.UnsafeMutablePointer<Pointee>
+    @usableFromInline
+    internal typealias Storage = Swift.Int.AtomicRepresentation
+    @usableFromInline
+    internal let _storage: Swift.UnsafeMutablePointer<Pointee>.AtomicRepresentation.Storage
+    @inline(__always) @_alwaysEmitIntoClient public init(_ value: Swift.UnsafeMutablePointer<Pointee>.AtomicRepresentation.Value) {
+      self._storage = .init(Self._encode(value))
+    }
+    @inline(__always) @_alwaysEmitIntoClient public func dispose() -> Swift.UnsafeMutablePointer<Pointee>.AtomicRepresentation.Value {
+      Self._decode(_storage.dispose())
+    }
+  }
+}
+#endif
 extension Swift.UnsafeMutablePointer.AtomicRepresentation {
   @usableFromInline
   @_transparent @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<Swift.UnsafeMutablePointer<Pointee>.AtomicRepresentation>) -> Swift.UnsafeMutablePointer<Swift.UnsafeMutablePointer<Pointee>.AtomicRepresentation.Storage> {
-    // `Self` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: Storage.self)
   }
@@ -7016,7 +7202,7 @@ extension Swift.Unmanaged : FWDebug.AtomicValue {
 extension Swift.Unmanaged.AtomicRepresentation {
   @usableFromInline
   @_transparent @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<Swift.Unmanaged<Instance>.AtomicRepresentation>) -> Swift.UnsafeMutablePointer<Swift.Unmanaged<Instance>.AtomicRepresentation.Storage> {
-    // `Self` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: Storage.self)
   }
@@ -7083,7 +7269,7 @@ extension Swift.UnsafeRawPointer : FWDebug.AtomicOptionalWrappable {
 extension Swift.UnsafeRawPointer.AtomicOptionalRepresentation {
   @usableFromInline
   @_transparent @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<Swift.UnsafeRawPointer.AtomicOptionalRepresentation>) -> Swift.UnsafeMutablePointer<Swift.UnsafeRawPointer.AtomicOptionalRepresentation.Storage> {
-    // `Self` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: Storage.self)
   }
@@ -7151,7 +7337,7 @@ extension Swift.UnsafeMutableRawPointer : FWDebug.AtomicOptionalWrappable {
 extension Swift.UnsafeMutableRawPointer.AtomicOptionalRepresentation {
   @usableFromInline
   @_transparent @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<Swift.UnsafeMutableRawPointer.AtomicOptionalRepresentation>) -> Swift.UnsafeMutablePointer<Swift.UnsafeMutableRawPointer.AtomicOptionalRepresentation.Storage> {
-    // `Self` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: Storage.self)
   }
@@ -7201,6 +7387,7 @@ extension Swift.UnsafeMutableRawPointer.AtomicOptionalRepresentation : FWDebug.A
     return (exchanged, _decode(original))
   }
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafePointer : FWDebug.AtomicOptionalWrappable {
   @frozen public struct AtomicOptionalRepresentation {
     public typealias Value = Swift.UnsafePointer<Pointee>?
@@ -7216,10 +7403,27 @@ extension Swift.UnsafePointer : FWDebug.AtomicOptionalWrappable {
     }
   }
 }
+#else
+extension Swift.UnsafePointer : FWDebug.AtomicOptionalWrappable {
+  @frozen public struct AtomicOptionalRepresentation {
+    public typealias Value = Swift.UnsafePointer<Pointee>?
+    @usableFromInline
+    internal typealias Storage = Swift.Int.AtomicRepresentation
+    @usableFromInline
+    internal let _storage: Swift.UnsafePointer<Pointee>.AtomicOptionalRepresentation.Storage
+    @inline(__always) @_alwaysEmitIntoClient public init(_ value: Swift.UnsafePointer<Pointee>.AtomicOptionalRepresentation.Value) {
+      self._storage = .init(Self._encode(value))
+    }
+    @inline(__always) @_alwaysEmitIntoClient public func dispose() -> Swift.UnsafePointer<Pointee>.AtomicOptionalRepresentation.Value {
+      Self._decode(_storage.dispose())
+    }
+  }
+}
+#endif
 extension Swift.UnsafePointer.AtomicOptionalRepresentation {
   @usableFromInline
   @_transparent @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<Swift.UnsafePointer<Pointee>.AtomicOptionalRepresentation>) -> Swift.UnsafeMutablePointer<Swift.UnsafePointer<Pointee>.AtomicOptionalRepresentation.Storage> {
-    // `Self` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: Storage.self)
   }
@@ -7269,6 +7473,7 @@ extension Swift.UnsafePointer.AtomicOptionalRepresentation : FWDebug.AtomicStora
     return (exchanged, _decode(original))
   }
 }
+#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer : FWDebug.AtomicOptionalWrappable {
   @frozen public struct AtomicOptionalRepresentation {
     public typealias Value = Swift.UnsafeMutablePointer<Pointee>?
@@ -7284,10 +7489,27 @@ extension Swift.UnsafeMutablePointer : FWDebug.AtomicOptionalWrappable {
     }
   }
 }
+#else
+extension Swift.UnsafeMutablePointer : FWDebug.AtomicOptionalWrappable {
+  @frozen public struct AtomicOptionalRepresentation {
+    public typealias Value = Swift.UnsafeMutablePointer<Pointee>?
+    @usableFromInline
+    internal typealias Storage = Swift.Int.AtomicRepresentation
+    @usableFromInline
+    internal let _storage: Swift.UnsafeMutablePointer<Pointee>.AtomicOptionalRepresentation.Storage
+    @inline(__always) @_alwaysEmitIntoClient public init(_ value: Swift.UnsafeMutablePointer<Pointee>.AtomicOptionalRepresentation.Value) {
+      self._storage = .init(Self._encode(value))
+    }
+    @inline(__always) @_alwaysEmitIntoClient public func dispose() -> Swift.UnsafeMutablePointer<Pointee>.AtomicOptionalRepresentation.Value {
+      Self._decode(_storage.dispose())
+    }
+  }
+}
+#endif
 extension Swift.UnsafeMutablePointer.AtomicOptionalRepresentation {
   @usableFromInline
   @_transparent @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<Swift.UnsafeMutablePointer<Pointee>.AtomicOptionalRepresentation>) -> Swift.UnsafeMutablePointer<Swift.UnsafeMutablePointer<Pointee>.AtomicOptionalRepresentation.Storage> {
-    // `Self` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: Storage.self)
   }
@@ -7355,7 +7577,7 @@ extension Swift.Unmanaged : FWDebug.AtomicOptionalWrappable {
 extension Swift.Unmanaged.AtomicOptionalRepresentation {
   @usableFromInline
   @_transparent @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<Swift.Unmanaged<Instance>.AtomicOptionalRepresentation>) -> Swift.UnsafeMutablePointer<Swift.Unmanaged<Instance>.AtomicOptionalRepresentation.Storage> {
-    // `Self` is layout-compatible with its only stored property.
+     
     return UnsafeMutableRawPointer(ptr)
       .assumingMemoryBound(to: Storage.self)
   }
@@ -7602,10 +7824,14 @@ public struct WitnessTable {
   }
 }
 extension Swift.Bool.AtomicRepresentation : Swift.Sendable {}
+extension FWDebug.UnsafeAtomicLazyReference : Swift.BitwiseCopyable {}
 extension FWDebug.UnsafeAtomicLazyReference.Storage : Swift.Sendable {}
 extension FWDebug.AtomicLoadOrdering : Swift.Sendable {}
+extension FWDebug.AtomicLoadOrdering : Swift.BitwiseCopyable {}
 extension FWDebug.AtomicStoreOrdering : Swift.Sendable {}
+extension FWDebug.AtomicStoreOrdering : Swift.BitwiseCopyable {}
 extension FWDebug.AtomicUpdateOrdering : Swift.Sendable {}
+extension FWDebug.AtomicUpdateOrdering : Swift.BitwiseCopyable {}
 extension FWDebug.ContextDescriptorKind : Swift.Equatable {}
 extension FWDebug.ContextDescriptorKind : Swift.Hashable {}
 extension FWDebug.ContextDescriptorKind : Swift.RawRepresentable {}
@@ -7639,6 +7865,7 @@ extension FWDebug.TypeReferenceKind : Swift.RawRepresentable {}
 extension FWDebug.MetadataKind : Swift.Equatable {}
 extension FWDebug.MetadataKind : Swift.Hashable {}
 extension FWDebug.MetadataKind : Swift.RawRepresentable {}
+extension FWDebug.UnsafeAtomic : Swift.BitwiseCopyable {}
 extension Swift.Int.AtomicRepresentation : Swift.Sendable {}
 extension Swift.Int64.AtomicRepresentation : Swift.Sendable {}
 extension Swift.Int32.AtomicRepresentation : Swift.Sendable {}
@@ -7664,11 +7891,7 @@ extension FWDebug.ValueOwnership : Swift.Hashable {}
 extension FWDebug.ValueOwnership : Swift.RawRepresentable {}
 extension Swift.UnsafeRawPointer.AtomicRepresentation : Swift.Sendable {}
 extension Swift.UnsafeMutableRawPointer.AtomicRepresentation : Swift.Sendable {}
-extension Swift.UnsafePointer.AtomicRepresentation : Swift.Sendable {}
-extension Swift.UnsafeMutablePointer.AtomicRepresentation : Swift.Sendable {}
 extension Swift.Unmanaged.AtomicRepresentation : Swift.Sendable {}
 extension Swift.UnsafeRawPointer.AtomicOptionalRepresentation : Swift.Sendable {}
 extension Swift.UnsafeMutableRawPointer.AtomicOptionalRepresentation : Swift.Sendable {}
-extension Swift.UnsafePointer.AtomicOptionalRepresentation : Swift.Sendable {}
-extension Swift.UnsafeMutablePointer.AtomicOptionalRepresentation : Swift.Sendable {}
 extension Swift.Unmanaged.AtomicOptionalRepresentation : Swift.Sendable {}
