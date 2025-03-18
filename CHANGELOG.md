@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.0.1] - 2025-03-18
+
+### Fixed
+* The systemLog method automatically prints the log time in Xcode
+* The customLog method merges logs by day and retains them for up to 7 days
+* By default, web server screenshots, clipboard access and other permissions are disabled and need to be enabled manually
+
 ## [6.0.0] - 2024-10-14
 
 ### Added

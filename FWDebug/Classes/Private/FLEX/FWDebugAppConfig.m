@@ -395,6 +395,8 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
         logPath = [[logPath stringByAppendingPathComponent:@"FWDebug"] stringByAppendingPathComponent:@"CustomLog"];
         if (![[NSFileManager defaultManager] fileExistsAtPath:logPath]) {
             [[NSFileManager defaultManager] createDirectoryAtPath:logPath withIntermediateDirectories:YES attributes:nil error:NULL];
+        } else {
+            [self mergeLogFiles:logPath];
         }
         
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -426,11 +428,11 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
 {
     NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:logPath error:nil];
     for (NSString *fileName in fileNames) {
-        if (fileName.length == 18 && [fileName hasPrefix:@"FWDebug-"]) {
+        if (fileName.length == 20 && [fileName hasPrefix:@"FWDebug-"]) {
             NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
             formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
             formatter.dateFormat = @"yyyyMMdd";
-            NSDate *date = [formatter dateFromString:[fileName substringWithRange:NSMakeRange(6, 8)]];
+            NSDate *date = [formatter dateFromString:[fileName substringWithRange:NSMakeRange(8, 8)]];
             NSTimeInterval logTime = [date timeIntervalSince1970];
             NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
             if ((nowTime - logTime) >= 86400 * 7) {
@@ -440,10 +442,10 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
             continue;
         }
         
-        if (fileName.length != 25 || ![fileName hasPrefix:@"FWDebug-"]) continue;
+        if (fileName.length != 27 || ![fileName hasPrefix:@"FWDebug-"]) continue;
         
         NSString *filePath = [logPath stringByAppendingPathComponent:fileName];
-        NSString *mergePath = [logPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.log", [fileName substringToIndex:14]]];
+        NSString *mergePath = [logPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.log", [fileName substringToIndex:16]]];
         NSString *fileLog = [NSString stringWithFormat:@"\n=====%@=====\n", fileName];
         fileLog = [fileLog stringByAppendingString:[[NSString alloc] initWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil]];
         if (![[NSFileManager defaultManager] fileExistsAtPath:mergePath]) {

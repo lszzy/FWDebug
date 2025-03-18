@@ -15,8 +15,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "FWDebug",
-            url: "https://github.com/lszzy/FWDebug/releases/download/6.0.0/FWDebug.xcframework.zip",
-            checksum: "30da5a8a975e2d865a34b771e445aa34ee3e2adebdf5877286ea91294db879a4"
+            url: "https://github.com/lszzy/FWDebug/releases/download/6.0.1/FWDebug.xcframework.zip",
+            checksum: "389c8e21199665400b18006baf2eb89f45e7cfb55ca40b75b3010d97fc0987d4"
         )
     ]
 )

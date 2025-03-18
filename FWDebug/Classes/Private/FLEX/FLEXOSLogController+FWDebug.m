@@ -15,13 +15,24 @@
 static void (*orig_NSLog)(NSString *format, ...);
 static void (*orig_NSLogv)(NSString *format, va_list args);
 
+NSDateFormatter *fwDebug_dateFormatter(void) {
+    static NSDateFormatter *dateFormatter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dateFormatter = [[NSDateFormatter alloc] init];
+        dateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
+        dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.SSS";
+    });
+    return dateFormatter;
+}
+
 void fwDebug_NSLog(NSString *format, ...) {
     va_list args;
     if (format) {
         va_start(args, format);
         NSString *message = [[NSString alloc] initWithFormat:format arguments:args];
         va_end(args);
-        orig_NSLog(@"%@", message);
+        orig_NSLog(@"%@: %@", [fwDebug_dateFormatter() stringFromDate:[NSDate date]], message);
         
         if ([FWDebugAppConfig hookSystemLog]) {
             [FLEXOSLogController appendMessage:message];
@@ -30,12 +41,10 @@ void fwDebug_NSLog(NSString *format, ...) {
 }
 
 void fwDebug_NSLogv(NSString *format, va_list args) {
-    va_list copy_args;
-    va_copy(copy_args, args);
-    orig_NSLogv(format, args);
+    NSString *message = [[NSString alloc] initWithFormat:format arguments:args];
+    orig_NSLog(@"%@: %@", [fwDebug_dateFormatter() stringFromDate:[NSDate date]], message);
     
     if ([FWDebugAppConfig hookSystemLog]) {
-        NSString *message = [[NSString alloc] initWithFormat:format arguments:copy_args];
         [FLEXOSLogController appendMessage:message];
     }
 }
