@@ -428,7 +428,9 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
 {
     NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:logPath error:nil];
     for (NSString *fileName in fileNames) {
-        if (fileName.length == 20 && [fileName hasPrefix:@"FWDebug-"]) {
+        if (![fileName hasPrefix:@"FWDebug-"]) continue;
+        
+        if (fileName.length == 20 || fileName.length == 27) {
             NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
             formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
             formatter.dateFormat = @"yyyyMMdd";
@@ -438,11 +440,11 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
             if ((nowTime - logTime) >= 86400 * 7) {
                 NSString *filePath = [logPath stringByAppendingPathComponent:fileName];
                 [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+                continue;
             }
-            continue;
         }
         
-        if (fileName.length != 27 || ![fileName hasPrefix:@"FWDebug-"]) continue;
+        if (fileName.length != 27) continue;
         
         NSString *filePath = [logPath stringByAppendingPathComponent:fileName];
         NSString *mergePath = [logPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.log", [fileName substringToIndex:16]]];
