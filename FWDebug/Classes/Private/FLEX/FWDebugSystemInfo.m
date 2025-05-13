@@ -37,6 +37,19 @@
 #define FWDebugBool(expr) ((expr) ? @"Yes" : @"No")
 #define FWDebugDesc(expr) ((expr != nil) ? [expr description] : @"-")
 
+@interface FWDebugSystemInfoEntry : NSObject
+
+@property (nonatomic, copy) NSString * entryName;
+@property (nonatomic, copy, nullable) NSString * _Nullable (^entryBlock)(void);
+
+@end
+
+@implementation FWDebugSystemInfoEntry
+
+@end
+
+static NSMutableArray<FWDebugSystemInfoEntry *> *registeredEntries;
+
 @interface FWDebugSystemInfo ()
 
 @property (nonatomic, strong) NSMutableArray *systemInfo;
@@ -45,6 +58,32 @@
 @end
 
 @implementation FWDebugSystemInfo
+
++ (void)registerEntry:(NSString *)entryName entryBlock:(NSString * _Nullable (^)(void))entryBlock
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        registeredEntries = [NSMutableArray array];
+    });
+    
+    if (!entryName || !entryBlock) return;
+    FWDebugSystemInfoEntry *entry = [[FWDebugSystemInfoEntry alloc] init];
+    entry.entryName = entryName;
+    entry.entryBlock = entryBlock;
+    [registeredEntries addObject:entry];
+}
+
++ (void)removeEntry:(NSString *)entryName
+{
+    if (!registeredEntries || !entryName) return;
+    NSMutableArray *removes = [NSMutableArray array];
+    [registeredEntries enumerateObjectsUsingBlock:^(FWDebugSystemInfoEntry * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([entryName isEqualToString:obj.entryName]) {
+            [removes addObject:obj];
+        }
+    }];
+    [registeredEntries removeObjectsInArray:removes];
+}
 
 - (void)viewDidLoad
 {
@@ -62,6 +101,19 @@
     self.systemInfo = [NSMutableArray array];
     NSMutableArray *rowsData = [NSMutableArray array];
     NSDictionary *sectionData = nil;
+    
+    //Custom
+    if (registeredEntries && registeredEntries.count > 0) {
+        [registeredEntries enumerateObjectsUsingBlock:^(FWDebugSystemInfoEntry * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [rowsData addObject:@{ obj.entryName : FWDebugStr(obj.entryBlock()) }];
+        }];
+        sectionData = @{
+                        @"title": @"Custom",
+                        @"rows": rowsData.copy,
+                        };
+        [rowsData removeAllObjects];
+        [self.systemInfo addObject:sectionData];
+    }
     
     //Application
     NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];

@@ -48,6 +48,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// 移除对象自定义入口
 - (void)removeObjectEntry:(NSString *)entryName;
 
+/// 注册信息自定义入口，访问时触发entryBlock
+- (void)registerInfoEntry:(NSString *)entryName entryBlock:(NSString * _Nullable (^)(void))entryBlock;
+
+/// 移除信息自定义入口
+- (void)removeInfoEntry:(NSString *)entryName;
+
 /// 记录自定义事件，object为事件对象，userInfo为weak引用附加信息
 - (void)recordEvent:(NSString *)event object:(id)object userInfo:(nullable id)userInfo;
 

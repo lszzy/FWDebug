@@ -21,6 +21,7 @@
 #import "FWDebugTimeProfiler.h"
 #import "FWDebugAppConfig.h"
 #import "FWDebugWebServer.h"
+#import "FWDebugSystemInfo.h"
 #import <UIKit/UIKit.h>
 
 NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
@@ -165,6 +166,16 @@ NSString * const FWDebugEventNotification = @"FWDebugEventNotification";
 - (void)removeObjectEntry:(NSString *)entryName
 {
     [FLEXObjectExplorerViewController fwDebugRemoveEntry:entryName];
+}
+
+- (void)registerInfoEntry:(NSString *)entryName entryBlock:(NSString * _Nullable (^)(void))entryBlock
+{
+    [FWDebugSystemInfo registerEntry:entryName entryBlock:entryBlock];
+}
+
+- (void)removeInfoEntry:(NSString *)entryName
+{
+    [FWDebugSystemInfo removeEntry:entryName];
 }
 
 - (void)recordEvent:(NSString *)event object:(id)object userInfo:(id)userInfo
