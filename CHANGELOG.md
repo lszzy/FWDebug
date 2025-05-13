@@ -1,5 +1,11 @@
 # Changelog
 
+## [6.0.2] - 2025-05-13
+
+### Added
+* Added registerInfoEntry custom debug information function
+* Added group.bundleId shared directory debug entry
+
 ## [6.0.1] - 2025-03-18
 
 ### Fixed

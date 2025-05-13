@@ -109,6 +109,10 @@ import CoreLocation
                 print("Custom Entry clicked")
             }
         }
+        
+        FWDebugManager.sharedInstance().registerInfoEntry("Custom Entry") {
+            "Custom Value"
+        }
     }
     
     // MARK: - CLLocationManagerDelegate

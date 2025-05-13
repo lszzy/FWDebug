@@ -114,6 +114,13 @@ static BOOL fwDebugVisible = NO;
         return [[FLEXFileBrowserController alloc] initWithPath:customLogPath];
     }];
     
+    NSString *groupPath = [NSFileManager.defaultManager containerURLForSecurityApplicationGroupIdentifier:[NSString stringWithFormat:@"group.%@", NSBundle.mainBundle.bundleIdentifier ?: @""]].path;
+    if (groupPath && [NSFileManager.defaultManager fileExistsAtPath:groupPath]) {
+        [[FLEXManager sharedManager] registerGlobalEntryWithName:@"📁  Group Directory" viewControllerFutureBlock:^UIViewController *{
+            return [[FLEXFileBrowserController alloc] initWithPath:groupPath];
+        }];
+    }
+    
     [[FLEXManager sharedManager] registerGlobalEntryWithName:@"🍀  App Config" viewControllerFutureBlock:^UIViewController *{
         return [[FWDebugAppConfig alloc] init];
     }];
