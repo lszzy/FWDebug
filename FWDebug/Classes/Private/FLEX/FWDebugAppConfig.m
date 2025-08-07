@@ -589,11 +589,11 @@ typedef NS_ENUM(NSInteger, FWDebugAppConfigSectionAppRow) {
         cell.detailTextLabel.text = detail;
         cellSwitch.on = [self.class webViewJavascriptEnabled];
     } else if (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowFilterLog) {
-        cell.textLabel.text = @"Filter System Log";
+        cell.textLabel.text = @"Filter System NSLog";
         cell.detailTextLabel.text = nil;
         cellSwitch.on = [self.class filterSystemLog];
     } else if (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowHookLog) {
-        cell.textLabel.text = @"Hook System Log";
+        cell.textLabel.text = @"Hook System NSLog";
         cell.detailTextLabel.text = nil;
         cellSwitch.on = [self.class hookSystemLog];
     } else if (indexPath.section == FWDebugAppConfigSectionApp && indexPath.row == FWDebugAppConfigSectionAppRowInspectSwift) {

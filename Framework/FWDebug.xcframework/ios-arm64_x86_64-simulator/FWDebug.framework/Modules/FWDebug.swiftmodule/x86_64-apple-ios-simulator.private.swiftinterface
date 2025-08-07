@@ -1,7 +1,7 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 6.0.3 effective-5.10 (swiftlang-6.0.3.1.10 clang-1600.0.30.1)
-// swift-module-flags: -target x86_64-apple-ios11.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -enable-bare-slash-regex -module-name FWDebug
-// swift-module-flags-ignorable: -no-verify-emitted-module-interface
+// swift-compiler-version: Apple Swift version 6.1.2 effective-5.10 (swiftlang-6.1.2.1.2 clang-1700.0.13.5)
+// swift-module-flags: -target x86_64-apple-ios13.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name FWDebug
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -interface-compiler-version 6.1.2
 @_exported import FWDebug
 import Foundation
 import MachO
@@ -680,15 +680,9 @@ extension FWDebug.AtomicUpdateOrdering : Swift.CustomStringConvertible {
 public protocol AtomicOptionalWrappable : FWDebug.AtomicValue {
   associatedtype AtomicOptionalRepresentation : FWDebug.AtomicStorage where Self.AtomicOptionalRepresentation.Value == Self?
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.Optional : FWDebug.AtomicValue where Wrapped : FWDebug.AtomicOptionalWrappable {
   public typealias AtomicRepresentation = Wrapped.AtomicOptionalRepresentation
 }
-#else
-extension Swift.Optional : FWDebug.AtomicValue where Wrapped : FWDebug.AtomicOptionalWrappable {
-  public typealias AtomicRepresentation = Wrapped.AtomicOptionalRepresentation
-}
-#endif
 extension Swift.RawRepresentable where Self : FWDebug.AtomicValue, Self.RawValue : FWDebug.AtomicValue {
   public typealias AtomicRepresentation = FWDebug.AtomicRawRepresentableStorage<Self>
 }
@@ -752,7 +746,6 @@ public protocol AtomicReference : AnyObject, FWDebug.AtomicOptionalWrappable whe
 @inlinable @inline(__always) internal var _concurrencyWindow: Swift.Int {
   get { 20 }
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == FWDebug._AtomicReferenceStorage {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug.DoubleWord.AtomicRepresentation> {
     get {
@@ -761,16 +754,6 @@ extension Swift.UnsafeMutablePointer where Pointee == FWDebug._AtomicReferenceSt
   }
   }
 }
-#else
-extension Swift.UnsafeMutablePointer where Pointee == FWDebug._AtomicReferenceStorage {
-  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug.DoubleWord.AtomicRepresentation> {
-    get {
-    UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: DoubleWord.AtomicRepresentation.self)
-  }
-  }
-}
-#endif
 @usableFromInline
 internal struct _AtomicReferenceStorage {
   @usableFromInline
@@ -2067,7 +2050,6 @@ extension Swift.Int : FWDebug.AtomicValue {
     }
   }
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.Int.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicIntStorage> {
     get {
@@ -2077,17 +2059,6 @@ extension Swift.UnsafeMutablePointer where Pointee == Swift.Int.AtomicRepresenta
   }
   }
 }
-#else
-extension Swift.UnsafeMutablePointer where Pointee == Swift.Int.AtomicRepresentation {
-  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicIntStorage> {
-    get {
-     
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicIntStorage.self)
-  }
-  }
-}
-#endif
 extension Swift.Int.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.Int.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.Int.AtomicRepresentation.Value {
     switch ordering {
@@ -2487,7 +2458,6 @@ extension Swift.Int64 : FWDebug.AtomicValue {
     }
   }
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.Int64.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicInt64Storage> {
     get {
@@ -2497,17 +2467,6 @@ extension Swift.UnsafeMutablePointer where Pointee == Swift.Int64.AtomicRepresen
   }
   }
 }
-#else
-extension Swift.UnsafeMutablePointer where Pointee == Swift.Int64.AtomicRepresentation {
-  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicInt64Storage> {
-    get {
-     
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicInt64Storage.self)
-  }
-  }
-}
-#endif
 extension Swift.Int64.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.Int64.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.Int64.AtomicRepresentation.Value {
     switch ordering {
@@ -2907,7 +2866,6 @@ extension Swift.Int32 : FWDebug.AtomicValue {
     }
   }
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.Int32.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicInt32Storage> {
     get {
@@ -2917,17 +2875,6 @@ extension Swift.UnsafeMutablePointer where Pointee == Swift.Int32.AtomicRepresen
   }
   }
 }
-#else
-extension Swift.UnsafeMutablePointer where Pointee == Swift.Int32.AtomicRepresentation {
-  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicInt32Storage> {
-    get {
-     
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicInt32Storage.self)
-  }
-  }
-}
-#endif
 extension Swift.Int32.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.Int32.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.Int32.AtomicRepresentation.Value {
     switch ordering {
@@ -3327,7 +3274,6 @@ extension Swift.Int16 : FWDebug.AtomicValue {
     }
   }
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.Int16.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicInt16Storage> {
     get {
@@ -3337,17 +3283,6 @@ extension Swift.UnsafeMutablePointer where Pointee == Swift.Int16.AtomicRepresen
   }
   }
 }
-#else
-extension Swift.UnsafeMutablePointer where Pointee == Swift.Int16.AtomicRepresentation {
-  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicInt16Storage> {
-    get {
-     
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicInt16Storage.self)
-  }
-  }
-}
-#endif
 extension Swift.Int16.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.Int16.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.Int16.AtomicRepresentation.Value {
     switch ordering {
@@ -3747,7 +3682,6 @@ extension Swift.Int8 : FWDebug.AtomicValue {
     }
   }
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.Int8.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicInt8Storage> {
     get {
@@ -3757,17 +3691,6 @@ extension Swift.UnsafeMutablePointer where Pointee == Swift.Int8.AtomicRepresent
   }
   }
 }
-#else
-extension Swift.UnsafeMutablePointer where Pointee == Swift.Int8.AtomicRepresentation {
-  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicInt8Storage> {
-    get {
-     
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicInt8Storage.self)
-  }
-  }
-}
-#endif
 extension Swift.Int8.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.Int8.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.Int8.AtomicRepresentation.Value {
     switch ordering {
@@ -4167,7 +4090,6 @@ extension Swift.UInt : FWDebug.AtomicValue {
     }
   }
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUIntStorage> {
     get {
@@ -4177,17 +4099,6 @@ extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt.AtomicRepresent
   }
   }
 }
-#else
-extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt.AtomicRepresentation {
-  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUIntStorage> {
-    get {
-     
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicUIntStorage.self)
-  }
-  }
-}
-#endif
 extension Swift.UInt.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.UInt.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.UInt.AtomicRepresentation.Value {
     switch ordering {
@@ -4587,7 +4498,6 @@ extension Swift.UInt64 : FWDebug.AtomicValue {
     }
   }
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt64.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUInt64Storage> {
     get {
@@ -4597,17 +4507,6 @@ extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt64.AtomicReprese
   }
   }
 }
-#else
-extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt64.AtomicRepresentation {
-  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUInt64Storage> {
-    get {
-     
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicUInt64Storage.self)
-  }
-  }
-}
-#endif
 extension Swift.UInt64.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.UInt64.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.UInt64.AtomicRepresentation.Value {
     switch ordering {
@@ -5007,7 +4906,6 @@ extension Swift.UInt32 : FWDebug.AtomicValue {
     }
   }
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt32.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUInt32Storage> {
     get {
@@ -5017,17 +4915,6 @@ extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt32.AtomicReprese
   }
   }
 }
-#else
-extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt32.AtomicRepresentation {
-  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUInt32Storage> {
-    get {
-     
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicUInt32Storage.self)
-  }
-  }
-}
-#endif
 extension Swift.UInt32.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.UInt32.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.UInt32.AtomicRepresentation.Value {
     switch ordering {
@@ -5427,7 +5314,6 @@ extension Swift.UInt16 : FWDebug.AtomicValue {
     }
   }
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt16.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUInt16Storage> {
     get {
@@ -5437,17 +5323,6 @@ extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt16.AtomicReprese
   }
   }
 }
-#else
-extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt16.AtomicRepresentation {
-  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUInt16Storage> {
-    get {
-     
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicUInt16Storage.self)
-  }
-  }
-}
-#endif
 extension Swift.UInt16.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.UInt16.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.UInt16.AtomicRepresentation.Value {
     switch ordering {
@@ -5847,7 +5722,6 @@ extension Swift.UInt8 : FWDebug.AtomicValue {
     }
   }
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt8.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUInt8Storage> {
     get {
@@ -5857,17 +5731,6 @@ extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt8.AtomicRepresen
   }
   }
 }
-#else
-extension Swift.UnsafeMutablePointer where Pointee == Swift.UInt8.AtomicRepresentation {
-  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicUInt8Storage> {
-    get {
-     
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicUInt8Storage.self)
-  }
-  }
-}
-#endif
 extension Swift.UInt8.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<Swift.UInt8.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> Swift.UInt8.AtomicRepresentation.Value {
     switch ordering {
@@ -6280,7 +6143,6 @@ extension FWDebug.DoubleWord : FWDebug.AtomicValue {
     }
   }
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer where Pointee == FWDebug.DoubleWord.AtomicRepresentation {
   @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicDoubleWordStorage> {
     get {
@@ -6290,17 +6152,6 @@ extension Swift.UnsafeMutablePointer where Pointee == FWDebug.DoubleWord.AtomicR
   }
   }
 }
-#else
-extension Swift.UnsafeMutablePointer where Pointee == FWDebug.DoubleWord.AtomicRepresentation {
-  @inlinable @inline(__always) internal var _extract: Swift.UnsafeMutablePointer<FWDebug._AtomicDoubleWordStorage> {
-    get {
-     
-    return UnsafeMutableRawPointer(self)
-      .assumingMemoryBound(to: _AtomicDoubleWordStorage.self)
-  }
-  }
-}
-#endif
 extension FWDebug.DoubleWord.AtomicRepresentation : FWDebug.AtomicStorage {
   @_semantics("atomics.requires_constant_orderings") @_transparent @_alwaysEmitIntoClient public static func atomicLoad(at pointer: Swift.UnsafeMutablePointer<FWDebug.DoubleWord.AtomicRepresentation>, ordering: FWDebug.AtomicLoadOrdering) -> FWDebug.DoubleWord.AtomicRepresentation.Value {
      
@@ -7014,7 +6865,6 @@ extension Swift.UnsafeMutableRawPointer.AtomicRepresentation : FWDebug.AtomicSto
     return (exchanged, _decode(original))
   }
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafePointer : FWDebug.AtomicValue {
   @frozen public struct AtomicRepresentation {
     public typealias Value = Swift.UnsafePointer<Pointee>
@@ -7030,23 +6880,6 @@ extension Swift.UnsafePointer : FWDebug.AtomicValue {
     }
   }
 }
-#else
-extension Swift.UnsafePointer : FWDebug.AtomicValue {
-  @frozen public struct AtomicRepresentation {
-    public typealias Value = Swift.UnsafePointer<Pointee>
-    @usableFromInline
-    internal typealias Storage = Swift.Int.AtomicRepresentation
-    @usableFromInline
-    internal let _storage: Swift.UnsafePointer<Pointee>.AtomicRepresentation.Storage
-    @inline(__always) @_alwaysEmitIntoClient public init(_ value: Swift.UnsafePointer<Pointee>.AtomicRepresentation.Value) {
-      self._storage = .init(Self._encode(value))
-    }
-    @inline(__always) @_alwaysEmitIntoClient public func dispose() -> Swift.UnsafePointer<Pointee>.AtomicRepresentation.Value {
-      Self._decode(_storage.dispose())
-    }
-  }
-}
-#endif
 extension Swift.UnsafePointer.AtomicRepresentation {
   @usableFromInline
   @_transparent @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<Swift.UnsafePointer<Pointee>.AtomicRepresentation>) -> Swift.UnsafeMutablePointer<Swift.UnsafePointer<Pointee>.AtomicRepresentation.Storage> {
@@ -7099,7 +6932,6 @@ extension Swift.UnsafePointer.AtomicRepresentation : FWDebug.AtomicStorage {
     return (exchanged, _decode(original))
   }
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer : FWDebug.AtomicValue {
   @frozen public struct AtomicRepresentation {
     public typealias Value = Swift.UnsafeMutablePointer<Pointee>
@@ -7115,23 +6947,6 @@ extension Swift.UnsafeMutablePointer : FWDebug.AtomicValue {
     }
   }
 }
-#else
-extension Swift.UnsafeMutablePointer : FWDebug.AtomicValue {
-  @frozen public struct AtomicRepresentation {
-    public typealias Value = Swift.UnsafeMutablePointer<Pointee>
-    @usableFromInline
-    internal typealias Storage = Swift.Int.AtomicRepresentation
-    @usableFromInline
-    internal let _storage: Swift.UnsafeMutablePointer<Pointee>.AtomicRepresentation.Storage
-    @inline(__always) @_alwaysEmitIntoClient public init(_ value: Swift.UnsafeMutablePointer<Pointee>.AtomicRepresentation.Value) {
-      self._storage = .init(Self._encode(value))
-    }
-    @inline(__always) @_alwaysEmitIntoClient public func dispose() -> Swift.UnsafeMutablePointer<Pointee>.AtomicRepresentation.Value {
-      Self._decode(_storage.dispose())
-    }
-  }
-}
-#endif
 extension Swift.UnsafeMutablePointer.AtomicRepresentation {
   @usableFromInline
   @_transparent @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<Swift.UnsafeMutablePointer<Pointee>.AtomicRepresentation>) -> Swift.UnsafeMutablePointer<Swift.UnsafeMutablePointer<Pointee>.AtomicRepresentation.Storage> {
@@ -7387,7 +7202,6 @@ extension Swift.UnsafeMutableRawPointer.AtomicOptionalRepresentation : FWDebug.A
     return (exchanged, _decode(original))
   }
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafePointer : FWDebug.AtomicOptionalWrappable {
   @frozen public struct AtomicOptionalRepresentation {
     public typealias Value = Swift.UnsafePointer<Pointee>?
@@ -7403,23 +7217,6 @@ extension Swift.UnsafePointer : FWDebug.AtomicOptionalWrappable {
     }
   }
 }
-#else
-extension Swift.UnsafePointer : FWDebug.AtomicOptionalWrappable {
-  @frozen public struct AtomicOptionalRepresentation {
-    public typealias Value = Swift.UnsafePointer<Pointee>?
-    @usableFromInline
-    internal typealias Storage = Swift.Int.AtomicRepresentation
-    @usableFromInline
-    internal let _storage: Swift.UnsafePointer<Pointee>.AtomicOptionalRepresentation.Storage
-    @inline(__always) @_alwaysEmitIntoClient public init(_ value: Swift.UnsafePointer<Pointee>.AtomicOptionalRepresentation.Value) {
-      self._storage = .init(Self._encode(value))
-    }
-    @inline(__always) @_alwaysEmitIntoClient public func dispose() -> Swift.UnsafePointer<Pointee>.AtomicOptionalRepresentation.Value {
-      Self._decode(_storage.dispose())
-    }
-  }
-}
-#endif
 extension Swift.UnsafePointer.AtomicOptionalRepresentation {
   @usableFromInline
   @_transparent @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<Swift.UnsafePointer<Pointee>.AtomicOptionalRepresentation>) -> Swift.UnsafeMutablePointer<Swift.UnsafePointer<Pointee>.AtomicOptionalRepresentation.Storage> {
@@ -7473,7 +7270,6 @@ extension Swift.UnsafePointer.AtomicOptionalRepresentation : FWDebug.AtomicStora
     return (exchanged, _decode(original))
   }
 }
-#if compiler(>=5.3) && $NoncopyableGenerics
 extension Swift.UnsafeMutablePointer : FWDebug.AtomicOptionalWrappable {
   @frozen public struct AtomicOptionalRepresentation {
     public typealias Value = Swift.UnsafeMutablePointer<Pointee>?
@@ -7489,23 +7285,6 @@ extension Swift.UnsafeMutablePointer : FWDebug.AtomicOptionalWrappable {
     }
   }
 }
-#else
-extension Swift.UnsafeMutablePointer : FWDebug.AtomicOptionalWrappable {
-  @frozen public struct AtomicOptionalRepresentation {
-    public typealias Value = Swift.UnsafeMutablePointer<Pointee>?
-    @usableFromInline
-    internal typealias Storage = Swift.Int.AtomicRepresentation
-    @usableFromInline
-    internal let _storage: Swift.UnsafeMutablePointer<Pointee>.AtomicOptionalRepresentation.Storage
-    @inline(__always) @_alwaysEmitIntoClient public init(_ value: Swift.UnsafeMutablePointer<Pointee>.AtomicOptionalRepresentation.Value) {
-      self._storage = .init(Self._encode(value))
-    }
-    @inline(__always) @_alwaysEmitIntoClient public func dispose() -> Swift.UnsafeMutablePointer<Pointee>.AtomicOptionalRepresentation.Value {
-      Self._decode(_storage.dispose())
-    }
-  }
-}
-#endif
 extension Swift.UnsafeMutablePointer.AtomicOptionalRepresentation {
   @usableFromInline
   @_transparent @_alwaysEmitIntoClient internal static func _extract(_ ptr: Swift.UnsafeMutablePointer<Swift.UnsafeMutablePointer<Pointee>.AtomicOptionalRepresentation>) -> Swift.UnsafeMutablePointer<Swift.UnsafeMutablePointer<Pointee>.AtomicOptionalRepresentation.Storage> {

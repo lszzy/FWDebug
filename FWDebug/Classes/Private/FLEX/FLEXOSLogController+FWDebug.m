@@ -112,12 +112,15 @@ void fwDebug_NSLogv(NSString *format, va_list args) {
     if (!error && entry) {
         if (entry->type == OS_ACTIVITY_STREAM_TYPE_LOG_MESSAGE ||
             entry->type == OS_ACTIVITY_STREAM_TYPE_LEGACY_LOG_MESSAGE) {
+            #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 260000
+            return YES;
+            #else
             os_log_message_t log_message = &entry->log_message;
-            
             NSString *imagePath = log_message->image_path ? [NSString stringWithUTF8String:log_message->image_path] : nil;
             if (!imagePath || ![imagePath hasPrefix:NSBundle.mainBundle.bundlePath]) {
                 return YES;
             }
+            #endif
         }
     }
     

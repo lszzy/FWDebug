@@ -10,11 +10,11 @@
 		2F11DB8A2328CFD200DE516C /* SwiftController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8621652049287800C98429 /* SwiftController.swift */; };
 		2F67301F22FDCFDC0031F667 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2F67301E22FDCFDC0031F667 /* LaunchScreen.storyboard */; };
 		2F86218F204959F600C98429 /* ObjectivecController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F86218E204959F600C98429 /* ObjectivecController.m */; };
-		2FBCA7C91E55768600B7170A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FBCA7C81E55768600B7170A /* main.m */; };
-		2FBCA7CC1E55768600B7170A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FBCA7CB1E55768600B7170A /* AppDelegate.m */; };
 		2FBCA7CF1E55768600B7170A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FBCA7CE1E55768600B7170A /* ViewController.m */; };
 		2FBCA7D41E55768600B7170A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2FBCA7D31E55768600B7170A /* Assets.xcassets */; };
 		80EB6F1C53A99EDF25BEADB4 /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC751C36D69022EBF7137C24 /* Pods_Example.framework */; };
+		B8DF9C342E444E01004C8036 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DF9C332E444E01004C8036 /* AppDelegate.swift */; };
+		B8DF9C362E445CA5004C8036 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DF9C352E445CA5004C8036 /* SceneDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -39,13 +39,12 @@
 		2F86218D204959F600C98429 /* ObjectivecController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectivecController.h; sourceTree = "<group>"; };
 		2F86218E204959F600C98429 /* ObjectivecController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObjectivecController.m; sourceTree = "<group>"; };
 		2FBCA7C41E55768600B7170A /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		2FBCA7C81E55768600B7170A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		2FBCA7CA1E55768600B7170A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		2FBCA7CB1E55768600B7170A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		2FBCA7CD1E55768600B7170A /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		2FBCA7CE1E55768600B7170A /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		2FBCA7D31E55768600B7170A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2FBCA7D81E55768600B7170A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B8DF9C332E444E01004C8036 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		B8DF9C352E445CA5004C8036 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		C75D941B6C56631C81BF885D /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
 		DC751C36D69022EBF7137C24 /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -74,13 +73,13 @@
 		2F528911265E2CC100CA282A /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				2FBCA7CA1E55768600B7170A /* AppDelegate.h */,
-				2FBCA7CB1E55768600B7170A /* AppDelegate.m */,
-				2FBCA7CD1E55768600B7170A /* ViewController.h */,
-				2FBCA7CE1E55768600B7170A /* ViewController.m */,
+				B8DF9C332E444E01004C8036 /* AppDelegate.swift */,
+				B8DF9C352E445CA5004C8036 /* SceneDelegate.swift */,
+				2F8621652049287800C98429 /* SwiftController.swift */,
 				2F86218D204959F600C98429 /* ObjectivecController.h */,
 				2F86218E204959F600C98429 /* ObjectivecController.m */,
-				2F8621652049287800C98429 /* SwiftController.swift */,
+				2FBCA7CD1E55768600B7170A /* ViewController.h */,
+				2FBCA7CE1E55768600B7170A /* ViewController.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -128,7 +127,6 @@
 				2FBCA7D81E55768600B7170A /* Info.plist */,
 				2F8621642049287800C98429 /* Example-Bridging-Header.h */,
 				2F8621672049289E00C98429 /* SwiftHeader.h */,
-				2FBCA7C81E55768600B7170A /* main.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -259,11 +257,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B8DF9C342E444E01004C8036 /* AppDelegate.swift in Sources */,
+				B8DF9C362E445CA5004C8036 /* SceneDelegate.swift in Sources */,
 				2F86218F204959F600C98429 /* ObjectivecController.m in Sources */,
 				2FBCA7CF1E55768600B7170A /* ViewController.m in Sources */,
 				2F11DB8A2328CFD200DE516C /* SwiftController.swift in Sources */,
-				2FBCA7CC1E55768600B7170A /* AppDelegate.m in Sources */,
-				2FBCA7C91E55768600B7170A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -395,7 +393,7 @@
 					"APP_TARGET=1",
 				);
 				INFOPLIST_FILE = Example/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = site.wuyong.FWDebug.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -421,7 +419,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = Example/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = site.wuyong.FWDebug.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";

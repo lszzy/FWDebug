@@ -7,7 +7,7 @@
 
 # [English](README.md)
 
-iOS调试库，支持iOS11+，无需添加任何代码，方便iOS开发和测试。
+iOS调试库，支持iOS13+，无需添加任何代码，方便iOS开发和测试。
 
 ## 屏幕截图
 
@@ -60,7 +60,7 @@ Swift Package Manager项目可在打包AppStore时从所在Target中移除FWDebu
 ### CocoaPods
 本调试库支持Debug和Release环境，建议Debug模式开启。Podfile示例：
 
-	platform :ios, '11.0'
+	platform :ios, '13.0'
 	use_frameworks!
 
 	target 'Example' do

@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.1.0] - 2025-08-07
+
+### Added
+* Compatible with Xcode 26
+* Minimum compatible with iOS 13
+* Synchronize the latest trunk code of FLEX
+
 ## [6.0.2] - 2025-05-13
 
 ### Added

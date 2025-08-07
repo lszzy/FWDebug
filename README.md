@@ -7,7 +7,7 @@
 
 # [中文](README_CN.md)
 
-iOS debugging library, support for iOS11 +, without adding any code to facilitate iOS development and testing.
+iOS debugging library, support for iOS13 +, without adding any code to facilitate iOS development and testing.
 
 ## Screenshot
 
@@ -60,7 +60,7 @@ It is recommended to use CocoaPods or Swift Package Manager to install and autom
 ### CocoaPods
 This debugging library supports Debug and Release environments. It is recommended that Debug mode be turned on. Podfile example:
 
-    platform:ios, '11.0'
+    platform:ios, '13.0'
     use_frameworks!
 
     target 'Example' do
