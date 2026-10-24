@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "FWDebug",
         platforms: [
-            .iOS(.v13)
+            .iOS(.v15)
         ],
     products: [
         .library(
@@ -15,8 +15,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "FWDebug",
-            url: "https://github.com/lszzy/FWDebug/releases/download/6.1.0/FWDebug.xcframework.zip",
-            checksum: "11139ca553b44d2d28b4df202ab747c5b5d654bb25ff5011072a879b31293cfd"
+            url: "https://github.com/lszzy/FWDebug/releases/download/6.2.0/FWDebug.xcframework.zip",
+            checksum: "22372905f3b46d8de49e59e024d9721208dcd4614e75bf4e1e67ee9b15f07f1c"
         )
     ]
 )

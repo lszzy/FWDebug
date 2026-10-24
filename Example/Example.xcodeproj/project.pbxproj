@@ -393,7 +393,7 @@
 					"APP_TARGET=1",
 				);
 				INFOPLIST_FILE = Example/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = site.wuyong.FWDebug.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -419,7 +419,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = Example/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = site.wuyong.FWDebug.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";

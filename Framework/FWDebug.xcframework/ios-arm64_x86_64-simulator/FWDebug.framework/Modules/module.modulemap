@@ -7,5 +7,4 @@ framework module FWDebug {
 
 module FWDebug.Swift {
   header "FWDebug-Swift.h"
-  requires objc
 }
