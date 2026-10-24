@@ -45,8 +45,11 @@ public struct ConformanceDescriptor: LayoutWrapper {
       let ptr = start.relativeDirectAddress(as: _ContextDescriptor.self)
       return getContextDescriptor(at: ptr) as? TypeContextDescriptor
     case .indirectTypeDescriptor:
-      var ptr = start.relativeDirectAddress(as: UnsafeRawPointer.self)
-      ptr = ptr.load(as: UnsafeRawPointer.self)
+      let reference = start.relativeDirectAddress(as: UnsafeRawPointer.self)
+      // A weak-linked type descriptor can be absent in the loaded image.
+      guard let ptr = reference.load(as: UnsafeRawPointer?.self) else {
+        return nil
+      }
       return getContextDescriptor(at: ptr) as? TypeContextDescriptor
     default:
       return nil
